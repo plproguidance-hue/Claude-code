@@ -1,0 +1,23 @@
+{
+  "name": "claude-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plproguidance-hue/Claude-code.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plproguidance-hue/Claude-code/issues"
+  },
+  "homepage": "https://github.com/plproguidance-hue/Claude-code#readme",
+  "dependencies": {
+    "playwright-core": "^1.61.1"
+  }
+}

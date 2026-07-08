@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon &mdash; Animated Login Page Reel</title>
+<style>
+  :root { color-scheme: dark; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #000; }
+  #stage {
+    position: relative;
+    width: 720px;
+    height: 1280px;
+    background: #000;
+    overflow: hidden;
+    font-family: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
+  }
+  /* ---- top: cream panel with the dragon ---- */
+  #panel {
+    position: absolute;
+    left: 12px;
+    top: 108px;
+    width: 696px;
+    height: 410px;
+    background: #ede9e0;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.35);
+  }
+  #dragon { display: block; width: 696px; height: 410px; }
+  /* ---- bottom: code editor window ---- */
+  #editor {
+    position: absolute;
+    left: 98px;
+    top: 588px;
+    width: 526px;
+    border-radius: 9px;
+    background: #16171d;
+    box-shadow: 0 18px 60px rgba(0,0,0,.75), 0 0 0 1px #2a2b33;
+    overflow: hidden;
+  }
+  #editor .titlebar {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    background: #1d1e25;
+    border-bottom: 1px solid #101116;
+    padding-left: 12px;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; margin-right: 7px; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 18px;
+    height: 34px;
+    padding: 0 16px;
+    background: #23242c;
+    color: #c8cad3;
+    font-size: 12px;
+  }
+  .tab .html-badge {
+    width: 12px; height: 13px;
+    background: #e44d26;
+    clip-path: polygon(0 0, 100% 0, 88% 88%, 50% 100%, 12% 88%);
+  }
+  #code {
+    padding: 14px 16px 18px;
+    font-size: 11.5px;
+    line-height: 1.62;
+    color: #aeb3c2;
+    white-space: pre;
+  }
+  #code .tag  { color: #7aa7e8; }
+  #code .attr { color: #9ab8e0; }
+  #code .str  { color: #b9c9e6; }
+  #code .cmt  { color: #5a6070; }
+  #code .txt  { color: #d3d6e0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="panel"><canvas id="dragon" width="696" height="410"></canvas></div>
+  <div id="editor">
+    <div class="titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="tab"><span class="html-badge"></span>index.html</span>
+    </div>
+    <div id="code"><span class="cmt">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+    <span class="cmt">&lt;!-- animated login page --&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"viewport"</span> <span class="attr">content</span>=<span class="str">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span><span class="txt">Animated Login Page  || Web Addicted</span><span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span> <span class="attr">href</span>=<span class="str">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"holder"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;form</span> <span class="attr">autocomplete</span>=<span class="str">"off"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;h2&gt;</span><span class="txt">Sign in</span><span class="tag">&lt;/h2&gt;</span>
+                <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"inputBox"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">required</span>=<span class="str">"required"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;span&gt;</span><span class="txt">Username</span><span class="tag">&lt;/span&gt;</span>
+                    <span class="tag">&lt;i&gt;&lt;/i&gt;</span>
+                <span class="tag">&lt;/div&gt;</span>
+                <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"inputBox"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"password"</span> <span class="attr">required</span>=<span class="str">"required"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;span&gt;</span><span class="txt">Password</span><span class="tag">&lt;/span&gt;</span>
+                    <span class="tag">&lt;i&gt;&lt;/i&gt;</span>
+                <span class="tag">&lt;/div&gt;</span>
+                <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"links"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span><span class="txt">Forgot Password ?</span><span class="tag">&lt;/a&gt;</span>
+                    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span><span class="txt">Signup</span><span class="tag">&lt;/a&gt;</span>
+                <span class="tag">&lt;/div&gt;</span>
+                <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"Login"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;/form&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></div>
+  </div>
+</div>
+
+<script>
+/*
+ * Procedural sky-dragon: a chain of spine segments follows the head,
+ * each segment fanning out feather-like rib strokes. Rendered in a
+ * blue/sky gradient with twinkling sparkles riding the body.
+ *
+ * Deterministic: everything derives from the frame counter so the
+ * offline renderer (render.mjs) reproduces identical frames.
+ */
+(() => {
+  const canvas = document.getElementById('dragon');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const FPS = 30;
+  const SEGS = 52;        // spine segments
+  const SPACING = 8.2;    // px between segments
+
+  // --- deterministic pseudo-random, fixed seed ---
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(0xD7A60);
+
+  // --- flight plan: where the dragon darts, keyed by frame ---
+  const waypoints = [
+    { until: 46,  x: 632, y: 138 },   // dart to the top right
+    { until: 112, x: 58,  y: 218 },   // sweep across to the far left
+    { until: 168, x: 430, y: 168 },   // back toward centre-right
+    { until: 218, x: 296, y: 330 },   // dive to the lower middle
+    { until: 999, x: 188, y: 130 },   // curl up and away
+  ];
+  function scriptedTarget(frame) {
+    for (const w of waypoints) if (frame < w.until) return w;
+    return waypoints[waypoints.length - 1];
+  }
+
+  // the on-screen cursor sits near the top right and drifts slightly
+  function cursorPos(frame) {
+    return {
+      x: 655 + Math.sin(frame * 0.017) * 14,
+      y: 62 + Math.cos(frame * 0.013) * 9,
+    };
+  }
+
+  // --- body state ---
+  const head = { x: 340, y: 190, vx: 0, vy: 0 };
+  const spine = [];
+  for (let i = 0; i < SEGS; i++) spine.push({ x: head.x - i * SPACING, y: head.y });
+
+  // sparkles ride fixed spots on the body and twinkle
+  const sparkles = [];
+  for (let k = 0; k < 34; k++) {
+    sparkles.push({
+      seg: 2 + Math.floor(rand() * (SEGS - 6)),
+      side: rand() < 0.5 ? -1 : 1,
+      out: 4 + rand() * 26,          // distance off the spine
+      size: 1.6 + rand() * 2.6,
+      phase: rand() * Math.PI * 2,
+      speed: 0.18 + rand() * 0.22,
+      tone: Math.floor(rand() * 4),
+    });
+  }
+  const sparkleTones = ['#ffffff', '#bfeaff', '#7fd4ff', '#4fb6f0'];
+
+  // rib length profile along the body: big fan behind the head,
+  // slimmer midsection, long flowing plume at the tail
+  function ribLen(i) {
+    const t = i / (SEGS - 1);
+    const g = (m, s) => Math.exp(-((t - m) * (t - m)) / (2 * s * s));
+    return 10 + g(0.16, 0.09) * 92 + g(0.5, 0.2) * 26 + g(0.93, 0.06) * 112;
+  }
+  function bodyWidth(i) {
+    const t = i / (SEGS - 1);
+    return 6.5 * (1 - t) + 1.2;
+  }
+
+  let lastFrame = -1;
+
+  function step(frame) {
+    const t = scriptedTarget(frame);
+    // chase with inertia -> darting, overshooting motion
+    head.vx += (t.x - head.x) * 0.016;
+    head.vy += (t.y - head.y) * 0.016;
+    head.vx *= 0.885;
+    head.vy *= 0.885;
+    // lateral sway proportional to speed -> swimming undulation
+    const sp = Math.hypot(head.vx, head.vy);
+    const swing = Math.sin(frame * 0.42) * Math.min(sp, 9) * 0.45;
+    const a = Math.atan2(head.vy, head.vx) + Math.PI / 2;
+    head.x += head.vx + Math.cos(a) * swing;
+    head.y += head.vy + Math.sin(a) * swing;
+    // soft walls
+    head.x = Math.max(24, Math.min(W - 24, head.x));
+    head.y = Math.max(26, Math.min(H - 26, head.y));
+
+    spine[0].x = head.x; spine[0].y = head.y;
+    for (let i = 1; i < SEGS; i++) {
+      const p = spine[i - 1], q = spine[i];
+      const dx = q.x - p.x, dy = q.y - p.y;
+      const d = Math.hypot(dx, dy) || 1;
+      q.x = p.x + (dx / d) * SPACING;
+      q.y = p.y + (dy / d) * SPACING;
+    }
+  }
+
+  function bodyGradient() {
+    const h = spine[0], tl = spine[SEGS - 1];
+    const g = ctx.createLinearGradient(h.x, h.y, tl.x, tl.y);
+    g.addColorStop(0, '#0a2f6e');    // deep navy at the head
+    g.addColorStop(0.45, '#1e6fc4'); // ocean blue
+    g.addColorStop(0.8, '#54b4ef');  // sky
+    g.addColorStop(1, '#a8dffb');    // pale sky at the tail tip
+    return g;
+  }
+
+  function segAngle(i) {
+    const a = spine[Math.max(0, i - 1)], b = spine[Math.min(SEGS - 1, i + 1)];
+    return Math.atan2(a.y - b.y, a.x - b.x); // points toward the head
+  }
+
+  function drawRibs(frame, grad) {
+    ctx.strokeStyle = grad;
+    ctx.lineCap = 'round';
+    for (let i = 2; i < SEGS - 1; i += 2) {
+      const p = spine[i];
+      const ang = segAngle(i);
+      const dx = Math.cos(ang), dy = Math.sin(ang);       // toward head
+      const px = -dy, py = dx;                            // perpendicular
+      const flutter = 1 + 0.16 * Math.sin(frame * 0.24 + i * 0.65);
+      const L = ribLen(i) * flutter;
+      ctx.lineWidth = L > 55 ? 1.1 : 1.5;
+      ctx.globalAlpha = L > 55 ? 0.5 : 0.75;
+      for (const s of [-1, 1]) {
+        const curl = 0.22 * Math.sin(frame * 0.2 + i * 0.9 + s);
+        ctx.beginPath();
+        ctx.moveTo(p.x + px * s * 2, p.y + py * s * 2);
+        ctx.quadraticCurveTo(
+          p.x + px * s * L * 0.55 - dx * L * 0.25,
+          p.y + py * s * L * 0.55 - dy * L * 0.25,
+          p.x + px * s * L * (0.38 + curl) - dx * L * 0.95,
+          p.y + py * s * L * (0.38 + curl) - dy * L * 0.95
+        );
+        ctx.stroke();
+        // a shorter inner stroke doubles the feathering density
+        ctx.beginPath();
+        ctx.moveTo(p.x + px * s * 2, p.y + py * s * 2);
+        ctx.quadraticCurveTo(
+          p.x + px * s * L * 0.3 - dx * L * 0.12,
+          p.y + py * s * L * 0.3 - dy * L * 0.12,
+          p.x + px * s * L * 0.28 - dx * L * 0.5,
+          p.y + py * s * L * 0.28 - dy * L * 0.5
+        );
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawSpine(grad) {
+    // vertebra chevrons
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.4;
+    ctx.globalAlpha = 0.9;
+    for (let i = 1; i < SEGS; i++) {
+      const p = spine[i];
+      const ang = segAngle(i);
+      const dx = Math.cos(ang), dy = Math.sin(ang);
+      const px = -dy, py = dx;
+      const w = bodyWidth(i);
+      ctx.beginPath();
+      ctx.moveTo(p.x - dx * 4 + px * w, p.y - dy * 4 + py * w);
+      ctx.lineTo(p.x, p.y);
+      ctx.lineTo(p.x - dx * 4 - px * w, p.y - dy * 4 - py * w);
+      ctx.stroke();
+    }
+    // backbone
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(spine[0].x, spine[0].y);
+    for (let i = 1; i < SEGS; i++) ctx.lineTo(spine[i].x, spine[i].y);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawHead() {
+    const p = spine[0];
+    const ang = segAngle(1);
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(ang);
+    ctx.scale(1.3, 1.3);
+    const g = ctx.createLinearGradient(-22, 0, 18, 0);
+    g.addColorStop(0, '#1e6fc4');
+    g.addColorStop(1, '#082a63');
+    ctx.fillStyle = g;
+    // skull + snout (top-down, symmetric)
+    ctx.beginPath();
+    ctx.moveTo(18, 0);                       // snout tip
+    ctx.quadraticCurveTo(6, -7, -8, -5.5);   // top of the skull
+    ctx.quadraticCurveTo(-13, -3, -13, 0);
+    ctx.quadraticCurveTo(-13, 3, -8, 5.5);
+    ctx.quadraticCurveTo(6, 7, 18, 0);       // lower jaw back to the tip
+    ctx.fill();
+    // swept-back horns
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 2.6;
+    ctx.lineCap = 'round';
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(-5, 4.5 * s);
+      ctx.quadraticCurveTo(-16, 9 * s, -24, 13 * s);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-9, 3.5 * s);
+      ctx.quadraticCurveTo(-17, 5.5 * s, -23, 7 * s);
+      ctx.stroke();
+    }
+    // eyes
+    ctx.fillStyle = '#bfeaff';
+    ctx.beginPath(); ctx.arc(3, -3.4, 1.3, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(3, 3.4, 1.3, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSparkles(frame) {
+    for (const s of sparkles) {
+      const p = spine[s.seg];
+      const ang = segAngle(s.seg);
+      const px = -Math.sin(ang), py = Math.cos(ang);
+      const x = p.x + px * s.side * s.out;
+      const y = p.y + py * s.side * s.out;
+      const tw = 0.5 + 0.5 * Math.sin(frame * s.speed + s.phase);
+      if (tw < 0.18) continue;
+      const r = s.size * (0.5 + tw * 0.7);
+      ctx.save();
+      ctx.globalAlpha = 0.25 + tw * 0.75;
+      ctx.strokeStyle = sparkleTones[s.tone];
+      ctx.shadowColor = '#8fd8ff';
+      ctx.shadowBlur = 4;
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();               // 4-point star
+      ctx.moveTo(x - r, y); ctx.lineTo(x + r, y);
+      ctx.moveTo(x, y - r); ctx.lineTo(x, y + r);
+      ctx.stroke();
+      ctx.lineWidth = 0.7;
+      const d = r * 0.45;
+      ctx.beginPath();
+      ctx.moveTo(x - d, y - d); ctx.lineTo(x + d, y + d);
+      ctx.moveTo(x - d, y + d); ctx.lineTo(x + d, y - d);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function drawCursor(frame) {
+    const c = cursorPos(frame);
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.fillStyle = 'rgba(40,42,48,.85)';
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(0, 11); ctx.lineTo(3, 8.4);
+    ctx.lineTo(5.4, 12.6); ctx.lineTo(7, 11.6); ctx.lineTo(4.6, 7.6);
+    ctx.lineTo(8, 7.2); ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function draw(frame) {
+    ctx.clearRect(0, 0, W, H);
+    const grad = bodyGradient();
+    drawRibs(frame, grad);
+    drawSpine(grad);
+    drawHead();
+    drawSparkles(frame);
+    drawCursor(frame);
+  }
+
+  // Renders frame n (steps the simulation; re-simulates when out of order).
+  window.renderFrame = function (n) {
+    if (n <= lastFrame) {
+      // restart from scratch so any n is reproducible
+      head.x = 340; head.y = 190; head.vx = 0; head.vy = 0;
+      for (let i = 0; i < SEGS; i++) { spine[i].x = head.x - i * SPACING; spine[i].y = head.y; }
+      lastFrame = -1;
+    }
+    while (lastFrame < n) { lastFrame++; step(lastFrame); }
+    draw(n);
+    return n;
+  };
+
+  // Live preview: run at 30fps unless the offline renderer drives us.
+  if (!location.search.includes('render=1')) {
+    let f = 0;
+    setInterval(() => { window.renderFrame(f++); }, 1000 / FPS);
+  }
+})();
+</script>
+</body>
+</html>
