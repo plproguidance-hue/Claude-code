@@ -15,7 +15,7 @@ import path from 'node:path';
 
 const WIDTH = 720;
 const HEIGHT = 1280;
-const FPS = 30;
+const FPS = 60;
 const SECONDS = 8;
 const TOTAL = FPS * SECONDS;
 

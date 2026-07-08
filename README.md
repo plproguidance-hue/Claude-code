@@ -1,7 +1,7 @@
 # Dragon Reel — Animated Login Page
 
 A recreation of the original "skeleton lizard + code editor" vertical reel
-(720x1280, 30fps, 8s), with the lizard replaced by a **procedural sky-dragon**:
+(720x1280, 30fps, 8s), with the lizard replaced by a **monochrome ink dragon**:
 same dynamic darting/coiling movement, rendered in a blue/sky gradient with
 twinkling sparkles along its body.
 

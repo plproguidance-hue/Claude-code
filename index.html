@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dragon &mdash; Animated Login Page Reel</title>
+<title>Ink Dragon &mdash; Animated Login Page Reel</title>
 <style>
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,14 +16,14 @@
     overflow: hidden;
     font-family: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
   }
-  /* ---- top: cream panel with the dragon ---- */
+  /* ---- top: warm ivory panel with the ink dragon ---- */
   #panel {
     position: absolute;
     left: 12px;
     top: 108px;
     width: 696px;
     height: 410px;
-    background: #ede9e0;
+    background: #f3eee3;
     box-shadow: 0 0 0 1px rgba(0,0,0,.35);
   }
   #dragon { display: block; width: 696px; height: 410px; }
@@ -127,161 +127,144 @@
 
 <script>
 /*
- * Procedural sky-dragon: a chain of spine segments follows the head,
- * each segment fanning out feather-like rib strokes. Rendered in a
- * blue/sky gradient with twinkling sparkles riding the body.
+ * Procedural ink dragon — a minimalist, monochrome, Chinese-inspired
+ * dragon: elongated segmented body, whiskers, antler horns, clawed
+ * limbs and flowing fin strokes, swimming through the air in endless
+ * S-curves with fading ghost echoes trailing behind it.
  *
- * Deterministic: everything derives from the frame counter so the
- * offline renderer (render.mjs) reproduces identical frames.
+ * The head rides a closed parametric path whose period equals the clip
+ * length, so the animation loops seamlessly. Everything derives from
+ * the frame counter -> the offline renderer (render.mjs) reproduces
+ * identical frames.
  */
 (() => {
   const canvas = document.getElementById('dragon');
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
-  const FPS = 30;
-  const SEGS = 52;        // spine segments
-  const SPACING = 8.2;    // px between segments
+  const FPS = 60;
+  const PERIOD = 480;      // frames per loop (8 s at 60 fps)
+  const SEGS = 60;         // spine segments
+  const SPACING = 7.4;     // px between segments
+  const INK = '#17171a';
 
-  // --- deterministic pseudo-random, fixed seed ---
-  function mulberry32(a) {
-    return function () {
-      a |= 0; a = (a + 0x6D2B79F5) | 0;
-      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  const rand = mulberry32(0xD7A60);
+  const TAU = Math.PI * 2;
 
-  // --- flight plan: where the dragon darts, keyed by frame ---
-  const waypoints = [
-    { until: 46,  x: 632, y: 138 },   // dart to the top right
-    { until: 112, x: 58,  y: 218 },   // sweep across to the far left
-    { until: 168, x: 430, y: 168 },   // back toward centre-right
-    { until: 218, x: 296, y: 330 },   // dive to the lower middle
-    { until: 999, x: 188, y: 130 },   // curl up and away
-  ];
-  function scriptedTarget(frame) {
-    for (const w of waypoints) if (frame < w.until) return w;
-    return waypoints[waypoints.length - 1];
-  }
-
-  // the on-screen cursor sits near the top right and drifts slightly
-  function cursorPos(frame) {
+  // --- closed flight path: harmonics of the loop frequency only,
+  //     so path(n) === path(n + PERIOD) exactly -----------------------
+  function path(n) {
+    const th = (n / PERIOD) * TAU;
     return {
-      x: 655 + Math.sin(frame * 0.017) * 14,
-      y: 62 + Math.cos(frame * 0.013) * 9,
+      x: 348 + 212 * Math.sin(th) + 82 * Math.sin(2 * th + 1.3) + 38 * Math.sin(3 * th + 0.7),
+      y: 204 + 102 * Math.cos(th) + 48 * Math.sin(2 * th + 2.1) + 24 * Math.cos(3 * th + 1.9),
     };
+  }
+  // fake 3D roll: the body twists about its axis as it turns
+  function roll(n) {
+    const th = (n / PERIOD) * TAU;
+    return 0.62 + 0.38 * Math.abs(Math.cos(th * 2 + 0.9));
   }
 
   // --- body state ---
-  const head = { x: 340, y: 190, vx: 0, vy: 0 };
   const spine = [];
-  for (let i = 0; i < SEGS; i++) spine.push({ x: head.x - i * SPACING, y: head.y });
+  for (let i = 0; i < SEGS; i++) spine.push({ x: 0, y: 0 });
+  const echoes = [];       // ghosted past poses, newest first
+  const ECHO_EVERY = 6;    // frames between snapshots
+  const ECHO_KEEP = 3;
 
-  // sparkles ride fixed spots on the body and twinkle
-  const sparkles = [];
-  for (let k = 0; k < 34; k++) {
-    sparkles.push({
-      seg: 2 + Math.floor(rand() * (SEGS - 6)),
-      side: rand() < 0.5 ? -1 : 1,
-      out: 4 + rand() * 26,          // distance off the spine
-      size: 1.6 + rand() * 2.6,
-      phase: rand() * Math.PI * 2,
-      speed: 0.18 + rand() * 0.22,
-      tone: Math.floor(rand() * 4),
-    });
+  function resetBody() {
+    const p0 = path(0);
+    for (let i = 0; i < SEGS; i++) { spine[i].x = p0.x - i * SPACING; spine[i].y = p0.y; }
+    echoes.length = 0;
   }
-  const sparkleTones = ['#ffffff', '#bfeaff', '#7fd4ff', '#4fb6f0'];
-
-  // rib length profile along the body: big fan behind the head,
-  // slimmer midsection, long flowing plume at the tail
-  function ribLen(i) {
-    const t = i / (SEGS - 1);
-    const g = (m, s) => Math.exp(-((t - m) * (t - m)) / (2 * s * s));
-    return 10 + g(0.16, 0.09) * 92 + g(0.5, 0.2) * 26 + g(0.93, 0.06) * 112;
-  }
-  function bodyWidth(i) {
-    const t = i / (SEGS - 1);
-    return 6.5 * (1 - t) + 1.2;
-  }
-
-  let lastFrame = -1;
 
   function step(frame) {
-    const t = scriptedTarget(frame);
-    // chase with inertia -> darting, overshooting motion
-    head.vx += (t.x - head.x) * 0.016;
-    head.vy += (t.y - head.y) * 0.016;
-    head.vx *= 0.885;
-    head.vy *= 0.885;
-    // lateral sway proportional to speed -> swimming undulation
-    const sp = Math.hypot(head.vx, head.vy);
-    const swing = Math.sin(frame * 0.42) * Math.min(sp, 9) * 0.45;
-    const a = Math.atan2(head.vy, head.vx) + Math.PI / 2;
-    head.x += head.vx + Math.cos(a) * swing;
-    head.y += head.vy + Math.sin(a) * swing;
-    // soft walls
-    head.x = Math.max(24, Math.min(W - 24, head.x));
-    head.y = Math.max(26, Math.min(H - 26, head.y));
-
-    spine[0].x = head.x; spine[0].y = head.y;
+    const p = path(frame);
+    spine[0].x = p.x; spine[0].y = p.y;
     for (let i = 1; i < SEGS; i++) {
-      const p = spine[i - 1], q = spine[i];
-      const dx = q.x - p.x, dy = q.y - p.y;
+      const a = spine[i - 1], b = spine[i];
+      const dx = b.x - a.x, dy = b.y - a.y;
       const d = Math.hypot(dx, dy) || 1;
-      q.x = p.x + (dx / d) * SPACING;
-      q.y = p.y + (dy / d) * SPACING;
+      b.x = a.x + (dx / d) * SPACING;
+      b.y = a.y + (dy / d) * SPACING;
+    }
+    if (frame % ECHO_EVERY === 0) {
+      echoes.unshift(display(frame).map((q) => ({ x: q.x, y: q.y })));
+      if (echoes.length > ECHO_KEEP) echoes.pop();
     }
   }
 
-  function bodyGradient() {
-    const h = spine[0], tl = spine[SEGS - 1];
-    const g = ctx.createLinearGradient(h.x, h.y, tl.x, tl.y);
-    g.addColorStop(0, '#0a2f6e');    // deep navy at the head
-    g.addColorStop(0.45, '#1e6fc4'); // ocean blue
-    g.addColorStop(0.8, '#54b4ef');  // sky
-    g.addColorStop(1, '#a8dffb');    // pale sky at the tail tip
-    return g;
+  // displayed points: spine + a travelling undulation wave
+  function display(frame) {
+    const pts = [];
+    for (let i = 0; i < SEGS; i++) {
+      const a = ang(i);
+      const w = 3.4 * Math.sin(i * 0.32 - frame * 0.16) * Math.min(1, i / 6);
+      pts.push({ x: spine[i].x - Math.sin(a) * w, y: spine[i].y + Math.cos(a) * w, a });
+    }
+    return pts;
   }
 
-  function segAngle(i) {
+  function ang(i) {
     const a = spine[Math.max(0, i - 1)], b = spine[Math.min(SEGS - 1, i + 1)];
-    return Math.atan2(a.y - b.y, a.x - b.x); // points toward the head
+    return Math.atan2(a.y - b.y, a.x - b.x); // toward the head
   }
 
-  function drawRibs(frame, grad) {
-    ctx.strokeStyle = grad;
+  // fin/mane length profile: crest behind the head, slim midsection,
+  // long flowing plume at the tail
+  function finLen(i) {
+    const t = i / (SEGS - 1);
+    const g = (m, s) => Math.exp(-((t - m) * (t - m)) / (2 * s * s));
+    return 9 + g(0.13, 0.08) * 72 + g(0.5, 0.24) * 17 + g(0.94, 0.055) * 98;
+  }
+  function bodyWidth(i) {
+    const t = i / (SEGS - 1);
+    return 6.2 * (1 - t) + 1.1;
+  }
+
+  // --- drawing --------------------------------------------------------
+  function drawBackbone(pts, width, alpha) {
+    ctx.strokeStyle = INK;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawFins(pts, frame, squash, alphaScale) {
+    ctx.strokeStyle = INK;
     ctx.lineCap = 'round';
     for (let i = 2; i < SEGS - 1; i += 2) {
-      const p = spine[i];
-      const ang = segAngle(i);
-      const dx = Math.cos(ang), dy = Math.sin(ang);       // toward head
-      const px = -dy, py = dx;                            // perpendicular
-      const flutter = 1 + 0.16 * Math.sin(frame * 0.24 + i * 0.65);
-      const L = ribLen(i) * flutter;
-      ctx.lineWidth = L > 55 ? 1.1 : 1.5;
-      ctx.globalAlpha = L > 55 ? 0.5 : 0.75;
+      const p = pts[i];
+      const dx = Math.cos(p.a), dy = Math.sin(p.a);
+      const px = -dy * squash, py = dx * squash;
+      const flutter = 1 + 0.14 * Math.sin(frame * 0.13 + i * 0.6);
+      const L = finLen(i) * flutter;
+      ctx.lineWidth = L > 45 ? 1.05 : 1.4;
+      ctx.globalAlpha = (L > 45 ? 0.42 : 0.68) * alphaScale;
       for (const s of [-1, 1]) {
-        const curl = 0.22 * Math.sin(frame * 0.2 + i * 0.9 + s);
+        const curl = 0.2 * Math.sin(frame * 0.11 + i * 0.85 + s);
         ctx.beginPath();
         ctx.moveTo(p.x + px * s * 2, p.y + py * s * 2);
         ctx.quadraticCurveTo(
           p.x + px * s * L * 0.55 - dx * L * 0.25,
           p.y + py * s * L * 0.55 - dy * L * 0.25,
-          p.x + px * s * L * (0.38 + curl) - dx * L * 0.95,
-          p.y + py * s * L * (0.38 + curl) - dy * L * 0.95
+          p.x + px * s * L * (0.36 + curl) - dx * L * 0.95,
+          p.y + py * s * L * (0.36 + curl) - dy * L * 0.95
         );
         ctx.stroke();
-        // a shorter inner stroke doubles the feathering density
         ctx.beginPath();
         ctx.moveTo(p.x + px * s * 2, p.y + py * s * 2);
         ctx.quadraticCurveTo(
           p.x + px * s * L * 0.3 - dx * L * 0.12,
           p.y + py * s * L * 0.3 - dy * L * 0.12,
-          p.x + px * s * L * 0.28 - dx * L * 0.5,
-          p.y + py * s * L * 0.28 - dy * L * 0.5
+          p.x + px * s * L * 0.26 - dx * L * 0.5,
+          p.y + py * s * L * 0.26 - dy * L * 0.5
         );
         ctx.stroke();
       }
@@ -289,142 +272,148 @@
     ctx.globalAlpha = 1;
   }
 
-  function drawSpine(grad) {
-    // vertebra chevrons
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.4;
-    ctx.globalAlpha = 0.9;
+  function drawVertebrae(pts, squash) {
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1.35;
+    ctx.globalAlpha = 0.85;
     for (let i = 1; i < SEGS; i++) {
-      const p = spine[i];
-      const ang = segAngle(i);
-      const dx = Math.cos(ang), dy = Math.sin(ang);
-      const px = -dy, py = dx;
+      const p = pts[i];
+      const dx = Math.cos(p.a), dy = Math.sin(p.a);
+      const px = -dy * squash, py = dx * squash;
       const w = bodyWidth(i);
       ctx.beginPath();
-      ctx.moveTo(p.x - dx * 4 + px * w, p.y - dy * 4 + py * w);
+      ctx.moveTo(p.x - dx * 3.8 + px * w, p.y - dy * 3.8 + py * w);
       ctx.lineTo(p.x, p.y);
-      ctx.lineTo(p.x - dx * 4 - px * w, p.y - dy * 4 - py * w);
+      ctx.lineTo(p.x - dx * 3.8 - px * w, p.y - dy * 3.8 - py * w);
       ctx.stroke();
     }
-    // backbone
-    ctx.lineWidth = 2.4;
-    ctx.beginPath();
-    ctx.moveTo(spine[0].x, spine[0].y);
-    for (let i = 1; i < SEGS; i++) ctx.lineTo(spine[i].x, spine[i].y);
-    ctx.stroke();
     ctx.globalAlpha = 1;
   }
 
-  function drawHead() {
-    const p = spine[0];
-    const ang = segAngle(1);
+  // small clawed limbs: fore pair and hind pair
+  function drawLegs(pts, frame, squash) {
+    ctx.strokeStyle = INK;
+    ctx.lineCap = 'round';
+    ctx.globalAlpha = 0.9;
+    for (const i of [15, 38]) {
+      const p = pts[i];
+      const dx = Math.cos(p.a), dy = Math.sin(p.a);
+      const px = -dy * squash, py = dx * squash;
+      const sw = Math.sin(frame * 0.14 + i) * 2.5;
+      for (const s of [-1, 1]) {
+        const kx = p.x + px * s * 13 - dx * (7 + sw * s);
+        const ky = p.y + py * s * 13 - dy * (7 + sw * s);
+        const fx = kx + px * s * 8 - dx * 9;
+        const fy = ky + py * s * 8 - dy * 9;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p.x + px * s * 3, p.y + py * s * 3);
+        ctx.quadraticCurveTo(kx, ky, fx, fy);
+        ctx.stroke();
+        // three splayed claws
+        ctx.lineWidth = 1.2;
+        for (const c of [-0.5, 0, 0.5]) {
+          const ca = Math.atan2(fy - ky, fx - kx) + c;
+          ctx.beginPath();
+          ctx.moveTo(fx, fy);
+          ctx.lineTo(fx + Math.cos(ca) * 6, fy + Math.sin(ca) * 6);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawHead(pts, frame, squash) {
+    const p = pts[0];
     ctx.save();
     ctx.translate(p.x, p.y);
-    ctx.rotate(ang);
-    ctx.scale(1.3, 1.3);
-    const g = ctx.createLinearGradient(-22, 0, 18, 0);
-    g.addColorStop(0, '#1e6fc4');
-    g.addColorStop(1, '#082a63');
-    ctx.fillStyle = g;
-    // skull + snout (top-down, symmetric)
+    ctx.rotate(p.a);
+    ctx.scale(1.32, 1.32 * (0.75 + 0.25 * squash));
+    ctx.fillStyle = INK;
+    ctx.strokeStyle = INK;
+    ctx.lineCap = 'round';
+    // skull + snout (top-down, symmetric), slight upturned nose curl
     ctx.beginPath();
-    ctx.moveTo(18, 0);                       // snout tip
-    ctx.quadraticCurveTo(6, -7, -8, -5.5);   // top of the skull
+    ctx.moveTo(19, 0);
+    ctx.quadraticCurveTo(15, -3.2, 10, -3.6);   // nose ridge
+    ctx.quadraticCurveTo(4, -7, -8, -5.5);      // top of the skull
     ctx.quadraticCurveTo(-13, -3, -13, 0);
     ctx.quadraticCurveTo(-13, 3, -8, 5.5);
-    ctx.quadraticCurveTo(6, 7, 18, 0);       // lower jaw back to the tip
+    ctx.quadraticCurveTo(4, 7, 10, 3.6);
+    ctx.quadraticCurveTo(15, 3.2, 19, 0);
     ctx.fill();
-    // swept-back horns
-    ctx.strokeStyle = g;
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = 'round';
+    // antler-like horns, swept back with a small branch
+    ctx.lineWidth = 2.2;
     for (const s of [-1, 1]) {
       ctx.beginPath();
       ctx.moveTo(-5, 4.5 * s);
-      ctx.quadraticCurveTo(-16, 9 * s, -24, 13 * s);
+      ctx.quadraticCurveTo(-16, 9 * s, -25, 14 * s);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(-9, 3.5 * s);
-      ctx.quadraticCurveTo(-17, 5.5 * s, -23, 7 * s);
+      ctx.moveTo(-14, 7.5 * s);
+      ctx.quadraticCurveTo(-19, 6 * s, -23, 6.5 * s);
       ctx.stroke();
     }
-    // eyes
-    ctx.fillStyle = '#bfeaff';
-    ctx.beginPath(); ctx.arc(3, -3.4, 1.3, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.arc(3, 3.4, 1.3, 0, 7); ctx.fill();
+    // long trailing whiskers, waving gently
+    ctx.lineWidth = 1.1;
+    ctx.globalAlpha = 0.8;
+    for (const s of [-1, 1]) {
+      const wv = Math.sin(frame * 0.09 + s) * 6;
+      ctx.beginPath();
+      ctx.moveTo(13, 2.6 * s);
+      ctx.quadraticCurveTo(2, (14 + wv) * s, -22, (20 - wv) * s);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // ivory eyes
+    ctx.fillStyle = '#f3eee3';
+    ctx.beginPath(); ctx.arc(3, -3.3, 1.25, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(3, 3.3, 1.25, 0, TAU); ctx.fill();
     ctx.restore();
   }
 
-  function drawSparkles(frame) {
-    for (const s of sparkles) {
-      const p = spine[s.seg];
-      const ang = segAngle(s.seg);
-      const px = -Math.sin(ang), py = Math.cos(ang);
-      const x = p.x + px * s.side * s.out;
-      const y = p.y + py * s.side * s.out;
-      const tw = 0.5 + 0.5 * Math.sin(frame * s.speed + s.phase);
-      if (tw < 0.18) continue;
-      const r = s.size * (0.5 + tw * 0.7);
-      ctx.save();
-      ctx.globalAlpha = 0.25 + tw * 0.75;
-      ctx.strokeStyle = sparkleTones[s.tone];
-      ctx.shadowColor = '#8fd8ff';
-      ctx.shadowBlur = 4;
-      ctx.lineWidth = 1.1;
-      ctx.beginPath();               // 4-point star
-      ctx.moveTo(x - r, y); ctx.lineTo(x + r, y);
-      ctx.moveTo(x, y - r); ctx.lineTo(x, y + r);
-      ctx.stroke();
-      ctx.lineWidth = 0.7;
-      const d = r * 0.45;
-      ctx.beginPath();
-      ctx.moveTo(x - d, y - d); ctx.lineTo(x + d, y + d);
-      ctx.moveTo(x - d, y + d); ctx.lineTo(x + d, y - d);
-      ctx.stroke();
-      ctx.restore();
+  function drawEchoes() {
+    // ghosted body echoes: faint backbones of recent poses
+    const alphas = [0.13, 0.07, 0.035];
+    for (let e = echoes.length - 1; e >= 0; e--) {
+      drawBackbone(echoes[e], 2, alphas[e] ?? 0.03);
     }
-  }
-
-  function drawCursor(frame) {
-    const c = cursorPos(frame);
-    ctx.save();
-    ctx.translate(c.x, c.y);
-    ctx.fillStyle = 'rgba(40,42,48,.85)';
-    ctx.beginPath();
-    ctx.moveTo(0, 0); ctx.lineTo(0, 11); ctx.lineTo(3, 8.4);
-    ctx.lineTo(5.4, 12.6); ctx.lineTo(7, 11.6); ctx.lineTo(4.6, 7.6);
-    ctx.lineTo(8, 7.2); ctx.closePath();
-    ctx.fill();
-    ctx.restore();
   }
 
   function draw(frame) {
     ctx.clearRect(0, 0, W, H);
-    const grad = bodyGradient();
-    drawRibs(frame, grad);
-    drawSpine(grad);
-    drawHead();
-    drawSparkles(frame);
-    drawCursor(frame);
+    const pts = display(frame);
+    const sq = roll(frame);
+    drawEchoes();
+    drawFins(pts, frame, sq, 1);
+    drawVertebrae(pts, sq);
+    drawBackbone(pts, 2.3, 0.9);
+    drawLegs(pts, frame, sq);
+    drawHead(pts, frame, sq);
   }
 
-  // Renders frame n (steps the simulation; re-simulates when out of order).
+  // --- frame driver ----------------------------------------------------
+  let lastFrame = null;
+
+  // Renders frame n. Warm-up runs one full loop before frame 0 so the
+  // chain state at frame 0 matches frame PERIOD -> seamless looping.
   window.renderFrame = function (n) {
-    if (n <= lastFrame) {
-      // restart from scratch so any n is reproducible
-      head.x = 340; head.y = 190; head.vx = 0; head.vy = 0;
-      for (let i = 0; i < SEGS; i++) { spine[i].x = head.x - i * SPACING; spine[i].y = head.y; }
-      lastFrame = -1;
+    if (lastFrame === null || n <= lastFrame) {
+      resetBody();
+      lastFrame = -PERIOD - 1;
+      for (let m = -PERIOD; m < Math.max(0, n - PERIOD); m++) { step(m); lastFrame = m; }
     }
     while (lastFrame < n) { lastFrame++; step(lastFrame); }
     draw(n);
     return n;
   };
 
-  // Live preview: run at 30fps unless the offline renderer drives us.
+  // Live preview at 60fps unless the offline renderer drives us.
   if (!location.search.includes('render=1')) {
     let f = 0;
-    setInterval(() => { window.renderFrame(f++); }, 1000 / FPS);
+    const tick = () => { window.renderFrame(f++); requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
   }
 })();
 </script>
