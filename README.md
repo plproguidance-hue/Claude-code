@@ -1,29 +1,33 @@
 # Dragon Reel — Animated Login Page
 
 A recreation of the original "skeleton lizard + code editor" vertical reel
-(720x1280, 30fps, 8s), with the lizard replaced by a **monochrome ink dragon**:
-same dynamic darting/coiling movement, rendered in a blue/sky gradient with
-twinkling sparkles along its body.
+(720x1280, 60fps, 8s seamless loop), with the lizard replaced by a
+**monochrome ink dragon**: a minimalist Chinese-inspired dragon — elongated
+segmented body, whiskers, antler horns, clawed limbs and flowing fins —
+drawn in black ink on a warm ivory panel, swimming through the air in
+endless S-curves with fading ghost echoes trailing behind it.
 
 ## Files
 
-- `index.html` — the whole scene: cream panel with the canvas dragon animation
-  on top, the `index.html` code-editor window below. Open it in a browser for
-  a live 30fps preview.
-- `render.mjs` — offline renderer: captures 240 deterministic frames with
+- `index.html` — the whole scene: ivory panel with the canvas dragon
+  animation on top, the `index.html` code-editor window below. Open it in a
+  browser for a live 60fps preview.
+- `render.mjs` — offline renderer: captures 480 deterministic frames with
   Playwright and encodes an MP4 with ffmpeg.
 - `dragon.mp4` — the rendered video (video track only).
 
 ## How the dragon works
 
-A chain of 52 spine segments follows a head that chases scripted waypoints
-with inertia (acceleration + damping), producing the darting, overshooting
-swim of the original. Each segment draws vertebra chevrons and feather-like
-rib strokes whose length profile forms a large fan behind the head and a long
-plume at the tail. All strokes share a head-to-tail linear gradient
-(deep navy → ocean blue → sky → pale sky); 34 sparkles ride fixed points on
-the body and twinkle. Everything is a pure function of the frame counter, so
-offline rendering is exactly reproducible.
+The head rides a closed parametric flight path built only from harmonics of
+the loop frequency, so `path(n) == path(n + 480)` and the clip loops
+seamlessly; a full warm-up cycle runs before frame 0 so the trailing body
+matches too. A chain of 60 spine segments follows the head, carrying a
+travelling undulation wave, vertebra chevrons, flowing fin strokes (a crest
+behind the head, a long tail plume), two pairs of clawed limbs, whiskers and
+antler horns. A slow body roll modulates stroke widths to fake 3D rotation,
+and ghosted snapshots of recent poses fade behind the dragon as motion
+trails. Everything is a pure function of the frame counter, so offline
+rendering is exactly reproducible.
 
 ## Rendering
 
