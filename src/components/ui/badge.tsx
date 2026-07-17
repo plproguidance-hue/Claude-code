@@ -1,0 +1,65 @@
+import { cn } from "@/lib/utils";
+import type { AccountStatus, Role } from "@/lib/auth/permissions";
+
+const tones = {
+  neutral: "bg-line/60 text-graphite",
+  success: "bg-success/10 text-success",
+  warning: "bg-warning/15 text-[#92600A]",
+  danger: "bg-danger/10 text-danger",
+  info: "bg-info/10 text-info",
+  brand: "bg-primary/10 text-primary-hover",
+} as const;
+
+export type BadgeTone = keyof typeof tones;
+
+export function Badge({
+  tone = "neutral",
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        tones[tone],
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+const STATUS_TONE: Record<AccountStatus, BadgeTone> = {
+  pending_approval: "warning",
+  active: "success",
+  rejected: "danger",
+  suspended: "danger",
+  deactivated: "neutral",
+};
+
+const STATUS_LABEL: Record<AccountStatus, string> = {
+  pending_approval: "Pending approval",
+  active: "Active",
+  rejected: "Rejected",
+  suspended: "Suspended",
+  deactivated: "Deactivated",
+};
+
+export function AccountStatusBadge({ status }: { status: AccountStatus }) {
+  return <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>;
+}
+
+const ROLE_LABEL: Record<Role, string> = {
+  client: "Client",
+  moderator: "Moderator",
+  manager: "Manager",
+  administrator: "Administrator",
+};
+
+export function RoleBadge({ role }: { role: Role }) {
+  return (
+    <Badge tone={role === "client" ? "neutral" : "brand"}>
+      {ROLE_LABEL[role]}
+    </Badge>
+  );
+}

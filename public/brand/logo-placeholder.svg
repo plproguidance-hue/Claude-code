@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48" role="img" aria-labelledby="pg-logo-title">
+  <title id="pg-logo-title">ProGuidance Tech Solution (temporary placeholder mark)</title>
+  <desc>Temporary placeholder pending the official ProGuidance wordmark — see src/assets/README.md</desc>
+  <rect x="2" y="6" width="36" height="36" rx="9" fill="#FF4B00"/>
+  <path d="M13 33 V15 h8.5 a6.5 6.5 0 0 1 0 13 H18" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M27 33 l6 -6" stroke="#FFD9C7" stroke-width="3.2" stroke-linecap="round"/>
+  <text x="48" y="27" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700" fill="#3F4A4D">Pro<tspan fill="#FF4B00">Guidance</tspan></text>
+  <text x="49" y="40" font-family="Inter, Arial, sans-serif" font-size="9" letter-spacing="3.5" font-weight="600" fill="#64748B">TECH SOLUTION</text>
+</svg>

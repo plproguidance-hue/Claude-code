@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/*
+ * ProGuidance semantic design tokens (MASTER BUILD PROMPT §4).
+ * Single source for color: components use the semantic utilities
+ * (bg-primary, text-ink, border-line, …) — never raw hex values.
+ */
+@theme {
+  --color-primary: #ff4b00;
+  --color-primary-hover: #e64200;
+  --color-charcoal: #3f4a4d;
+  --color-graphite: #273236;
+  --color-page: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-ink: #172126;
+  --color-ink-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 0.75rem;
+}
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular numerals for money, IDs, and dates (spec §4). */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible focus for keyboard users everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
