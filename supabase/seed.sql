@@ -75,5 +75,42 @@ begin
     (org_alpha, manager_id, admin_id),
     (org_alpha, moderator_id, admin_id)
   on conflict do nothing;
+
+  -- Demo company for Alpha (sanitized fixture data, fake EIN pattern).
+  insert into public.companies
+    (id, organization_id, legal_name, dba, entity_type, formation_state,
+     formation_date, ein, registered_agent_name, business_purpose, status,
+     onboarding_mode, wizard_step, created_by, submitted_at)
+  values
+    ('00000000-0000-4000-c000-000000000001', org_alpha,
+     'Alpha Ventures LLC', 'AlphaShop', 'llc', 'WY', '2025-03-14',
+     '98-7654321', 'Demo Agent Services LLC',
+     'E-commerce retail and digital services (demonstration record)',
+     'active', 'transfer', 6, client_alpha_id, now())
+  on conflict (id) do nothing;
+
+  insert into public.company_owners_members
+    (company_id, full_name, role_title, ownership_percent, email, country)
+  values
+    ('00000000-0000-4000-c000-000000000001', 'Casey Alpha', 'Managing Member',
+     100, 'client.alpha@proguidance.dev', 'US')
+  on conflict do nothing;
+
+  insert into public.company_addresses
+    (company_id, kind, line1, city, state, postal_code)
+  values
+    ('00000000-0000-4000-c000-000000000001', 'business',
+     '1200 Demo Street Ste 5', 'Sheridan', 'WY', '82801'),
+    ('00000000-0000-4000-c000-000000000001', 'registered',
+     '30 N Demo Ave', 'Sheridan', 'WY', '82801')
+  on conflict do nothing;
+
+  insert into public.company_compliance_deadlines
+    (company_id, title, kind, due_date, notes, created_by)
+  values
+    ('00000000-0000-4000-c000-000000000001', 'Wyoming annual report',
+     'annual_report', (current_date + interval '60 days')::date,
+     'Demonstration deadline', admin_id)
+  on conflict do nothing;
 end;
 $$;

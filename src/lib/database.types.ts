@@ -24,6 +24,14 @@ export type ProfileRow = {
   decided_by: string | null;
   decided_at: string | null;
   decision_note: string | null;
+  phone: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  city: string | null;
+  region: string | null;
+  postal_code: string | null;
+  country: string | null;
+  timezone: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -53,6 +61,105 @@ export type StaffAssignmentRow = {
   created_at: string;
 };
 
+export type CompanyStatus =
+  | "draft"
+  | "pending_review"
+  | "active"
+  | "inactive"
+  | "dissolved";
+
+export type EntityType =
+  | "llc"
+  | "c_corp"
+  | "s_corp"
+  | "nonprofit"
+  | "partnership"
+  | "sole_prop";
+
+export type CompanyRow = {
+  id: string;
+  organization_id: string;
+  legal_name: string;
+  dba: string | null;
+  entity_type: EntityType | null;
+  formation_state: string | null;
+  formation_date: string | null;
+  ein: string | null;
+  registered_agent_name: string | null;
+  business_purpose: string | null;
+  status: CompanyStatus;
+  onboarding_mode: "formation" | "transfer";
+  wizard_step: number;
+  created_by: string | null;
+  submitted_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CompanyOwnerRow = {
+  id: string;
+  company_id: string;
+  full_name: string;
+  role_title: string | null;
+  ownership_percent: number | null;
+  email: string | null;
+  country: string | null;
+  created_at: string;
+};
+
+export type CompanyAddressRow = {
+  id: string;
+  company_id: string;
+  kind: "registered" | "mailing" | "business";
+  line1: string;
+  line2: string | null;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  created_at: string;
+};
+
+export type ComplianceDeadlineRow = {
+  id: string;
+  company_id: string;
+  title: string;
+  kind: "annual_report" | "registered_agent_renewal" | "tax_filing" | "other";
+  due_date: string;
+  notes: string | null;
+  status: "upcoming" | "completed" | "overdue";
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CompanyUpdateRequestRow = {
+  id: string;
+  company_id: string;
+  requested_by: string;
+  changes: Record<string, string>;
+  evidence_note: string | null;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_note: string | null;
+  created_at: string;
+};
+
+export type InvitationRow = {
+  id: string;
+  email: string;
+  role: Role;
+  organization_id: string | null;
+  token_hash: string;
+  auto_approve: boolean;
+  invited_by: string | null;
+  expires_at: string;
+  accepted_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+};
+
 export type AuditLogRow = {
   id: string;
   actor_id: string | null;
@@ -70,7 +177,17 @@ export type Database = {
       profiles: {
         Row: ProfileRow;
         Insert: { id: string; email: string; full_name?: string | null };
-        Update: { full_name?: string | null };
+        Update: {
+          full_name?: string | null;
+          phone?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          region?: string | null;
+          postal_code?: string | null;
+          country?: string | null;
+          timezone?: string | null;
+        };
         Relationships: [];
       };
       organizations: {
@@ -105,6 +222,121 @@ export type Database = {
         Update: Record<string, never>;
         Relationships: [];
       };
+      companies: {
+        Row: CompanyRow;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          legal_name: string;
+          dba?: string | null;
+          entity_type?: EntityType | null;
+          formation_state?: string | null;
+          formation_date?: string | null;
+          ein?: string | null;
+          registered_agent_name?: string | null;
+          business_purpose?: string | null;
+          onboarding_mode?: "formation" | "transfer";
+          wizard_step?: number;
+          created_by?: string | null;
+        };
+        Update: {
+          legal_name?: string;
+          dba?: string | null;
+          entity_type?: EntityType | null;
+          formation_state?: string | null;
+          formation_date?: string | null;
+          ein?: string | null;
+          registered_agent_name?: string | null;
+          business_purpose?: string | null;
+          status?: CompanyStatus;
+          wizard_step?: number;
+        };
+        Relationships: [];
+      };
+      company_owners_members: {
+        Row: CompanyOwnerRow;
+        Insert: {
+          company_id: string;
+          full_name: string;
+          role_title?: string | null;
+          ownership_percent?: number | null;
+          email?: string | null;
+          country?: string | null;
+        };
+        Update: {
+          full_name?: string;
+          role_title?: string | null;
+          ownership_percent?: number | null;
+          email?: string | null;
+          country?: string | null;
+        };
+        Relationships: [];
+      };
+      company_addresses: {
+        Row: CompanyAddressRow;
+        Insert: {
+          company_id: string;
+          kind: "registered" | "mailing" | "business";
+          line1: string;
+          line2?: string | null;
+          city: string;
+          state: string;
+          postal_code: string;
+          country?: string;
+        };
+        Update: {
+          line1?: string;
+          line2?: string | null;
+          city?: string;
+          state?: string;
+          postal_code?: string;
+        };
+        Relationships: [];
+      };
+      company_compliance_deadlines: {
+        Row: ComplianceDeadlineRow;
+        Insert: {
+          company_id: string;
+          title: string;
+          kind: ComplianceDeadlineRow["kind"];
+          due_date: string;
+          notes?: string | null;
+          created_by?: string | null;
+        };
+        Update: {
+          title?: string;
+          kind?: ComplianceDeadlineRow["kind"];
+          due_date?: string;
+          notes?: string | null;
+          status?: ComplianceDeadlineRow["status"];
+        };
+        Relationships: [];
+      };
+      company_update_requests: {
+        Row: CompanyUpdateRequestRow;
+        Insert: {
+          company_id: string;
+          requested_by: string;
+          changes: Record<string, string>;
+          evidence_note?: string | null;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      invitations: {
+        Row: InvitationRow;
+        Insert: {
+          email: string;
+          role?: Role;
+          organization_id?: string | null;
+          token_hash: string;
+          auto_approve?: boolean;
+          invited_by?: string | null;
+          expires_at: string;
+        };
+        Update: { revoked_at?: string | null };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -116,10 +348,25 @@ export type Database = {
         Args: { target_user: string; decision: string; note?: string };
         Returns: undefined;
       };
+      review_company_update_request: {
+        Args: { request_id: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      invitation_preview: {
+        Args: { token: string };
+        Returns: {
+          email: string;
+          invited_role: Role;
+          organization_name: string | null;
+          is_valid: boolean;
+        }[];
+      };
     };
     Enums: {
       app_role: Role;
       account_status: AccountStatus;
+      company_status: CompanyStatus;
+      entity_type: EntityType;
     };
     CompositeTypes: Record<string, never>;
   };

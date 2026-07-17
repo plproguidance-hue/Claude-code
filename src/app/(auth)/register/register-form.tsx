@@ -33,7 +33,7 @@ const meterTones = [
   "bg-success",
 ] as const;
 
-export function RegisterForm() {
+export function RegisterForm({ lockedEmail }: { lockedEmail?: string }) {
   const [state, formAction, pending] = useActionState(register, initialState);
   const [password, setPassword] = useState("");
   const strength = passwordStrength(password);
@@ -62,7 +62,15 @@ export function RegisterForm() {
           autoComplete="email"
           required
           placeholder="you@company.com"
+          defaultValue={lockedEmail}
+          readOnly={Boolean(lockedEmail)}
+          aria-describedby={lockedEmail ? "email-locked-hint" : undefined}
         />
+        {lockedEmail && (
+          <p id="email-locked-hint" className="mt-1.5 text-xs text-ink-muted">
+            The invitation is tied to this address.
+          </p>
+        )}
       </div>
 
       <div>

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardTitle } from "@/components/ui/card";
 import { AccountStatusBadge, RoleBadge } from "@/components/ui/badge";
 import { ProfileForm } from "./profile-form";
+import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = { title: "Profile" };
 
@@ -79,6 +80,11 @@ export default async function ProfileSettingsPage() {
       <Card>
         <CardTitle>Display name</CardTitle>
         <ProfileForm initialName={profile.full_name ?? ""} />
+      </Card>
+
+      <Card>
+        <CardTitle>Contact details</CardTitle>
+        <ContactForm profile={profile} />
       </Card>
     </div>
   );

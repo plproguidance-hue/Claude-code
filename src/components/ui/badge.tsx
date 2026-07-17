@@ -49,6 +49,30 @@ export function AccountStatusBadge({ status }: { status: AccountStatus }) {
   return <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>;
 }
 
+const COMPANY_STATUS_TONE: Record<string, BadgeTone> = {
+  draft: "neutral",
+  pending_review: "warning",
+  active: "success",
+  inactive: "neutral",
+  dissolved: "danger",
+};
+
+const COMPANY_STATUS_LABEL: Record<string, string> = {
+  draft: "Draft",
+  pending_review: "Pending review",
+  active: "Active",
+  inactive: "Inactive",
+  dissolved: "Dissolved",
+};
+
+export function CompanyStatusBadge({ status }: { status: string }) {
+  return (
+    <Badge tone={COMPANY_STATUS_TONE[status] ?? "neutral"}>
+      {COMPANY_STATUS_LABEL[status] ?? status}
+    </Badge>
+  );
+}
+
 const ROLE_LABEL: Record<Role, string> = {
   client: "Client",
   moderator: "Moderator",

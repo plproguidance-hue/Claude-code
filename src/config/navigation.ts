@@ -2,9 +2,11 @@ import {
   Activity,
   BadgeDollarSign,
   Building2,
+  CalendarClock,
   FileText,
   LayoutDashboard,
   LifeBuoy,
+  Lock,
   MessagesSquare,
   ShieldCheck,
   UserCircle,
@@ -41,11 +43,11 @@ export const CLIENT_NAV: NavGroup[] = [
   {
     label: "My Business",
     items: [
+      { label: "Companies", href: "/companies", icon: Building2 },
       {
-        label: "Companies",
-        href: "/companies",
-        icon: Building2,
-        plannedPhase: 2,
+        label: "Compliance",
+        href: "/compliance",
+        icon: CalendarClock,
       },
     ],
   },
@@ -103,6 +105,7 @@ export const CLIENT_NAV: NavGroup[] = [
     label: "Account",
     items: [
       { label: "Profile", href: "/settings/profile", icon: UserCircle },
+      { label: "Security", href: "/settings/security", icon: Lock },
     ],
   },
 ];
@@ -114,5 +117,7 @@ export const STAFF_NAV: NavGroup = {
     { label: "Admin overview", href: "/admin", icon: ShieldCheck },
     { label: "Registrations", href: "/admin/registrations", icon: UserCog },
     { label: "Users", href: "/admin/users", icon: Users },
+    { label: "Clients", href: "/admin/clients", icon: BadgeDollarSign },
+    { label: "Companies", href: "/admin/companies", icon: Building2 },
   ],
 };

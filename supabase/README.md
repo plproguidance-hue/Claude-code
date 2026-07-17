@@ -52,3 +52,4 @@ npm run dev
 | `20260717090000_foundation.sql` | Enums, tables (organizations, profiles, memberships, staff assignments, permissions, overrides, invitations, audit, settings), authorization helper functions, registration lifecycle triggers, `approve_registration()`, private `documents` bucket (Supabase only). |
 | `20260717090100_rls.sql` | RLS enabled on every table + default-deny policy set. |
 | `20260717090200_seed_permissions.sql` | Permission catalogue + default role grants (kept in sync with `src/lib/auth/permissions.ts` by a unit test). |
+| `20260717110000_companies.sql` | Phase 2: companies, owners/members, USA-only company addresses, compliance deadlines, reviewed update requests (`review_company_update_request()`), draft-lifecycle protection triggers, `invitation_preview()`, international profile contact columns, RLS for all of it. |

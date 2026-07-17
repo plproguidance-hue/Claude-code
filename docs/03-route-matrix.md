@@ -23,7 +23,7 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 | `/auth/callback` (route handler) | public | 1 | ✅ | OAuth/email-link code exchange (`exchangeCodeForSession`) → safe internal redirect. |
 | `/auth/confirm` (route handler) | public | 1 | ✅ | `verifyOtp` token-hash handler for email verification / recovery links. |
 | `/auth/sign-out` (POST) | auth | 1 | ✅ | Server action sign-out, cookie cleanup, redirect to `/login`. |
-| Invitation acceptance (`/invite/[token]`) | public | 2 | 🔜 | Pre-approved account per invitation policy; expired/invalid states. |
+| `/invite/[token]` | public | 2 | ✅ | Token-hash preview via SECURITY DEFINER function; locked-email registration; invalid/expired/revoked states; pre-approval per invitation policy. |
 
 ## Client application shell (protected)
 
@@ -32,7 +32,7 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 | `/` | public | 1 | ✅ | Redirects: signed-in+active → `/dashboard`; signed-in+pending → `/pending-approval`; else `/login`. |
 | `/dashboard` | active | 1 | ✅ (foundation) | Shell + welcome header, org context, empty-state cards. Full action-oriented dashboard (§6.1) in Phase 2+. |
 | `/settings/profile` | active | 1 | ✅ (foundation) | Profile basics (name, email view). Full profile per §6.13 in Phase 2. |
-| `/settings/security` | active | 2 | 🔜 | Password change, MFA lifecycle, sessions, recovery codes. |
+| `/settings/security` | active | 2 | ✅ | Current-password-verified change, TOTP enrol/verify/unenrol, revoke other sessions. Recovery codes: see risks (no native Supabase support). |
 | `/settings/notifications` | active | 7 | 🔜 | Notification preferences. |
 | `/activity` | active | 2 | 🔜 | Unified activity timeline. |
 
@@ -40,9 +40,10 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 
 | Route | Access | Phase | Status |
 | --- | --- | --- | --- |
-| `/companies` · `/companies/[id]` (tabs: overview, formation, owners, addresses/agent, EIN/tax, compliance, services, documents, invoices, activity) | active | 2 | 🔜 |
-| `/companies/onboard` (new formation funnel) · `/companies/transfer` (existing-company funnel) | active | 2 | 🔜 |
-| `/compliance` (calendar) | active | 2 | 🔜 |
+| `/companies` | active | 2 | ✅ List cards (entity, state, masked EIN, status) + start-formation / start-transfer entry points. |
+| `/companies/new` | active | 2 | ✅ Resumable 6-step autosaving wizard (both funnels): entity/state, name/purpose, owners, US addresses + registered agent, EIN, review/consent/submit → `pending_review`. |
+| `/companies/[id]` | active | 2 | ✅ Tabs: overview, formation, owners, addresses/agent, EIN/tax (masked, password-reveal), compliance, update requests. Services/documents/invoices tabs arrive with those modules. |
+| `/compliance` | active | 2 | ✅ Cross-company upcoming deadline calendar. |
 
 ## Client — Services & projects (Phase 3)
 
@@ -73,8 +74,9 @@ re-checked in RLS. Managers/moderators reach permission-scoped equivalents per s
 | `/admin` (executive dashboard) | staff role | 1 | ✅ (foundation: queues/counters for registrations & users) |
 | `/admin/registrations` | `clients.approve_registration` | 1 | ✅ Approve/reject pending registrations with audit trail. |
 | `/admin/users` | `users.roles.manage` | 1 | ✅ (foundation: directory, roles, org assignment view) |
-| `/admin/clients`, `/admin/clients/[id]` | `clients.view_all` / `clients.view_assigned` | 2 | 🔜 |
-| `/admin/companies`, `/admin/companies/[id]` | `companies.view` | 2 | 🔜 |
+| `/admin/clients`, `/admin/clients/[id]` | `clients.view_all` / `clients.view_assigned` | 2 | ✅ Directory + client profile (orgs, companies, decision history). |
+| `/admin/companies`, `/admin/companies/[id]` | `companies.view` (+ `companies.update_request_review` for actions) | 2 | ✅ Directory with pending-request counts; detail with status controls, update-request review (approve applies whitelisted changes atomically), deadline management. |
+| `/admin/users` invitations | `clients.create` / `invitations.approve` | 2 | ✅ One-time-link invitation creation (hash-only storage), open-invitation list, revocation. |
 | `/admin/projects`, `/admin/projects/[id]` | `projects.*` | 3 | 🔜 |
 | `/admin/workflows` | `services.manage` | 3 | 🔜 |
 | `/admin/requests` | `requests.create` / `requests.review` | 3 | 🔜 |
