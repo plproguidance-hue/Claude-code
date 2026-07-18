@@ -78,6 +78,43 @@ as $$
   )::jsonb;
 $$;
 
+-- Minimal Supabase Storage schema replica so storage RLS behaviour (and the
+-- deliberate absence of policies on the private documents bucket) can be
+-- proven against plain PostgreSQL.
+create schema if not exists storage;
+
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets (id),
+  name text,
+  owner uuid,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (bucket_id, name)
+);
+
+alter table storage.objects enable row level security;
+
+create or replace function storage.foldername(name text)
+returns text[]
+language sql
+immutable
+as $$
+  select (string_to_array(name, '/'))[1 : array_length(string_to_array(name, '/'), 1) - 1];
+$$;
+
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.objects to anon, authenticated, service_role;
+grant select on storage.buckets to anon, authenticated, service_role;
+
 grant usage on schema auth to anon, authenticated, service_role;
 grant usage on schema public to anon, authenticated, service_role;
 

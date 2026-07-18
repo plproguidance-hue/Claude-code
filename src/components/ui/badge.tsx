@@ -124,6 +124,28 @@ export function DataRequestStatusBadge({ status }: { status: string }) {
   );
 }
 
+const DOCUMENT_STATUS_TONE: Record<string, BadgeTone> = {
+  quarantined: "warning",
+  pending_review: "info",
+  approved: "success",
+  rejected: "danger",
+};
+
+const DOCUMENT_STATUS_LABEL: Record<string, string> = {
+  quarantined: "Quarantined",
+  pending_review: "Under review",
+  approved: "Approved",
+  rejected: "Rejected",
+};
+
+export function DocumentStatusBadge({ status }: { status: string }) {
+  return (
+    <Badge tone={DOCUMENT_STATUS_TONE[status] ?? "neutral"}>
+      {DOCUMENT_STATUS_LABEL[status] ?? status}
+    </Badge>
+  );
+}
+
 const ROLE_LABEL: Record<Role, string> = {
   client: "Client",
   moderator: "Moderator",

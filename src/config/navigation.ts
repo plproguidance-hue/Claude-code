@@ -68,12 +68,7 @@ export const CLIENT_NAV: NavGroup[] = [
   {
     label: "Documents",
     items: [
-      {
-        label: "Document vault",
-        href: "/documents",
-        icon: FileText,
-        plannedPhase: 4,
-      },
+      { label: "Document vault", href: "/documents", icon: FileText },
     ],
   },
   {
@@ -124,6 +119,7 @@ export const STAFF_NAV: NavGroup = {
     { label: "Companies", href: "/admin/companies", icon: Building2 },
     { label: "Projects", href: "/admin/projects", icon: FolderKanban },
     { label: "Request reviews", href: "/admin/requests", icon: ClipboardList },
+    { label: "Document review", href: "/admin/documents/review", icon: FileText },
     { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
   ],
 };

@@ -59,7 +59,7 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 
 | Route | Phase | Status |
 | --- | --- | --- |
-| `/documents` (vault tabs §6.7) | 4 | 🔜 |
+| `/documents` | 4 | ✅ Vault with §6.7 tabs (all/required/in-review/approved/rejected/letters/expiring), validated uploads (magic-byte + size + safe filenames + sha256), hard quarantine default, authorized 60-second signed downloads. File transfer requires configured Supabase Storage (service credentials) — see risks. |
 | `/quotations`, `/quotations/[id]` | 5 | 🔜 |
 | `/invoices`, `/invoices/[id]`, `/payments`, `/wallet`, `/transactions` | 5 | 🔜 |
 | `/messages` (project messages), `/tickets`, `/tickets/[id]` | 6 | 🔜 |
@@ -82,7 +82,7 @@ re-checked in RLS. Managers/moderators reach permission-scoped equivalents per s
 | `/admin/projects`, `/admin/projects/[id]` | `projects.*` | 3 | ✅ Status-filtered table; detail with valid-transition controls (matrix-driven), staff-only notes, assignments, milestones, data-request creation, full history. |
 | `/admin/workflows` | `services.manage` | 3 | ✅ (as data) Transition matrix is DB-configurable by `services.manage`; dedicated editor UI arrives with per-service templates in a later phase. |
 | `/admin/requests` | `requests.review` | 3 | ✅ Review queue with version history; rejection requires a reason. |
-| `/admin/documents/review` | `documents.review` | 4 | 🔜 |
+| `/admin/documents/review` | `documents.review` (+ administrator for quarantine) | 4 | ✅ Quarantine queue (admin-only release/reject with scan status + checksum) and review queue (rejection requires a reason). |
 | `/admin/quotations`, `/admin/quotations/[id]` | `quotations.*` | 5 | 🔜 |
 | `/admin/invoices`, `/admin/invoices/[id]` | `invoices.*` | 5 | 🔜 |
 | `/admin/payments/review` | `payments.review` | 5 | 🔜 |

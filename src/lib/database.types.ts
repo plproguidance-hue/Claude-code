@@ -307,6 +307,67 @@ export type DataRequestSubmissionRow = {
   created_at: string;
 };
 
+export type DocumentReviewStatus =
+  | "quarantined"
+  | "pending_review"
+  | "approved"
+  | "rejected";
+
+export type ScanStatusValue = "pending" | "clean" | "infected" | "unavailable";
+
+export type DocumentCategory =
+  | "formation"
+  | "identity"
+  | "tax"
+  | "banking"
+  | "marketplace"
+  | "approval_letter"
+  | "certificate"
+  | "other";
+
+export type DocumentRow = {
+  id: string;
+  organization_id: string;
+  company_id: string | null;
+  project_id: string | null;
+  data_request_id: string | null;
+  title: string;
+  category: DocumentCategory;
+  visibility: "client" | "staff";
+  review_status: DocumentReviewStatus;
+  review_note: string | null;
+  current_version: number;
+  expires_at: string | null;
+  uploaded_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DocumentVersionRow = {
+  id: string;
+  document_id: string;
+  version: number;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  checksum_sha256: string;
+  storage_path: string;
+  scan_status: ScanStatusValue;
+  scanned_at: string | null;
+  uploaded_by: string | null;
+  created_at: string;
+};
+
+export type DocumentReviewRow = {
+  id: string;
+  document_id: string;
+  version: number;
+  reviewer_id: string | null;
+  decision: "approved" | "rejected" | "released" | "quarantine_rejected";
+  note: string | null;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -614,6 +675,48 @@ export type Database = {
         Update: Record<string, never>;
         Relationships: [];
       };
+      documents: {
+        Row: DocumentRow;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          company_id?: string | null;
+          project_id?: string | null;
+          data_request_id?: string | null;
+          title: string;
+          category?: DocumentCategory;
+          visibility?: "client" | "staff";
+          expires_at?: string | null;
+          uploaded_by: string;
+        };
+        Update: {
+          title?: string;
+          category?: DocumentCategory;
+          expires_at?: string | null;
+        };
+        Relationships: [];
+      };
+      document_versions: {
+        Row: DocumentVersionRow;
+        Insert: {
+          document_id: string;
+          version: number;
+          file_name: string;
+          mime_type: string;
+          size_bytes: number;
+          checksum_sha256: string;
+          storage_path: string;
+          uploaded_by: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      document_reviews: {
+        Row: DocumentReviewRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -653,6 +756,18 @@ export type Database = {
       };
       review_data_request: {
         Args: { p_request: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      mark_document_scanned: {
+        Args: { p_version: string; result: ScanStatusValue };
+        Returns: undefined;
+      };
+      release_quarantined_document: {
+        Args: { p_document: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      review_document: {
+        Args: { p_document: string; decision: string; note?: string };
         Returns: undefined;
       };
     };
