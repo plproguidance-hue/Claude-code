@@ -84,12 +84,7 @@ export const CLIENT_NAV: NavGroup[] = [
   {
     label: "Communication",
     items: [
-      {
-        label: "Support",
-        href: "/tickets",
-        icon: MessagesSquare,
-        plannedPhase: 6,
-      },
+      { label: "Support", href: "/tickets", icon: MessagesSquare },
       {
         label: "Help Center",
         href: "/help",
@@ -122,6 +117,7 @@ export const STAFF_NAV: NavGroup = {
     { label: "Quotations", href: "/admin/quotations", icon: FileText },
     { label: "Invoices", href: "/admin/invoices", icon: BadgeDollarSign },
     { label: "Payment review", href: "/admin/payments/review", icon: WalletIcon },
+    { label: "Tickets", href: "/admin/tickets", icon: MessagesSquare },
     { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
   ],
 };

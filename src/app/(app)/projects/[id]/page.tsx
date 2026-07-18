@@ -19,6 +19,8 @@ import {
 import { formatDateUS, formatUsd } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { RequestResponseForm } from "../../requests/request-response-form";
+import { MessageThread } from "./message-thread";
+import { isStaffRole } from "@/lib/auth/permissions";
 
 export const metadata: Metadata = { title: "Project workspace" };
 
@@ -26,6 +28,7 @@ const TABS = [
   ["overview", "Overview"],
   ["timeline", "Timeline"],
   ["requests", "Data requests"],
+  ["messages", "Messages"],
   ["milestones", "Milestones"],
 ] as const;
 
@@ -47,6 +50,11 @@ export default async function ProjectWorkspacePage({
     : "overview";
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) notFound();
+
   const { data: project } = await supabase
     .from("projects")
     .select("*")
@@ -60,6 +68,9 @@ export default async function ProjectWorkspacePage({
     { data: requests },
     { data: milestones },
     { data: company },
+    { data: messages },
+    { data: profile },
+    { data: staffProfiles },
   ] = await Promise.all([
     supabase
       .from("services")
@@ -88,7 +99,22 @@ export default async function ProjectWorkspacePage({
           .eq("id", project.company_id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
+    supabase
+      .from("project_messages")
+      .select("*")
+      .eq("project_id", project.id)
+      .order("created_at"),
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("role", ["administrator", "manager", "moderator"]),
   ]);
+
+  const staffNames = Object.fromEntries(
+    (staffProfiles ?? []).map((p) => [p.id, p.full_name ?? p.email]),
+  );
+  const viewerIsStaff = profile ? isStaffRole(profile.role) : false;
 
   const owner = PROJECT_ACTION_OWNER[project.status];
   const progress = progressPercent(project.status);
@@ -289,6 +315,16 @@ export default async function ProjectWorkspacePage({
             </Card>
           )}
         </div>
+      )}
+
+      {tab === "messages" && (
+        <MessageThread
+          projectId={project.id}
+          messages={messages ?? []}
+          currentUserId={user.id}
+          staff={viewerIsStaff}
+          staffNames={staffNames}
+        />
       )}
 
       {tab === "milestones" && (

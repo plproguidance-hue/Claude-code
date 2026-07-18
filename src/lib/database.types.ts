@@ -307,6 +307,58 @@ export type DataRequestSubmissionRow = {
   created_at: string;
 };
 
+export type TicketStatus =
+  | "open"
+  | "assigned"
+  | "waiting_client"
+  | "waiting_staff"
+  | "resolved"
+  | "closed"
+  | "reopened";
+
+export type TicketRow = {
+  id: string;
+  organization_id: string;
+  project_id: string | null;
+  company_id: string | null;
+  ticket_number: string;
+  department:
+    | "sales"
+    | "order_support"
+    | "documents"
+    | "accounting_invoice"
+    | "marketplace_support"
+    | "technical_support"
+    | "compliance_tax"
+    | "general_support";
+  subject: string;
+  priority: "low" | "normal" | "high" | "urgent";
+  status: TicketStatus;
+  created_by: string | null;
+  assigned_to: string | null;
+  closed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TicketMessageRow = {
+  id: string;
+  ticket_id: string;
+  author_id: string | null;
+  body: string;
+  is_internal: boolean;
+  created_at: string;
+};
+
+export type ProjectMessageRow = {
+  id: string;
+  project_id: string;
+  author_id: string | null;
+  body: string;
+  is_internal: boolean;
+  created_at: string;
+};
+
 export type DocumentReviewStatus =
   | "quarantined"
   | "pending_review"
@@ -912,6 +964,37 @@ export type Database = {
         Update: Record<string, never>;
         Relationships: [];
       };
+      tickets: {
+        Row: TicketRow;
+        Insert: {
+          organization_id: string;
+          project_id?: string | null;
+          company_id?: string | null;
+          department: TicketRow["department"];
+          subject: string;
+          priority?: TicketRow["priority"];
+          created_by: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      ticket_messages: {
+        Row: TicketMessageRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      project_messages: {
+        Row: ProjectMessageRow;
+        Insert: {
+          project_id: string;
+          author_id: string;
+          body: string;
+          is_internal?: boolean;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       documents: {
         Row: DocumentRow;
         Insert: {
@@ -1025,6 +1108,18 @@ export type Database = {
       };
       review_payment: {
         Args: { p_payment: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      reply_ticket: {
+        Args: { p_ticket: string; p_body: string; p_internal?: boolean };
+        Returns: undefined;
+      };
+      set_ticket_status: {
+        Args: {
+          p_ticket: string;
+          new_status: TicketStatus;
+          assignee?: string;
+        };
         Returns: undefined;
       };
     };
