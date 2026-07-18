@@ -22,6 +22,17 @@ export function formatDateUS(value: string | null | undefined): string {
   });
 }
 
+/** USD-only money formatting with tabular-friendly output (spec: USD only). */
+export function formatUsd(cents: number, note?: string | null): string {
+  const dollars = cents / 100;
+  const formatted = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: dollars % 1 === 0 ? 0 : 2,
+  }).format(dollars);
+  return note ? `${formatted}${note}` : formatted;
+}
+
 export const ENTITY_TYPE_LABELS: Record<string, string> = {
   llc: "LLC",
   c_corp: "C Corporation",

@@ -3,7 +3,11 @@ import {
   BadgeDollarSign,
   Building2,
   CalendarClock,
+  ClipboardList,
   FileText,
+  FolderKanban,
+  History,
+  Layers,
   LayoutDashboard,
   LifeBuoy,
   Lock,
@@ -54,12 +58,11 @@ export const CLIENT_NAV: NavGroup[] = [
   {
     label: "Services",
     items: [
-      {
-        label: "Catalogue",
-        href: "/services",
-        icon: BadgeDollarSign,
-        plannedPhase: 3,
-      },
+      { label: "Catalogue", href: "/services", icon: BadgeDollarSign },
+      { label: "Plans", href: "/plans", icon: Layers },
+      { label: "Projects", href: "/projects", icon: FolderKanban },
+      { label: "Orders", href: "/orders", icon: History },
+      { label: "Data requests", href: "/requests", icon: ClipboardList },
     ],
   },
   {
@@ -119,5 +122,8 @@ export const STAFF_NAV: NavGroup = {
     { label: "Users", href: "/admin/users", icon: Users },
     { label: "Clients", href: "/admin/clients", icon: BadgeDollarSign },
     { label: "Companies", href: "/admin/companies", icon: Building2 },
+    { label: "Projects", href: "/admin/projects", icon: FolderKanban },
+    { label: "Request reviews", href: "/admin/requests", icon: ClipboardList },
+    { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
   ],
 };

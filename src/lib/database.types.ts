@@ -1,4 +1,17 @@
 import type { AccountStatus, Role } from "@/lib/auth/permissions";
+import type { ProjectStatus } from "@/lib/projects/status";
+
+export type DataRequestStatus =
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "in_progress"
+  | "submitted"
+  | "under_review"
+  | "approved"
+  | "rejected_changes_required"
+  | "overdue"
+  | "cancelled";
 
 /**
  * Hand-maintained database typings for the Phase 1 schema
@@ -171,6 +184,129 @@ export type AuditLogRow = {
   created_at: string;
 };
 
+export type ServiceCategoryRow = {
+  id: string;
+  name: string;
+  slug: string;
+  sort: number;
+};
+
+export type ServiceRow = {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  summary: string;
+  description: string | null;
+  price_cents: number;
+  price_note: string | null;
+  government_fee_note: string | null;
+  turnaround: string | null;
+  requirements: string | null;
+  is_published: boolean;
+  requires_price_verification: boolean;
+  sort: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServicePlanRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price_cents: number;
+  billing_note: string | null;
+  is_published: boolean;
+  sort: number;
+  created_at: string;
+};
+
+export type ServicePlanItemRow = {
+  id: string;
+  plan_id: string;
+  label: string;
+  included: boolean;
+  sort: number;
+};
+
+export type ProjectRow = {
+  id: string;
+  organization_id: string;
+  company_id: string | null;
+  service_id: string;
+  order_number: string;
+  status: ProjectStatus;
+  requested_by: string | null;
+  client_note: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProjectAssignmentRow = {
+  id: string;
+  project_id: string;
+  user_id: string;
+  role_label: string;
+  assigned_by: string | null;
+  created_at: string;
+};
+
+export type ProjectMilestoneRow = {
+  id: string;
+  project_id: string;
+  title: string;
+  due_date: string | null;
+  completed_at: string | null;
+  sort: number;
+  created_at: string;
+};
+
+export type ProjectStatusHistoryRow = {
+  id: string;
+  project_id: string;
+  actor_id: string | null;
+  from_status: ProjectStatus | null;
+  to_status: ProjectStatus;
+  note: string | null;
+  client_visible: boolean;
+  created_at: string;
+};
+
+export type ProjectStatusTransitionRow = {
+  from_status: ProjectStatus;
+  to_status: ProjectStatus;
+};
+
+export type DataRequestRow = {
+  id: string;
+  organization_id: string;
+  project_id: string | null;
+  company_id: string | null;
+  title: string;
+  description: string | null;
+  kind: "information" | "document";
+  priority: "low" | "normal" | "high" | "urgent";
+  due_date: string | null;
+  status: DataRequestStatus;
+  rejection_reason: string | null;
+  created_by: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DataRequestSubmissionRow = {
+  id: string;
+  request_id: string;
+  submitted_by: string | null;
+  body: string;
+  version: number;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -337,6 +473,147 @@ export type Database = {
         Update: { revoked_at?: string | null };
         Relationships: [];
       };
+      service_categories: {
+        Row: ServiceCategoryRow;
+        Insert: { name: string; slug: string; sort?: number };
+        Update: { name?: string; slug?: string; sort?: number };
+        Relationships: [];
+      };
+      services: {
+        Row: ServiceRow;
+        Insert: {
+          category_id: string;
+          name: string;
+          slug: string;
+          summary: string;
+          price_cents: number;
+          price_note?: string | null;
+          government_fee_note?: string | null;
+          turnaround?: string | null;
+          requirements?: string | null;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Update: {
+          name?: string;
+          summary?: string;
+          description?: string | null;
+          price_cents?: number;
+          price_note?: string | null;
+          government_fee_note?: string | null;
+          turnaround?: string | null;
+          requirements?: string | null;
+          is_published?: boolean;
+          requires_price_verification?: boolean;
+          sort?: number;
+        };
+        Relationships: [];
+      };
+      service_plans: {
+        Row: ServicePlanRow;
+        Insert: {
+          name: string;
+          slug: string;
+          description?: string | null;
+          price_cents: number;
+          billing_note?: string | null;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Update: {
+          name?: string;
+          description?: string | null;
+          price_cents?: number;
+          billing_note?: string | null;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Relationships: [];
+      };
+      service_plan_items: {
+        Row: ServicePlanItemRow;
+        Insert: {
+          plan_id: string;
+          label: string;
+          included?: boolean;
+          sort?: number;
+        };
+        Update: { label?: string; included?: boolean; sort?: number };
+        Relationships: [];
+      };
+      projects: {
+        Row: ProjectRow;
+        Insert: {
+          organization_id: string;
+          company_id?: string | null;
+          service_id: string;
+          requested_by?: string | null;
+          client_note?: string | null;
+        };
+        Update: { client_note?: string | null };
+        Relationships: [];
+      };
+      project_assignments: {
+        Row: ProjectAssignmentRow;
+        Insert: {
+          project_id: string;
+          user_id: string;
+          role_label?: string;
+          assigned_by?: string | null;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      project_milestones: {
+        Row: ProjectMilestoneRow;
+        Insert: {
+          project_id: string;
+          title: string;
+          due_date?: string | null;
+          sort?: number;
+        };
+        Update: {
+          title?: string;
+          due_date?: string | null;
+          completed_at?: string | null;
+          sort?: number;
+        };
+        Relationships: [];
+      };
+      project_status_history: {
+        Row: ProjectStatusHistoryRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      project_status_transitions: {
+        Row: ProjectStatusTransitionRow;
+        Insert: ProjectStatusTransitionRow;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      data_requests: {
+        Row: DataRequestRow;
+        Insert: {
+          organization_id: string;
+          project_id?: string | null;
+          company_id?: string | null;
+          title: string;
+          description?: string | null;
+          kind?: "information" | "document";
+          priority?: "low" | "normal" | "high" | "urgent";
+          due_date?: string | null;
+          created_by?: string | null;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      data_request_submissions: {
+        Row: DataRequestSubmissionRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -361,12 +638,31 @@ export type Database = {
           is_valid: boolean;
         }[];
       };
+      transition_project: {
+        Args: {
+          p_project: string;
+          new_status: ProjectStatus;
+          note?: string;
+          is_client_visible?: boolean;
+        };
+        Returns: undefined;
+      };
+      submit_data_request: {
+        Args: { p_request: string; p_body: string };
+        Returns: undefined;
+      };
+      review_data_request: {
+        Args: { p_request: string; decision: string; note?: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       app_role: Role;
       account_status: AccountStatus;
       company_status: CompanyStatus;
       entity_type: EntityType;
+      project_status: ProjectStatus;
+      data_request_status: DataRequestStatus;
     };
     CompositeTypes: Record<string, never>;
   };

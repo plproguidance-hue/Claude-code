@@ -53,3 +53,4 @@ npm run dev
 | `20260717090100_rls.sql` | RLS enabled on every table + default-deny policy set. |
 | `20260717090200_seed_permissions.sql` | Permission catalogue + default role grants (kept in sync with `src/lib/auth/permissions.ts` by a unit test). |
 | `20260717110000_companies.sql` | Phase 2: companies, owners/members, USA-only company addresses, compliance deadlines, reviewed update requests (`review_company_update_request()`), draft-lifecycle protection triggers, `invitation_preview()`, international profile contact columns, RLS for all of it. |
+| `20260717120000_catalogue_projects.sql` | Phase 3: service catalogue + plans (19 §6.4 seed services flagged for price verification; demo plans unpublished), projects with PG-ORD numbering, configurable `project_status_transitions` + audited `transition_project()`, status history with staff-only visibility, data requests with versioned submissions (`submit_data_request()`, `review_data_request()`), RLS throughout. |

@@ -49,9 +49,11 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 
 | Route | Phase | Status |
 | --- | --- | --- |
-| `/services` (catalogue), `/services/[slug]`, `/plans` | 3 | 🔜 |
-| `/projects` (active), `/projects/[id]` (workspace tabs §6.5), `/orders` (history) | 3 | 🔜 |
-| `/requests` (data requests §6.6) | 3 | 🔜 |
+| `/services`, `/services/[slug]` | 3 | ✅ Published catalogue by category (USD, gov-fee note, turnaround, unverified-price flag) + order flow (no charge on click; project starts in `order_submitted`). |
+| `/plans` | 3 | ✅ Published plans comparison; demo tiers ship unpublished with an honest empty state. |
+| `/projects`, `/projects/[id]` | 3 | ✅ Active-project cards with progress + action owner; workspace tabs: overview, client-visible timeline, data requests (respond inline), milestones. |
+| `/orders` | 3 | ✅ Full order history table. |
+| `/requests` | 3 | ✅ Request list with due dates/priority, versioned response history, resubmission after rejection. |
 
 ## Client — Documents (Phase 4), Billing (Phase 5), Communication (Phase 6–7), Resources (Phase 7)
 
@@ -77,16 +79,16 @@ re-checked in RLS. Managers/moderators reach permission-scoped equivalents per s
 | `/admin/clients`, `/admin/clients/[id]` | `clients.view_all` / `clients.view_assigned` | 2 | ✅ Directory + client profile (orgs, companies, decision history). |
 | `/admin/companies`, `/admin/companies/[id]` | `companies.view` (+ `companies.update_request_review` for actions) | 2 | ✅ Directory with pending-request counts; detail with status controls, update-request review (approve applies whitelisted changes atomically), deadline management. |
 | `/admin/users` invitations | `clients.create` / `invitations.approve` | 2 | ✅ One-time-link invitation creation (hash-only storage), open-invitation list, revocation. |
-| `/admin/projects`, `/admin/projects/[id]` | `projects.*` | 3 | 🔜 |
-| `/admin/workflows` | `services.manage` | 3 | 🔜 |
-| `/admin/requests` | `requests.create` / `requests.review` | 3 | 🔜 |
+| `/admin/projects`, `/admin/projects/[id]` | `projects.*` | 3 | ✅ Status-filtered table; detail with valid-transition controls (matrix-driven), staff-only notes, assignments, milestones, data-request creation, full history. |
+| `/admin/workflows` | `services.manage` | 3 | ✅ (as data) Transition matrix is DB-configurable by `services.manage`; dedicated editor UI arrives with per-service templates in a later phase. |
+| `/admin/requests` | `requests.review` | 3 | ✅ Review queue with version history; rejection requires a reason. |
 | `/admin/documents/review` | `documents.review` | 4 | 🔜 |
 | `/admin/quotations`, `/admin/quotations/[id]` | `quotations.*` | 5 | 🔜 |
 | `/admin/invoices`, `/admin/invoices/[id]` | `invoices.*` | 5 | 🔜 |
 | `/admin/payments/review` | `payments.review` | 5 | 🔜 |
 | `/admin/tickets`, `/admin/tickets/[id]` | `tickets.*` | 6 | 🔜 |
 | `/admin/notifications` | `notifications.send` | 7 | 🔜 |
-| `/admin/catalogue` | `services.manage` | 3 | 🔜 |
+| `/admin/catalogue` | `services.manage` | 3 | ✅ Publish/unpublish services and plans, verify seed prices (flag cleared per service). |
 | `/admin/content` | `content.manage` | 7 | 🔜 |
 | `/admin/staff` | `users.roles.manage` | 8 | 🔜 |
 | `/admin/reports` | `reports.view` | 8 | 🔜 |
