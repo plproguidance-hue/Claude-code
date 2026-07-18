@@ -307,6 +307,71 @@ export type DataRequestSubmissionRow = {
   created_at: string;
 };
 
+export type NotificationRow = {
+  id: string;
+  user_id: string;
+  organization_id: string | null;
+  type:
+    | "action_required"
+    | "document"
+    | "project"
+    | "message"
+    | "billing"
+    | "quotation"
+    | "support"
+    | "compliance"
+    | "security"
+    | "announcement";
+  title: string;
+  body: string | null;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
+};
+
+export type HelpCategoryRow = {
+  id: string;
+  name: string;
+  slug: string;
+  sort: number;
+};
+
+export type HelpArticleRow = {
+  id: string;
+  category_id: string;
+  title: string;
+  slug: string;
+  body: string;
+  is_published: boolean;
+  sort: number;
+  updated_at: string;
+};
+
+export type PerkRow = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  benefit: string | null;
+  url: string | null;
+  disclosure: string | null;
+  is_published: boolean;
+  sort: number;
+};
+
+export type EmailOutboxRow = {
+  id: string;
+  to_email: string;
+  subject: string;
+  body: string;
+  status: "pending" | "sent" | "failed";
+  attempts: number;
+  last_error: string | null;
+  idempotency_key: string | null;
+  created_at: string;
+  sent_at: string | null;
+};
+
 export type TicketStatus =
   | "open"
   | "assigned"
@@ -964,6 +1029,71 @@ export type Database = {
         Update: Record<string, never>;
         Relationships: [];
       };
+      notifications: {
+        Row: NotificationRow;
+        Insert: Record<string, never>;
+        Update: { read_at?: string | null };
+        Relationships: [];
+      };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          category: string;
+          email_enabled: boolean;
+        };
+        Insert: {
+          user_id: string;
+          category: string;
+          email_enabled?: boolean;
+        };
+        Update: { email_enabled?: boolean };
+        Relationships: [];
+      };
+      email_outbox: {
+        Row: EmailOutboxRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      help_categories: {
+        Row: HelpCategoryRow;
+        Insert: { name: string; slug: string; sort?: number };
+        Update: { name?: string; slug?: string; sort?: number };
+        Relationships: [];
+      };
+      help_articles: {
+        Row: HelpArticleRow;
+        Insert: {
+          category_id: string;
+          title: string;
+          slug: string;
+          body: string;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Update: {
+          title?: string;
+          body?: string;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Relationships: [];
+      };
+      perks_resources: {
+        Row: PerkRow;
+        Insert: {
+          name: string;
+          category: string;
+          description: string;
+          benefit?: string | null;
+          url?: string | null;
+          disclosure?: string | null;
+          is_published?: boolean;
+          sort?: number;
+        };
+        Update: { is_published?: boolean; sort?: number };
+        Relationships: [];
+      };
       tickets: {
         Row: TicketRow;
         Insert: {
@@ -1119,6 +1249,15 @@ export type Database = {
           p_ticket: string;
           new_status: TicketStatus;
           assignee?: string;
+        };
+        Returns: undefined;
+      };
+      send_org_announcement: {
+        Args: {
+          org: string;
+          n_title: string;
+          n_body?: string;
+          n_link?: string;
         };
         Returns: undefined;
       };

@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Building2, ChevronDown, LogOut, Menu, UserCircle } from "lucide-react";
+import {
+  Bell,
+  Building2,
+  ChevronDown,
+  LogOut,
+  Menu,
+  UserCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 import type { ProfileRow } from "@/lib/database.types";
@@ -11,10 +18,12 @@ import { RoleBadge } from "@/components/ui/badge";
 export function Topbar({
   profile,
   organizations,
+  unreadNotifications = 0,
   onMobileMenu,
 }: {
   profile: ProfileRow;
   organizations: ShellOrg[];
+  unreadNotifications?: number;
   onMobileMenu: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -63,7 +72,24 @@ export function Topbar({
         </div>
       )}
 
-      <div className="ml-auto" ref={menuRef}>
+      <Link
+        href="/notifications"
+        aria-label={
+          unreadNotifications > 0
+            ? `Notifications, ${unreadNotifications} unread`
+            : "Notifications"
+        }
+        className="relative ml-auto flex h-11 w-11 items-center justify-center rounded-lg text-ink-muted hover:bg-page hover:text-ink"
+      >
+        <Bell aria-hidden className="h-5 w-5" />
+        {unreadNotifications > 0 && (
+          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white tnum">
+            {unreadNotifications > 99 ? "99+" : unreadNotifications}
+          </span>
+        )}
+      </Link>
+
+      <div ref={menuRef}>
         <button
           type="button"
           onClick={() => setMenuOpen((open) => !open)}

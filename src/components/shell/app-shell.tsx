@@ -15,10 +15,12 @@ export interface ShellOrg {
 export function AppShell({
   profile,
   organizations,
+  unreadNotifications = 0,
   children,
 }: {
   profile: ProfileRow;
   organizations: ShellOrg[];
+  unreadNotifications?: number;
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -42,6 +44,7 @@ export function AppShell({
         <Topbar
           profile={profile}
           organizations={organizations}
+          unreadNotifications={unreadNotifications}
           onMobileMenu={() => setMobileOpen(true)}
         />
         <main

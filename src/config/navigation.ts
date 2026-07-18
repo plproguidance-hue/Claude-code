@@ -6,8 +6,10 @@ import {
   ClipboardList,
   FileText,
   FolderKanban,
+  Gift,
   History,
   Layers,
+  Megaphone,
   LayoutDashboard,
   LifeBuoy,
   Lock,
@@ -85,12 +87,8 @@ export const CLIENT_NAV: NavGroup[] = [
     label: "Communication",
     items: [
       { label: "Support", href: "/tickets", icon: MessagesSquare },
-      {
-        label: "Help Center",
-        href: "/help",
-        icon: LifeBuoy,
-        plannedPhase: 7,
-      },
+      { label: "Help Center", href: "/help", icon: LifeBuoy },
+      { label: "Perks", href: "/perks", icon: Gift },
     ],
   },
   {
@@ -119,5 +117,7 @@ export const STAFF_NAV: NavGroup = {
     { label: "Payment review", href: "/admin/payments/review", icon: WalletIcon },
     { label: "Tickets", href: "/admin/tickets", icon: MessagesSquare },
     { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
+    { label: "Content", href: "/admin/content", icon: LifeBuoy },
+    { label: "Announcements", href: "/admin/notifications", icon: Megaphone },
   ],
 };

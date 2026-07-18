@@ -26,15 +26,19 @@ export default async function AppLayout({
   if (!profile) redirect("/pending-approval");
   if (profile.status !== "active") redirect("/pending-approval");
 
-  const { data: organizations } = await supabase
-    .from("organizations")
-    .select("id, name, slug")
-    .order("name");
+  const [{ data: organizations }, { count: unreadCount }] = await Promise.all([
+    supabase.from("organizations").select("id, name, slug").order("name"),
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .is("read_at", null),
+  ]);
 
   return (
     <AppShell
       profile={profile}
       organizations={(organizations ?? []) as ShellOrg[]}
+      unreadNotifications={unreadCount ?? 0}
     >
       {children}
     </AppShell>
