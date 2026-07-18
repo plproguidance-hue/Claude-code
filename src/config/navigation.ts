@@ -1,6 +1,9 @@
 import {
   Activity,
   BadgeDollarSign,
+  BarChart3,
+  ScrollText,
+  Settings as SettingsIcon,
   Building2,
   CalendarClock,
   ClipboardList,
@@ -119,5 +122,9 @@ export const STAFF_NAV: NavGroup = {
     { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
     { label: "Content", href: "/admin/content", icon: LifeBuoy },
     { label: "Announcements", href: "/admin/notifications", icon: Megaphone },
+    { label: "Staff & roles", href: "/admin/staff", icon: UserCog },
+    { label: "Reports", href: "/admin/reports", icon: BarChart3 },
+    { label: "Audit log", href: "/admin/audit", icon: ScrollText },
+    { label: "Settings", href: "/admin/settings", icon: SettingsIcon },
   ],
 };

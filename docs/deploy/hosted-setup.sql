@@ -1,4 +1,4 @@
--- ProGuidance Portal — combined schema for hosted Supabase
+-- ProGuidance Portal — combined schema for hosted Supabase (ALL PHASES)
 -- Paste this entire file into the Supabase SQL Editor and run it once:
 -- https://supabase.com/dashboard/project/nbeipbxdyyhzfbueovnq/sql/new
 -- Generated from supabase/migrations/* (apply-once; not idempotent).
@@ -2675,3 +2675,1485 @@ create policy "document reviews: via parent document"
   using (public.can_see_document(document_id));
 
 -- Reviews are inserted only by the SECURITY DEFINER functions above.
+
+-- ============================================================
+-- 20260718090000_billing.sql
+-- ============================================================
+-- ProGuidance Portal — Phase 5: quotations, invoices, payments, wallet.
+-- USD only; money is integer cents. Spec §6.8–§6.9.
+
+create type public.quotation_status as enum (
+  'requested', 'under_review', 'draft', 'sent', 'viewed',
+  'changes_requested', 'accepted', 'declined', 'expired', 'converted'
+);
+
+create type public.invoice_status as enum (
+  'draft', 'sent', 'viewed', 'partially_paid', 'paid',
+  'overdue', 'void', 'refunded'
+);
+
+create type public.payment_status as enum (
+  'submitted', 'under_review', 'approved', 'rejected', 'reversed'
+);
+
+create type public.ledger_entry_type as enum ('credit', 'debit');
+
+create sequence public.quote_number_seq;
+create sequence public.invoice_number_seq;
+
+-- ---------------------------------------------------------------------------
+-- Quotations (versioned; acceptance recorded with actor + time)
+-- ---------------------------------------------------------------------------
+
+create table public.quotations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  project_id uuid references public.projects (id) on delete set null,
+  company_id uuid references public.companies (id) on delete set null,
+  quote_number text not null unique
+    default ('PG-QUO-' || lpad(nextval('public.quote_number_seq')::text, 6, '0')),
+  title text not null check (char_length(title) between 1 and 200),
+  status public.quotation_status not null default 'requested',
+  request_note text,
+  terms text,
+  valid_until date,
+  current_version integer not null default 0,
+  requested_by uuid references auth.users (id) on delete set null,
+  decided_by uuid references auth.users (id) on delete set null,
+  decided_at timestamptz,
+  decision_note text,
+  created_by uuid references auth.users (id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index quotations_org_idx on public.quotations (organization_id);
+create index quotations_status_idx on public.quotations (status);
+
+create trigger quotations_set_updated_at
+  before update on public.quotations
+  for each row execute function public.set_updated_at();
+
+create table public.quotation_versions (
+  id uuid primary key default gen_random_uuid(),
+  quotation_id uuid not null references public.quotations (id) on delete cascade,
+  version integer not null,
+  created_by uuid references auth.users (id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (quotation_id, version)
+);
+
+create table public.quotation_line_items (
+  id uuid primary key default gen_random_uuid(),
+  quotation_version_id uuid not null references public.quotation_versions (id) on delete cascade,
+  label text not null,
+  quantity numeric(10, 2) not null default 1 check (quantity > 0),
+  unit_price_cents integer not null check (unit_price_cents >= 0),
+  is_government_fee boolean not null default false,
+  sort integer not null default 0
+);
+
+create index quotation_line_items_version_idx
+  on public.quotation_line_items (quotation_version_id);
+
+-- ---------------------------------------------------------------------------
+-- Invoices (issued invoices are immutable snapshots)
+-- ---------------------------------------------------------------------------
+
+create table public.invoices (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  project_id uuid references public.projects (id) on delete set null,
+  company_id uuid references public.companies (id) on delete set null,
+  -- Uniqueness makes quote conversion idempotent at the database level.
+  quotation_id uuid unique references public.quotations (id) on delete set null,
+  invoice_number text not null unique
+    default ('PG-INV-' || lpad(nextval('public.invoice_number_seq')::text, 6, '0')),
+  status public.invoice_status not null default 'draft',
+  issue_date date,
+  due_date date,
+  total_cents integer not null default 0 check (total_cents >= 0),
+  amount_paid_cents integer not null default 0 check (amount_paid_cents >= 0),
+  notes text,
+  terms text,
+  issued_by uuid references auth.users (id) on delete set null,
+  created_by uuid references auth.users (id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index invoices_org_idx on public.invoices (organization_id);
+create index invoices_status_idx on public.invoices (status);
+
+create trigger invoices_set_updated_at
+  before update on public.invoices
+  for each row execute function public.set_updated_at();
+
+create table public.invoice_line_items (
+  id uuid primary key default gen_random_uuid(),
+  invoice_id uuid not null references public.invoices (id) on delete cascade,
+  label text not null,
+  quantity numeric(10, 2) not null default 1 check (quantity > 0),
+  unit_price_cents integer not null check (unit_price_cents >= 0),
+  is_government_fee boolean not null default false,
+  sort integer not null default 0
+);
+
+create index invoice_line_items_invoice_idx
+  on public.invoice_line_items (invoice_id);
+
+-- ---------------------------------------------------------------------------
+-- Payments (manual/bank/Wise proof first; reviewed by administrators)
+-- ---------------------------------------------------------------------------
+
+create table public.payments (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  invoice_id uuid references public.invoices (id) on delete set null,
+  method text not null check (method in
+    ('bank_transfer', 'wise', 'manual', 'wallet_topup')),
+  amount_cents integer not null check (amount_cents > 0),
+  reference text,
+  paid_date date,
+  note text,
+  status public.payment_status not null default 'submitted',
+  submitted_by uuid references auth.users (id) on delete set null,
+  reviewed_by uuid references auth.users (id) on delete set null,
+  reviewed_at timestamptz,
+  review_note text,
+  created_at timestamptz not null default now()
+);
+
+create index payments_org_idx on public.payments (organization_id);
+create index payments_invoice_idx on public.payments (invoice_id);
+create index payments_status_idx on public.payments (status);
+
+-- ---------------------------------------------------------------------------
+-- Wallet (USD only; append-only ledger is the financial truth)
+-- ---------------------------------------------------------------------------
+
+create table public.wallet_accounts (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null unique references public.organizations (id) on delete cascade,
+  balance_cents bigint not null default 0 check (balance_cents >= 0),
+  created_at timestamptz not null default now()
+);
+
+create table public.wallet_ledger_entries (
+  id uuid primary key default gen_random_uuid(),
+  wallet_account_id uuid not null references public.wallet_accounts (id) on delete cascade,
+  entry_type public.ledger_entry_type not null,
+  amount_cents bigint not null check (amount_cents > 0),
+  balance_after_cents bigint not null check (balance_after_cents >= 0),
+  reference text,
+  related_invoice_id uuid references public.invoices (id) on delete set null,
+  related_payment_id uuid references public.payments (id) on delete set null,
+  idempotency_key text unique,
+  actor_id uuid,
+  created_at timestamptz not null default now()
+);
+
+create index wallet_ledger_wallet_idx
+  on public.wallet_ledger_entries (wallet_account_id, created_at);
+
+revoke update, delete on public.wallet_ledger_entries from authenticated, anon;
+
+-- ---------------------------------------------------------------------------
+-- Lifecycle protection
+-- ---------------------------------------------------------------------------
+
+create or replace function public.protect_billing_columns()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null
+     or coalesce(current_setting('app.billing_lifecycle', true), '') = 'allowed' then
+    return new;
+  end if;
+
+  if tg_table_name = 'quotations' then
+    if new.status is distinct from old.status
+       or new.current_version is distinct from old.current_version
+       or new.decided_by is distinct from old.decided_by then
+      raise exception 'quotation lifecycle changes only through billing functions'
+        using errcode = '42501';
+    end if;
+  elsif tg_table_name = 'invoices' then
+    if new.status is distinct from old.status
+       or new.amount_paid_cents is distinct from old.amount_paid_cents
+       or new.total_cents is distinct from old.total_cents
+       or new.issue_date is distinct from old.issue_date then
+      raise exception 'invoice lifecycle changes only through billing functions'
+        using errcode = '42501';
+    end if;
+    if old.status <> 'draft' then
+      raise exception 'issued invoices are immutable; use credit notes'
+        using errcode = '42501';
+    end if;
+  elsif tg_table_name = 'payments' then
+    if new.status is distinct from old.status
+       or new.amount_cents is distinct from old.amount_cents then
+      raise exception 'payment decisions only through review_payment()'
+        using errcode = '42501';
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger quotations_protect before update on public.quotations
+  for each row execute function public.protect_billing_columns();
+create trigger invoices_protect before update on public.invoices
+  for each row execute function public.protect_billing_columns();
+create trigger payments_protect before update on public.payments
+  for each row execute function public.protect_billing_columns();
+
+-- Adding a quotation version bumps the parent automatically (staff never
+-- touch current_version directly).
+create or replace function public.register_quotation_version()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+  update public.quotations
+     set current_version = greatest(current_version, new.version)
+   where id = new.quotation_id;
+  perform set_config('app.billing_lifecycle', '', true);
+  return new;
+end;
+$$;
+
+create trigger quotation_versions_register
+  after insert on public.quotation_versions
+  for each row execute function public.register_quotation_version();
+
+-- Issued-invoice line items are frozen.
+create or replace function public.protect_invoice_items()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  inv_status public.invoice_status;
+  inv_id uuid;
+begin
+  inv_id := coalesce(new.invoice_id, old.invoice_id);
+  select i.status into inv_status from public.invoices i where i.id = inv_id;
+  if inv_status is distinct from 'draft'
+     and coalesce(current_setting('app.billing_lifecycle', true), '') <> 'allowed'
+     and auth.uid() is not null then
+    raise exception 'line items of an issued invoice are immutable'
+      using errcode = '42501';
+  end if;
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger invoice_items_protect
+  before insert or update or delete on public.invoice_line_items
+  for each row execute function public.protect_invoice_items();
+
+-- ---------------------------------------------------------------------------
+-- Billing functions
+-- ---------------------------------------------------------------------------
+
+create or replace function public.send_quotation(p_quote uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  quote public.quotations%rowtype;
+begin
+  if not public.has_permission('quotations.send') then
+    raise exception 'permission denied: quotations.send required'
+      using errcode = '42501';
+  end if;
+  select q.* into quote from public.quotations q where q.id = p_quote for update;
+  if not found then raise exception 'quotation % not found', p_quote; end if;
+  if not public.can_access_org(quote.organization_id) then
+    raise exception 'permission denied: no access to this organization'
+      using errcode = '42501';
+  end if;
+  if quote.status not in ('requested', 'under_review', 'draft', 'changes_requested') then
+    raise exception 'quotation cannot be sent from status %', quote.status;
+  end if;
+  if quote.current_version = 0 then
+    raise exception 'add a version with line items before sending';
+  end if;
+
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+  update public.quotations set status = 'sent' where id = p_quote;
+  perform set_config('app.billing_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), quote.organization_id,
+    'quotation.sent', 'quotation', p_quote::text, '{}'::jsonb);
+end;
+$$;
+
+-- Client decision on a sent quotation (actor + timestamp recorded).
+create or replace function public.decide_quotation(
+  p_quote uuid,
+  decision text,
+  note text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  quote public.quotations%rowtype;
+  new_status public.quotation_status;
+begin
+  select q.* into quote from public.quotations q where q.id = p_quote for update;
+  if not found then raise exception 'quotation % not found', p_quote; end if;
+
+  if not public.is_org_member(quote.organization_id) then
+    raise exception 'permission denied: not a member of this organization'
+      using errcode = '42501';
+  end if;
+
+  if quote.status not in ('sent', 'viewed', 'changes_requested') then
+    raise exception 'quotation is not open for a decision (status: %)', quote.status;
+  end if;
+
+  new_status := case decision
+    when 'accept' then 'accepted'::public.quotation_status
+    when 'decline' then 'declined'::public.quotation_status
+    when 'request_changes' then 'changes_requested'::public.quotation_status
+    else null
+  end;
+  if new_status is null then
+    raise exception 'invalid decision "%": expected accept, decline, or request_changes', decision;
+  end if;
+
+  if quote.valid_until is not null and quote.valid_until < current_date
+     and decision = 'accept' then
+    raise exception 'quotation has expired and can no longer be accepted';
+  end if;
+
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+  update public.quotations
+     set status = new_status,
+         decided_by = auth.uid(),
+         decided_at = now(),
+         decision_note = note
+   where id = p_quote;
+  perform set_config('app.billing_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), quote.organization_id,
+    'quotation.' || decision, 'quotation', p_quote::text,
+    jsonb_build_object('note', note));
+end;
+$$;
+
+-- Accepted quotation → exactly one project (order_submitted) + one DRAFT
+-- invoice, transactionally and idempotently. Issuance stays a separate,
+-- deliberate staff step (spec §6.8).
+create or replace function public.convert_quotation(p_quote uuid)
+returns uuid  -- the created invoice id
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  quote public.quotations%rowtype;
+  fallback_service uuid;
+  new_project uuid;
+  new_invoice uuid;
+  total integer;
+begin
+  if not public.has_permission('quotations.convert') then
+    raise exception 'permission denied: quotations.convert required'
+      using errcode = '42501';
+  end if;
+
+  select q.* into quote from public.quotations q where q.id = p_quote for update;
+  if not found then raise exception 'quotation % not found', p_quote; end if;
+  if not public.can_access_org(quote.organization_id) then
+    raise exception 'permission denied: no access to this organization'
+      using errcode = '42501';
+  end if;
+  if quote.status = 'converted' then
+    raise exception 'quotation has already been converted';
+  end if;
+  if quote.status <> 'accepted' then
+    raise exception 'only accepted quotations convert (status: %)', quote.status;
+  end if;
+
+  if quote.project_id is null then
+    select s.id into fallback_service
+      from public.services s where s.is_published order by s.sort limit 1;
+    if fallback_service is null then
+      raise exception 'no published service available to attach the order to';
+    end if;
+    insert into public.projects
+      (organization_id, company_id, service_id, requested_by, client_note)
+    values (quote.organization_id, quote.company_id, fallback_service,
+            quote.requested_by, 'Created from quotation ' || quote.quote_number)
+    returning id into new_project;
+  else
+    new_project := quote.project_id;
+  end if;
+
+  select coalesce(sum(round(li.quantity * li.unit_price_cents)), 0)::integer
+    into total
+    from public.quotation_line_items li
+    join public.quotation_versions v on v.id = li.quotation_version_id
+   where v.quotation_id = p_quote and v.version = quote.current_version;
+
+  -- invoices.quotation_id is UNIQUE: a concurrent/retried conversion fails
+  -- here instead of duplicating.
+  insert into public.invoices
+    (organization_id, project_id, company_id, quotation_id, total_cents,
+     notes, terms, created_by)
+  values (quote.organization_id, new_project, quote.company_id, p_quote,
+          total, 'From quotation ' || quote.quote_number, quote.terms,
+          auth.uid())
+  returning id into new_invoice;
+
+  insert into public.invoice_line_items
+    (invoice_id, label, quantity, unit_price_cents, is_government_fee, sort)
+  select new_invoice, li.label, li.quantity, li.unit_price_cents,
+         li.is_government_fee, li.sort
+    from public.quotation_line_items li
+    join public.quotation_versions v on v.id = li.quotation_version_id
+   where v.quotation_id = p_quote and v.version = quote.current_version;
+
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+  update public.quotations set status = 'converted' where id = p_quote;
+  perform set_config('app.billing_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), quote.organization_id,
+    'quotation.converted', 'quotation', p_quote::text,
+    jsonb_build_object('invoice_id', new_invoice, 'project_id', new_project));
+
+  return new_invoice;
+end;
+$$;
+
+create or replace function public.issue_invoice(
+  p_invoice uuid,
+  p_due_date date default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  inv public.invoices%rowtype;
+  total integer;
+begin
+  if not public.has_permission('invoices.issue') then
+    raise exception 'permission denied: invoices.issue required'
+      using errcode = '42501';
+  end if;
+
+  select i.* into inv from public.invoices i where i.id = p_invoice for update;
+  if not found then raise exception 'invoice % not found', p_invoice; end if;
+  if not public.can_access_org(inv.organization_id) then
+    raise exception 'permission denied: no access to this organization'
+      using errcode = '42501';
+  end if;
+  if inv.status <> 'draft' then
+    raise exception 'only draft invoices can be issued (status: %)', inv.status;
+  end if;
+
+  select coalesce(sum(round(li.quantity * li.unit_price_cents)), 0)::integer
+    into total from public.invoice_line_items li where li.invoice_id = p_invoice;
+  if total <= 0 then
+    raise exception 'an invoice needs line items before it can be issued';
+  end if;
+
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+  update public.invoices
+     set status = 'sent',
+         total_cents = total,
+         issue_date = current_date,
+         due_date = coalesce(p_due_date, current_date + 14),
+         issued_by = auth.uid()
+   where id = p_invoice;
+  perform set_config('app.billing_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), inv.organization_id,
+    'invoice.issued', 'invoice', p_invoice::text,
+    jsonb_build_object('total_cents', total));
+end;
+$$;
+
+-- Administrator review of a payment: atomically settles the payment, the
+-- invoice balance/status, the wallet ledger (top-ups), and the audit log.
+create or replace function public.review_payment(
+  p_payment uuid,
+  decision text,
+  note text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+#variable_conflict use_variable
+declare
+  pay public.payments%rowtype;
+  inv public.invoices%rowtype;
+  wallet public.wallet_accounts%rowtype;
+  new_paid integer;
+begin
+  if not public.has_permission('payments.review') then
+    raise exception 'permission denied: payments.review required'
+      using errcode = '42501';
+  end if;
+  if decision not in ('approved', 'rejected') then
+    raise exception 'invalid decision "%": expected approved or rejected', decision;
+  end if;
+
+  select p.* into pay from public.payments p where p.id = p_payment for update;
+  if not found then raise exception 'payment % not found', p_payment; end if;
+  if not public.can_access_org(pay.organization_id) then
+    raise exception 'permission denied: no access to this organization'
+      using errcode = '42501';
+  end if;
+  if pay.status not in ('submitted', 'under_review') then
+    raise exception 'payment already decided (status: %)', pay.status;
+  end if;
+
+  perform set_config('app.billing_lifecycle', 'allowed', true);
+
+  update public.payments
+     set status = case when decision = 'approved'
+                       then 'approved'::public.payment_status
+                       else 'rejected'::public.payment_status end,
+         reviewed_by = auth.uid(), reviewed_at = now(), review_note = note
+   where id = p_payment;
+
+  if decision = 'approved' then
+    if pay.invoice_id is not null then
+      select i.* into inv from public.invoices i
+       where i.id = pay.invoice_id for update;
+      new_paid := inv.amount_paid_cents + pay.amount_cents;
+      update public.invoices
+         set amount_paid_cents = new_paid,
+             status = case when new_paid >= inv.total_cents
+                           then 'paid'::public.invoice_status
+                           else 'partially_paid'::public.invoice_status end
+       where id = pay.invoice_id;
+    elsif pay.method = 'wallet_topup' then
+      insert into public.wallet_accounts (organization_id)
+      values (pay.organization_id)
+      on conflict (organization_id) do nothing;
+
+      select w.* into wallet from public.wallet_accounts w
+       where w.organization_id = pay.organization_id for update;
+
+      insert into public.wallet_ledger_entries
+        (wallet_account_id, entry_type, amount_cents, balance_after_cents,
+         reference, related_payment_id, idempotency_key, actor_id)
+      values (wallet.id, 'credit', pay.amount_cents,
+              wallet.balance_cents + pay.amount_cents,
+              coalesce(pay.reference, 'wallet top-up'), p_payment,
+              'payment:' || p_payment::text, auth.uid());
+
+      update public.wallet_accounts
+         set balance_cents = wallet.balance_cents + pay.amount_cents
+       where id = wallet.id;
+    end if;
+  end if;
+
+  perform set_config('app.billing_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), pay.organization_id,
+    'payment.' || decision, 'payment', p_payment::text,
+    jsonb_build_object('amount_cents', pay.amount_cents, 'note', note));
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Row Level Security
+-- ---------------------------------------------------------------------------
+
+alter table public.quotations enable row level security;
+alter table public.quotation_versions enable row level security;
+alter table public.quotation_line_items enable row level security;
+alter table public.invoices enable row level security;
+alter table public.invoice_line_items enable row level security;
+alter table public.payments enable row level security;
+alter table public.wallet_accounts enable row level security;
+alter table public.wallet_ledger_entries enable row level security;
+
+-- Quotations: clients see sent+ statuses; staff see drafts too.
+create policy "quotations: tenant access" on public.quotations
+  for select to authenticated
+  using (
+    public.can_access_org(organization_id)
+    and ((select public.is_staff())
+         or status in ('requested', 'sent', 'viewed', 'changes_requested',
+                       'accepted', 'declined', 'expired', 'converted'))
+  );
+
+create policy "quotations: clients request, staff draft" on public.quotations
+  for insert to authenticated
+  with check (
+    (public.is_org_member(organization_id)
+     and status = 'requested'
+     and requested_by = (select auth.uid()))
+    or (public.has_permission('quotations.create')
+        and public.can_access_org(organization_id))
+  );
+
+create policy "quotations: staff edit metadata" on public.quotations
+  for update to authenticated
+  using (public.has_permission('quotations.create')
+         and public.can_access_org(organization_id))
+  with check (public.has_permission('quotations.create')
+              and public.can_access_org(organization_id));
+
+create policy "quotation versions: via parent" on public.quotation_versions
+  for select to authenticated
+  using (exists (select 1 from public.quotations q
+                  where q.id = quotation_id
+                    and public.can_access_org(q.organization_id)));
+
+create policy "quotation versions: staff add" on public.quotation_versions
+  for insert to authenticated
+  with check (
+    public.has_permission('quotations.create')
+    and exists (select 1 from public.quotations q
+                 where q.id = quotation_id
+                   and public.can_access_org(q.organization_id))
+  );
+
+create policy "quotation items: via version" on public.quotation_line_items
+  for select to authenticated
+  using (exists (
+    select 1 from public.quotation_versions v
+    join public.quotations q on q.id = v.quotation_id
+    where v.id = quotation_version_id
+      and public.can_access_org(q.organization_id)));
+
+create policy "quotation items: staff manage" on public.quotation_line_items
+  for all to authenticated
+  using (
+    public.has_permission('quotations.create')
+    and exists (
+      select 1 from public.quotation_versions v
+      join public.quotations q on q.id = v.quotation_id
+      where v.id = quotation_version_id
+        and public.can_access_org(q.organization_id)))
+  with check (
+    public.has_permission('quotations.create')
+    and exists (
+      select 1 from public.quotation_versions v
+      join public.quotations q on q.id = v.quotation_id
+      where v.id = quotation_version_id
+        and public.can_access_org(q.organization_id)));
+
+-- Invoices: clients never see drafts.
+create policy "invoices: tenant access" on public.invoices
+  for select to authenticated
+  using (
+    public.can_access_org(organization_id)
+    and ((select public.is_staff()) or status <> 'draft')
+  );
+
+create policy "invoices: staff create drafts" on public.invoices
+  for insert to authenticated
+  with check (
+    public.has_permission('invoices.create')
+    and public.can_access_org(organization_id)
+    and status = 'draft'
+  );
+
+create policy "invoices: staff edit drafts" on public.invoices
+  for update to authenticated
+  using (public.has_permission('invoices.create')
+         and public.can_access_org(organization_id))
+  with check (public.has_permission('invoices.create')
+              and public.can_access_org(organization_id));
+
+create policy "invoice items: via parent" on public.invoice_line_items
+  for select to authenticated
+  using (exists (
+    select 1 from public.invoices i
+     where i.id = invoice_id
+       and public.can_access_org(i.organization_id)
+       and ((select public.is_staff()) or i.status <> 'draft')));
+
+create policy "invoice items: staff manage drafts" on public.invoice_line_items
+  for all to authenticated
+  using (
+    public.has_permission('invoices.create')
+    and exists (select 1 from public.invoices i
+                 where i.id = invoice_id
+                   and public.can_access_org(i.organization_id)))
+  with check (
+    public.has_permission('invoices.create')
+    and exists (select 1 from public.invoices i
+                 where i.id = invoice_id
+                   and public.can_access_org(i.organization_id)));
+
+-- Payments: clients submit proof for their own org.
+create policy "payments: tenant access" on public.payments
+  for select to authenticated
+  using (public.can_access_org(organization_id));
+
+create policy "payments: members submit proof" on public.payments
+  for insert to authenticated
+  with check (
+    submitted_by = (select auth.uid())
+    and status = 'submitted'
+    and public.is_org_member(organization_id)
+    and (invoice_id is null or exists (
+      select 1 from public.invoices i
+       where i.id = invoice_id
+         and i.organization_id = organization_id
+         and i.status in ('sent', 'viewed', 'partially_paid', 'overdue')))
+  );
+
+-- Wallet: read-only for the tenant; every mutation flows through functions.
+create policy "wallets: tenant access" on public.wallet_accounts
+  for select to authenticated
+  using (public.can_access_org(organization_id));
+
+create policy "ledger: tenant access" on public.wallet_ledger_entries
+  for select to authenticated
+  using (exists (select 1 from public.wallet_accounts w
+                  where w.id = wallet_account_id
+                    and public.can_access_org(w.organization_id)));
+
+-- ============================================================
+-- 20260718100000_communication.sql
+-- ============================================================
+-- ProGuidance Portal — Phase 6: support tickets & project messages.
+-- Spec §6.10: departments, status machine, internal staff notes invisible
+-- to clients, closed tickets read-only unless explicitly reopened.
+
+create type public.ticket_status as enum (
+  'open', 'assigned', 'waiting_client', 'waiting_staff',
+  'resolved', 'closed', 'reopened'
+);
+
+create sequence public.ticket_number_seq;
+
+create table public.tickets (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  project_id uuid references public.projects (id) on delete set null,
+  company_id uuid references public.companies (id) on delete set null,
+  ticket_number text not null unique
+    default ('PG-TIC-' || lpad(nextval('public.ticket_number_seq')::text, 6, '0')),
+  department text not null check (department in (
+    'sales', 'order_support', 'documents', 'accounting_invoice',
+    'marketplace_support', 'technical_support', 'compliance_tax',
+    'general_support'
+  )),
+  subject text not null check (char_length(subject) between 1 and 200),
+  priority text not null default 'normal'
+    check (priority in ('low', 'normal', 'high', 'urgent')),
+  status public.ticket_status not null default 'open',
+  created_by uuid references auth.users (id) on delete set null,
+  assigned_to uuid references public.profiles (id) on delete set null,
+  closed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index tickets_org_idx on public.tickets (organization_id);
+create index tickets_status_idx on public.tickets (status);
+create index tickets_assigned_idx on public.tickets (assigned_to);
+
+create trigger tickets_set_updated_at
+  before update on public.tickets
+  for each row execute function public.set_updated_at();
+
+create table public.ticket_messages (
+  id uuid primary key default gen_random_uuid(),
+  ticket_id uuid not null references public.tickets (id) on delete cascade,
+  author_id uuid references auth.users (id) on delete set null,
+  body text not null check (char_length(body) between 1 and 10000),
+  is_internal boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index ticket_messages_ticket_idx
+  on public.ticket_messages (ticket_id, created_at);
+
+create table public.project_messages (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects (id) on delete cascade,
+  author_id uuid references auth.users (id) on delete set null,
+  body text not null check (char_length(body) between 1 and 10000),
+  is_internal boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index project_messages_project_idx
+  on public.project_messages (project_id, created_at);
+
+-- ---------------------------------------------------------------------------
+-- Ticket lifecycle: status changes only through functions.
+-- ---------------------------------------------------------------------------
+
+create or replace function public.protect_ticket_columns()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null
+     or coalesce(current_setting('app.ticket_lifecycle', true), '') = 'allowed' then
+    return new;
+  end if;
+  if new.status is distinct from old.status
+     or new.assigned_to is distinct from old.assigned_to then
+    raise exception 'ticket status/assignment changes only through ticket functions'
+      using errcode = '42501';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger tickets_protect
+  before update on public.tickets
+  for each row execute function public.protect_ticket_columns();
+
+-- Reply with automatic status flow. Internal notes are staff-only and never
+-- change the client-facing status. Closed tickets reject replies; a client
+-- reply on a resolved ticket reopens it.
+create or replace function public.reply_ticket(
+  p_ticket uuid,
+  p_body text,
+  p_internal boolean default false
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  tick public.tickets%rowtype;
+  staff boolean;
+begin
+  select t.* into tick from public.tickets t where t.id = p_ticket for update;
+  if not found then raise exception 'ticket % not found', p_ticket; end if;
+
+  staff := public.is_staff();
+
+  if not public.has_permission('tickets.reply') then
+    raise exception 'permission denied: tickets.reply required'
+      using errcode = '42501';
+  end if;
+  if staff then
+    if not public.can_access_org(tick.organization_id) then
+      raise exception 'permission denied: no access to this organization'
+        using errcode = '42501';
+    end if;
+  else
+    if not public.is_org_member(tick.organization_id) then
+      raise exception 'permission denied: not a member of this organization'
+        using errcode = '42501';
+    end if;
+    if p_internal then
+      raise exception 'internal notes are staff-only' using errcode = '42501';
+    end if;
+  end if;
+
+  if tick.status = 'closed' then
+    raise exception 'closed tickets are read-only; reopen it first';
+  end if;
+
+  if p_body is null or char_length(trim(p_body)) = 0 then
+    raise exception 'message body is required';
+  end if;
+
+  insert into public.ticket_messages (ticket_id, author_id, body, is_internal)
+  values (p_ticket, auth.uid(), p_body, p_internal);
+
+  if not p_internal then
+    perform set_config('app.ticket_lifecycle', 'allowed', true);
+    update public.tickets
+       set status = case
+         when not staff and tick.status = 'resolved'
+           then 'reopened'::public.ticket_status
+         when not staff then 'waiting_staff'::public.ticket_status
+         else 'waiting_client'::public.ticket_status
+       end
+     where id = p_ticket;
+    perform set_config('app.ticket_lifecycle', '', true);
+  end if;
+end;
+$$;
+
+-- Staff status controls: assign (tickets.assign), resolve/close
+-- (tickets.close), reopen (member or staff in scope).
+create or replace function public.set_ticket_status(
+  p_ticket uuid,
+  new_status public.ticket_status,
+  assignee uuid default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  tick public.tickets%rowtype;
+begin
+  select t.* into tick from public.tickets t where t.id = p_ticket for update;
+  if not found then raise exception 'ticket % not found', p_ticket; end if;
+
+  if new_status = 'assigned' then
+    if not public.has_permission('tickets.assign')
+       or not public.can_access_org(tick.organization_id) then
+      raise exception 'permission denied: tickets.assign required'
+        using errcode = '42501';
+    end if;
+    if assignee is null then
+      raise exception 'assignment needs an assignee';
+    end if;
+  elsif new_status in ('resolved', 'closed') then
+    if not public.has_permission('tickets.close')
+       or not public.can_access_org(tick.organization_id) then
+      raise exception 'permission denied: tickets.close required'
+        using errcode = '42501';
+    end if;
+  elsif new_status = 'reopened' then
+    if not (public.is_org_member(tick.organization_id)
+            or (public.is_staff()
+                and public.can_access_org(tick.organization_id))) then
+      raise exception 'permission denied' using errcode = '42501';
+    end if;
+    if tick.status not in ('resolved', 'closed') then
+      raise exception 'only resolved or closed tickets can be reopened';
+    end if;
+  else
+    raise exception 'unsupported status change to %', new_status;
+  end if;
+
+  perform set_config('app.ticket_lifecycle', 'allowed', true);
+  update public.tickets
+     set status = new_status,
+         assigned_to = case when new_status = 'assigned' then assignee
+                            else assigned_to end,
+         closed_at = case when new_status = 'closed' then now()
+                          when new_status = 'reopened' then null
+                          else closed_at end
+   where id = p_ticket;
+  perform set_config('app.ticket_lifecycle', '', true);
+
+  perform public.log_audit_event(auth.uid(), tick.organization_id,
+    'ticket.' || new_status, 'ticket', p_ticket::text,
+    jsonb_build_object('assignee', assignee));
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Row Level Security
+-- ---------------------------------------------------------------------------
+
+alter table public.tickets enable row level security;
+alter table public.ticket_messages enable row level security;
+alter table public.project_messages enable row level security;
+
+create policy "tickets: tenant access" on public.tickets
+  for select to authenticated
+  using (public.can_access_org(organization_id));
+
+create policy "tickets: members open" on public.tickets
+  for insert to authenticated
+  with check (
+    created_by = (select auth.uid())
+    and status = 'open'
+    and (public.is_org_member(organization_id)
+         or (public.has_permission('tickets.reply')
+             and (select public.is_staff())
+             and public.can_access_org(organization_id)))
+  );
+
+-- Internal notes never reach clients (spec §6.10).
+create policy "ticket messages: visible except internal for clients"
+  on public.ticket_messages for select
+  to authenticated
+  using (
+    exists (select 1 from public.tickets t
+             where t.id = ticket_id
+               and public.can_access_org(t.organization_id))
+    and (not is_internal or (select public.is_staff()))
+  );
+
+create policy "project messages: visible except internal for clients"
+  on public.project_messages for select
+  to authenticated
+  using (
+    exists (select 1 from public.projects p
+             where p.id = project_id
+               and public.can_access_org(p.organization_id))
+    and (not is_internal or (select public.is_staff()))
+  );
+
+create policy "project messages: participants post" on public.project_messages
+  for insert to authenticated
+  with check (
+    author_id = (select auth.uid())
+    and exists (
+      select 1 from public.projects p
+       where p.id = project_id
+         and (
+           (public.is_org_member(p.organization_id) and not is_internal)
+           or ((select public.is_staff())
+               and public.can_access_org(p.organization_id))
+         )
+    )
+  );
+-- ticket_messages inserts happen only inside reply_ticket().
+
+-- ============================================================
+-- 20260718110000_notifications_content.sql
+-- ============================================================
+-- ProGuidance Portal — Phase 7: in-app notifications (event-driven),
+-- email outbox, notification preferences, Help Center, perks. Spec §6.11–§6.12.
+
+create table public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  organization_id uuid references public.organizations (id) on delete cascade,
+  type text not null check (type in (
+    'action_required', 'document', 'project', 'message', 'billing',
+    'quotation', 'support', 'compliance', 'security', 'announcement'
+  )),
+  title text not null check (char_length(title) between 1 and 200),
+  body text,
+  link text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index notifications_user_idx
+  on public.notifications (user_id, read_at, created_at desc);
+
+create table public.notification_preferences (
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  category text not null,
+  email_enabled boolean not null default true,
+  primary key (user_id, category)
+);
+
+-- Queued outbox: emails are NEVER sent inside a transaction; a worker with
+-- SMTP/Resend credentials drains 'pending' rows with retries. Without
+-- credentials rows simply wait — nothing is faked.
+create table public.email_outbox (
+  id uuid primary key default gen_random_uuid(),
+  to_email text not null,
+  subject text not null,
+  body text not null,
+  status text not null default 'pending'
+    check (status in ('pending', 'sent', 'failed')),
+  attempts integer not null default 0,
+  last_error text,
+  idempotency_key text unique,
+  created_at timestamptz not null default now(),
+  sent_at timestamptz
+);
+
+create index email_outbox_status_idx on public.email_outbox (status, created_at);
+
+create table public.help_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  sort integer not null default 0
+);
+
+create table public.help_articles (
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.help_categories (id) on delete cascade,
+  title text not null,
+  slug text not null unique,
+  body text not null,
+  is_published boolean not null default false,
+  sort integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+create index help_articles_category_idx on public.help_articles (category_id);
+
+create table public.perks_resources (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  category text not null,
+  description text not null,
+  benefit text,
+  url text,
+  disclosure text,
+  is_published boolean not null default false,
+  sort integer not null default 0
+);
+
+-- ---------------------------------------------------------------------------
+-- Notification helpers (SECURITY DEFINER — the only write paths)
+-- ---------------------------------------------------------------------------
+
+create or replace function public.notify_user(
+  target uuid,
+  n_type text,
+  n_title text,
+  n_body text default null,
+  n_link text default null,
+  org uuid default null
+)
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  insert into public.notifications (user_id, organization_id, type, title, body, link)
+  values (target, org, n_type, n_title, n_body, n_link);
+$$;
+
+create or replace function public.notify_org_members(
+  org uuid,
+  n_type text,
+  n_title text,
+  n_body text default null,
+  n_link text default null
+)
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  insert into public.notifications (user_id, organization_id, type, title, body, link)
+  select m.user_id, org, n_type, n_title, n_body, n_link
+    from public.organization_memberships m
+    join public.profiles p on p.id = m.user_id and p.status = 'active'
+   where m.organization_id = org;
+$$;
+
+-- Admin composer: audience is an organization's members; requires the
+-- notifications.send permission and is audited.
+create or replace function public.send_org_announcement(
+  org uuid,
+  n_title text,
+  n_body text default null,
+  n_link text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.has_permission('notifications.send') then
+    raise exception 'permission denied: notifications.send required'
+      using errcode = '42501';
+  end if;
+  if not public.can_access_org(org) then
+    raise exception 'permission denied: no access to this organization'
+      using errcode = '42501';
+  end if;
+  perform public.notify_org_members(org, 'announcement', n_title, n_body, n_link);
+  perform public.log_audit_event(auth.uid(), org, 'notification.sent',
+    'organization', org::text, jsonb_build_object('title', n_title));
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Event triggers
+-- ---------------------------------------------------------------------------
+
+-- Registration decision → notify the user; approval also queues a
+-- mandatory security email in the outbox.
+create or replace function public.notify_registration_decision()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if old.status = 'pending_approval' and new.status = 'active' then
+    perform public.notify_user(new.id, 'security',
+      'Your ProGuidance account is approved',
+      'Welcome aboard — your portal access is now active.', '/dashboard');
+    insert into public.email_outbox (to_email, subject, body, idempotency_key)
+    values (new.email, 'Your ProGuidance account is approved',
+            'Your registration was approved. Sign in at your portal to get started.',
+            'registration-approved:' || new.id)
+    on conflict (idempotency_key) do nothing;
+  elsif old.status = 'pending_approval' and new.status = 'rejected' then
+    perform public.notify_user(new.id, 'security',
+      'Your ProGuidance registration was not approved', null, null);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger profiles_notify_decision
+  after update on public.profiles
+  for each row execute function public.notify_registration_decision();
+
+-- Client-visible project updates → notify org members.
+create or replace function public.notify_project_update()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  org uuid;
+begin
+  if new.client_visible then
+    select p.organization_id into org from public.projects p
+     where p.id = new.project_id;
+    perform public.notify_org_members(org, 'project',
+      'Project update: ' || replace(new.to_status::text, '_', ' '),
+      new.note, '/projects/' || new.project_id || '?tab=timeline');
+  end if;
+  return new;
+end;
+$$;
+
+create trigger project_history_notify
+  after insert on public.project_status_history
+  for each row execute function public.notify_project_update();
+
+-- New data request → notify org members (action required).
+create or replace function public.notify_data_request()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform public.notify_org_members(new.organization_id, 'action_required',
+    'Information requested: ' || new.title, new.description, '/requests');
+  return new;
+end;
+$$;
+
+create trigger data_requests_notify
+  after insert on public.data_requests
+  for each row execute function public.notify_data_request();
+
+-- Document review decision → notify the uploader.
+create or replace function public.notify_document_review()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.review_status in ('approved', 'rejected')
+     and new.review_status is distinct from old.review_status
+     and new.uploaded_by is not null then
+    perform public.notify_user(new.uploaded_by, 'document',
+      'Document ' || new.review_status || ': ' || new.title,
+      new.review_note, '/documents', new.organization_id);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger documents_notify_review
+  after update on public.documents
+  for each row execute function public.notify_document_review();
+
+-- Invoice issued → notify org members.
+create or replace function public.notify_invoice_issued()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if old.status = 'draft' and new.status = 'sent' then
+    perform public.notify_org_members(new.organization_id, 'billing',
+      'Invoice ' || new.invoice_number || ' issued',
+      'Amount due: $' || (new.total_cents / 100.0)::numeric(12,2),
+      '/invoices/' || new.id);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger invoices_notify_issue
+  after update on public.invoices
+  for each row execute function public.notify_invoice_issued();
+
+-- Payment decision → notify the submitter.
+create or replace function public.notify_payment_review()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.status in ('approved', 'rejected')
+     and new.status is distinct from old.status
+     and new.submitted_by is not null then
+    perform public.notify_user(new.submitted_by, 'billing',
+      'Payment ' || new.status,
+      'Amount: $' || (new.amount_cents / 100.0)::numeric(12,2),
+      '/payments', new.organization_id);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger payments_notify_review
+  after update on public.payments
+  for each row execute function public.notify_payment_review();
+
+-- Quotation sent → notify org members.
+create or replace function public.notify_quotation_sent()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.status = 'sent' and old.status is distinct from new.status then
+    perform public.notify_org_members(new.organization_id, 'quotation',
+      'Quotation ready: ' || new.title, null, '/quotations/' || new.id);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger quotations_notify_sent
+  after update on public.quotations
+  for each row execute function public.notify_quotation_sent();
+
+-- Public staff ticket reply → notify org members.
+create or replace function public.notify_ticket_reply()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  tick public.tickets%rowtype;
+  author_is_staff boolean;
+begin
+  if new.is_internal then
+    return new;
+  end if;
+  select t.* into tick from public.tickets t where t.id = new.ticket_id;
+  select exists (
+    select 1 from public.profiles p
+     where p.id = new.author_id
+       and p.role in ('administrator', 'manager', 'moderator')
+  ) into author_is_staff;
+  if author_is_staff then
+    perform public.notify_org_members(tick.organization_id, 'support',
+      'Reply on ' || tick.ticket_number || ': ' || tick.subject,
+      null, '/tickets/' || tick.id);
+  end if;
+  return new;
+end;
+$$;
+
+create trigger ticket_messages_notify
+  after insert on public.ticket_messages
+  for each row execute function public.notify_ticket_reply();
+
+-- ---------------------------------------------------------------------------
+-- Row Level Security
+-- ---------------------------------------------------------------------------
+
+alter table public.notifications enable row level security;
+alter table public.notification_preferences enable row level security;
+alter table public.email_outbox enable row level security;
+alter table public.help_categories enable row level security;
+alter table public.help_articles enable row level security;
+alter table public.perks_resources enable row level security;
+
+create policy "notifications: own" on public.notifications
+  for select to authenticated
+  using (user_id = (select auth.uid()));
+
+create policy "notifications: mark own read" on public.notifications
+  for update to authenticated
+  using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
+
+create policy "notification prefs: own" on public.notification_preferences
+  for all to authenticated
+  using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
+
+create policy "outbox: settings managers read" on public.email_outbox
+  for select to authenticated
+  using (public.has_permission('settings.manage'));
+
+create policy "help categories: readable" on public.help_categories
+  for select to authenticated using (true);
+create policy "help categories: manage" on public.help_categories
+  for all to authenticated
+  using (public.has_permission('content.manage'))
+  with check (public.has_permission('content.manage'));
+
+create policy "help articles: published or managers" on public.help_articles
+  for select to authenticated
+  using (is_published or public.has_permission('content.manage'));
+create policy "help articles: manage" on public.help_articles
+  for all to authenticated
+  using (public.has_permission('content.manage'))
+  with check (public.has_permission('content.manage'));
+
+create policy "perks: published or managers" on public.perks_resources
+  for select to authenticated
+  using (is_published or public.has_permission('content.manage'));
+create policy "perks: manage" on public.perks_resources
+  for all to authenticated
+  using (public.has_permission('content.manage'))
+  with check (public.has_permission('content.manage'));
+
+-- ---------------------------------------------------------------------------
+-- Seed: Help Center content (published — never a blank production page)
+-- and demonstration perks (published with clear disclosure).
+-- ---------------------------------------------------------------------------
+
+insert into public.help_categories (id, name, slug, sort) values
+  ('00000000-0000-4000-f000-000000000001', 'US Formation', 'us-formation', 1),
+  ('00000000-0000-4000-f000-000000000002', 'Documents', 'documents', 2),
+  ('00000000-0000-4000-f000-000000000003', 'Billing & Invoices', 'billing', 3),
+  ('00000000-0000-4000-f000-000000000004', 'Marketplace Setup', 'marketplace', 4),
+  ('00000000-0000-4000-f000-000000000005', 'Account & Security', 'account-security', 5);
+
+insert into public.help_articles (category_id, title, slug, body, is_published, sort) values
+  ('00000000-0000-4000-f000-000000000001', 'How US LLC formation works with ProGuidance', 'how-llc-formation-works',
+   E'Order the USA LLC Formation service from the catalogue and your order becomes a tracked project.\n\n1. We review your order and confirm details.\n2. You provide owner information through data requests.\n3. We prepare and submit the state filing.\n4. You receive formation documents in your secure vault.\n\nGovernment fees are billed separately at actual cost. Timelines depend on the state — your project timeline always shows the current stage and whose action is next. ProGuidance provides professional processing support; state approval decisions rest with the authority.', true, 1),
+  ('00000000-0000-4000-f000-000000000001', 'Choosing a formation state', 'choosing-a-formation-state',
+   E'Wyoming, Delaware, and Florida are popular for non-resident founders, but the right choice depends on your business. Consider filing fees, annual report costs, and where you actually operate.\n\nThis article is general information, not legal or tax advice — confirm suitability with a qualified professional. Our team can share practical experience for your situation through a support ticket.', true, 2),
+  ('00000000-0000-4000-f000-000000000002', 'Uploading documents securely', 'uploading-documents-securely',
+   E'Use the Document Vault to upload PDFs and images up to 25 MB. Every file is stored privately, virus-scanned, and reviewed by our team before it is marked approved.\n\nIf a document is rejected you will see the reason and can upload a new version — earlier versions are always preserved. Downloads use short-lived secure links; there are no public file URLs.', true, 1),
+  ('00000000-0000-4000-f000-000000000003', 'Understanding your invoice', 'understanding-your-invoice',
+   E'ProGuidance invoices are USD only and use the PG-INV- number series. Professional fees and government/third-party fees are always listed separately.\n\nPay by bank transfer or Wise, then submit the payment proof from the invoice page. Our team verifies every payment before the balance updates — you will receive a notification either way.', true, 1),
+  ('00000000-0000-4000-f000-000000000003', 'How the USD wallet works', 'how-the-wallet-works',
+   E'The wallet holds USD credit backed by an append-only ledger. Request a top-up, send the funds, and submit the reference — the balance updates once our team verifies the transfer. Every movement appears in your transactions list with a running balance.', true, 2),
+  ('00000000-0000-4000-f000-000000000004', 'Preparing for marketplace account setup', 'preparing-marketplace-setup',
+   E'Amazon and Walmart seller onboarding needs consistent business details: company documents, EIN confirmation, a US address, and matching bank details.\n\nStart the relevant service from the catalogue and respond promptly to data requests — mismatched details are the most common cause of marketplace verification delays. Marketplace approval decisions are made by the platforms and are outside ProGuidance''s control.', true, 1),
+  ('00000000-0000-4000-f000-000000000005', 'Keeping your account secure', 'keeping-your-account-secure',
+   E'Use a unique 12+ character password and enable two-factor authentication in Security settings. Revoke sessions you do not recognize.\n\nProGuidance staff will never ask for your password. Security-critical emails (like registration approval) are always sent regardless of notification preferences.', true, 1),
+  ('00000000-0000-4000-f000-000000000005', 'Getting help fast', 'getting-help-fast',
+   E'Open a support ticket in the department that matches your question — Sales, Order Support, Documents, Accounting/Invoice, Marketplace Support, Technical Support, Compliance/Tax, or General Support.\n\nProject-specific questions go in the project workspace Messages tab so the assigned team sees them with full context.', true, 2);
+
+insert into public.perks_resources (name, category, description, benefit, url, disclosure, is_published, sort) values
+  ('Wise Business', 'Banking', 'Multi-currency business account popular with US companies owned by international founders.', 'Hold and convert USD alongside other currencies.', 'https://wise.com', 'Demonstration listing seeded by the portal build — the owner should confirm partnership terms before relying on it. May contain affiliate relationships.', true, 1),
+  ('Payoneer', 'Payments', 'Receive marketplace payouts from Amazon, Walmart, and other platforms.', 'Marketplace-friendly USD receiving accounts.', 'https://payoneer.com', 'Demonstration listing seeded by the portal build — the owner should confirm partnership terms before relying on it. May contain affiliate relationships.', true, 2),
+  ('Northwest Registered Agent', 'Compliance', 'Registered agent service coverage across all US states.', 'Reliable registered agent coverage for multi-state needs.', 'https://www.northwestregisteredagent.com', 'Demonstration listing seeded by the portal build — the owner should confirm partnership terms before relying on it. May contain affiliate relationships.', true, 3);

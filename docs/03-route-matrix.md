@@ -60,11 +60,11 @@ Legend — Status: ✅ implemented (Phase 1) · 🔜 reserved (listed phase) · 
 | Route | Phase | Status |
 | --- | --- | --- |
 | `/documents` | 4 | ✅ Vault with §6.7 tabs (all/required/in-review/approved/rejected/letters/expiring), validated uploads (magic-byte + size + safe filenames + sha256), hard quarantine default, authorized 60-second signed downloads. File transfer requires configured Supabase Storage (service credentials) — see risks. |
-| `/quotations`, `/quotations/[id]` | 5 | 🔜 |
-| `/invoices`, `/invoices/[id]`, `/payments`, `/wallet`, `/transactions` | 5 | 🔜 |
-| `/messages` (project messages), `/tickets`, `/tickets/[id]` | 6 | 🔜 |
-| `/notifications` | 7 | 🔜 |
-| `/help`, `/help/[category]/[article]`, `/perks` | 7 | 🔜 |
+| `/quotations`, `/quotations/[id]` | 5 | ✅ Request → versioned offer → confirmed accept/decline/request-changes with recorded actor/time; expired quotes cannot be accepted. |
+| `/invoices`, `/invoices/[id]`, `/payments`, `/wallet` | 5 | ✅ USD invoices (PG-INV-) with branded print view and payment-proof submission; payments list; wallet with verified top-ups + append-only transaction ledger (wallet page includes transactions). |
+| Project messages (workspace Messages tab), `/tickets`, `/tickets/[id]` | 6 | ✅ Departmental tickets with auto status flow, reopen, staff-only internal notes; per-project threads shared with assigned staff. |
+| `/notifications` | 7 | ✅ Today/Earlier grouping, mark read/all, unread bell in shell; event-driven from registrations, projects, requests, documents, billing, quotations, tickets. |
+| `/help`, `/help/[slug]`, `/perks` | 7 | ✅ 8 seeded published articles with related links + support escalation; perks with affiliate disclosures. |
 
 ## Admin / staff operations portal
 
@@ -83,17 +83,17 @@ re-checked in RLS. Managers/moderators reach permission-scoped equivalents per s
 | `/admin/workflows` | `services.manage` | 3 | ✅ (as data) Transition matrix is DB-configurable by `services.manage`; dedicated editor UI arrives with per-service templates in a later phase. |
 | `/admin/requests` | `requests.review` | 3 | ✅ Review queue with version history; rejection requires a reason. |
 | `/admin/documents/review` | `documents.review` (+ administrator for quarantine) | 4 | ✅ Quarantine queue (admin-only release/reject with scan status + checksum) and review queue (rejection requires a reason). |
-| `/admin/quotations`, `/admin/quotations/[id]` | `quotations.*` | 5 | 🔜 |
-| `/admin/invoices`, `/admin/invoices/[id]` | `invoices.*` | 5 | 🔜 |
-| `/admin/payments/review` | `payments.review` | 5 | 🔜 |
-| `/admin/tickets`, `/admin/tickets/[id]` | `tickets.*` | 6 | 🔜 |
-| `/admin/notifications` | `notifications.send` | 7 | 🔜 |
+| `/admin/quotations`, `/admin/quotations/[id]` | `quotations.*` | 5 | ✅ Draft builder with versioned line items, send, idempotent convert (one order + one draft invoice, never auto-sent). |
+| `/admin/invoices`, `/admin/invoices/[id]` | `invoices.create` / `invoices.issue` | 5 | ✅ Draft builder; administrator-only issuance freezes the snapshot. |
+| `/admin/payments/review` | `payments.review` | 5 | ✅ Atomic approve/reject (payment + invoice balance/status + wallet ledger + audit in one transaction). |
+| `/admin/tickets` | `tickets.*` | 6 | ✅ Inbox split by needs-staff-action; thread controls (assign/resolve/close/internal notes) live on the shared ticket page. |
+| `/admin/notifications` | `notifications.send` | 7 | ✅ Org-audience announcement composer (audited). |
 | `/admin/catalogue` | `services.manage` | 3 | ✅ Publish/unpublish services and plans, verify seed prices (flag cleared per service). |
-| `/admin/content` | `content.manage` | 7 | 🔜 |
-| `/admin/staff` | `users.roles.manage` | 8 | 🔜 |
-| `/admin/reports` | `reports.view` | 8 | 🔜 |
-| `/admin/audit` | `audit.view` | 8 | 🔜 (audit *data* recorded from Phase 1) |
-| `/admin/settings` | `settings.manage` | 8 | 🔜 (`system_settings` table exists from Phase 1) |
+| `/admin/content` | `content.manage` | 7 | ✅ Draft/publish toggles for help articles and perks. |
+| `/admin/staff` | `users.roles.manage` | 8 | ✅ Role changes (trigger-enforced + audited) and manager/moderator org-assignment management. |
+| `/admin/reports` | `reports.view` | 8 | ✅ Scope-aware operational/financial summary + authorized invoice CSV export. |
+| `/admin/audit` | `audit.view` | 8 | ✅ Filterable append-only event viewer (recorded since Phase 1). |
+| `/admin/settings` | `settings.manage` | 8 | ✅ Business config display, integration status (never shows secrets), email-outbox monitor. `/api/health` liveness probe added. |
 
 ## Global route-protection rules (implemented Phase 1)
 

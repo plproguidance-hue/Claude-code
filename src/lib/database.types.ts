@@ -637,6 +637,10 @@ export type Database = {
           postal_code?: string | null;
           country?: string | null;
           timezone?: string | null;
+          // Privileged columns — the profiles_protect_columns trigger rejects
+          // these unless the caller holds users.roles.manage / approval perms.
+          role?: Role;
+          status?: AccountStatus;
         };
         Relationships: [];
       };
