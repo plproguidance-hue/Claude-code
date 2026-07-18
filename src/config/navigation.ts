@@ -16,6 +16,7 @@ import {
   UserCircle,
   UserCog,
   Users,
+  Wallet as WalletIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -74,12 +75,10 @@ export const CLIENT_NAV: NavGroup[] = [
   {
     label: "Billing",
     items: [
-      {
-        label: "Invoices",
-        href: "/invoices",
-        icon: BadgeDollarSign,
-        plannedPhase: 5,
-      },
+      { label: "Quotations", href: "/quotations", icon: FileText },
+      { label: "Invoices", href: "/invoices", icon: BadgeDollarSign },
+      { label: "Payments", href: "/payments", icon: History },
+      { label: "Wallet", href: "/wallet", icon: WalletIcon },
     ],
   },
   {
@@ -120,6 +119,9 @@ export const STAFF_NAV: NavGroup = {
     { label: "Projects", href: "/admin/projects", icon: FolderKanban },
     { label: "Request reviews", href: "/admin/requests", icon: ClipboardList },
     { label: "Document review", href: "/admin/documents/review", icon: FileText },
+    { label: "Quotations", href: "/admin/quotations", icon: FileText },
+    { label: "Invoices", href: "/admin/invoices", icon: BadgeDollarSign },
+    { label: "Payment review", href: "/admin/payments/review", icon: WalletIcon },
     { label: "Catalogue", href: "/admin/catalogue", icon: Layers },
   ],
 };

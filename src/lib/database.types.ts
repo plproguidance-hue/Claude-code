@@ -358,6 +358,142 @@ export type DocumentVersionRow = {
   created_at: string;
 };
 
+export type QuotationStatus =
+  | "requested"
+  | "under_review"
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "changes_requested"
+  | "accepted"
+  | "declined"
+  | "expired"
+  | "converted";
+
+export type InvoiceStatus =
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "partially_paid"
+  | "paid"
+  | "overdue"
+  | "void"
+  | "refunded";
+
+export type PaymentStatus =
+  | "submitted"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "reversed";
+
+export type QuotationRow = {
+  id: string;
+  organization_id: string;
+  project_id: string | null;
+  company_id: string | null;
+  quote_number: string;
+  title: string;
+  status: QuotationStatus;
+  request_note: string | null;
+  terms: string | null;
+  valid_until: string | null;
+  current_version: number;
+  requested_by: string | null;
+  decided_by: string | null;
+  decided_at: string | null;
+  decision_note: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type QuotationVersionRow = {
+  id: string;
+  quotation_id: string;
+  version: number;
+  created_by: string | null;
+  created_at: string;
+};
+
+export type QuotationLineItemRow = {
+  id: string;
+  quotation_version_id: string;
+  label: string;
+  quantity: number;
+  unit_price_cents: number;
+  is_government_fee: boolean;
+  sort: number;
+};
+
+export type InvoiceRow = {
+  id: string;
+  organization_id: string;
+  project_id: string | null;
+  company_id: string | null;
+  quotation_id: string | null;
+  invoice_number: string;
+  status: InvoiceStatus;
+  issue_date: string | null;
+  due_date: string | null;
+  total_cents: number;
+  amount_paid_cents: number;
+  notes: string | null;
+  terms: string | null;
+  issued_by: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InvoiceLineItemRow = {
+  id: string;
+  invoice_id: string;
+  label: string;
+  quantity: number;
+  unit_price_cents: number;
+  is_government_fee: boolean;
+  sort: number;
+};
+
+export type PaymentRow = {
+  id: string;
+  organization_id: string;
+  invoice_id: string | null;
+  method: "bank_transfer" | "wise" | "manual" | "wallet_topup";
+  amount_cents: number;
+  reference: string | null;
+  paid_date: string | null;
+  note: string | null;
+  status: PaymentStatus;
+  submitted_by: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_note: string | null;
+  created_at: string;
+};
+
+export type WalletAccountRow = {
+  id: string;
+  organization_id: string;
+  balance_cents: number;
+  created_at: string;
+};
+
+export type WalletLedgerEntryRow = {
+  id: string;
+  wallet_account_id: string;
+  entry_type: "credit" | "debit";
+  amount_cents: number;
+  balance_after_cents: number;
+  reference: string | null;
+  related_invoice_id: string | null;
+  related_payment_id: string | null;
+  idempotency_key: string | null;
+  actor_id: string | null;
+  created_at: string;
+};
+
 export type DocumentReviewRow = {
   id: string;
   document_id: string;
@@ -675,6 +811,107 @@ export type Database = {
         Update: Record<string, never>;
         Relationships: [];
       };
+      quotations: {
+        Row: QuotationRow;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          project_id?: string | null;
+          company_id?: string | null;
+          title: string;
+          status?: QuotationStatus;
+          request_note?: string | null;
+          terms?: string | null;
+          valid_until?: string | null;
+          requested_by?: string | null;
+          created_by?: string | null;
+        };
+        Update: {
+          title?: string;
+          terms?: string | null;
+          valid_until?: string | null;
+        };
+        Relationships: [];
+      };
+      quotation_versions: {
+        Row: QuotationVersionRow;
+        Insert: {
+          id?: string;
+          quotation_id: string;
+          version: number;
+          created_by?: string | null;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      quotation_line_items: {
+        Row: QuotationLineItemRow;
+        Insert: {
+          quotation_version_id: string;
+          label: string;
+          quantity?: number;
+          unit_price_cents: number;
+          is_government_fee?: boolean;
+          sort?: number;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      invoices: {
+        Row: InvoiceRow;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          project_id?: string | null;
+          company_id?: string | null;
+          notes?: string | null;
+          terms?: string | null;
+          created_by?: string | null;
+        };
+        Update: { notes?: string | null; terms?: string | null };
+        Relationships: [];
+      };
+      invoice_line_items: {
+        Row: InvoiceLineItemRow;
+        Insert: {
+          invoice_id: string;
+          label: string;
+          quantity?: number;
+          unit_price_cents: number;
+          is_government_fee?: boolean;
+          sort?: number;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      payments: {
+        Row: PaymentRow;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          invoice_id?: string | null;
+          method: PaymentRow["method"];
+          amount_cents: number;
+          reference?: string | null;
+          paid_date?: string | null;
+          note?: string | null;
+          submitted_by: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      wallet_accounts: {
+        Row: WalletAccountRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      wallet_ledger_entries: {
+        Row: WalletLedgerEntryRow;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       documents: {
         Row: DocumentRow;
         Insert: {
@@ -768,6 +1005,26 @@ export type Database = {
       };
       review_document: {
         Args: { p_document: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      send_quotation: {
+        Args: { p_quote: string };
+        Returns: undefined;
+      };
+      decide_quotation: {
+        Args: { p_quote: string; decision: string; note?: string };
+        Returns: undefined;
+      };
+      convert_quotation: {
+        Args: { p_quote: string };
+        Returns: string;
+      };
+      issue_invoice: {
+        Args: { p_invoice: string; p_due_date?: string };
+        Returns: undefined;
+      };
+      review_payment: {
+        Args: { p_payment: string; decision: string; note?: string };
         Returns: undefined;
       };
     };
