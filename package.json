@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:integration": "vitest run --config vitest.integration.config.ts"
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "setup:local": "bash scripts/local-setup.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
