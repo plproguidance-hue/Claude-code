@@ -10,11 +10,11 @@
 
 function econur_hero_default_slides() {
     return array(
-        array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'Shop Face Care', 'url' => '/product-category/face-care/'),
-        array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'Explore Brightening Bar', 'url' => '/product/licorice-brightening-bar/'),
-        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'Explore Active Defense', 'url' => '/product/active-defense-bar/'),
-        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'Explore Herbfresh', 'url' => '/product/herbifresh-bar/'),
-        array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'Explore Caffeind Bar', 'url' => '/product/caffiend-bar/'),
+        array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'width' => 16, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'Shop Face Care', 'url' => '/product-category/face-care/'),
+        array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'width' => 30, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'Explore Brightening Bar', 'url' => '/product/licorice-brightening-bar/'),
+        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'Explore Active Defense', 'url' => '/product/active-defense-bar/'),
+        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'Explore Herbfresh', 'url' => '/product/herbifresh-bar/'),
+        array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'Explore Caffeind Bar', 'url' => '/product/caffiend-bar/'),
     );
 }
 
@@ -25,13 +25,13 @@ function econur_hero_slides() {
     foreach ($slides as $s) {
         if (empty($s['on']) && isset($s['on'])) continue;
         if (!wp_attachment_is_image((int) ($s['desktop'] ?? 0))) continue;
-        $out[] = wp_parse_args($s, array('mobile' => 0, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => ''));
+        $out[] = wp_parse_args($s, array('mobile' => 0, 'width' => 30, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => ''));
     }
     return $out;
 }
 
-/* painted width of the banner per breakpoint (it fills a rounded frame; on small screens the frame is narrower than 2.4:1) */
-define('ECONUR_HERO_SIZES', '(min-width: 1520px) 1480px, (min-width: 1280px) calc(104vw - 50px), (min-width: 1024px) calc(114vw - 55px), (min-width: 768px) calc(100vw - 32px), calc(150vw - 48px)');
+/* painted width of the banner per breakpoint (full banner from 768px up; phones show a 16:10 frame cut from the right) */
+define('ECONUR_HERO_SIZES', '(min-width: 1528px) 1480px, (min-width: 1440px) calc(100vw - 48px), (min-width: 1024px) calc(100vw - 40px), (min-width: 768px) calc(100vw - 32px), calc(150vw - 36px)');
 // WordPress re-adds "auto, " to lazy images when it filters content; remove it again for the hero banners only.
 add_filter('wp_content_img_tag', function ($img) {
     return str_replace('sizes="auto, ' . ECONUR_HERO_SIZES . '"', 'sizes="' . ECONUR_HERO_SIZES . '"', $img);
@@ -44,12 +44,12 @@ add_shortcode('econur_hero', function () {
     $arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
     // mobile frame ratio: the first slide's own mobile image when there is one, otherwise 16:10 cut from the right of the banner
     $m_ratio = '';
-    if (!empty($slides[0]['mobile'])) { $mm = wp_get_attachment_metadata((int) $slides[0]['mobile']); if (!empty($mm['width']) && !empty($mm['height'])) $m_ratio = ' style="--ecn-hero-m-ar:' . (int) $mm['width'] . ' / ' . (int) $mm['height'] . '"'; }
+    if (!empty($slides[0]['mobile'])) { $mm = wp_get_attachment_metadata((int) $slides[0]['mobile']); if (!empty($mm['width']) && !empty($mm['height'])) $m_ratio = ' style="--ecn-hx-m-ar:' . (int) $mm['width'] . ' / ' . (int) $mm['height'] . '"'; }
 
     $o  = econur_hero_css();
-    $o .= '<section class="ecn-hsl ecn-hero' . ($m_ratio ? ' has-mobile' : '') . '" aria-roledescription="carousel" aria-label="Econur featured products"' . $m_ratio . '>';
+    $o .= '<section class="ecn-hsl ecn-hx' . ($m_ratio ? ' has-mobile' : '') . '" aria-roledescription="carousel" aria-label="Econur featured products"' . $m_ratio . '>';
     $o .= '<h1 class="ecn-visually-hidden">Econur: 100% natural, handmade skincare in zero-plastic packaging</h1>';
-    $o .= '<div class="ecn-hero-track">';
+    $o .= '<div class="ecn-hx-track">';
     foreach ($slides as $i => $s) {
         $first = 0 === $i;
         $d = (int) $s['desktop']; $m = (int) $s['mobile'];
@@ -57,7 +57,7 @@ add_shortcode('econur_hero', function () {
         if ('' === $alt) $alt = wp_strip_all_tags(str_replace("\n", ' ', $s['title']));
         $img = wp_get_attachment_image($d, 'full', false, array(
             'alt' => $alt, 'sizes' => ECONUR_HERO_SIZES, 'decoding' => $first ? 'sync' : 'async',
-            'loading' => $first ? 'eager' : 'lazy', 'fetchpriority' => $first ? 'high' : 'low', 'class' => 'ecn-hero-img',
+            'loading' => $first ? 'eager' : 'lazy', 'fetchpriority' => $first ? 'high' : 'low', 'class' => 'ecn-hx-img',
         ));
         $img = str_replace('sizes="auto, ', 'sizes="', $img);
         $src = '';
@@ -66,22 +66,23 @@ add_shortcode('econur_hero', function () {
             $src = '<source media="(max-width: 767px)" srcset="' . esc_attr($set ? $set : wp_get_attachment_image_url($m, 'full')) . '" sizes="100vw">';
         }
         $url = $s['url'] ? (0 === strpos($s['url'], '/') ? home_url($s['url']) : $s['url']) : '';
-        $o .= '<div class="ecn-hero-slide' . ($first ? ' is-on' : '') . ($src ? ' has-m' : '') . '" role="group" aria-roledescription="slide" aria-label="' . ($i + 1) . ' of ' . $n . '"' . ($first ? '' : ' aria-hidden="true" inert') . '>';
-        $o .= '<div class="ecn-hero-media"><picture>' . $src . $img . '</picture></div>';
-        $o .= '<div class="ecn-hero-copy">';
-        if ($s['eyebrow']) $o .= '<p class="ecn-hero-eyebrow">' . esc_html($s['eyebrow']) . '</p>';
-        if ($s['title'])   $o .= '<h2 class="ecn-hero-title">' . nl2br(esc_html($s['title']), false) . '</h2>';
-        if ($s['text'])    $o .= '<p class="ecn-hero-text">' . esc_html($s['text']) . '</p>';
-        if ($s['cta'] && $url) $o .= '<a class="ecn-hero-cta" href="' . esc_url($url) . '"><span>' . esc_html($s['cta']) . '</span>' . $arrow . '</a>';
+        $wd = max(12, min(45, (int) $s['width']));
+        $o .= '<div class="ecn-hx-slide' . ($first ? ' is-on' : '') . ($src ? ' has-m' : '') . '" style="--hx-w:' . $wd . '%" role="group" aria-roledescription="slide" aria-label="' . ($i + 1) . ' of ' . $n . '"' . ($first ? '' : ' aria-hidden="true" inert') . '>';
+        $o .= '<div class="ecn-hx-media"><picture>' . $src . $img . '</picture></div>';
+        $o .= '<div class="ecn-hx-copy">';
+        if ($s['eyebrow']) $o .= '<p class="ecn-hx-eyebrow">' . esc_html($s['eyebrow']) . '</p>';
+        if ($s['title'])   $o .= '<h2 class="ecn-hx-title">' . nl2br(esc_html($s['title']), false) . '</h2>';
+        if ($s['text'])    $o .= '<p class="ecn-hx-text">' . esc_html($s['text']) . '</p>';
+        if ($s['cta'] && $url) $o .= '<a class="ecn-hx-cta" href="' . esc_url($url) . '"><span>' . esc_html($s['cta']) . '</span>' . $arrow . '</a>';
         $o .= '</div></div>';
     }
     $o .= '</div>';
     if ($n > 1) {
-        $o .= '<button class="ecn-hero-arrow ecn-hero-prev" type="button" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg></button>';
-        $o .= '<button class="ecn-hero-arrow ecn-hero-next" type="button" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>';
-        $o .= '<div class="ecn-hero-ctl"><div class="ecn-hero-dots">';
+        $o .= '<button class="ecn-hx-arrow ecn-hx-prev" type="button" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg></button>';
+        $o .= '<button class="ecn-hx-arrow ecn-hx-next" type="button" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>';
+        $o .= '<div class="ecn-hx-ctl"><div class="ecn-hx-dots">';
         foreach ($slides as $i => $s) $o .= '<button type="button" aria-label="Show slide ' . ($i + 1) . ' of ' . $n . ': ' . esc_attr(wp_strip_all_tags(str_replace("\n", ' ', $s['title']))) . '"' . (0 === $i ? ' aria-current="true" class="is-on"' : '') . '></button>';
-        $o .= '</div><button class="ecn-hero-pause" type="button" aria-label="Pause slideshow" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 6.5v11a1 1 0 0 0 1.5.86l9-5.5a1 1 0 0 0 0-1.72l-9-5.5A1 1 0 0 0 8 6.5Z"/></svg></button></div>';
+        $o .= '</div><button class="ecn-hx-pause" type="button" aria-label="Pause slideshow" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 6.5v11a1 1 0 0 0 1.5.86l9-5.5a1 1 0 0 0 0-1.72l-9-5.5A1 1 0 0 0 8 6.5Z"/></svg></button></div>';
     }
     $o .= '</section>';
     if ($n > 1) $o .= econur_hero_js();
@@ -92,76 +93,75 @@ function econur_hero_css() {
     static $done = false;
     if ($done) return '';
     $done = true;
-    return '<style id="ecn-hero-css">
-.ecn-hero{ position:relative; box-sizing:border-box; width:calc(100% - 24px); max-width:1480px; margin:12px auto 0; border-radius:16px; overflow:hidden; background:#F4EEE4; isolation:isolate; font-family:var(--ecn-font-body); color:var(--ecn-ink); }
-.ecn-hero *{ box-sizing:border-box; }
-.ecn-hero-track{ display:grid; }
-.ecn-hero-slide{ grid-area:1 / 1; position:relative; display:flex; flex-direction:column; min-width:0; opacity:0; visibility:hidden; transition:opacity .6s ease, visibility 0s linear .6s; }
-.ecn-hero-slide.is-on{ opacity:1; visibility:visible; transition:opacity .6s ease, visibility 0s linear 0s; z-index:1; }
-.ecn-hero-media{ position:relative; overflow:hidden; aspect-ratio:var(--ecn-hero-m-ar, 16 / 10); background:#F4EEE4; }
-.ecn-hero-media picture{ display:contents; }
-.ecn-hero-media img{ position:absolute; inset:0; display:block; width:100%; height:100%; max-width:none; object-fit:cover; object-position:100% 50%; border-radius:0 !important; }
-.ecn-hero.has-mobile .ecn-hero-slide.has-m .ecn-hero-media img{ object-position:50% 50%; }
-.ecn-hero-copy{ flex:1 1 auto; padding:22px 20px 20px; }
-.ecn-hero-eyebrow{ margin:0 0 10px !important; font-family:var(--ecn-font-body); font-size:11.5px; font-weight:600; line-height:1.3; letter-spacing:.14em; text-transform:uppercase; color:var(--ecn-olive-dark); }
-.ecn-hero-title{ margin:0 !important; font-family:var(--ecn-font-head); font-size:clamp(38px, 2.2vw + 30px, 44px); font-weight:500; line-height:1.0; letter-spacing:-.015em; color:var(--ecn-ink); }
-.ecn-hero-text{ max-width:460px; margin:14px 0 0 !important; font-family:var(--ecn-font-body); font-size:15px; line-height:1.6; color:#55524A; }
-.ecn-hero-cta{ display:inline-flex; align-items:center; gap:10px; min-height:48px; margin-top:20px; padding:0 22px; border-radius:10px; background:var(--ecn-olive-dark); color:#FFFDF9 !important; font-family:var(--ecn-font-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.06em; text-transform:uppercase; text-decoration:none !important; transition:background-color .22s ease; }
-.ecn-hero-cta svg{ width:16px; height:16px; flex:none; transition:transform .22s ease; }
-.ecn-hero-cta:hover, .ecn-hero-cta:focus-visible{ background:#094A50; }
-.ecn-hero-cta:hover svg, .ecn-hero-cta:focus-visible svg{ transform:translateX(3px); }
-.ecn-hero-cta:focus-visible, .ecn-hero-arrow:focus-visible, .ecn-hero-dots button:focus-visible, .ecn-hero-pause:focus-visible{ outline:2px solid var(--ecn-olive-dark); outline-offset:3px; }
-.ecn-hero-arrow{ display:none; }
-.ecn-hero-ctl{ display:flex; align-items:center; justify-content:center; gap:4px; padding:0 12px 14px; }
-.ecn-hero-dots{ display:flex; align-items:center; }
-.ecn-hero-dots button, .ecn-hero-pause{ -webkit-appearance:none; appearance:none; position:relative; display:grid; place-items:center; width:28px; height:32px; margin:0; padding:0; border:0; border-radius:8px; background:none !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; }
-.ecn-hero-dots button::before{ content:""; width:7px; height:7px; border-radius:999px; background:rgba(42,40,35,.28); transition:width .3s ease, background-color .3s ease; }
-.ecn-hero-dots button.is-on::before{ width:22px; background:var(--ecn-olive-dark); }
-.ecn-hero-dots button.is-on{ width:40px; }
-.ecn-hero-pause svg{ width:14px; height:14px; opacity:.6; }
-.ecn-hero-pause .i-play, .ecn-hero.is-paused .ecn-hero-pause .i-pause{ display:none; }
-.ecn-hero.is-paused .ecn-hero-pause .i-play{ display:block; }
+    return '<style id="ecn-hx-css">
+.ecn-hx{ position:relative; box-sizing:border-box; width:calc(100% - 24px); max-width:1480px; margin:12px auto 0; border-radius:16px; overflow:hidden; background:#F4EEE4; isolation:isolate; font-family:var(--ecn-font-body); color:var(--ecn-ink); }
+.ecn-hx *{ box-sizing:border-box; }
+.ecn-hx-track{ display:grid; grid-template-columns:minmax(0,1fr); width:100%; }
+.ecn-hx-slide{ grid-area:1 / 1; position:relative; width:100%; display:flex; flex-direction:column; min-width:0; opacity:0; visibility:hidden; transition:opacity .6s ease, visibility 0s linear .6s; }
+.ecn-hx-slide.is-on{ opacity:1; visibility:visible; transition:opacity .6s ease, visibility 0s linear 0s; z-index:1; }
+.ecn-hx-media{ position:relative; overflow:hidden; aspect-ratio:var(--ecn-hx-m-ar, 16 / 10); background:#F4EEE4; }
+.ecn-hx-media picture{ display:contents; }
+.ecn-hx-media img{ position:absolute; inset:0; display:block; width:100%; height:100%; max-width:none; object-fit:cover; object-position:100% 50%; border-radius:0 !important; }
+.ecn-hx.has-mobile .ecn-hx-slide.has-m .ecn-hx-media img{ object-position:50% 50%; }
+.ecn-hx-copy{ flex:1 1 auto; padding:22px 20px 20px; }
+.ecn-hx-eyebrow{ margin:0 0 10px !important; font-family:var(--ecn-font-body); font-size:11.5px; font-weight:600; line-height:1.3; letter-spacing:.14em; text-transform:uppercase; color:var(--ecn-olive-dark); }
+.ecn-hx-title{ margin:0 !important; font-family:var(--ecn-font-head); font-size:clamp(38px, 2.2vw + 30px, 44px); font-weight:500; line-height:1.0; letter-spacing:-.015em; color:var(--ecn-ink); }
+.ecn-hx-text{ max-width:460px; margin:14px 0 0 !important; font-family:var(--ecn-font-body); font-size:15px; line-height:1.6; color:#55524A; }
+.ecn-hx-cta{ display:inline-flex; align-items:center; gap:10px; min-height:48px; margin-top:20px; padding:0 22px; border-radius:10px; background:var(--ecn-olive-dark); color:#FFFDF9 !important; font-family:var(--ecn-font-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.06em; text-transform:uppercase; text-decoration:none !important; transition:background-color .22s ease; }
+.ecn-hx-cta svg{ width:16px; height:16px; flex:none; transition:transform .22s ease; }
+.ecn-hx-cta:hover, .ecn-hx-cta:focus-visible{ background:#094A50; }
+.ecn-hx-cta:hover svg, .ecn-hx-cta:focus-visible svg{ transform:translateX(3px); }
+.ecn-hx-cta:focus-visible, .ecn-hx-arrow:focus-visible, .ecn-hx-dots button:focus-visible, .ecn-hx-pause:focus-visible{ outline:2px solid var(--ecn-olive-dark); outline-offset:3px; }
+.ecn-hx-arrow{ display:none; }
+.ecn-hx-ctl{ display:flex; align-items:center; justify-content:center; gap:4px; padding:0 12px 14px; }
+.ecn-hx-dots{ display:flex; align-items:center; }
+.ecn-hx-dots button, .ecn-hx-pause{ -webkit-appearance:none; appearance:none; position:relative; display:grid; place-items:center; width:28px; height:32px; margin:0; padding:0; border:0; border-radius:8px; background:none !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; }
+.ecn-hx-dots button::before{ content:""; width:7px; height:7px; border-radius:999px; background:rgba(42,40,35,.28); transition:width .3s ease, background-color .3s ease; }
+.ecn-hx-dots button.is-on::before{ width:22px; background:var(--ecn-olive-dark); }
+.ecn-hx-dots button.is-on{ width:40px; }
+.ecn-hx-pause svg{ width:14px; height:14px; opacity:.6; }
+.ecn-hx-pause .i-play, .ecn-hx.is-paused .ecn-hx-pause .i-pause{ display:none; }
+.ecn-hx.is-paused .ecn-hx-pause .i-play{ display:block; }
 @media (min-width:768px){
-  .ecn-hero{ width:calc(100% - 32px); margin-top:16px; }
-  .ecn-hero-media{ aspect-ratio:1942 / 809; }
-  .ecn-hero .ecn-hero-media img{ object-position:100% 50%; }
-  .ecn-hero-copy{ padding:26px 32px 22px; }
-  .ecn-hero-text{ font-size:16px; }
+  .ecn-hx{ width:calc(100% - 32px); margin-top:16px; }
+  .ecn-hx-media{ aspect-ratio:1942 / 809; }
+  .ecn-hx .ecn-hx-media img{ object-position:100% 50%; }
+  .ecn-hx-copy{ padding:26px 32px 22px; }
+  .ecn-hx-text{ font-size:16px; }
 }
 @media (min-width:1024px){
-  .ecn-hero{ width:calc(100% - 40px); border-radius:18px; }
-  .ecn-hero-slide{ display:block; }
-  .ecn-hero-media{ aspect-ratio:2.1 / 1; }
-  .ecn-hero-copy{ position:absolute; z-index:2; left:5.5%; top:50%; transform:translateY(-52%); width:31%; max-width:470px; padding:0; }
-  .ecn-hero-eyebrow{ font-size:12px; margin-bottom:14px !important; }
-  .ecn-hero-title{ font-size:clamp(50px, 2.2vw + 24px, 60px); font-weight:500; line-height:.98; }
-  .ecn-hero-text{ max-width:420px; margin-top:18px !important; font-size:16px; line-height:1.6; }
-  .ecn-hero-cta{ margin-top:26px; min-height:50px; padding:0 24px; }
-  .ecn-hero-arrow{ position:absolute; z-index:3; top:50%; display:grid; place-items:center; width:40px; height:40px; margin-top:-20px; padding:0; border:0; border-radius:50%; background:rgba(255,253,249,.55) !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; opacity:.55; transition:opacity .2s ease, background-color .2s ease; }
-  .ecn-hero-arrow svg{ width:20px; height:20px; }
-  .ecn-hero-prev{ left:14px; } .ecn-hero-next{ right:14px; }
-  .ecn-hero:hover .ecn-hero-arrow, .ecn-hero-arrow:focus-visible{ opacity:1; background:rgba(255,253,249,.9) !important; }
-  .ecn-hero-ctl{ position:absolute; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); padding:2px 6px; border-radius:999px; background:rgba(255,253,249,.62); }
-  .ecn-hero-dots button{ width:24px; height:28px; }
-  .ecn-hero-dots button.is-on{ width:36px; }
-  .ecn-hero-pause{ width:26px; height:28px; }
+  .ecn-hx{ width:calc(100% - 40px); border-radius:18px; }
+  .ecn-hx-slide{ display:block; }
+  .ecn-hx-media{ aspect-ratio:1942 / 809; }
+  .ecn-hx-copy{ position:absolute; z-index:2; left:5.5%; top:50%; transform:translateY(-52%); width:var(--hx-w, 30%); max-width:470px; padding:0; }
+  .ecn-hx-eyebrow{ font-size:12px; margin-bottom:14px !important; }
+  .ecn-hx-title{ font-size:clamp(46px, 2.2vw + 24px, 60px); font-weight:500; line-height:.98; white-space:nowrap; }
+  .ecn-hx-text{ max-width:none; margin-top:18px !important; font-size:16px; line-height:1.6; }
+  .ecn-hx-cta{ margin-top:26px; min-height:50px; padding:0 24px; }
+  .ecn-hx-arrow{ position:absolute; z-index:3; top:50%; display:grid; place-items:center; width:40px; height:40px; margin-top:-20px; padding:0; border:0; border-radius:50%; background:rgba(255,253,249,.55) !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; opacity:.55; transition:opacity .2s ease, background-color .2s ease; }
+  .ecn-hx-arrow svg{ width:20px; height:20px; }
+  .ecn-hx-prev{ left:14px; } .ecn-hx-next{ right:14px; }
+  .ecn-hx:hover .ecn-hx-arrow, .ecn-hx-arrow:focus-visible{ opacity:1; background:rgba(255,253,249,.9) !important; }
+  .ecn-hx-ctl{ position:absolute; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); padding:2px 6px; border-radius:999px; background:rgba(255,253,249,.62); }
+  .ecn-hx-dots button{ width:24px; height:28px; }
+  .ecn-hx-dots button.is-on{ width:36px; }
+  .ecn-hx-pause{ width:26px; height:28px; }
 }
-@media (min-width:1280px){ .ecn-hero-media{ aspect-ratio:2.3 / 1; } .ecn-hero-copy{ left:5.5%; width:30%; } }
-@media (min-width:1440px){ .ecn-hero-media{ aspect-ratio:1942 / 809; } .ecn-hero{ width:calc(100% - 48px); } }
-@media (prefers-reduced-motion: reduce){ .ecn-hero-slide, .ecn-hero-slide.is-on, .ecn-hero-cta, .ecn-hero-cta svg{ transition:none !important; } }
+@media (min-width:1440px){ .ecn-hx{ width:calc(100% - 48px); } }
+@media (prefers-reduced-motion: reduce){ .ecn-hx-slide, .ecn-hx-slide.is-on, .ecn-hx-cta, .ecn-hx-cta svg{ transition:none !important; } }
 </style>';
 }
 
 function econur_hero_js() {
-    return '<script>(function(){var s=document.currentScript&&document.currentScript.previousElementSibling;if(!s||!s.classList.contains("ecn-hero"))return;
-var sl=[].slice.call(s.querySelectorAll(".ecn-hero-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hero-dots button")),pb=s.querySelector(".ecn-hero-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=5500,
+    return '<script>(function(){var s=document.currentScript&&document.currentScript.previousElementSibling;if(!s||!s.classList.contains("ecn-hx"))return;
+var sl=[].slice.call(s.querySelectorAll(".ecn-hx-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hx-dots button")),pb=s.querySelector(".ecn-hx-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=5500,
 rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(rm){paused=true;s.classList.add("is-paused");pb.setAttribute("aria-pressed","true");pb.setAttribute("aria-label","Play slideshow");}
 function wake(el){[].forEach.call(el.querySelectorAll("img[loading=lazy]"),function(i){i.loading="eager";});}
 function go(i){i=(i+n)%n;if(i===cur)return;var a=sl[cur],b=sl[i];wake(b);a.classList.remove("is-on");a.setAttribute("aria-hidden","true");a.inert=true;b.classList.add("is-on");b.removeAttribute("aria-hidden");b.inert=false;
 d.forEach(function(x,k){x.classList.toggle("is-on",k===i);if(k===i){x.setAttribute("aria-current","true");}else{x.removeAttribute("aria-current");}});cur=i;wake(sl[(i+1)%n]);}
 function stop(){if(timer){clearTimeout(timer);timer=null;}}function run(){stop();if(paused||hover||document.hidden)return;timer=setTimeout(function(){go(cur+1);run();},DELAY);}
 d.forEach(function(b,k){b.addEventListener("click",function(){go(k);run();});});
-s.querySelector(".ecn-hero-prev").addEventListener("click",function(){go(cur-1);run();});s.querySelector(".ecn-hero-next").addEventListener("click",function(){go(cur+1);run();});
+s.querySelector(".ecn-hx-prev").addEventListener("click",function(){go(cur-1);run();});s.querySelector(".ecn-hx-next").addEventListener("click",function(){go(cur+1);run();});
 pb.addEventListener("click",function(){paused=!paused;s.classList.toggle("is-paused",paused);pb.setAttribute("aria-pressed",paused?"true":"false");pb.setAttribute("aria-label",paused?"Play slideshow":"Pause slideshow");run();});
 s.addEventListener("mouseenter",function(){hover=true;stop();});s.addEventListener("mouseleave",function(){hover=false;run();});
 s.addEventListener("focusin",function(){hover=true;stop();});s.addEventListener("focusout",function(e){if(!s.contains(e.relatedTarget)){hover=false;run();}});
@@ -188,7 +188,7 @@ add_action('admin_post_econur_hero_save', function () {
         if (!$d) continue;
         $slides[] = array(
             'order' => intval($r['order'] ?? 0), 'on' => empty($r['on']) ? 0 : 1, 'desktop' => $d, 'mobile' => absint($r['mobile'] ?? 0),
-            'eyebrow' => sanitize_text_field($r['eyebrow'] ?? ''), 'title' => sanitize_textarea_field($r['title'] ?? ''),
+            'width' => max(12, min(45, absint($r['width'] ?? 30))), 'eyebrow' => sanitize_text_field($r['eyebrow'] ?? ''), 'title' => sanitize_textarea_field($r['title'] ?? ''),
             'text' => sanitize_textarea_field($r['text'] ?? ''), 'cta' => sanitize_text_field($r['cta'] ?? ''), 'url' => esc_url_raw(trim($r['url'] ?? '')),
         );
     }
@@ -206,7 +206,7 @@ function econur_hero_admin_page() {
     wp_enqueue_media();
     $slides = get_option('econur_hero_slides');
     if (!is_array($slides) || !$slides) $slides = econur_hero_default_slides();
-    $slides[] = array('on' => 0, 'desktop' => 0, 'mobile' => 0, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => '');
+    $slides[] = array('on' => 0, 'desktop' => 0, 'mobile' => 0, 'width' => 30, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => '');
     $thumb = function ($id) { return $id ? wp_get_attachment_image((int) $id, array(160, 80), false, array('style' => 'width:160px;height:auto;display:block')) : ''; };
     echo '<div class="wrap"><h1>Hero Slides</h1><p>Homepage hero, shown in the order below (lowest number first). Headings: each new line is a line break. The mobile image is optional; without it phones show the desktop banner, trimmed from the left.</p>';
     if (!empty($_GET['saved'])) echo '<div class="notice notice-success"><p>Saved. The page cache has been cleared.</p></div>';
@@ -226,6 +226,7 @@ function econur_hero_admin_page() {
         echo '<p><label>Eyebrow<br><input class="regular-text" name="s[' . $i . '][eyebrow]" value="' . esc_attr($s['eyebrow']) . '"></label></p>';
         echo '<p><label>Heading<br><textarea name="s[' . $i . '][title]" rows="3" class="large-text">' . esc_textarea($s['title']) . '</textarea></label></p>';
         echo '<p><label>Description<br><textarea name="s[' . $i . '][text]" rows="2" class="large-text">' . esc_textarea($s['text']) . '</textarea></label></p>';
+        echo '<p><label>Text column width on desktop (% of banner width, keep the text clear of the products)<br><input type="number" min="12" max="45" name="s[' . $i . '][width]" value="' . (int) ($s['width'] ?? 30) . '" style="width:80px"></label></p>';
         echo '<p><label>Button label<br><input class="regular-text" name="s[' . $i . '][cta]" value="' . esc_attr($s['cta']) . '"></label> <label>Button link<br><input class="regular-text" name="s[' . $i . '][url]" value="' . esc_attr($s['url']) . '"></label></p>';
         if ($new) echo '<p class="description">Empty row: choose a desktop image to add a new slide.</p>';
         echo '</td></tr>';
