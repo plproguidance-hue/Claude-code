@@ -1,0 +1,70 @@
+function econur_v6_find_bar() {
+    // v8: numbered concern selector + one recommendation card. Every fact on the card is the bar's own WooCommerce data
+    // (name, price / sale price, size, first highlight, key ingredients, skin types, product link). Switching stays in
+    // econur-motion.js ([data-v7-tabs]); all panels are rendered so a switch never reloads anything.
+    // Per bar: concern icon, an optional campaign photo (media id) used instead of the product photo, and the focal point
+    // used where the photo fills a frame of a different shape.
+    $art = array(
+        'active-defense-bar'       => array('face', (int) apply_filters('econur_fyb_active_defense_image', 111), '50% 55%'),
+        'licorice-brightening-bar' => array('sun', 0, '50% 62%'),
+        'caffiend-bar'             => array('pores', 0, '50% 58%'),
+        'herbifresh-bar'           => array('drop', 0, '58% 42%'),
+        'olivelle-bar'             => array('feather', 0, '50% 54%'),
+    );
+    $tabs = ''; $panels = ''; $n = 0;
+    foreach (econur_v6_products() as $p) {
+        if (!econur_v6_list($p->get_id(), 'econur_skin_type')) continue;
+        $slug = $p->get_slug(); $id = 'fyb-' . $slug; $on = 0 === $n;
+        $a = isset($art[$slug]) ? $art[$slug] : array('leaf', 0, '50% 55%');
+        $buy = econur_v6_buy($p);
+        $hl = econur_v6_pairs($p->get_id(), 'econur_highlights');
+        $note = $hl ? $hl[0][1] : '';
+        $key = econur_v6_list($p->get_id(), 'econur_key_ingredients');
+        $skin = econur_v6_list($p->get_id(), 'econur_skin_type');
+        $link = get_permalink($p->get_id());
+        $img = $a[1] && wp_attachment_is_image($a[1]) ? $a[1] : (int) $p->get_image_id();
+        $meta = $img ? wp_get_attachment_metadata($img) : array();
+        $wide = !empty($meta['width']) && !empty($meta['height']) && $meta['width'] > $meta['height'];
+        $alt = $img ? trim((string) get_post_meta($img, '_wp_attachment_image_alt', true)) : '';
+        if ('' === $alt) $alt = 'ECONUR ' . $p->get_name() . ', handmade soap bar';
+        $pic = $img ? str_replace('sizes="auto, ', 'sizes="', econur_v6_img($img, 'full', $wide ? ECONUR_FYB_SIZES_WIDE : ECONUR_FYB_SIZES, $alt, 'object-position:' . $a[2])) : '';
+        $tabs .= '<button type="button" class="v7-fyb-tab" role="tab" id="' . esc_attr($id) . '-t" aria-controls="' . esc_attr($id) . '" aria-selected="' . ($on ? 'true' : 'false') . '" tabindex="' . ($on ? '0' : '-1') . '">'
+            . '<span class="v8-fyb-num" aria-hidden="true">' . sprintf('%02d', $n + 1) . '</span><span class="v8-fyb-ico" aria-hidden="true">' . econur_v6_fyb_icon($a[0]) . '</span>'
+            . '<span class="v8-fyb-lab">' . esc_html(econur_v6_concern_short($p)) . '</span><span class="v8-fyb-go" aria-hidden="true">' . econur_v6_icon('arrow') . '</span></button>';
+        $panels .= '<div class="v7-fyb-panel" role="tabpanel" id="' . esc_attr($id) . '" aria-labelledby="' . esc_attr($id) . '-t"' . ($on ? '' : ' hidden') . '>'
+            . '<a class="v7-fyb-media" href="' . esc_url($link) . '" tabindex="-1">' . $pic . '</a>'
+            . '<div class="v7-fyb-info"><p class="v8-fyb-eyebrow">' . esc_html(econur_v6_concern($p)) . '</p>'
+            . '<h3 class="v7-fyb-name">' . esc_html($p->get_name()) . '</h3>'
+            . ($note ? '<p class="v7-fyb-note">' . esc_html($note) . '</p>' : '')
+            . (($key || $skin) ? '<dl class="v8-fyb-facts">' . ($key ? '<div class="v8-fyb-fact is-key"><dt>Key ingredients</dt><dd>' . esc_html(implode(', ', $key)) . '</dd></div>' : '') . ($skin ? '<div class="v8-fyb-fact is-skin"><dt>Best for</dt><dd>' . esc_html(implode(', ', $skin)) . '</dd></div>' : '') . '</dl>' : '')
+            . '<div class="v7-fyb-buy">' . ($buy ? econur_v6_price_html($buy) : '') . '<a class="v8-fyb-cta" href="' . esc_url($link) . '"><span>Explore product</span>' . econur_v6_icon('arrow') . '</a></div>'
+            . '</div></div>';
+        $n++;
+    }
+    if (!$n) return '';
+    return '<div class="v6-head v8-fyb-head"><span class="v8-fyb-mark" aria-hidden="true">' . econur_v6_icon('leaf') . '</span>'
+        . '<h2 class="v6-h2" id="v6-find-t">Find Your Bar</h2><p class="v6-sub">Match the bar to your skin in ten seconds.</p></div>'
+        . '<div class="v7-fyb v8-fyb" data-v7-tabs><div class="v7-fyb-tabs" role="tablist" aria-label="Choose your skin concern">' . $tabs . '</div><div class="v7-fyb-panels">' . $panels . '</div></div>';
+}
+
+// Find Your Bar concern icons (line icons in the same 24px / 1.5 stroke style as econur_v6_icon).
+function econur_v6_fyb_icon($k) {
+    $d = array(
+        'face'    => '<path d="M12 3.2c-3.9 0-6.6 2.9-6.6 7.1 0 4.9 3.1 10.5 6.6 10.5s6.6-5.6 6.6-10.5c0-4.2-2.7-7.1-6.6-7.1Z"/><path d="M9.7 10.3v.8M14.3 10.3v.8M10.2 15.4c1.1.7 2.5.7 3.6 0M7.9 13.2h.01M16.1 13.2h.01"/>',
+        'sun'     => '<circle cx="12" cy="12" r="3.8"/><path d="M12 3v1.8M12 19.2V21M5.64 5.64l1.27 1.27M17.09 17.09l1.27 1.27M3 12h1.8M19.2 12H21M5.64 18.36l1.27-1.27M17.09 6.91l1.27-1.27"/>',
+        'pores'   => '<path d="M3 15.5c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0 3-1.2 4.5 0 3 1.2 4.5 0M7.5 19.5h.01M12 20h.01M16.5 19.5h.01M12 11V4M9.5 6.5 12 4l2.5 2.5"/>',
+        'feather' => '<path d="M19.6 4.4c-5.3-.6-10.4 2.7-11.3 8.9L7.8 17l3.7-.5c6.2-.9 9.5-6 8.1-12.1Z"/><path d="M4 20l8.5-8.5M11.2 13.8H15M13.6 11.4h3.2"/>',
+    );
+    if (!isset($d[$k])) return econur_v6_icon($k);
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $d[$k] . '</svg>';
+}
+
+// The card photo fills a cropped frame (object-fit: cover), so sizes describes the painted width: a landscape campaign
+// photo is painted wider than its frame on desktop. WordPress re-adds "auto, " to lazy images when it filters content.
+if (!defined('ECONUR_FYB_SIZES')) define('ECONUR_FYB_SIZES', '(min-width: 1280px) 440px, (min-width: 1024px) calc(48vw - 24px), (min-width: 768px) calc(100vw - 48px), calc(100vw - 32px)');
+if (!defined('ECONUR_FYB_SIZES_WIDE')) define('ECONUR_FYB_SIZES_WIDE', '(min-width: 1024px) 700px, (min-width: 768px) calc(100vw - 48px), calc(100vw - 32px)');
+add_filter('wp_content_img_tag', function ($img) {
+    if (false === strpos($img, 'sizes="auto, ')) return $img;
+    foreach (array(ECONUR_FYB_SIZES, ECONUR_FYB_SIZES_WIDE) as $s) $img = str_replace('sizes="auto, ' . $s . '"', 'sizes="' . $s . '"', $img);
+    return $img;
+});
