@@ -19,3 +19,13 @@ Planned implementation (WordPress, Astra child theme "econur"):
 3. Favicon: set option `site_icon` to the new icon attachment (WordPress outputs 32/192 icons, apple-touch 180, msapplication 270).
 4. Leave logos inside product/packaging/banner photos unchanged. Footer logo is out of scope unless the owner asks.
 5. Back up the previous `custom_logo` / `site_icon` values before switching; verify desktop + mobile header and head icon tags.
+
+## Implemented on the live site (29 Sep 2026, on the site version restored to ~24 Sep 2026)
+- Media: logo = attachment 98 (econur-logo-official.webp), icon = attachment 99 (econur-icon-official.webp),
+  site icon = attachment 100 (econur-site-icon-official.png, 512 px, scaled from 99; WordPress sizes 32/64/180/192/270).
+- Settings: theme_mod custom_logo 39 -> 98; option site_icon 76 -> 100; Astra logo width 150/130/115 -> 142/126/112.
+- Customizer > Additional CSS: one rule showing the wordmark area of the logo (object-fit, transparent margins only).
+- functions.php: `sizes` filter for the header logo (backup: functions.php.bak-brand-20260929).
+- /favicon.ico created (16/32/48 px from attachment 100).
+- Previous values saved in option `econur_brand_backup_20260929`.
+- Not changed: footer logo in Astra footer HTML widget (still logo-1.png).
