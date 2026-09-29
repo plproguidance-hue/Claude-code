@@ -1,0 +1,18 @@
+function econur_v6_crafted() {
+    // v8 brand story: the text-free photo (media 109, 1448 x 1086) shown whole at its own 4:3 ratio beside an editorial
+    // copy block. Three proof rows (line icon + title + one short line) replace the old bullet list.
+    $facts = array(
+        array('hand', 'Hand-cut in small batches', 'Thoughtfully crafted with care.'),
+        array('drop', 'Cold-pressed oils', 'Plant-based oils used in every batch.'),
+        array('pin', 'Made in Bangladesh', 'Locally crafted with thoughtful care.'),
+    );
+    $rows = '';
+    foreach ($facts as $f) $rows .= '<li class="v8-craft-row"><span class="v8-craft-ico" aria-hidden="true">' . econur_v6_icon($f[0]) . '</span><span class="v8-craft-txt"><b>' . esc_html($f[1]) . '</b><small>' . esc_html($f[2]) . '</small></span></li>';
+    $img = (int) apply_filters('econur_crafted_image', 109);
+    return '<div class="v7-craft v8-craft">'
+        . '<figure class="v7-craft-media">' . econur_v6_img($img, 'full', '(min-width: 1366px) 710px, (min-width: 1024px) 54vw, (min-width: 768px) calc(100vw - 48px), calc(100vw - 32px)', get_post_meta($img, '_wp_attachment_image_alt', true)) . '</figure>'
+        . '<div class="v7-craft-copy"><p class="v8-craft-eyebrow">Handmade in Bangladesh</p><h2 class="v8-craft-t" id="v6-craft-t">Crafted in Bangladesh</h2>'
+        . '<p class="v8-craft-p">Handcrafted, 100% natural skincare, made in Bangladesh from cold-pressed oils and plant botanicals, in packaging that returns to the soil.</p>'
+        . '<ul class="v8-craft-rows">' . $rows . '</ul>'
+        . '<a class="v8-craft-cta" href="' . esc_url(wc_get_page_permalink('shop')) . '"><span>Shop all bars</span>' . econur_v6_icon('arrow') . '</a></div></div>';
+}
