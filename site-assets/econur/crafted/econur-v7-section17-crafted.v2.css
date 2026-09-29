@@ -1,0 +1,72 @@
+
+/* 17 ------------------------------------------- crafted in bangladesh: brand story (v8) */
+/* Markup: econur_v6_crafted() in inc/home-v6.php. The final Caffiend banner (media 110, 1448 x 1086) is shown whole at its
+   own 4:3 ratio (no crop, packaging label and branding untouched). Desktop: photo ~55% + copy ~45%. Tablet + phones: photo first, copy under it.
+   The older .v7-craft rules above stay for rollback. */
+.elementor .e-con.v6-host#crafted{ background:var(--v6-ivory) !important; }
+.v6.v6-crafted-sec{ padding-top:48px !important; padding-bottom:56px !important; }
+.v6 .v7-craft.v8-craft{ display:flex; flex-direction:column; gap:0; align-items:stretch; }
+.v6 .v8-craft .v7-craft-media{ aspect-ratio:auto; margin:0; overflow:hidden; border-radius:14px; background:#EFE6DA; }
+.v6 .v8-craft .v7-craft-media img{ display:block; width:100%; height:auto; object-fit:fill; transition:none; }
+.v6 .v8-craft:hover .v7-craft-media img{ transform:none; }
+.v6 .v8-craft .v7-craft-copy{ max-width:none; padding-top:30px; }
+.v8-craft .v8-craft-eyebrow{ display:flex; align-items:center; gap:12px; margin:0 0 10px; font-family:var(--v6-body); font-size:11px; font-weight:600; line-height:1.3; letter-spacing:.17em; text-transform:uppercase; color:var(--v6-green); }
+.v8-craft .v8-craft-eyebrow::after{ content:""; width:28px; height:1px; background:currentColor; opacity:.45; }
+.v8-craft .v8-craft-t{ margin:0; font-family:var(--v6-head); font-size:clamp(34px, 1.6vw + 28px, 40px); font-weight:600; line-height:1.04; letter-spacing:-.01em; color:var(--v6-ink); text-wrap:balance; }
+.v8-craft .v8-craft-p{ max-width:500px; margin:16px 0 0; font-family:var(--v6-body); font-size:15.5px; line-height:1.6; color:#6C7069; }
+.v8-craft .v8-craft-rows{ margin:24px 0 0 !important; padding:0; list-style:none; border-top:1px solid #E8E3DA; }
+.v8-craft .v8-craft-row{ display:grid; grid-template-columns:42px minmax(0,1fr); align-items:center; column-gap:14px; padding:16px 0; border-bottom:1px solid #E8E3DA; }
+.v8-craft .v8-craft-ico{ display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:#F1ECE2; color:var(--v6-green); }
+.v8-craft .v8-craft-ico svg{ width:19px; height:19px; }
+.v8-craft .v8-craft-txt{ display:block; min-width:0; }
+.v8-craft .v8-craft-txt b{ display:block; font-family:var(--v6-head); font-size:19px; font-weight:600; line-height:1.2; letter-spacing:-.005em; color:var(--v6-green); }
+.v8-craft .v8-craft-txt small{ display:block; margin-top:3px; font-family:var(--v6-body); font-size:13.5px; line-height:1.45; color:#6E6F67; }
+.v8-craft .v8-craft-cta{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; margin-top:24px; padding:0 26px; border-radius:10px; background:var(--v6-green); color:#fff !important; font-family:var(--v6-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.01em; text-decoration:none !important; transition:background-color .2s ease, transform .2s var(--v6-ease); }
+.v8-craft .v8-craft-cta svg{ width:16px; height:16px; flex:none; transition:transform .2s var(--v6-ease); }
+.v8-craft .v8-craft-cta:hover{ background:#103B33; transform:translateY(-1px); }
+.v8-craft .v8-craft-cta:hover svg, .v8-craft .v8-craft-cta:focus-visible svg{ transform:translateX(3px); }
+.v8-craft .v8-craft-cta:focus{ outline:none; }
+.v8-craft .v8-craft-cta:focus-visible{ outline:2px solid var(--v6-green); outline-offset:3px; }
+
+/* reveal (econur-motion.js): photo rises 12px, copy 14px, the three rows follow 60ms apart */
+.v6 .v8-craft .v7-craft-media.v7-rv{ transform:translateY(12px); }
+.v6 .v8-craft .v7-craft-copy.v7-rv{ transform:translateY(14px); }
+.v6 .v8-craft .v7-craft-media.v7-rv.is-in, .v6 .v8-craft .v7-craft-copy.v7-rv.is-in{ transform:none; }
+.v8-craft .v7-craft-copy.v7-rv .v8-craft-row{ opacity:0; transform:translateY(8px); transition:opacity .45s var(--v6-ease), transform .45s var(--v6-ease); }
+.v8-craft .v7-craft-copy.v7-rv.is-in .v8-craft-row{ opacity:1; transform:none; }
+.v8-craft .v7-craft-copy.v7-rv .v8-craft-row:nth-child(1){ transition-delay:200ms; }
+.v8-craft .v7-craft-copy.v7-rv .v8-craft-row:nth-child(2){ transition-delay:260ms; }
+.v8-craft .v7-craft-copy.v7-rv .v8-craft-row:nth-child(3){ transition-delay:320ms; }
+
+@media (min-width:768px){
+  .v6.v6-crafted-sec{ padding-top:64px !important; padding-bottom:64px !important; }
+  .v6 .v8-craft .v7-craft-media{ border-radius:16px; }
+  .v6 .v8-craft .v7-craft-copy{ max-width:600px; padding-top:34px; }
+  .v8-craft .v8-craft-t{ font-size:clamp(40px, 1.4vw + 30px, 46px); }
+  .v8-craft .v8-craft-p{ font-size:16px; }
+  .v8-craft .v8-craft-txt b{ font-size:20px; }
+  .v8-craft .v8-craft-cta{ min-height:50px; }
+}
+@media (min-width:1024px){
+  .v6.v6-crafted-sec{ padding-top:80px !important; padding-bottom:80px !important; }
+  .v6 .v7-craft.v8-craft{ display:grid; grid-template-columns:minmax(0,58fr) minmax(0,42fr); column-gap:clamp(48px, 4.6vw, 68px); align-items:center; }
+  .v6 .v8-craft .v7-craft-media{ border-radius:18px; }
+  .v6 .v8-craft .v7-craft-copy{ max-width:540px; padding-top:0; }
+  .v8-craft .v8-craft-eyebrow{ font-size:11.5px; margin-bottom:14px; }
+  .v8-craft .v8-craft-t{ font-size:clamp(48px, 1.6vw + 32px, 58px); line-height:1.0; }
+  .v8-craft .v8-craft-p{ margin-top:18px; font-size:16.5px; line-height:1.62; }
+  .v8-craft .v8-craft-rows{ margin-top:26px !important; }
+  .v8-craft .v8-craft-row{ grid-template-columns:46px minmax(0,1fr); column-gap:16px; padding:16px 0; }
+  .v8-craft .v8-craft-ico{ width:46px; height:46px; }
+  .v8-craft .v8-craft-ico svg{ width:20px; height:20px; }
+  .v8-craft .v8-craft-txt b{ font-size:21px; }
+  .v8-craft .v8-craft-txt small{ font-size:14px; }
+  .v8-craft .v8-craft-cta{ min-height:52px; margin-top:28px; padding:0 28px; font-size:15px; }
+}
+@media (min-width:1280px){
+  .v8-craft .v8-craft-p{ font-size:17px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .v8-craft .v7-craft-copy.v7-rv .v8-craft-row{ opacity:1 !important; transform:none !important; transition:none !important; }
+  .v8-craft .v8-craft-cta:hover, .v8-craft .v8-craft-cta:hover svg, .v8-craft .v8-craft-cta:focus-visible svg{ transform:none !important; transition:none !important; }
+}
