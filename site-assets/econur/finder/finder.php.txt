@@ -39,10 +39,14 @@ function econur_finder_ingredients($pid) {
     return econur_finder_sentence(($parts ? implode(', ', $parts) . ' and ' . $last : $last) . '.');
 }
 
-// Sentence case that keeps acronyms: "Made for Oily Skin" -> "Made for oily skin", "Tea Tree EO" stays "EO".
+// Sentence case that keeps acronyms: "Made for Oily Skin" -> "Made for oily skin", "Two-Way" -> "Two-way", "Tea Tree EO" stays "EO".
 function econur_finder_sentence($s) {
     $w = explode(' ', $s);
-    foreach ($w as $n => $x) if ($n > 0 && $x !== strtoupper($x)) $w[$n] = lcfirst($x);
+    foreach ($w as $n => $x) {
+        $parts = explode('-', $x);
+        foreach ($parts as $i => $pt) if (($n > 0 || $i > 0) && $pt !== strtoupper($pt)) $parts[$i] = lcfirst($pt);
+        $w[$n] = implode('-', $parts);
+    }
     return implode(' ', $w);
 }
 

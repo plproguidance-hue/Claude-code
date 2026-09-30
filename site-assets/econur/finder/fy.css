@@ -1,0 +1,132 @@
+
+/* Find your bar v2: concern finder ([econur_finder] in inc/finder.php) with the reassurance row inside the same card */
+.ecn-fy{ --fy-teal:#0D585F; --fy-teal-dark:#0A474D; --fy-ink:#1E2624; --fy-muted:#6F6B63; --fy-line:#E9E2D6; --fy-wash:#EDF4F2; --fy-leaf:url("https://econur.shop/wp-content/uploads/2026/09/econur-sale-sprig.webp");
+  position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin:0; padding:20px 14px 16px; border:1px solid #EFE8DC; border-radius:20px;
+  background:radial-gradient(60% 45% at 100% 0%, rgba(233,241,236,.9), rgba(233,241,236,0) 70%), linear-gradient(180deg, #FCFAF5 0%, #F8F4EC 100%); box-shadow:0 10px 30px rgba(52,44,30,.05); }
+.ecn-fy::before{ content:""; position:absolute; z-index:-1; top:-14px; right:-26px; width:150px; height:78px; background:var(--fy-leaf) right top / contain no-repeat; transform:scaleX(-1); opacity:.26; pointer-events:none;
+  -webkit-mask-image:radial-gradient(100% 100% at 0% 0%, #000 40%, rgba(0,0,0,0) 100%); mask-image:radial-gradient(100% 100% at 0% 0%, #000 40%, rgba(0,0,0,0) 100%); }
+/* heading */
+.ecn-fy-eyebrow{ display:flex; align-items:center; gap:8px; margin:0 0 6px; font-size:9.5px; font-weight:600; line-height:1.2; letter-spacing:.2em; text-transform:uppercase; color:var(--fy-teal); }
+.ecn-fy-eyebrow::after{ content:""; flex:none; width:22px; height:1px; background:currentColor; opacity:.7; }
+.ecn-fy .ecn-fy-title{ margin:0 !important; padding:0 !important; font-family:var(--ecn-font-head) !important; font-weight:500 !important; font-size:28px !important; line-height:1.05 !important; letter-spacing:-.015em; color:var(--fy-ink) !important; }
+.ecn-fy-sub{ margin:6px 0 0; font-size:13.5px; line-height:1.45; color:var(--fy-muted); }
+/* concern tabs: phones = one swipeable row */
+.ecn-fy-tabs{ display:flex; gap:8px; margin:0 -14px; padding:2px 14px 4px; overflow-x:auto; scroll-snap-type:x proximity; scroll-padding:0 14px; scrollbar-width:none; overscroll-behavior-x:contain; }
+.ecn-fy-tabs::-webkit-scrollbar{ display:none; }
+.ecn-fy .ecn-fy-tab{ -webkit-appearance:none; appearance:none; flex:0 0 auto; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:6px; width:84px; margin:0; padding:10px 6px 9px; border:1px solid var(--fy-line); border-radius:14px; background:#FFFEFB; color:var(--fy-ink); font:inherit; text-align:center; text-transform:none; letter-spacing:normal; line-height:1.2; box-shadow:none; cursor:pointer; transition:border-color .2s ease, background-color .2s ease, box-shadow .2s ease; }
+.ecn-fy .ecn-fy-tab:hover{ background:#FFFEFB; color:var(--fy-ink); border-color:#CFDDDA; }
+.ecn-fy .ecn-fy-tab:focus{ background:#FFFEFB; color:var(--fy-ink); }
+.ecn-fy .ecn-fy-tab.is-on{ border-color:var(--fy-teal); background:var(--fy-wash); box-shadow:inset 0 0 0 1px var(--fy-teal); }
+.ecn-fy .ecn-fy-tab:focus-visible{ outline:2px solid var(--fy-teal); outline-offset:2px; }
+.ecn-fy-thumb{ flex:none; display:block; width:44px !important; height:44px !important; margin:0 !important; border-radius:50% !important; object-fit:cover; box-shadow:0 0 0 2px #fff, 0 2px 8px rgba(0,0,0,.10); }
+.ecn-fy-tab-copy{ display:block; min-width:0; }
+.ecn-fy-tab-copy b{ display:block; font-weight:600; font-size:12px; line-height:1.2; color:var(--fy-ink); }
+.ecn-fy-full, .ecn-fy-tab-copy small, .ecn-fy-tab-go{ display:none; }
+/* product panels: all stacked in one cell so switching never changes the height */
+.ecn-fy-panels{ display:grid; min-width:0; }
+.ecn-fy-panel{ grid-area:1 / 1; display:flex; flex-direction:column; min-width:0; background:#FFFEFB; border:1px solid var(--fy-line); border-radius:18px; overflow:hidden; box-shadow:0 8px 22px rgba(52,44,30,.06); }
+.ecn-fy-panel[hidden]{ display:flex !important; visibility:hidden; pointer-events:none; }
+.ecn-fy-panel.is-in{ animation:ecn-fy-in .26s ease both; }
+@keyframes ecn-fy-in{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.ecn-fy-media{ position:relative; background:#F1ECE3; }
+.ecn-fy-img{ display:block; aspect-ratio:16 / 10; overflow:hidden; }
+.ecn-fy-img img{ display:block; width:100% !important; height:100% !important; max-width:none; margin:0 !important; border-radius:0 !important; object-fit:cover; }
+.ecn-fy-badge{ position:absolute; top:10px; right:10px; display:inline-flex; align-items:center; gap:6px; max-width:calc(100% - 20px); padding:6px 11px; border-radius:999px; background:rgba(255,253,249,.94); color:var(--fy-teal-dark); font-size:11px; font-weight:600; line-height:1.2; box-shadow:0 2px 10px rgba(0,0,0,.10); }
+.ecn-fy-badge svg{ flex:none; width:13px; height:13px; }
+.ecn-fy-body{ display:flex; flex-direction:column; gap:8px; flex:1; padding:14px 14px 16px; }
+.ecn-fy .ecn-fy-name{ margin:0 !important; padding:0 !important; font-family:var(--ecn-font-head) !important; font-weight:500 !important; font-size:23px !important; line-height:1.12 !important; letter-spacing:-.01em; }
+.ecn-fy .ecn-fy-name a{ color:var(--fy-ink) !important; text-decoration:none !important; }
+.ecn-fy-ing{ margin:0; font-size:14px; line-height:1.45; color:var(--fy-muted); }
+.ecn-fy-attrs{ list-style:none; display:flex; flex-wrap:wrap; gap:6px 14px; margin:2px 0 0; padding:0; }
+.ecn-fy-attrs li{ display:inline-flex; align-items:center; gap:6px; margin:0; font-size:12.5px; line-height:1.3; color:#4E5A57; }
+.ecn-fy-attrs svg{ flex:none; width:14px; height:14px; color:var(--fy-teal); }
+.ecn-fy-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:6px; }
+.ecn-fy-price{ display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px; min-width:0; line-height:1.15; }
+.ecn-fy-price b{ font-size:23px; font-weight:700; color:var(--fy-teal); }
+.ecn-fy-price b .woocommerce-Price-amount{ color:inherit !important; font-weight:inherit; }
+.ecn-fy-price s{ font-size:12.5px; color:#9A958B; }
+.ecn-fy-price small{ flex-basis:100%; font-size:11.5px; color:var(--fy-muted); }
+.ecn-fy .ecn-fy-cta{ flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 20px; border-radius:999px; background:var(--fy-teal); color:#fff !important; font-size:14px; font-weight:600; line-height:1; text-decoration:none !important; transition:background-color .2s ease; }
+.ecn-fy .ecn-fy-cta:hover, .ecn-fy .ecn-fy-cta:focus-visible{ background:var(--fy-teal-dark); color:#fff !important; }
+.ecn-fy .ecn-fy-cta:focus-visible{ outline:2px solid var(--fy-teal); outline-offset:3px; }
+.ecn-fy-cta svg{ width:17px; height:17px; transition:transform .2s ease; }
+.ecn-fy-cta:hover svg{ transform:translateX(3px); }
+/* reassurance row inside the card (same [econur_trust] content): phones = three compact rows */
+.ecn-fy-trust .ecn-trustx{ margin:4px 0 0; }
+.ecn-fy .ecn-trustx-list{ display:grid; grid-template-columns:minmax(0,1fr); gap:0; margin:0; padding:4px 14px; background:#EFF5F3 !important; border:1px solid #E1ECE9; border-radius:18px; }
+.ecn-fy .ecn-trustx-item{ flex-direction:row; align-items:center; text-align:left; gap:12px; padding:11px 0; }
+.ecn-fy .ecn-trustx-item + .ecn-trustx-item{ border-left:0; border-top:1px solid #DCE8E5 !important; }
+.ecn-fy .ecn-trustx-ico{ width:38px; height:38px; background:#fff !important; color:var(--fy-teal) !important; box-shadow:0 1px 4px rgba(13,88,95,.08); }
+.ecn-fy .ecn-trustx-ico svg{ width:18px; height:18px; }
+.ecn-fy .ecn-trustx-copy{ align-items:flex-start; gap:2px; }
+.ecn-fy .ecn-trustx-copy b{ font-family:var(--ecn-font-head); font-weight:500; font-size:15px; color:var(--fy-ink); }
+.ecn-fy .ecn-trustx-copy span{ font-size:12.5px; line-height:1.4; color:var(--fy-muted); max-width:none; }
+@media (prefers-reduced-motion:reduce){ .ecn-fy-panel.is-in{ animation:none; } .ecn-fy .ecn-fy-tab, .ecn-fy-cta svg{ transition:none; } }
+@media (max-width:374px){ .ecn-fy{ padding:18px 12px 14px; } .ecn-fy-tabs{ margin:0 -12px; padding:2px 12px 4px; } .ecn-fy .ecn-fy-tab{ width:78px; } .ecn-fy .ecn-fy-title{ font-size:26px !important; } .ecn-fy .ecn-fy-name{ font-size:21px !important; } .ecn-fy .ecn-fy-cta{ padding:0 16px; } .ecn-fy-price b{ font-size:21px; } }
+/* tablets: photo beside the details, reassurance as three columns */
+@media (min-width:600px){
+  .ecn-fy{ padding:26px 24px 22px; border-radius:22px; gap:16px; }
+  .ecn-fy::before{ width:220px; height:114px; opacity:.3; }
+  .ecn-fy-eyebrow{ font-size:10.5px; }
+  .ecn-fy .ecn-fy-title{ font-size:36px !important; }
+  .ecn-fy-sub{ font-size:15px; }
+  .ecn-fy-tabs{ margin:0; padding:2px 0 4px; }
+  .ecn-fy .ecn-fy-tab{ width:auto; flex:1 1 0; min-width:96px; }
+  .ecn-fy-panel{ flex-direction:row; }
+  .ecn-fy-media{ flex:0 0 48%; }
+  .ecn-fy-img{ height:100%; aspect-ratio:auto; min-height:300px; }
+  .ecn-fy-body{ padding:22px 22px 22px; }
+  .ecn-fy .ecn-fy-name{ font-size:26px !important; }
+  .ecn-fy .ecn-trustx-list{ grid-template-columns:repeat(3, minmax(0,1fr)); padding:18px 6px; }
+  .ecn-fy .ecn-trustx-item{ flex-direction:column; align-items:center; text-align:center; gap:9px; padding:2px 14px; }
+  .ecn-fy .ecn-trustx-item + .ecn-trustx-item{ border-top:0 !important; border-left:1px solid #DCE8E5 !important; }
+  .ecn-fy .ecn-trustx-copy{ align-items:center; }
+  .ecn-fy .ecn-trustx-ico{ width:46px; height:46px; }
+  .ecn-fy .ecn-trustx-ico svg{ width:21px; height:21px; }
+}
+/* desktop: concern list on the left (about 36%), recommendation on the right */
+@media (min-width:1000px){
+  .ecn-fy{ grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-areas:"head panel" "tabs panel" "trust trust"; grid-template-rows:auto 1fr auto; column-gap:32px; row-gap:18px; padding:34px 36px 30px; border-radius:24px; box-shadow:0 14px 40px rgba(52,44,30,.06); }
+  .ecn-fy::before{ top:-20px; right:-34px; width:300px; height:156px; opacity:.3; }
+  .ecn-fy-head{ grid-area:head; }
+  .ecn-fy-tabs{ grid-area:tabs; flex-direction:column; gap:12px; overflow:visible; }
+  .ecn-fy-panels{ grid-area:panel; }
+  .ecn-fy-trust{ grid-area:trust; }
+  .ecn-fy-eyebrow{ font-size:11px; margin-bottom:8px; }
+  .ecn-fy-eyebrow::after{ width:32px; }
+  .ecn-fy .ecn-fy-title{ font-size:44px !important; }
+  .ecn-fy-sub{ margin-top:8px; font-size:15.5px; }
+  .ecn-fy .ecn-fy-tab{ flex:0 0 auto; flex-direction:row; align-items:center; gap:14px; width:100%; min-width:0; min-height:86px; padding:12px 14px 12px 12px; border-radius:16px; text-align:left; }
+  .ecn-fy .ecn-fy-tab:hover{ box-shadow:0 6px 16px rgba(52,44,30,.07); }
+  .ecn-fy .ecn-fy-tab.is-on{ box-shadow:inset 0 0 0 1px var(--fy-teal), 0 6px 16px rgba(13,88,95,.08); }
+  .ecn-fy-thumb{ width:52px !important; height:52px !important; }
+  .ecn-fy-tab-copy{ flex:1; }
+  .ecn-fy-tab-copy b{ font-family:var(--ecn-font-head); font-weight:500; font-size:16.5px; line-height:1.2; }
+  .ecn-fy-full{ display:inline; }
+  .ecn-fy-short{ display:none; }
+  .ecn-fy-tab-copy small{ display:block; margin-top:3px; font-size:12.5px; line-height:1.35; color:var(--fy-muted); }
+  .ecn-fy-tab-go{ display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:50%; color:#8E8A82; transition:color .2s ease, transform .2s ease; }
+  .ecn-fy-tab-go svg{ width:18px; height:18px; }
+  .ecn-fy .ecn-fy-tab.is-on .ecn-fy-tab-go, .ecn-fy .ecn-fy-tab:hover .ecn-fy-tab-go{ color:var(--fy-teal); transform:translateX(2px); }
+  .ecn-fy-panel{ flex-direction:column; border-radius:20px; }
+  .ecn-fy-media{ flex:none; }
+  .ecn-fy-img{ height:auto; min-height:0; aspect-ratio:16 / 9.2; }
+  .ecn-fy-badge{ top:14px; right:14px; padding:7px 13px; font-size:12px; }
+  .ecn-fy-body{ gap:9px; padding:22px 28px 24px; }
+  .ecn-fy .ecn-fy-name{ font-size:32px !important; }
+  .ecn-fy-ing{ font-size:16px; }
+  .ecn-fy-attrs{ gap:8px 22px; margin-top:4px; }
+  .ecn-fy-attrs li{ font-size:13.5px; }
+  .ecn-fy-attrs svg{ width:16px; height:16px; }
+  .ecn-fy-price b{ font-size:28px; }
+  .ecn-fy-price s{ font-size:14px; }
+  .ecn-fy-price small{ font-size:12.5px; }
+  .ecn-fy .ecn-fy-cta{ min-height:50px; padding:0 28px; font-size:15px; }
+  .ecn-fy-trust .ecn-trustx{ margin:6px 0 0; }
+  .ecn-fy .ecn-trustx-list{ padding:22px 10px; border-radius:20px; }
+  .ecn-fy .ecn-trustx-item{ padding:2px 22px; gap:10px; }
+  .ecn-fy .ecn-trustx-ico{ width:52px; height:52px; }
+  .ecn-fy .ecn-trustx-ico svg{ width:23px; height:23px; }
+  .ecn-fy .ecn-trustx-copy b{ font-size:18px; }
+  .ecn-fy .ecn-trustx-copy span{ font-size:13.5px; max-width:28ch; }
+}
