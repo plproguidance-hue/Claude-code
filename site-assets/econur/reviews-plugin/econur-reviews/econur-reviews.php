@@ -21,7 +21,7 @@ define('ECONUR_REVIEWS_VERSION', '1.0.0');
  * The plugin only takes over [econur_reviews] when the option `econur_reviews_active` is 'yes'. Until then the
  * existing section keeps rendering, and the new one is visible only on a preview URL (?enr_preview=<key>).
  */
-function econur_reviews_settings() {
+function enr_reviews_settings() {
     return apply_filters('econur_reviews_settings', array(
         'live_min'   => 3,
         'limit'      => 9,
@@ -74,7 +74,7 @@ register_activation_hook(__FILE__, function () {
     if (!get_option('econur_reviews_preview_key')) update_option('econur_reviews_preview_key', wp_generate_password(20, false), false);
 });
 
-function econur_reviews_is_preview() {
+function enr_reviews_is_preview() {
     static $is = null;
     if (null === $is) {
         $key = (string) get_option('econur_reviews_preview_key');
@@ -83,44 +83,44 @@ function econur_reviews_is_preview() {
     return $is;
 }
 
-function econur_reviews_is_on() {
-    return 'yes' === get_option('econur_reviews_active') || econur_reviews_is_preview();
+function enr_reviews_is_on() {
+    return 'yes' === get_option('econur_reviews_active') || enr_reviews_is_preview();
 }
 
 // Take over the shortcode after the theme has registered its own version of it.
 add_action('init', function () {
-    if (!econur_reviews_is_on()) return;
+    if (!enr_reviews_is_on()) return;
     remove_shortcode('econur_reviews');
-    add_shortcode('econur_reviews', 'econur_reviews_shortcode');
+    add_shortcode('econur_reviews', 'enr_reviews_shortcode');
 }, 20);
 
 // A preview is never cached or indexed.
 add_action('template_redirect', function () {
-    if (!econur_reviews_is_preview()) return;
+    if (!enr_reviews_is_preview()) return;
     if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
     do_action('litespeed_control_set_nocache', 'econur reviews preview');
     nocache_headers();
 }, 0);
-add_filter('wp_robots', function ($r) { if (econur_reviews_is_preview()) $r['noindex'] = true; return $r; });
+add_filter('wp_robots', function ($r) { if (enr_reviews_is_preview()) $r['noindex'] = true; return $r; });
 
 /* ---------- data ---------- */
 
-const ECONUR_REVIEWS_CACHE = 'econur_reviews_data_v1';
+const ENR_REVIEWS_CACHE = 'econur_reviews_data_v1';
 
-function econur_reviews_flush() {
-    delete_transient(ECONUR_REVIEWS_CACHE);
+function enr_reviews_flush() {
+    delete_transient(ENR_REVIEWS_CACHE);
     $front = (int) get_option('page_on_front');
     if ($front) do_action('litespeed_purge_post', $front);
 }
 foreach (array('comment_post', 'edit_comment', 'wp_set_comment_status', 'deleted_comment', 'trashed_comment', 'untrashed_comment', 'spammed_comment', 'unspammed_comment', 'woocommerce_update_product', 'woocommerce_delete_product', 'woocommerce_trash_product') as $h) {
-    add_action($h, 'econur_reviews_flush');
+    add_action($h, 'enr_reviews_flush');
 }
 foreach (array('added_comment_meta', 'updated_comment_meta', 'deleted_comment_meta') as $h) {
-    add_action($h, function ($mid, $cid, $key) { if (in_array($key, array('rating', 'verified'), true)) econur_reviews_flush(); }, 10, 3);
+    add_action($h, function ($mid, $cid, $key) { if (in_array($key, array('rating', 'verified'), true)) enr_reviews_flush(); }, 10, 3);
 }
 
 // Rating figures across ALL approved, rated product reviews on published products.
-function econur_reviews_stats() {
+function enr_reviews_stats() {
     global $wpdb;
     $row = $wpdb->get_row(
         "SELECT COUNT(*) AS n, AVG(CAST(r.meta_value AS DECIMAL(4,2))) AS average, SUM(CASE WHEN v.meta_value = '1' THEN 1 ELSE 0 END) AS verified
@@ -135,7 +135,7 @@ function econur_reviews_stats() {
 }
 
 // The reviewer's city, only when it is on record: the linked account's billing city, else their latest paid order's.
-function econur_reviews_city($comment) {
+function enr_reviews_city($comment) {
     $city = '';
     if ($comment->user_id) $city = (string) get_user_meta($comment->user_id, 'billing_city', true);
     if ($city === '' && is_email($comment->comment_author_email) && function_exists('wc_get_orders')) {
@@ -145,8 +145,8 @@ function econur_reviews_city($comment) {
     return trim(wp_strip_all_tags($city));
 }
 
-function econur_reviews_build($cfg) {
-    $stats = econur_reviews_stats();
+function enr_reviews_build($cfg) {
+    $stats = enr_reviews_stats();
     $items = array();
     if ($stats['count'] >= (int) $cfg['live_min']) {
         $comments = get_comments(array('type' => 'review', 'status' => 'approve', 'post_type' => 'product', 'post_status' => 'publish', 'parent' => 0,
@@ -157,7 +157,7 @@ function econur_reviews_build($cfg) {
             if ($text === '' || $rating < (int) $cfg['min_rating']) continue;
             $items[] = array(
                 'name'     => $c->comment_author !== '' ? $c->comment_author : 'ECONUR customer',
-                'city'     => econur_reviews_city($c),
+                'city'     => enr_reviews_city($c),
                 'rating'   => $rating,
                 'verified' => function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID),
                 'product'  => (int) $c->comment_post_ID,
@@ -172,19 +172,19 @@ function econur_reviews_build($cfg) {
     return array('mode' => 'live', 'stats' => $stats, 'items' => $items);
 }
 
-function econur_reviews_data($cfg, $cache = true) {
+function enr_reviews_data($cfg, $cache = true) {
     if ($cache) {
-        $d = get_transient(ECONUR_REVIEWS_CACHE);
+        $d = get_transient(ENR_REVIEWS_CACHE);
         if (is_array($d) && isset($d['mode'])) return $d;
     }
-    $d = econur_reviews_build($cfg);
-    if ($cache) set_transient(ECONUR_REVIEWS_CACHE, $d, 12 * HOUR_IN_SECONDS);
+    $d = enr_reviews_build($cfg);
+    if ($cache) set_transient(ENR_REVIEWS_CACHE, $d, 12 * HOUR_IN_SECONDS);
     return $d;
 }
 
 /* ---------- markup helpers ---------- */
 
-function econur_reviews_icon($n) {
+function enr_reviews_icon($n) {
     $i = array(
         'cart'  => '<circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2.5 3.5h2.6l2.3 11.1a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2l1.6-6.7H6.1"/>',
         'chat'  => '<path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/><path d="M8 8.5h8"/><path d="M8 12h5"/>',
@@ -200,7 +200,7 @@ function econur_reviews_icon($n) {
 }
 
 // Five stars filled to $n (partial fill for decimals), with the rating as text for screen readers.
-function econur_reviews_stars($n, $class = 'enr-rv-stars') {
+function enr_reviews_stars($n, $class = 'enr-rv-stars') {
     static $uid = 0;
     $n = max(0, min(5, round((float) $n, 1))); $out = '';
     $path = 'M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 17.1l-5.7 3.1 1.2-6.3L2.8 9.5l6.4-.8Z';
@@ -218,21 +218,21 @@ function econur_reviews_stars($n, $class = 'enr-rv-stars') {
 }
 
 // One line about a product: its key ingredients, else the start of its short description.
-function econur_reviews_product_line($product) {
+function enr_reviews_product_line($product) {
     if (function_exists('econur_finder_ingredients')) { $l = econur_finder_ingredients($product->get_id()); if ($l) return $l; }
     $parts = array_values(array_filter(array_map('trim', explode('|', (string) get_post_meta($product->get_id(), 'econur_key_ingredients', true)))));
     if ($parts) return implode(', ', $parts);
     return wp_trim_words(wp_strip_all_tags($product->get_short_description()), 8, '…');
 }
 
-function econur_reviews_thumb($img_id, $alt, $focus, $sizes) {
+function enr_reviews_thumb($img_id, $alt, $focus, $sizes) {
     if (!$img_id || !wp_attachment_is_image($img_id)) return '';
     $attr = array('class' => 'enr-rv-thumb', 'alt' => $alt, 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $sizes);
     if (preg_match('/^\d{1,3}% \d{1,3}%$/', (string) $focus)) $attr['style'] = 'object-position:' . $focus;
     return str_replace('sizes="auto, ', 'sizes="', wp_get_attachment_image($img_id, 'medium', false, $attr));
 }
 
-function econur_reviews_card($r, $n, $total, $live, $cfg) {
+function enr_reviews_card($r, $n, $total, $live, $cfg) {
     $name = trim($r['name']);
     $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($name, 0, 1)) : strtoupper(substr($name, 0, 1));
     $verified = $live && !empty($r['verified']);
@@ -243,9 +243,9 @@ function econur_reviews_card($r, $n, $total, $live, $cfg) {
         $link = get_permalink($p->get_id());
         $img_id = (int) get_post_meta($p->get_id(), 'econur_home_card_image', true);
         if (!$img_id || !wp_attachment_is_image($img_id)) $img_id = (int) $p->get_image_id();
-        $img = econur_reviews_thumb($img_id, $p->get_name(), $cfg['thumb_focus'][$p->get_id()] ?? '', '112px');
+        $img = enr_reviews_thumb($img_id, $p->get_name(), $cfg['thumb_focus'][$p->get_id()] ?? '', '112px');
         $label = $live ? ($verified ? 'Purchased' : 'Reviewed') : ($r['product_label'] ?? 'Product mentioned');
-        $line = econur_reviews_product_line($p);
+        $line = enr_reviews_product_line($p);
         $lower = '<div class="enr-rv-buy">'
             . ($img ? '<a class="enr-rv-buy-img" href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . $img . '</a>' : '')
             . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">' . esc_html($label) . '</span>'
@@ -254,7 +254,7 @@ function econur_reviews_card($r, $n, $total, $live, $cfg) {
             . '</div></div>';
     } elseif (!$live && !empty($r['about']['title'])) {
         $a = $r['about'];
-        $img = econur_reviews_thumb((int) ($a['image'] ?? 0), $a['title'], $a['focus'] ?? '', '240px');
+        $img = enr_reviews_thumb((int) ($a['image'] ?? 0), $a['title'], $a['focus'] ?? '', '240px');
         $lower = '<div class="enr-rv-buy">' . ($img ? '<span class="enr-rv-buy-img">' . $img . '</span>' : '')
             . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">About</span><span class="enr-rv-buy-name">' . esc_html($a['title']) . '</span>'
             . (!empty($a['line']) ? '<span class="enr-rv-buy-line">' . esc_html($a['line']) . '</span>' : '') . '</div></div>';
@@ -265,14 +265,14 @@ function econur_reviews_card($r, $n, $total, $live, $cfg) {
         $date = '<time class="enr-rv-date" datetime="' . esc_attr(gmdate('Y-m-d', $ts)) . '">' . esc_html(date_i18n(get_option('date_format'), $ts)) . '</time>';
     }
 
-    if ($verified) $status = '<span class="enr-rv-verified"><span class="enr-rv-tick">' . econur_reviews_icon('check') . '</span>Verified buyer</span>';
-    elseif (!$live) $status = '<span class="enr-rv-verified enr-rv-shared"><span class="enr-rv-tick">' . econur_reviews_icon('chat') . '</span>Shared with ECONUR</span>';
+    if ($verified) $status = '<span class="enr-rv-verified"><span class="enr-rv-tick">' . enr_reviews_icon('check') . '</span>Verified buyer</span>';
+    elseif (!$live) $status = '<span class="enr-rv-verified enr-rv-shared"><span class="enr-rv-tick">' . enr_reviews_icon('chat') . '</span>Shared with ECONUR</span>';
     else $status = '';
 
     $quote = '<svg class="enr-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>';
 
     return '<li class="enr-rv-slide" role="group" aria-roledescription="slide" aria-label="' . esc_attr($n . ' of ' . $total) . '"><article class="enr-rv-card' . ($lower ? ' has-buy' : '') . '">'
-        . '<div class="enr-rv-top">' . $quote . ($live && !empty($r['rating']) ? econur_reviews_stars($r['rating']) : '') . '</div>'
+        . '<div class="enr-rv-top">' . $quote . ($live && !empty($r['rating']) ? enr_reviews_stars($r['rating']) : '') . '</div>'
         . '<blockquote class="enr-rv-text"><p>' . esc_html($r['text']) . '</p></blockquote>'
         . '<div class="enr-rv-who"><span class="enr-rv-avatar" aria-hidden="true">' . esc_html($initial) . '</span>'
         . '<div class="enr-rv-who-copy"><b class="enr-rv-name">' . esc_html($name) . '</b>'
@@ -284,7 +284,7 @@ function econur_reviews_card($r, $n, $total, $live, $cfg) {
 
 /* ---------- section ---------- */
 
-function econur_reviews_render($data, $cfg) {
+function enr_reviews_render($data, $cfg) {
     $live = 'live' === $data['mode'];
     $items = $data['items'];
     $total = count($items);
@@ -293,14 +293,14 @@ function econur_reviews_render($data, $cfg) {
     $variant = $live ? ($all_verified ? 'live_verified' : 'live') : 'fallback';
 
     $cards = ''; $n = 0;
-    foreach ($items as $r) $cards .= econur_reviews_card($r, ++$n, $total, $live, $cfg);
+    foreach ($items as $r) $cards .= enr_reviews_card($r, ++$n, $total, $live, $cfg);
 
     $summary = '';
     if ($live && $data['stats']['count']) {
         $s = $data['stats'];
         $what = $s['verified'] === $s['count'] ? _n('verified review', 'verified reviews', $s['count'], 'econur-reviews') : _n('review', 'reviews', $s['count'], 'econur-reviews');
         $summary = '<div class="enr-rv-summary"><div class="enr-rv-summary-row"><span class="enr-rv-avg" aria-hidden="true">' . esc_html(number_format_i18n($s['average'], 1)) . '</span>'
-            . econur_reviews_stars($s['average'], 'enr-rv-stars enr-rv-stars--lg') . '</div>'
+            . enr_reviews_stars($s['average'], 'enr-rv-stars enr-rv-stars--lg') . '</div>'
             . '<p class="enr-rv-count">Based on <b>' . esc_html(number_format_i18n($s['count'])) . '</b> ' . esc_html($what) . '</p></div>';
     }
 
@@ -309,16 +309,16 @@ function econur_reviews_render($data, $cfg) {
     $uid = 'enr-rv-' . wp_unique_id();
     $main = '<div class="enr-rv-carousel" role="region" aria-roledescription="carousel" aria-label="Customer reviews">'
         . '<ul class="enr-rv-track" id="' . $uid . '-track" tabindex="0" aria-label="Reviews, use the arrow keys to move">' . $cards . '</ul>'
-        . '<div class="enr-rv-nav"' . ($total < 2 ? ' hidden' : '') . '><button type="button" class="enr-rv-arrow enr-rv-prev" aria-controls="' . $uid . '-track" aria-label="Previous review" disabled>' . econur_reviews_icon('prev') . '</button>'
+        . '<div class="enr-rv-nav"' . ($total < 2 ? ' hidden' : '') . '><button type="button" class="enr-rv-arrow enr-rv-prev" aria-controls="' . $uid . '-track" aria-label="Previous review" disabled>' . enr_reviews_icon('prev') . '</button>'
         . '<div class="enr-rv-dots">' . $dots . '</div>'
-        . '<button type="button" class="enr-rv-arrow enr-rv-next" aria-controls="' . $uid . '-track" aria-label="Next review">' . econur_reviews_icon('next') . '</button></div>'
+        . '<button type="button" class="enr-rv-arrow enr-rv-next" aria-controls="' . $uid . '-track" aria-label="Next review">' . enr_reviews_icon('next') . '</button></div>'
         . '</div>';
 
     $latest = (int) $cfg['min_rating'] > 1 ? sprintf('Shows our latest %d- and 5-star reviews.', (int) $cfg['min_rating']) : 'Automatically shows the latest reviews.';
     if ((int) $cfg['min_rating'] >= 5) $latest = 'Shows our latest 5-star reviews.';
     $trust = '';
     foreach ($cfg['trust'][$variant] as $t) {
-        $trust .= '<li class="enr-rv-trust-item"><span class="enr-rv-trust-ico">' . econur_reviews_icon($t[0]) . '</span><span class="enr-rv-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html(str_replace('%latest%', $latest, $t[2])) . '</span></span></li>';
+        $trust .= '<li class="enr-rv-trust-item"><span class="enr-rv-trust-ico">' . enr_reviews_icon($t[0]) . '</span><span class="enr-rv-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html(str_replace('%latest%', $latest, $t[2])) . '</span></span></li>';
     }
 
     $decor = '';
@@ -336,28 +336,28 @@ function econur_reviews_render($data, $cfg) {
         . '</section>';
 }
 
-function econur_reviews_shortcode($atts = array()) {
-    $cfg = econur_reviews_settings();
+function enr_reviews_shortcode($atts = array()) {
+    $cfg = enr_reviews_settings();
     $atts = shortcode_atts(array('limit' => $cfg['limit'], 'min_rating' => $cfg['min_rating']), $atts, 'econur_reviews');
     $cfg['limit'] = max(1, min(20, (int) $atts['limit']));
     $cfg['min_rating'] = max(1, min(5, (int) $atts['min_rating']));
-    $default = $cfg['limit'] === (int) econur_reviews_settings()['limit'] && $cfg['min_rating'] === (int) econur_reviews_settings()['min_rating'];
-    $html = econur_reviews_render(econur_reviews_data($cfg, $default), $cfg);
-    if ($html) econur_reviews_enqueue();
+    $default = $cfg['limit'] === (int) enr_reviews_settings()['limit'] && $cfg['min_rating'] === (int) enr_reviews_settings()['min_rating'];
+    $html = enr_reviews_render(enr_reviews_data($cfg, $default), $cfg);
+    if ($html) enr_reviews_enqueue();
     return $html;
 }
 
 /* ---------- assets: only on pages that use the section ---------- */
 
-function econur_reviews_enqueue() {
+function enr_reviews_enqueue() {
     $u = plugin_dir_url(__FILE__) . 'assets/';
     wp_enqueue_style('econur-reviews', $u . 'econur-reviews.css', array(), ECONUR_REVIEWS_VERSION);
     wp_enqueue_script('econur-reviews', $u . 'econur-reviews.js', array(), ECONUR_REVIEWS_VERSION, array('in_footer' => true, 'strategy' => 'defer'));
 }
 
 add_action('wp_enqueue_scripts', function () {
-    if (!econur_reviews_is_on() || !is_singular()) return;
+    if (!enr_reviews_is_on() || !is_singular()) return;
     $id = get_queried_object_id();
     $content = (string) get_post_field('post_content', $id) . (string) get_post_meta($id, '_elementor_data', true);
-    if (false !== strpos($content, '[econur_reviews')) econur_reviews_enqueue();
+    if (false !== strpos($content, '[econur_reviews')) enr_reviews_enqueue();
 });
