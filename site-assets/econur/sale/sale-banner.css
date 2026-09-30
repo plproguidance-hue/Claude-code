@@ -59,3 +59,5 @@
   .ecn-sec-sale .ecn-sb-cta{ width:100%; }
   .elementor-43 .elementor-element.elementor-element-833f8ca.e-con{ --padding-bottom:40px; }
 }
+/* sale banner: narrow phones - keep the small flower clear of the eyebrow label */
+@media (max-width:369px){ .ecn-sec-sale .ecn-sb::before{ background-position:right -34px top -38px, right 18px bottom 96px, 0 0, 0 0; } }
