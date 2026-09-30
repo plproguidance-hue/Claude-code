@@ -39,14 +39,14 @@
 .ecn-rv-track{ transition:opacity .22s ease, transform .22s ease; }
 .ecn-rv-track.is-swap{ opacity:0; transform:translateY(4px); }
 .ecn-rv-track:focus-visible{ outline:2px solid var(--rv-teal); outline-offset:-2px; border-radius:18px; }
-.ecn-rv-slide{ flex:0 0 calc(100% - 22px); margin:0 !important; padding:0; scroll-snap-align:start; display:flex; }
+.ecn-rv-slide{ flex:0 0 100%; margin:0 !important; padding:0; scroll-snap-align:start; display:flex; }
 /* card */
 .ecn-rv-card{ display:flex; flex-direction:column; width:100%; padding:20px 20px 18px; background:var(--rv-card); border:1px solid var(--rv-line); border-radius:18px; box-shadow:0 8px 24px rgba(52,44,30,.06); transition:transform .3s ease, box-shadow .3s ease; }
 .ecn-rv-top{ display:flex; align-items:center; gap:12px; }
 .ecn-rv-quote{ flex:none; display:block; width:30px; height:23px; fill:#D6DBCC; }
 .ecn-rv .ecn-rv-text{ margin:14px 0 18px !important; padding:0 !important; border:0 !important; background:none !important; font-style:normal !important; quotes:none; }
 .ecn-rv .ecn-rv-text::before, .ecn-rv .ecn-rv-text::after{ content:none !important; }
-.ecn-rv .ecn-rv-text p{ margin:0 !important; font-family:var(--ecn-font-head); font-size:18px; font-weight:400; font-style:normal; line-height:1.42; color:var(--rv-ink); }
+.ecn-rv .ecn-rv-text p{ margin:0 !important; font-family:var(--ecn-font-head); font-size:17px; font-weight:400; font-style:normal; line-height:1.42; color:var(--rv-ink); }
 .ecn-rv-who{ display:flex; align-items:center; gap:12px; margin-top:auto; }
 .ecn-rv-avatar{ flex:none; display:grid; place-items:center; width:48px; height:48px; border-radius:50%; background:var(--rv-sage); color:#46604F; font-family:var(--ecn-font-head); font-size:22px; line-height:1; }
 .ecn-rv-who-copy{ display:flex; flex-direction:column; gap:2px; min-width:0; }
@@ -149,7 +149,7 @@
 @media (min-width:1000px){
   .ecn-rv{ padding:54px 40px 34px; border-radius:26px; }
   .ecn-rv-deco--tl{ top:-34px; left:-46px; width:300px; }
-  .ecn-rv-deco--tr{ top:-20px; right:-24px; width:240px; }
+  .ecn-rv-deco--tr{ top:-26px; right:-30px; width:290px; }
   .ecn-rv-deco--bl, .ecn-rv-deco--br{ bottom:-30px; width:170px; }
   .ecn-rv-deco--bl{ left:-40px; }
   .ecn-rv-deco--br{ right:-40px; }
@@ -175,7 +175,7 @@
   .ecn-rv-quote{ width:38px; height:29px; }
   .ecn-rv-stars svg{ width:19px; height:19px; }
   .ecn-rv .ecn-rv-text{ margin:18px 0 22px !important; }
-  .ecn-rv .ecn-rv-text p{ font-size:20.5px; line-height:1.4; }
+  .ecn-rv .ecn-rv-text p{ font-size:19.5px; line-height:1.42; }
   .ecn-rv-avatar{ width:56px; height:56px; font-size:25px; }
   .ecn-rv-who{ gap:14px; }
   .ecn-rv-name{ font-size:15.5px; }
