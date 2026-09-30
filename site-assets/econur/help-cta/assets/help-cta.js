@@ -13,6 +13,11 @@
         set(item, open);
       });
     });
+    // every page view starts with the first answer open, also when the browser restores the page from its
+    // back/forward cache
+    function reset() { items.forEach(function (item, k) { set(item, k === 0); }); }
+    window.addEventListener('pageshow', function (e) { if (e.persisted) reset(); });
+    reset();
   }
   function start() { [].forEach.call(document.querySelectorAll('.ehc-acc'), init); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
