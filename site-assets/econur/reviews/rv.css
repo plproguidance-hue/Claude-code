@@ -19,6 +19,10 @@
 .ecn-rv-summary-row{ display:flex; align-items:center; justify-content:center; gap:12px; }
 .ecn-rv-avg{ font-size:38px; font-weight:700; line-height:1; color:var(--rv-teal); }
 .ecn-rv-count{ margin:6px 0 0; font-size:14px; color:var(--rv-ink); }
+.ecn-rv-summary--label{ display:flex; flex-direction:column; align-items:center; }
+.ecn-rv-feedback{ display:inline-flex; align-items:center; gap:12px; margin:0 !important; font-family:var(--ecn-font-head); font-size:24px; font-weight:500; line-height:1.15; color:var(--rv-teal); }
+.ecn-rv-feedback::before, .ecn-rv-feedback::after{ content:""; width:7px; height:7px; border-radius:50%; background:var(--rv-gold); opacity:.85; }
+.ecn-rv-summary--label .ecn-rv-count{ color:var(--rv-muted); }
 /* stars */
 .ecn-rv-stars{ display:inline-flex; gap:3px; line-height:0; }
 .ecn-rv-stars svg{ width:17px; height:17px; }
@@ -29,6 +33,8 @@
 .ecn-rv-carousel{ margin-top:22px; }
 .ecn-rv-track{ list-style:none; display:flex; gap:12px; margin:-8px -18px 0 !important; padding:8px 18px 16px !important; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 18px; scrollbar-width:none; overscroll-behavior-x:contain; }
 .ecn-rv-track::-webkit-scrollbar{ display:none; }
+.ecn-rv-track{ transition:opacity .22s ease, transform .22s ease; }
+.ecn-rv-track.is-swap{ opacity:0; transform:translateY(4px); }
 .ecn-rv-track:focus-visible{ outline:2px solid var(--rv-teal); outline-offset:-2px; border-radius:18px; }
 .ecn-rv-slide{ flex:0 0 calc(100% - 22px); margin:0 !important; padding:0; scroll-snap-align:start; display:flex; }
 /* card */
@@ -95,7 +101,7 @@
   .ecn-rv-card:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(52,44,30,.10); }
   .ecn-rv-buy-img:hover .ecn-rv-thumb{ transform:scale(1.04); }
 }
-@media (prefers-reduced-motion:reduce){ .ecn-rv-card, .ecn-rv .ecn-rv-thumb{ transition:none; } .ecn-rv-card:hover{ transform:none; } }
+@media (prefers-reduced-motion:reduce){ .ecn-rv-card, .ecn-rv .ecn-rv-thumb, .ecn-rv-track{ transition:none; } .ecn-rv-card:hover{ transform:none; } }
 @media (max-width:374px){
   .ecn-rv{ padding:38px 14px 16px; }
   .ecn-rv-deco--tl{ width:80px; }
@@ -142,6 +148,8 @@
   .ecn-rv-summary{ margin-top:22px; }
   .ecn-rv-avg{ font-size:50px; }
   .ecn-rv-count{ font-size:16px; }
+  .ecn-rv-feedback{ font-size:32px; gap:16px; }
+  .ecn-rv-feedback::before, .ecn-rv-feedback::after{ width:8px; height:8px; }
   .ecn-rv-carousel, .ecn-rv-empty{ margin-top:30px; }
   .ecn-rv .ecn-rv-empty-card{ padding:38px 48px 36px; }
   .ecn-rv-empty-title{ font-size:28px; }
@@ -162,7 +170,6 @@
   .ecn-rv-buy-line{ font-size:13.5px; }
   .ecn-rv-nav{ margin-top:8px; gap:18px; }
   .ecn-rv .ecn-rv-arrow{ width:46px; height:46px; }
-  .ecn-rv--n3 .ecn-rv-nav, .ecn-rv--n2 .ecn-rv-nav, .ecn-rv--n1 .ecn-rv-nav{ display:none; }
   .ecn-rv .ecn-rv-trust{ margin-top:26px !important; padding:20px 8px !important; border-radius:20px; }
   .ecn-rv-trust-item{ gap:16px; padding:4px 26px; }
   .ecn-rv-trust-ico{ width:56px; height:56px; }
