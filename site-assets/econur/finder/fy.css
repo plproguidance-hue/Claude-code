@@ -40,7 +40,7 @@
 .ecn-fy-attrs{ list-style:none; display:flex; flex-wrap:wrap; gap:6px 14px; margin:2px 0 0; padding:0; }
 .ecn-fy-attrs li{ display:inline-flex; align-items:center; gap:6px; margin:0; font-size:12.5px; line-height:1.3; color:#4E5A57; }
 .ecn-fy-attrs svg{ flex:none; width:14px; height:14px; color:var(--fy-teal); }
-.ecn-fy-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:4px; }
+.ecn-fy-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:6px; }
 .ecn-fy-price{ display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px; min-width:0; line-height:1.15; }
 .ecn-fy-price b{ font-size:23px; font-weight:700; color:var(--fy-teal); }
 .ecn-fy-price b .woocommerce-Price-amount{ color:inherit !important; font-weight:inherit; }
@@ -75,7 +75,8 @@
   .ecn-fy-panel{ flex-direction:row; }
   .ecn-fy-media{ flex:0 0 48%; }
   .ecn-fy-img{ height:100%; aspect-ratio:auto; min-height:300px; }
-  .ecn-fy-body{ padding:22px 22px 22px; }
+  .ecn-fy-body{ justify-content:center; padding:22px 22px 22px; }
+  .ecn-fy-foot{ margin-top:14px; }
   .ecn-fy .ecn-fy-name{ font-size:26px !important; }
   .ecn-fy .ecn-trustx-list{ grid-template-columns:repeat(3, minmax(0,1fr)); padding:18px 6px; }
   .ecn-fy .ecn-trustx-item{ flex-direction:column; align-items:center; text-align:center; gap:9px; padding:2px 14px; }
@@ -89,7 +90,7 @@
   .ecn-fy{ grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-areas:"head panel" "tabs panel" "trust trust"; grid-template-rows:auto 1fr auto; column-gap:32px; row-gap:14px; padding:32px 36px 24px; border-radius:24px; box-shadow:0 14px 40px rgba(52,44,30,.06); }
   .ecn-fy::before{ top:-20px; right:-34px; width:300px; height:156px; opacity:.3; }
   .ecn-fy-head{ grid-area:head; }
-  .ecn-fy-tabs{ grid-area:tabs; flex-direction:column; gap:10px; overflow:visible; }
+  .ecn-fy-tabs{ grid-area:tabs; flex-direction:column; gap:8px; overflow:visible; }
   .ecn-fy-panels{ grid-area:panel; }
   .ecn-fy-trust{ grid-area:trust; }
   .ecn-fy-eyebrow{ font-size:11px; margin-bottom:8px; }
@@ -112,8 +113,8 @@
   .ecn-fy-media{ flex:none; }
   .ecn-fy-img{ height:auto; min-height:0; aspect-ratio:16 / 9.2; }
   .ecn-fy-badge{ top:14px; right:14px; padding:7px 13px; font-size:12px; }
-  .ecn-fy-body{ gap:8px; padding:22px 28px 22px; }
-  .ecn-fy-foot{ padding-top:0; }
+  .ecn-fy-body{ justify-content:flex-start; gap:8px; padding:22px 28px 22px; }
+  .ecn-fy-foot{ margin-top:auto; padding-top:0; }
   .ecn-fy .ecn-fy-name{ font-size:32px !important; }
   .ecn-fy-ing{ font-size:16px; }
   .ecn-fy-attrs{ gap:8px 22px; margin-top:4px; }
