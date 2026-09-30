@@ -2,14 +2,16 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.0.0');
+define('ECONUR_REVIEWS_VERSION', '1.1.0');
+
+require_once __DIR__ . '/includes/review-requests.php';
 
 /*
  * Two modes, chosen automatically:
@@ -45,11 +47,14 @@ function enr_reviews_settings() {
             'live_verified' => 'Real feedback from customers who have purchased ECONUR products.',
         ),
         // [icon, title, line]. live_verified is used only when every review shown is from a verified owner.
+        // Product claims (e.g. handmade, natural, packaging) appear here only once the owner has confirmed them.
+        // Current lines are checked against store settings: reviews are open on every product, and cash on delivery
+        // is the enabled payment method for the Bangladesh-only shipping zone.
         'trust' => array(
             'fallback' => array(
                 array('chat', 'Real customer feedback', 'Shared with us by ECONUR customers.'),
-                array('leaf', 'Handmade, 100% natural', 'Zero-plastic, compostable packaging.'),
-                array('cash', 'Cash on delivery', 'Pay in cash when your order arrives.'),
+                array('star', 'Share your experience', 'Leave a review on any product page.'),
+                array('cash', 'Cash on delivery', 'Available across Bangladesh.'),
             ),
             'live' => array(
                 array('chat', 'Customer reviews', 'Approved reviews from our product pages.'),
@@ -191,7 +196,6 @@ function enr_reviews_icon($n) {
         'check' => '<path d="m7.5 12.3 3 3 6-6.2"/>',
         'star'  => '<path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.6l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8Z"/>',
         'sync'  => '<path d="M20 11a8 8 0 0 0-14.3-4.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.3L20 15.5"/><path d="M20 20v-4.5h-4.5"/>',
-        'leaf'  => '<path d="M5 19c0-8 5-13.5 15-14-.4 9.6-5.8 15-13.4 15"/><path d="M5 19c2.6-4.3 5.6-7.2 9.5-9.4"/>',
         'cash'  => '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5"/><path d="M18 9.5v5"/>',
         'prev'  => '<path d="m15 6-6 6 6 6"/>',
         'next'  => '<path d="m9 6 6 6-6 6"/>',
