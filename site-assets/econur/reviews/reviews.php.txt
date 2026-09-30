@@ -11,7 +11,8 @@ defined('ABSPATH') || exit;
 /**
  * enabled              = false keeps the section off the page.
  * testimonials         = customer feedback confirmed by the store owner. rating = stars shown; verified / date only when confirmed;
- *                        product = the bar the customer names (0 = no product block), product_label = its small label.
+ *                        product = the bar the customer names (0 = no product block), product_label = its small label;
+ *                        about = when no product is named: image (media ID), focus, title and line taken from the customer's own words.
  * limit                = how many reviews to show (newest first).
  * only_verified_owners = list only reviews WooCommerce marks as from a verified owner (reviews are auto-approved and open to anyone).
  * show_verified        = show "Verified buyer", "Purchased" and "Verified purchases" wording. Off until approved.
@@ -25,10 +26,12 @@ function econur_reviews_config() {
         'enabled'              => true,
         'testimonials'         => array(
             array('name' => 'Nadia Rahman',    'city' => 'Dhaka',      'rating' => 5, 'verified' => false, 'date' => '', 'product' => 0,  'product_label' => '',
+                  'about' => array('image' => 140, 'focus' => '32% 74%', 'title' => 'An ECONUR bar', 'line' => 'A permanent fixture in the shower'),
                   'text' => 'Softest my skin has felt in years. This bar is a permanent fixture in my shower now and I will not go back to commercial soap.'),
             array('name' => 'Tanvir Hossain',  'city' => 'Chattogram', 'rating' => 5, 'verified' => false, 'date' => '', 'product' => 14, 'product_label' => 'Product',
                   'text' => 'The Active Defense Bar cleared my blackheads in two weeks. Genuinely impressed.'),
             array('name' => 'Priya Chowdhury', 'city' => 'Sylhet',     'rating' => 5, 'verified' => false, 'date' => '', 'product' => 0,  'product_label' => '',
+                  'about' => array('image' => 103, 'focus' => '58% 42%', 'title' => 'A full ECONUR set', 'line' => 'Ordered as a gift'),
                   'text' => 'Ordered a full set as a gift. The packaging and the scents are beautiful, everyone loved them.'),
         ),
         'limit'                => 6,
@@ -136,6 +139,18 @@ add_shortcode('econur_reviews', function () {
                 . '</div></div>';
         }
 
+        if (!$buy && !empty($r['about']['title'])) {
+            $a = $r['about']; $img = '';
+            if (!empty($a['image']) && wp_attachment_is_image((int) $a['image'])) {
+                $attr = array('class' => 'ecn-rv-thumb', 'alt' => $a['title'], 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '112px');
+                if (preg_match('/^\d{1,3}% \d{1,3}%$/', (string) ($a['focus'] ?? ''))) $attr['style'] = 'object-position:' . $a['focus'];
+                $img = str_replace('sizes="auto, ', 'sizes="', wp_get_attachment_image((int) $a['image'], 'medium', false, $attr));
+            }
+            $buy = '<div class="ecn-rv-buy">' . ($img ? '<span class="ecn-rv-buy-img">' . $img . '</span>' : '')
+                . '<div class="ecn-rv-buy-copy"><span class="ecn-rv-buy-eyebrow">About</span><span class="ecn-rv-buy-name">' . esc_html($a['title']) . '</span>'
+                . (!empty($a['line']) ? '<span class="ecn-rv-buy-line">' . esc_html($a['line']) . '</span>' : '') . '</div></div>';
+        }
+
         $date = '';
         if (!empty($r['date']) && ($ts = strtotime($r['date']))) $date = '<time class="ecn-rv-date" datetime="' . esc_attr(gmdate('Y-m-d', $ts)) . '">' . esc_html(date_i18n('M j, Y', $ts)) . '</time>';
 
@@ -146,7 +161,8 @@ add_shortcode('econur_reviews', function () {
             . '<div class="ecn-rv-who"><span class="ecn-rv-avatar" aria-hidden="true">' . esc_html($initial) . '</span>'
             . '<div class="ecn-rv-who-copy"><b class="ecn-rv-name">' . esc_html($name) . '</b>'
             . (!empty($r['city']) ? '<span class="ecn-rv-city">' . esc_html($r['city']) . '</span>' : '')
-            . ($verified ? '<span class="ecn-rv-verified"><span class="ecn-rv-tick">' . econur_reviews_icon('check') . '</span>Verified buyer</span>' : '')
+            . ($verified ? '<span class="ecn-rv-verified"><span class="ecn-rv-tick">' . econur_reviews_icon('check') . '</span>Verified buyer</span>'
+                         : '<span class="ecn-rv-verified ecn-rv-shared"><span class="ecn-rv-tick">' . econur_reviews_icon('chat') . '</span>Shared with ECONUR</span>')
             . '</div></div>'
             . $buy . $date
             . '</article></li>';
@@ -160,7 +176,10 @@ add_shortcode('econur_reviews', function () {
         // No confirmed rating figures: the summary area names what the cards are, without numbers.
         $cities = array_values(array_unique(array_filter(array_map(function ($r) { return trim((string) ($r['city'] ?? '')); }, $items))));
         $where = count($cities) > 1 ? implode(', ', array_slice($cities, 0, -1)) . ' and ' . end($cities) : ($cities[0] ?? '');
-        $summary = '<div class="ecn-rv-summary ecn-rv-summary--label"><p class="ecn-rv-feedback">Customer feedback</p>'
+        $rated = array_filter(array_map(function ($r) { return (float) ($r['rating'] ?? 0); }, $items));
+        $shown = $rated ? array_sum($rated) / count($rated) : 0;
+        $summary = '<div class="ecn-rv-summary ecn-rv-summary--label"><div class="ecn-rv-summary-row"><span class="ecn-rv-feedback">Customer feedback</span>'
+            . ($shown ? econur_reviews_stars($shown, 'ecn-rv-stars ecn-rv-stars--lg') : '') . '</div>'
             . ($where ? '<p class="ecn-rv-count">From ECONUR customers in ' . esc_html($where) . '</p>' : '') . '</div>';
     }
 
@@ -180,9 +199,9 @@ add_shortcode('econur_reviews', function () {
             array('chat', 'Real product reviews', 'Honest feedback from real buyers.'),
             array('sync', 'Updated from WooCommerce', 'Automatically shows the latest reviews.'),
         ) : array(
-            array('cart', 'Real customers', 'Feedback from people who ordered ECONUR.'),
-            array('chat', 'Share your experience', 'Leave a review on any product page.'),
-            array('star', 'Rated from 1 to 5 stars', 'Every product review includes a star rating.'),
+            array('cart', 'Customer feedback', 'Feedback shared by ECONUR customers.'),
+            array('chat', 'Product experiences', 'Customer experiences with ECONUR products.'),
+            array('shield', 'More reviews coming', 'Additional feedback can be added as it is received.'),
         );
     } else {
         // No reviews yet: an honest invitation in the same card style, nothing presented as a review.

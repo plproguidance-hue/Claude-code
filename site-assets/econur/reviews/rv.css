@@ -20,8 +20,9 @@
 .ecn-rv-avg{ font-size:38px; font-weight:700; line-height:1; color:var(--rv-teal); }
 .ecn-rv-count{ margin:6px 0 0; font-size:14px; color:var(--rv-ink); }
 .ecn-rv-summary--label{ display:flex; flex-direction:column; align-items:center; }
-.ecn-rv-feedback{ display:inline-flex; align-items:center; gap:12px; margin:0 !important; font-family:var(--ecn-font-head); font-size:24px; font-weight:500; line-height:1.15; color:var(--rv-teal); }
-.ecn-rv-feedback::before, .ecn-rv-feedback::after{ content:""; width:7px; height:7px; border-radius:50%; background:var(--rv-gold); opacity:.85; }
+.ecn-rv-summary--label .ecn-rv-summary-row{ flex-wrap:wrap; gap:6px 12px; }
+.ecn-rv-feedback{ font-family:var(--ecn-font-head); font-size:27px; font-weight:500; line-height:1.1; letter-spacing:-.01em; color:#0B4F55; }
+.ecn-rv-summary--label .ecn-rv-stars--lg svg{ width:22px; height:22px; }
 .ecn-rv-summary--label .ecn-rv-count{ color:var(--rv-muted); }
 /* stars */
 .ecn-rv-stars{ display:inline-flex; gap:3px; line-height:0; }
@@ -52,6 +53,7 @@
 .ecn-rv-verified{ display:inline-flex; align-items:center; gap:6px; margin-top:2px; font-size:13px; font-weight:500; line-height:1.3; color:var(--rv-green); }
 .ecn-rv-tick{ flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:var(--rv-green); color:#fff; }
 .ecn-rv-tick svg{ width:12px; height:12px; stroke-width:2.6; }
+.ecn-rv-shared .ecn-rv-tick svg{ width:10px; height:10px; stroke-width:2.2; }
 /* purchased product */
 .ecn-rv-buy{ display:flex; align-items:center; gap:14px; margin-top:16px; padding-top:16px; border-top:1px solid var(--rv-line); }
 .ecn-rv-buy-img{ flex:none; display:block; width:78px; height:78px; overflow:hidden; border-radius:12px; background:#F1ECE3; }
@@ -148,8 +150,10 @@
   .ecn-rv-summary{ margin-top:22px; }
   .ecn-rv-avg{ font-size:50px; }
   .ecn-rv-count{ font-size:16px; }
-  .ecn-rv-feedback{ font-size:32px; gap:16px; }
-  .ecn-rv-feedback::before, .ecn-rv-feedback::after{ width:8px; height:8px; }
+  .ecn-rv-feedback{ font-size:42px; }
+  .ecn-rv-summary--label .ecn-rv-summary-row{ gap:8px 16px; }
+  .ecn-rv-summary--label .ecn-rv-stars--lg svg{ width:30px; height:30px; }
+  .ecn-rv-summary--label .ecn-rv-count{ margin-top:8px; }
   .ecn-rv-carousel, .ecn-rv-empty{ margin-top:30px; }
   .ecn-rv .ecn-rv-empty-card{ padding:38px 48px 36px; }
   .ecn-rv-empty-title{ font-size:28px; }
