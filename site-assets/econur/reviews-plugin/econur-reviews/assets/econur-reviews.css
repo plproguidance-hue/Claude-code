@@ -270,3 +270,15 @@
 @media (min-width:700px){ .enr-rv-stars svg{ width:22px; height:22px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:34px; height:34px; } }
 @media (min-width:1200px){ .enr-rv-stars svg{ width:24px; height:24px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:38px; height:38px; } }
 @media (max-width:374px){ .enr-rv-stars svg{ width:19px; height:19px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:25px; height:25px; } }
+/* final fit: slightly wider cards, slightly shorter cards, more room above the controls, and the top-right artwork
+   kept clear of the cards */
+@media (max-width:999px){ .enr-rv-nav{ margin-top:10px; } }
+@media (min-width:1200px){
+  .enr-rv{ padding:66px 20px 38px; }
+  .enr-rv-card{ padding:22px 26px 18px; }
+  .enr-rv .enr-rv-text{ margin:14px 0 16px !important; }
+  .enr-rv-date{ margin-top:10px; min-height:16px; }
+  .enr-rv-nav{ margin-top:20px; }
+  .enr-rv .enr-rv-trust{ margin-top:22px !important; }
+  .enr-rv-deco--tr{ top:-34px; right:-26px; width:240px; }
+}

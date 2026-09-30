@@ -2,14 +2,14 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.3.1
+ * Version:           1.3.2
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.3.1');
+define('ECONUR_REVIEWS_VERSION', '1.3.2');
 
 require_once __DIR__ . '/includes/review-requests.php';
 
