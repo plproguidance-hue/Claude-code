@@ -143,35 +143,33 @@
   .ecnf .ecnf-art--shadow{ display:block !important; top:-70px; left:42%; width:520px; opacity:.06; filter:grayscale(1) blur(2px); mix-blend-mode:multiply; transform:rotate(18deg); }
 }
 
-/* ---------- desktop: brand | Shop | Help | Order & Support ---------- */
+/* ---------- desktop: brand | Shop | Help | Order & Support ----------
+   A wide section: side gaps grow with the viewport (about 28px at 1366, 31px at 1440, 50px at 1920), capped at
+   1820px. Type, logo, icons and button keep their size; the extra width goes to the column gaps and the art sits
+   on the outer edges, so the middle stays clean. */
 @media (min-width:1000px){
-  .ecnf{ margin:0 auto 28px; width:calc(100% - 40px); }
-  .ecnf-main{ grid-template-columns:minmax(0,35fr) minmax(0,16fr) minmax(0,16fr) minmax(0,33fr); column-gap:28px; padding:50px 52px 40px 132px; }
+  .ecnf{ --ecnf-gap:clamp(20px, calc(3.61vw - 21.3px), 55px); width:calc(100% - 2 * var(--ecnf-gap)); max-width:1820px; margin:-6px auto 28px; }
+  .ecnf-main{ grid-template-columns:minmax(0,30fr) minmax(0,15fr) minmax(0,15fr) minmax(0,29fr); column-gap:clamp(24px, 3.2vw, 68px); padding:50px clamp(52px, 5.5vw, 112px) 40px clamp(122px, 9.6vw, 196px); }
   .ecnf-brand{ grid-column:auto; max-width:none; }
   .ecnf .ecnf-about{ max-width:360px; }
-  .ecnf-col--shop, .ecnf-col--help{ padding-left:12px; }
+  .ecnf-support-wrap{ max-width:400px; }
   .ecnf .ecnf-h, .ecnf .ecnf-h--static{ font-size:22px !important; }
 
-  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px 52px !important; }
+  /* legal strip spans the whole card; its right end stays clear of the floating chat button */
+  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px max(clamp(52px, 4.6vw, 96px), calc(130px - var(--ecnf-gap))) 14px clamp(52px, 4.6vw, 96px) !important; }
 
-  .ecnf .ecnf-art--soaps{ top:auto; right:auto; bottom:52px; left:-30px; width:262px; transform:scaleX(-1); }
-  .ecnf .ecnf-art--tl{ display:block !important; top:-26px; left:-30px; width:150px; transform:rotate(4deg); opacity:.95; }
-  .ecnf .ecnf-art--tr{ display:block; top:-34px; right:-50px; width:146px; transform:scaleX(-1) rotate(-8deg); opacity:.95; }
+  .ecnf .ecnf-art--soaps{ top:auto; right:auto; bottom:52px; left:-30px; width:clamp(262px, 16vw, 310px); transform:scaleX(-1); }
+  .ecnf .ecnf-art--tl{ display:block !important; top:-26px; left:-34px; width:clamp(150px, 11vw, 200px); transform:rotate(4deg); opacity:.95; }
+  .ecnf .ecnf-art--tr{ display:block; top:-34px; right:-50px; width:clamp(146px, 10vw, 190px); transform:scaleX(-1) rotate(-8deg); opacity:.95; }
   .ecnf .ecnf-art--edge{ display:block !important; top:40%; right:-74px; bottom:auto; left:auto; width:170px; transform:rotate(-100deg); opacity:.9; }
-  .ecnf .ecnf-art--shadow{ top:-90px; left:36%; width:620px; }
+  .ecnf .ecnf-art--shadow{ top:-90px; left:auto; right:7%; width:620px; }
 }
-/* small laptops: wider support column (number and button stay on one line); the legal strip ends before the
-   floating chat button, which sits over the card's right edge at these widths */
+/* small laptops: wider support column so the number and button stay on one line */
 @media (min-width:1000px) and (max-width:1199px){
   .ecnf-main{ grid-template-columns:minmax(0,31fr) minmax(0,15fr) minmax(0,15fr) minmax(0,39fr); column-gap:22px; padding:48px 40px 38px 122px; }
+  .ecnf-support-wrap{ max-width:none; }
   .ecnf .ecnf-wa{ padding:0 18px; }
   .ecnf .ecnf-art--soaps{ left:-50px; bottom:52px; width:206px; }
   .ecnf .ecnf-art--edge{ right:-104px; }
   .ecnf .ecnf-art--tl{ width:128px; left:-34px; }
-}
-@media (min-width:1000px) and (max-width:1339px){ .ecnf-legal{ padding-right:150px !important; } }
-@media (min-width:1200px){
-  .ecnf-main{ padding-left:150px; padding-right:60px; }
-  .ecnf .ecnf-art--tl{ width:176px; left:-34px; }
-  .ecnf .ecnf-art--soaps{ width:280px; }
 }
