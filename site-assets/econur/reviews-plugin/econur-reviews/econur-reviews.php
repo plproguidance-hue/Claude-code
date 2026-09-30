@@ -2,14 +2,14 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.2.0');
+define('ECONUR_REVIEWS_VERSION', '1.3.0');
 
 require_once __DIR__ . '/includes/review-requests.php';
 
@@ -18,7 +18,8 @@ require_once __DIR__ . '/includes/review-requests.php';
  *  - live:     at least `live_min` approved product reviews exist. Cards are the newest approved reviews rated
  *              `min_rating` or higher; the rating row is calculated from ALL approved reviews.
  *  - fallback: fewer reviews than that. Cards are the confirmed testimonials below, with only what is known about
- *              each one: no stars, no "Verified buyer", no "Purchased", no date and no rating row.
+ *              each one: their star rating (confirmed by the owner), no "Verified buyer", no "Purchased" and no date.
+ *              The rating row is calculated from those confirmed ratings.
  *
  * The plugin only takes over [econur_reviews] when the option `econur_reviews_active` is 'yes'. Until then the
  * existing section keeps rendering, and the new one is visible only on a preview URL (?enr_preview=<key>).
@@ -28,14 +29,15 @@ function enr_reviews_settings() {
         'live_min'   => 3,
         'limit'      => 9,
         'min_rating' => 4,
-        // Confirmed by the store owner as real customers. Wording is the customers' own; do not edit.
+        // Confirmed by the store owner as real customers, each rating ECONUR 5 stars (confirmed 2026-09-30).
+        // Wording is the customers' own; do not edit.
         'testimonials' => array(
-            array('name' => 'Nadia Rahman', 'city' => 'Dhaka',
+            array('name' => 'Nadia Rahman', 'city' => 'Dhaka', 'rating' => 5,
                   'about' => array('image' => 140, 'focus' => '32% 74%', 'title' => 'An ECONUR bar', 'line' => 'A permanent fixture in the shower'),
                   'text' => 'Softest my skin has felt in years. This bar is a permanent fixture in my shower now and I will not go back to commercial soap.'),
-            array('name' => 'Tanvir Hossain', 'city' => 'Chattogram', 'product' => 14,
+            array('name' => 'Tanvir Hossain', 'city' => 'Chattogram', 'rating' => 5, 'product' => 14,
                   'text' => 'The Active Defense Bar cleared my blackheads in two weeks. Genuinely impressed.'),
-            array('name' => 'Priya Chowdhury', 'city' => 'Sylhet',
+            array('name' => 'Priya Chowdhury', 'city' => 'Sylhet', 'rating' => 5,
                   'about' => array('image' => 103, 'focus' => '58% 42%', 'title' => 'A full ECONUR set', 'line' => 'Ordered as a gift'),
                   'text' => 'Ordered a full set as a gift. The packaging and the scents are beautiful, everyone loved them.'),
         ),
@@ -214,7 +216,7 @@ function enr_reviews_stars($n, $class = 'enr-rv-stars') {
             $out .= '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="' . ($fill >= 1 ? 'is-on' : 'is-off') . '" d="' . $path . '"/></svg>';
         } else {
             $id = 'enr-rv-g' . (++$uid); $pc = round($fill * 100) . '%';
-            $out .= '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><defs><linearGradient id="' . $id . '"><stop offset="' . $pc . '" stop-color="#C9A24A"/><stop offset="' . $pc . '" stop-color="#E4DDCD"/></linearGradient></defs><path fill="url(#' . $id . ')" d="' . $path . '"/></svg>';
+            $out .= '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><defs><linearGradient id="' . $id . '"><stop offset="' . $pc . '" stop-color="#E0A731"/><stop offset="' . $pc . '" stop-color="#E4DDCD"/></linearGradient></defs><path fill="url(#' . $id . ')" d="' . $path . '"/></svg>';
         }
     }
     $label = sprintf('Rated %s out of 5', rtrim(rtrim(number_format($n, 1), '0'), '.'));
@@ -252,8 +254,8 @@ function enr_reviews_card($r, $n, $total, $live, $cfg) {
         $img_id = (int) get_post_meta($p->get_id(), 'econur_home_card_image', true);
         if (!$img_id || !wp_attachment_is_image($img_id)) $img_id = (int) $p->get_image_id();
         $img = enr_reviews_thumb($img_id, $p->get_name(), $cfg['thumb_focus'][$p->get_id()] ?? '', '112px');
-        // Same lower block on every card. Testimonials: what the customer's own words refer to (no purchase claim).
-        $label = $live ? ($verified ? 'Purchased' : 'Reviewed') : 'From the review';
+        // Same lower block on every card. Testimonials use a neutral label (no purchase claim).
+        $label = $live ? ($verified ? 'Purchased' : 'Reviewed') : 'Product';
         $line = enr_reviews_product_line($p);
         $lower = '<div class="enr-rv-buy">'
             . ($img ? '<a class="enr-rv-buy-img" href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . $img . '</a>' : '')
@@ -265,7 +267,7 @@ function enr_reviews_card($r, $n, $total, $live, $cfg) {
         $a = $r['about'];
         $img = enr_reviews_thumb((int) ($a['image'] ?? 0), $a['title'], $a['focus'] ?? '', '240px');
         $lower = '<div class="enr-rv-buy">' . ($img ? '<span class="enr-rv-buy-img">' . $img . '</span>' : '')
-            . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">From the review</span><span class="enr-rv-buy-name">' . esc_html($a['title']) . '</span>'
+            . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">Product</span><span class="enr-rv-buy-name">' . esc_html($a['title']) . '</span>'
             . (!empty($a['line']) ? '<span class="enr-rv-buy-line">' . esc_html($a['line']) . '</span>' : '') . '</div></div>';
     }
 
@@ -282,7 +284,7 @@ function enr_reviews_card($r, $n, $total, $live, $cfg) {
     $quote = '<svg class="enr-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>';
 
     return '<li class="enr-rv-slide" role="group" aria-roledescription="slide" aria-label="' . esc_attr($n . ' of ' . $total) . '"><article class="enr-rv-card' . ($lower ? ' has-buy' : '') . '">'
-        . '<div class="enr-rv-top">' . $quote . ($live && !empty($r['rating']) ? enr_reviews_stars($r['rating']) : '') . '</div>'
+        . '<div class="enr-rv-top">' . $quote . (!empty($r['rating']) ? enr_reviews_stars($r['rating']) : '') . '</div>'
         . '<blockquote class="enr-rv-text"><p>' . esc_html($r['text']) . '</p></blockquote>'
         . '<div class="enr-rv-who"><span class="enr-rv-avatar" aria-hidden="true">' . esc_html($initial) . '</span>'
         . '<div class="enr-rv-who-copy"><b class="enr-rv-name">' . esc_html($name) . '</b>'
@@ -306,17 +308,15 @@ function enr_reviews_render($data, $cfg) {
     foreach ($items as $r) $cards .= enr_reviews_card($r, ++$n, $total, $live, $cfg);
 
     $summary = '';
+    $ratings = array_filter(array_map(function ($r) { return (int) ($r['rating'] ?? 0); }, $items));
     if (!$live) {
-        // Testimonials have no rating figures. Same block, truthful content: how many customer stories are shown,
-        // their initials and where the customers are.
-        $cities = array_values(array_unique(array_filter(array_map(function ($r) { return trim((string) ($r['city'] ?? '')); }, $items))));
-        $where = count($cities) > 1 ? implode(', ', array_slice($cities, 0, -1)) . ' and ' . end($cities) : ($cities[0] ?? '');
-        $faces = '';
-        foreach (array_slice($items, 0, 5) as $r) { $nm = trim($r['name']); $faces .= '<span>' . esc_html(function_exists('mb_substr') ? mb_strtoupper(mb_substr($nm, 0, 1)) : strtoupper(substr($nm, 0, 1))) . '</span>'; }
-        $line = sprintf(_n('%s customer story', '%s customer stories', $total, 'econur-reviews'), '') . ($where ? ' from ' . $where : '');
-        $summary = '<div class="enr-rv-summary enr-rv-summary--stories"><div class="enr-rv-summary-row"><span class="enr-rv-avg" aria-hidden="true">' . (int) $total . '</span>'
-            . '<span class="enr-rv-faces" aria-hidden="true">' . $faces . '</span></div>'
-            . '<p class="enr-rv-count"><span class="enr-rv-sr">' . (int) $total . ' </span>' . esc_html(ucfirst(trim($line))) . '</p></div>';
+        // Testimonials: the same rating row as live mode, calculated from the owner-confirmed ratings shown in the cards.
+        if (count($ratings) === $total) {
+            $avg = array_sum($ratings) / $total;
+            $summary = '<div class="enr-rv-summary"><div class="enr-rv-summary-row"><span class="enr-rv-avg" aria-hidden="true">' . esc_html(number_format_i18n($avg, 1)) . '</span>'
+                . enr_reviews_stars($avg, 'enr-rv-stars enr-rv-stars--lg') . '</div>'
+                . '<p class="enr-rv-count">Based on <b>' . esc_html(number_format_i18n($total)) . '</b> ' . esc_html(_n('customer review', 'customer reviews', $total, 'econur-reviews')) . '</p></div>';
+        }
     } elseif ($data['stats']['count']) {
         $s = $data['stats'];
         $what = $s['verified'] === $s['count'] ? _n('verified review', 'verified reviews', $s['count'], 'econur-reviews') : _n('review', 'reviews', $s['count'], 'econur-reviews');

@@ -1,5 +1,5 @@
 /* ECONUR Reviews plugin: "What customers say" section ([econur_reviews]). Scoped to .enr-rv. */
-.enr-rv{ --rv-teal:#0D585F; --rv-green:#1F6B4F; --rv-ink:#1E2624; --rv-muted:#6B675F; --rv-line:#ECE5D8; --rv-card:#FFFDF8; --rv-gold:#C9A24A; --rv-sage:#E3E9DD;
+.enr-rv{ --rv-teal:#0D585F; --rv-green:#1F6B4F; --rv-ink:#1E2624; --rv-muted:#6B675F; --rv-line:#ECE5D8; --rv-card:#FFFDF8; --rv-gold:#E0A731; --rv-sage:#E3E9DD;
   position:relative; isolation:isolate; overflow:hidden; margin:0 16px; padding:40px 18px 20px; border:1px solid #EDE6D8; border-radius:22px;
   background:radial-gradient(70% 40% at 50% 0%, rgba(236,239,226,.55), rgba(236,239,226,0) 70%), linear-gradient(180deg, #FBF8F1 0%, #F7F3EA 100%); box-shadow:0 12px 34px rgba(52,44,30,.05); }
 .enr-rv > *{ position:relative; z-index:1; }
@@ -181,12 +181,6 @@
 /* every card keeps the same rows: the date row holds its space even when there is no date */
 .enr-rv-date{ min-height:18px; }
 .enr-rv-top{ min-height:23px; }
-/* summary for customer stories: number, the customers' initials, where they are */
-.enr-rv-faces{ display:inline-flex; align-items:center; }
-.enr-rv-faces span{ display:grid; place-items:center; width:32px; height:32px; margin-left:-8px; border:2px solid #FAF7F0; border-radius:50%; background:var(--rv-sage); color:#46604F; font-family:var(--ecn-font-head, "Fraunces", Georgia, serif); font-size:15px; line-height:1; }
-.enr-rv-faces span:first-child{ margin-left:0; }
-.enr-rv-summary--stories .enr-rv-count{ color:var(--rv-ink); }
-@media (min-width:700px){ .enr-rv-faces span{ width:36px; height:36px; font-size:17px; } }
 /* desktop: matched to the approved reference. The block is 1140px wide, the same as the homepage sections above it,
    and sizes stop growing past this point */
 @media (min-width:1200px){
@@ -201,28 +195,27 @@
   .enr-rv-summary{ margin-top:14px; }
   .enr-rv-avg{ font-size:54px; line-height:1; }
   .enr-rv-count{ margin-top:4px; font-size:16.5px; }
-  .enr-rv-faces span{ width:40px; height:40px; font-size:19px; }
   .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:30px; height:30px; }
   .enr-rv-carousel{ margin-top:18px; }
   .enr-rv-track{ gap:18px; margin:-8px -8px 0 !important; padding:8px 8px 12px !important; }
   .enr-rv-slide{ flex-basis:calc((100% - 36px) / 3); }
   .enr-rv-card{ padding:24px 26px 20px; border-radius:18px; }
   .enr-rv-quote{ width:32px; height:25px; }
-  .enr-rv-top{ min-height:25px; }
+  .enr-rv-top{ min-height:25px; gap:14px; }
   .enr-rv-stars svg{ width:18px; height:18px; }
-  .enr-rv .enr-rv-text{ margin:18px 0 22px !important; }
+  .enr-rv .enr-rv-text{ margin:16px 0 18px !important; }
   .enr-rv .enr-rv-text p{ font-size:19px; line-height:1.45; }
   .enr-rv-who{ gap:14px; }
   .enr-rv-avatar{ width:60px; height:60px; font-size:27px; }
   .enr-rv-name{ font-size:16px; }
   .enr-rv-city{ font-size:14px; }
   .enr-rv-verified{ font-size:14.5px; }
-  .enr-rv-buy{ min-height:0; gap:18px; margin-top:18px; padding-top:18px; }
+  .enr-rv-buy{ min-height:0; gap:18px; margin-top:16px; padding-top:16px; }
   .enr-rv-buy-img{ width:100px; height:100px; }
   .enr-rv-buy-eyebrow{ font-size:11px; letter-spacing:.14em; }
   .enr-rv .enr-rv-buy-name{ font-size:19px; }
   .enr-rv-buy-line{ font-size:14px; }
-  .enr-rv-date{ margin-top:14px; min-height:19px; font-size:13.5px; }
+  .enr-rv-date{ margin-top:12px; min-height:19px; font-size:13.5px; }
   .enr-rv-nav{ margin-top:10px; gap:18px; }
   .enr-rv .enr-rv-arrow{ width:46px; height:46px; }
   .enr-rv .enr-rv-trust{ margin-top:16px !important; padding:22px 8px !important; border-radius:22px; }
@@ -236,7 +229,7 @@
    name so no other section's text changes (the site loads Fraunces only in 500-600). */
 @font-face{ font-family:"ENR Fraunces Text"; font-style:normal; font-weight:400; font-display:swap; src:url("fraunces-400-latin.woff2") format("woff2"); unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 .enr-rv .enr-rv-text p, .enr-rv .enr-rv-buy-name, .enr-rv-trust-copy b{ font-family:"ENR Fraunces Text", var(--ecn-font-head, "Fraunces", Georgia, serif); font-weight:400; }
-.enr-rv-avatar, .enr-rv-faces span{ font-family:inherit; font-weight:400; }
+.enr-rv-avatar{ font-family:inherit; font-weight:400; }
 /* phones: matched to the reference's mobile layout. Exactly one card in view (the gap equals the side padding so the next
    card starts just outside the block), a single-line summary and a slightly smaller heading */
 @media (max-width:699px){
@@ -245,7 +238,6 @@
   .enr-rv-count{ font-size:13px; letter-spacing:-.005em; }
   .enr-rv-summary{ margin-top:12px; }
   .enr-rv-avg{ font-size:36px; line-height:1; }
-  .enr-rv-faces span{ width:28px; height:28px; font-size:13px; }
   .enr-rv-buy-img{ width:88px; height:88px; }
 }
 @media (max-width:374px){
@@ -265,3 +257,10 @@
   .enr-rv .enr-rv-buy-name{ font-size:17.5px; }
   .enr-rv-buy-line{ font-size:13px; }
 }
+/* star sizes matched to the reference: cards and rating row */
+.enr-rv-stars{ gap:2px; }
+.enr-rv-stars svg{ width:20px; height:20px; }
+.enr-rv .enr-rv-summary .enr-rv-stars--lg{ gap:3px; }
+.enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:27px; height:27px; }
+@media (min-width:700px){ .enr-rv-stars svg{ width:20px; height:20px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:30px; height:30px; } }
+@media (min-width:1200px){ .enr-rv-stars svg{ width:21px; height:21px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:34px; height:34px; } }
