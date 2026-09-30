@@ -142,7 +142,7 @@ add_shortcode('econur_reviews', function () {
         if (!$buy && !empty($r['about']['title'])) {
             $a = $r['about']; $img = '';
             if (!empty($a['image']) && wp_attachment_is_image((int) $a['image'])) {
-                $attr = array('class' => 'ecn-rv-thumb', 'alt' => $a['title'], 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '112px');
+                $attr = array('class' => 'ecn-rv-thumb', 'alt' => $a['title'], 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '240px');
                 if (preg_match('/^\d{1,3}% \d{1,3}%$/', (string) ($a['focus'] ?? ''))) $attr['style'] = 'object-position:' . $a['focus'];
                 $img = str_replace('sizes="auto, ', 'sizes="', wp_get_attachment_image((int) $a['image'], 'medium', false, $attr));
             }
@@ -180,7 +180,7 @@ add_shortcode('econur_reviews', function () {
         $shown = $rated ? array_sum($rated) / count($rated) : 0;
         $summary = '<div class="ecn-rv-summary ecn-rv-summary--label"><div class="ecn-rv-summary-row"><span class="ecn-rv-feedback">Customer feedback</span>'
             . ($shown ? econur_reviews_stars($shown, 'ecn-rv-stars ecn-rv-stars--lg') : '') . '</div>'
-            . ($where ? '<p class="ecn-rv-count">From ECONUR customers in ' . esc_html($where) . '</p>' : '') . '</div>';
+            . ($where ? '<p class="ecn-rv-count">Customers in ' . esc_html($where) . '</p>' : '') . '</div>';
     }
 
     if ($n) {
