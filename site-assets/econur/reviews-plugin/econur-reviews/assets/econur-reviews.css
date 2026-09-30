@@ -264,3 +264,9 @@
 .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:27px; height:27px; }
 @media (min-width:700px){ .enr-rv-stars svg{ width:20px; height:20px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:30px; height:30px; } }
 @media (min-width:1200px){ .enr-rv-stars svg{ width:21px; height:21px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:34px; height:34px; } }
+/* the star glyph fills ~80% of its box: sizes set so the drawn stars match the reference */
+.enr-rv-stars svg{ width:22px; height:22px; }
+.enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:30px; height:30px; }
+@media (min-width:700px){ .enr-rv-stars svg{ width:22px; height:22px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:34px; height:34px; } }
+@media (min-width:1200px){ .enr-rv-stars svg{ width:24px; height:24px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:38px; height:38px; } }
+@media (max-width:374px){ .enr-rv-stars svg{ width:19px; height:19px; } .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:25px; height:25px; } }
