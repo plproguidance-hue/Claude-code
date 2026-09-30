@@ -1,38 +1,62 @@
 <?php
 /**
  * Econur "What customers say" review section. [econur_reviews]
- * The reviews are the ones already shown on the homepage (moved here word for word from the old HTML widget).
- * WooCommerce has no product reviews yet, so there is no average rating, review count or review date to show.
- * Edit the content in econur_reviews_config().
+ * Shows the latest approved WooCommerce product reviews: reviewer name, star rating, verified-owner status,
+ * the reviewed product and the review date all come from WooCommerce. With no reviews it outputs nothing.
+ * Settings are in econur_reviews_config().
  */
 defined('ABSPATH') || exit;
 
 /**
- * rating   = stars shown on the card (1-5).
- * verified = show "Verified buyer" on the card.
- * product  = WooCommerce product ID of the bar the review is about, or 0 to leave out the "Purchased" block.
- * date     = review date (Y-m-d), or '' to leave it out.
- * summary  = array('average' => 4.8, 'count' => 27) only when real figures exist; null hides the rating summary.
- * decor    = media IDs of the decorative corner images (top-left leaves, top-right soap, bottom sprigs).
+ * limit                = how many reviews to show (newest first).
+ * only_verified_owners = list only reviews WooCommerce marks as from a verified owner (reviews are auto-approved and open to anyone).
+ * show_verified        = show "Verified buyer", "Purchased" and "Verified purchases" wording. Off until approved.
+ * show_summary         = show the average rating and review count. Off until approved.
+ * summary_min          = and only once at least this many rated reviews exist.
+ * decor       = media IDs of the decorative corner images (top-left leaves, top-right soap, bottom sprigs).
+ * thumb_focus = object-position for each product's thumbnail, by product ID (optional).
  */
 function econur_reviews_config() {
     return array(
-        'summary' => null,
-        'decor'   => array('tl' => 154, 'tr' => 155, 'bl' => 131, 'br' => 131),
-        'reviews' => array(
-            array('name' => 'Nadia Rahman',    'city' => 'Dhaka',      'rating' => 5, 'verified' => true, 'product' => 0,  'thumb_focus' => '', 'date' => '',
-                  'text' => 'Softest my skin has felt in years. This bar is a permanent fixture in my shower now and I will not go back to commercial soap.'),
-            array('name' => 'Tanvir Hossain',  'city' => 'Chattogram', 'rating' => 5, 'verified' => true, 'product' => 14, 'thumb_focus' => '30% 62%', 'date' => '',
-                  'text' => 'The Active Defense Bar cleared my blackheads in two weeks. Genuinely impressed.'),
-            array('name' => 'Priya Chowdhury', 'city' => 'Sylhet',     'rating' => 5, 'verified' => true, 'product' => 0,  'thumb_focus' => '', 'date' => '',
-                  'text' => 'Ordered a full set as a gift. The packaging and the scents are beautiful, everyone loved them.'),
-        ),
-        'trust' => array(
-            array('icon' => 'cart',   'title' => 'Verified purchases',   'text' => 'Reviews from confirmed customers.'),
-            array('icon' => 'chat',   'title' => 'Real product reviews', 'text' => 'Honest feedback from real buyers.'),
-            array('icon' => 'shield', 'title' => 'Customer feedback',    'text' => 'Reviews shared by ECONUR customers.'),
-        ),
+        'limit'                => 6,
+        'only_verified_owners' => true,
+        'show_verified'        => false,
+        'show_summary'         => false,
+        'summary_min'          => 3,
+        'decor'       => array('tl' => 154, 'tr' => 155, 'bl' => 131, 'br' => 131),
+        'thumb_focus' => array(14 => '30% 62%'),
     );
+}
+
+// Latest approved product reviews that have text, as plain arrays.
+function econur_reviews_items($limit, $only_verified) {
+    $out = array();
+    $comments = get_comments(array('type' => 'review', 'status' => 'approve', 'post_type' => 'product', 'post_status' => 'publish', 'number' => $limit * 5, 'orderby' => 'comment_date_gmt', 'order' => 'DESC'));
+    foreach ($comments as $c) {
+        $text = trim(wp_strip_all_tags($c->comment_content));
+        $verified = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID);
+        if ($text === '' || ($only_verified && !$verified)) continue;
+        $out[] = array(
+            'name'     => $c->comment_author !== '' ? $c->comment_author : 'ECONUR customer',
+            'rating'   => (int) get_comment_meta($c->comment_ID, 'rating', true),
+            'verified' => $verified,
+            'product'  => (int) $c->comment_post_ID,
+            'date'     => $c->comment_date,
+            'text'     => $text,
+        );
+        if (count($out) >= $limit) break;
+    }
+    return apply_filters('econur_reviews_items', $out);
+}
+
+// Average rating and number of rated reviews across all published products.
+function econur_reviews_summary() {
+    $sum = 0; $count = 0;
+    foreach (wc_get_products(array('limit' => -1, 'status' => 'publish', 'return' => 'objects')) as $p) {
+        $n = (int) $p->get_rating_count(); if (!$n) continue;
+        $sum += (float) $p->get_average_rating() * $n; $count += $n;
+    }
+    return $count ? array('average' => round($sum / $count, 1), 'count' => $count) : null;
 }
 
 function econur_reviews_icon($n) {
@@ -41,6 +65,9 @@ function econur_reviews_icon($n) {
         'chat'   => '<path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/><path d="M8 8.5h8"/><path d="M8 12h5"/>',
         'shield' => '<path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10Z"/><path d="m8.8 12 2.2 2.2 4.3-4.4"/>',
         'check'  => '<path d="m7.5 12.3 3 3 6-6.2"/>',
+        'star'   => '<path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.6l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8Z"/>',
+        'sync'   => '<path d="M20 11a8 8 0 0 0-14.3-4.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.3L20 15.5"/><path d="M20 20v-4.5h-4.5"/>',
+        'go'     => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
         'prev'   => '<path d="m15 6-6 6 6 6"/>',
         'next'   => '<path d="m9 6 6 6-6 6"/>',
     );
@@ -66,10 +93,12 @@ function econur_reviews_product_line($pid) {
 }
 
 add_shortcode('econur_reviews', function () {
-    $cfg = econur_reviews_config(); $cards = ''; $n = 0; $total = count($cfg['reviews']);
+    $cfg = econur_reviews_config();
+    $items = econur_reviews_items((int) $cfg['limit'], !empty($cfg['only_verified_owners']));
+    $show_verified = !empty($cfg['show_verified']); $total = count($items); $cards = ''; $n = 0; $all_verified = $total > 0;
 
-    foreach ($cfg['reviews'] as $r) {
-        $n++;
+    foreach ($items as $r) {
+        $n++; $verified = $show_verified && !empty($r['verified']); if (empty($r['verified'])) $all_verified = false;
         $name = trim($r['name']); $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($name, 0, 1)) : strtoupper(substr($name, 0, 1));
 
         $buy = '';
@@ -79,12 +108,13 @@ add_shortcode('econur_reviews', function () {
             $img_id = (int) get_post_meta($p->get_id(), 'econur_home_card_image', true);
             if (!$img_id || !wp_attachment_is_image($img_id)) $img_id = (int) $p->get_image_id();
             $attr = array('class' => 'ecn-rv-thumb', 'alt' => $p->get_name(), 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '112px');
-            if (preg_match('/^\d{1,3}% \d{1,3}%$/', (string) $r['thumb_focus'])) $attr['style'] = 'object-position:' . $r['thumb_focus'];
-            $img = $img_id ? wp_get_attachment_image($img_id, 'medium', false, $attr) : '';
+            $focus = $cfg['thumb_focus'][$p->get_id()] ?? '';
+            if (preg_match('/^\d{1,3}% \d{1,3}%$/', (string) $focus)) $attr['style'] = 'object-position:' . $focus;
+            $img = $img_id ? str_replace('sizes="auto, ', 'sizes="', wp_get_attachment_image($img_id, 'medium', false, $attr)) : '';
             $line = econur_reviews_product_line($p->get_id());
             $buy = '<div class="ecn-rv-buy">'
                 . ($img ? '<a class="ecn-rv-buy-img" href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . $img . '</a>' : '')
-                . '<div class="ecn-rv-buy-copy"><span class="ecn-rv-buy-eyebrow">Purchased</span>'
+                . '<div class="ecn-rv-buy-copy"><span class="ecn-rv-buy-eyebrow">' . ($verified ? 'Purchased' : 'Reviewed') . '</span>'
                 . '<a class="ecn-rv-buy-name" href="' . esc_url($link) . '">' . esc_html($p->get_name()) . '</a>'
                 . ($line ? '<span class="ecn-rv-buy-line">' . esc_html($line) . '</span>' : '')
                 . '</div></div>';
@@ -94,30 +124,58 @@ add_shortcode('econur_reviews', function () {
         if (!empty($r['date']) && ($ts = strtotime($r['date']))) $date = '<time class="ecn-rv-date" datetime="' . esc_attr(gmdate('Y-m-d', $ts)) . '">' . esc_html(date_i18n('M j, Y', $ts)) . '</time>';
 
         $cards .= '<li class="ecn-rv-slide" role="group" aria-roledescription="slide" aria-label="' . esc_attr($n . ' of ' . $total) . '"><article class="ecn-rv-card' . ($buy ? ' has-buy' : '') . '">'
-            . '<div class="ecn-rv-top"><svg class="ecn-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>' . econur_reviews_stars($r['rating']) . '</div>'
+            . '<div class="ecn-rv-top"><svg class="ecn-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>'
+            . ($r['rating'] ? econur_reviews_stars($r['rating']) : '') . '</div>'
             . '<blockquote class="ecn-rv-text"><p>' . esc_html($r['text']) . '</p></blockquote>'
             . '<div class="ecn-rv-who"><span class="ecn-rv-avatar" aria-hidden="true">' . esc_html($initial) . '</span>'
             . '<div class="ecn-rv-who-copy"><b class="ecn-rv-name">' . esc_html($name) . '</b>'
-            . ($r['city'] ? '<span class="ecn-rv-city">' . esc_html($r['city']) . '</span>' : '')
-            . (!empty($r['verified']) ? '<span class="ecn-rv-verified"><span class="ecn-rv-tick">' . econur_reviews_icon('check') . '</span>Verified buyer</span>' : '')
+            . ($verified ? '<span class="ecn-rv-verified"><span class="ecn-rv-tick">' . econur_reviews_icon('check') . '</span>Verified buyer</span>' : '')
             . '</div></div>'
             . $buy . $date
             . '</article></li>';
     }
-    if (!$n) return '';
 
     $summary = '';
-    if (!empty($cfg['summary']['average']) && !empty($cfg['summary']['count'])) {
-        $avg = (float) $cfg['summary']['average']; $cnt = (int) $cfg['summary']['count'];
-        $summary = '<div class="ecn-rv-summary"><div class="ecn-rv-summary-row"><span class="ecn-rv-avg">' . esc_html(number_format($avg, 1)) . '</span>' . econur_reviews_stars($avg, 'ecn-rv-stars ecn-rv-stars--lg') . '</div>'
-            . '<p class="ecn-rv-count">Based on <b>' . esc_html(number_format_i18n($cnt)) . '</b> verified reviews</p></div>';
+    if ($n && !empty($cfg['show_summary']) && ($sm = econur_reviews_summary()) && $sm['count'] >= (int) $cfg['summary_min']) {
+        $summary = '<div class="ecn-rv-summary"><div class="ecn-rv-summary-row"><span class="ecn-rv-avg">' . esc_html(number_format($sm['average'], 1)) . '</span>' . econur_reviews_stars($sm['average'], 'ecn-rv-stars ecn-rv-stars--lg') . '</div>'
+            . '<p class="ecn-rv-count">Based on <b>' . esc_html(number_format_i18n($sm['count'])) . '</b> ' . ($show_verified && $all_verified ? 'verified ' : '') . 'reviews</p></div>';
     }
 
-    $dots = '';
-    for ($i = 0; $i < $n; $i++) $dots .= '<button type="button" class="ecn-rv-dot' . ($i ? '' : ' is-on') . '" aria-label="Show review ' . ($i + 1) . '"' . ($i ? '' : ' aria-current="true"') . '></button>';
+    if ($n) {
+        $dots = '';
+        for ($i = 0; $i < $n; $i++) $dots .= '<button type="button" class="ecn-rv-dot' . ($i ? '' : ' is-on') . '" aria-label="Show review ' . ($i + 1) . '"' . ($i ? '' : ' aria-current="true"') . '></button>';
+        $main = '<div class="ecn-rv-carousel" role="region" aria-roledescription="carousel" aria-label="Customer reviews">'
+            . '<ul class="ecn-rv-track" id="ecn-rv-track" tabindex="0">' . $cards . '</ul>'
+            . '<div class="ecn-rv-nav"><button type="button" class="ecn-rv-arrow ecn-rv-prev" aria-controls="ecn-rv-track" aria-label="Previous review" disabled>' . econur_reviews_icon('prev') . '</button>'
+            . '<div class="ecn-rv-dots">' . $dots . '</div>'
+            . '<button type="button" class="ecn-rv-arrow ecn-rv-next" aria-controls="ecn-rv-track" aria-label="Next review">' . econur_reviews_icon('next') . '</button></div>'
+            . '</div>';
+        $eyebrow = 'Loved by customers';
+        $sub = ($show_verified && $all_verified) ? 'Real feedback from customers who have purchased ECONUR products.' : 'Real feedback from ECONUR customers.';
+        $trust = array(
+            array('chat', 'Real product reviews', 'Left on our product pages.'),
+            array('sync', 'Updated from WooCommerce', 'Automatically shows the latest reviews.'),
+            ($show_verified && $all_verified) ? array('cart', 'Verified purchases', 'Reviews from confirmed customers.') : array('star', 'Rated from 1 to 5 stars', 'Every review includes a star rating.'),
+        );
+    } else {
+        // No reviews yet: an honest invitation in the same card style, nothing presented as a review.
+        $main = '<div class="ecn-rv-empty"><div class="ecn-rv-card ecn-rv-empty-card">'
+            . '<svg class="ecn-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>'
+            . '<p class="ecn-rv-empty-title">Your review could be the first here.</p>'
+            . '<p class="ecn-rv-empty-text">Tried an ECONUR bar? Leave a star rating and a few words on its product page. Your review helps others find the right bar.</p>'
+            . '<a class="ecn-rv-cta" href="' . esc_url(wc_get_page_permalink('shop')) . '">Shop the bars ' . econur_reviews_icon('go') . '</a>'
+            . '</div></div>';
+        $eyebrow = 'Customer reviews';
+        $sub = 'Feedback from ECONUR customers will appear here as reviews come in.';
+        $trust = array(
+            array('chat', 'Reviews on every bar', 'Share yours on the product page.'),
+            array('star', 'Rated from 1 to 5 stars', 'Every review includes a star rating.'),
+            array('sync', 'Updated from WooCommerce', 'New reviews show up here automatically.'),
+        );
+    }
 
-    $trust = '';
-    foreach ($cfg['trust'] as $t) $trust .= '<li class="ecn-rv-trust-item"><span class="ecn-rv-trust-ico">' . econur_reviews_icon($t['icon']) . '</span><span class="ecn-rv-trust-copy"><b>' . esc_html($t['title']) . '</b><span>' . esc_html($t['text']) . '</span></span></li>';
+    $trust_html = '';
+    foreach ($trust as $t) $trust_html .= '<li class="ecn-rv-trust-item"><span class="ecn-rv-trust-ico">' . econur_reviews_icon($t[0]) . '</span><span class="ecn-rv-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html($t[2]) . '</span></span></li>';
 
     $decor = '';
     foreach ((array) $cfg['decor'] as $pos => $id) {
@@ -125,18 +183,13 @@ add_shortcode('econur_reviews', function () {
         if ($src) $decor .= '<img class="ecn-rv-deco ecn-rv-deco--' . esc_attr($pos) . '" src="' . esc_url($src[0]) . '" width="' . (int) $src[1] . '" height="' . (int) $src[2] . '" alt="" aria-hidden="true" loading="lazy" decoding="async">';
     }
 
-    $GLOBALS['econur_reviews_js'] = true;
-    return '<section class="ecn-rv ecn-rv--n' . $n . '" aria-labelledby="ecn-rv-title">'
+    if ($n) $GLOBALS['econur_reviews_js'] = true;
+    return '<section class="ecn-rv ecn-rv--n' . $n . ($n ? '' : ' ecn-rv--empty') . '" aria-labelledby="ecn-rv-title">'
         . $decor
-        . '<div class="ecn-rv-head"><p class="ecn-rv-eyebrow">Loved by customers</p><h2 class="ecn-rv-title" id="ecn-rv-title">What customers say</h2>'
-        . '<p class="ecn-rv-sub">Real feedback from customers who have purchased ECONUR products.</p>' . $summary . '</div>'
-        . '<div class="ecn-rv-carousel" role="region" aria-roledescription="carousel" aria-label="Customer reviews">'
-        . '<ul class="ecn-rv-track" id="ecn-rv-track" tabindex="0">' . $cards . '</ul>'
-        . '<div class="ecn-rv-nav"><button type="button" class="ecn-rv-arrow ecn-rv-prev" aria-controls="ecn-rv-track" aria-label="Previous review" disabled>' . econur_reviews_icon('prev') . '</button>'
-        . '<div class="ecn-rv-dots">' . $dots . '</div>'
-        . '<button type="button" class="ecn-rv-arrow ecn-rv-next" aria-controls="ecn-rv-track" aria-label="Next review">' . econur_reviews_icon('next') . '</button></div>'
-        . '</div>'
-        . '<ul class="ecn-rv-trust">' . $trust . '</ul>'
+        . '<div class="ecn-rv-head"><p class="ecn-rv-eyebrow">' . esc_html($eyebrow) . '</p><h2 class="ecn-rv-title" id="ecn-rv-title">What customers say</h2>'
+        . '<p class="ecn-rv-sub">' . esc_html($sub) . '</p>' . $summary . '</div>'
+        . $main
+        . '<ul class="ecn-rv-trust">' . $trust_html . '</ul>'
         . '</section>';
 });
 
