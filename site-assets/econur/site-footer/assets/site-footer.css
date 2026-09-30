@@ -29,7 +29,7 @@
 .ecnf .ecnf-social a:hover, .ecnf .ecnf-social a:focus-visible{ background:var(--ecnf-teal); color:#fff !important; }
 
 /* links */
-.ecnf .ecnf-links a{ display:inline-block; padding:7px 0; font-size:15.5px; line-height:1.35; color:var(--ecnf-text) !important; transition:color .2s ease; }
+.ecnf .ecnf-links a{ display:inline-block; padding:6px 0; font-size:15.5px; line-height:1.35; color:var(--ecnf-text) !important; transition:color .2s ease; }
 .ecnf .ecnf-links a:hover, .ecnf .ecnf-links a:focus-visible{ color:var(--ecnf-teal) !important; }
 
 /* support rows */
@@ -38,11 +38,12 @@
 .ecnf .ecnf-ico{ flex:none; display:grid; place-items:center; width:44px; height:44px; border-radius:50%; background:#E6ECDF; color:var(--ecnf-teal); }
 .ecnf .ecnf-ico svg{ width:20px; height:20px; }
 .ecnf .ecnf-support-t{ font-size:15px; line-height:1.5; color:var(--ecnf-text); }
+.ecnf .ecnf-support-t a{ white-space:nowrap; }
 .ecnf .ecnf-support-t a{ color:var(--ecnf-ink) !important; transition:color .2s ease; }
 .ecnf .ecnf-support-t a:hover, .ecnf .ecnf-support-t a:focus-visible{ color:var(--ecnf-teal) !important; }
 
 /* WhatsApp button */
-.ecnf .ecnf-wa{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:52px; padding:0 24px; border-radius:999px; background:var(--ecnf-teal); color:#fff !important; font-size:16.5px; font-weight:600; line-height:1; transition:background-color .2s ease, box-shadow .2s ease; }
+.ecnf .ecnf-wa{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:52px; padding:0 24px; border-radius:999px; background:var(--ecnf-teal); color:#fff !important; font-size:16.5px; font-weight:600; line-height:1; white-space:nowrap; transition:background-color .2s ease, box-shadow .2s ease; }
 .ecnf .ecnf-wa svg{ flex:none; width:22px; height:22px; }
 .ecnf .ecnf-wa svg:last-child{ width:17px; height:17px; transition:transform .2s ease; }
 .ecnf .ecnf-wa:hover, .ecnf .ecnf-wa:focus-visible{ background:var(--ecnf-teal-dark); color:#fff !important; }
@@ -79,7 +80,7 @@
 .ecnf .ecnf-links li a{ display:block; }
 .ecnf .ecnf-panel .ecnf-support{ padding:2px 0 16px !important; }
 .ecnf .ecnf-wa{ margin-top:20px; }
-.ecnf-legal{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:24px 20px 26px; text-align:center; }
+.ecnf-legal{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:24px 20px 84px; text-align:center; }
 .ecnf .ecnf-legal-leaf--mid{ display:flex; align-items:center; gap:14px; width:100%; max-width:260px; margin-bottom:8px; }
 .ecnf .ecnf-legal-leaf--mid::before, .ecnf .ecnf-legal-leaf--mid::after{ content:""; flex:1; height:1px; background:#DCD3C1; }
 .ecnf .ecnf-slogan .ecnf-legal-leaf{ display:none; }
@@ -87,10 +88,10 @@
 @media (max-width:359px){ .ecnf .ecnf-slogan{ display:none; } .ecnf-main{ padding:28px 18px 0; } }
 
 /* phone art: leaves top right, a sprig low left, soap on linen low right */
-.ecnf-art--tl, .ecnf-art--soaps, .ecnf-art--shadow, .ecnf-art--edge{ display:none !important; }
+.ecnf-art--tl, .ecnf-art--soaps, .ecnf-art--shadow{ display:none !important; }
 .ecnf .ecnf-art--tr{ top:-18px; right:-34px; width:118px; transform:scaleX(-1) rotate(-6deg); opacity:.95; }
-.ecnf .ecnf-art--linen{ right:-26px; bottom:-38px; width:96px; opacity:.95; }
-.ecnf .ecnf-art--sprig{ display:none; }
+.ecnf .ecnf-art--linen{ right:-12px; bottom:-40px; width:92px; opacity:.95; }
+.ecnf .ecnf-art--edge{ display:block !important; left:-30px; bottom:-6px; width:118px; transform:rotate(12deg) scaleX(-1); opacity:.9; }
 
 @media (prefers-reduced-motion:reduce){ .ecnf-panel, .ecnf-panel-in, .ecnf-pm, .ecnf-pm::before, .ecnf-pm::after, .ecnf .ecnf-wa, .ecnf .ecnf-wa svg, .ecnf a{ transition:none !important; } }
 
@@ -115,12 +116,12 @@
   .ecnf .ecnf-ico{ width:46px; height:46px; }
   .ecnf .ecnf-wa{ min-height:56px; margin-top:22px; }
 
-  .ecnf-main{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); column-gap:32px; row-gap:34px; padding:44px 44px 38px; }
+  .ecnf-main{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.45fr); column-gap:28px; row-gap:34px; padding:44px 40px 38px 44px; }
   .ecnf-brand{ grid-column:1 / -1; max-width:420px; }
   .ecnf-support-wrap{ min-width:0; }
 
   /* legal strip: one slim row */
-  .ecnf-legal{ flex-direction:row; flex-wrap:wrap; justify-content:center; column-gap:0; row-gap:6px; min-height:60px; padding:14px 28px; border-top:1px solid var(--ecnf-line); background:rgba(243,235,220,.55); text-align:left; }
+  .ecnf-legal{ flex-direction:row; flex-wrap:wrap; justify-content:center; column-gap:0; row-gap:6px; min-height:60px; padding:14px 28px !important; border-top:1px solid var(--ecnf-line); background:#F4EDE0; text-align:left; }
   .ecnf .ecnf-copy{ order:1; }
   .ecnf .ecnf-legal-leaf--mid{ order:2; width:auto; max-width:none; margin:0 18px; }
   .ecnf .ecnf-legal-leaf--mid::before{ display:none; }
@@ -128,32 +129,49 @@
   .ecnf .ecnf-made{ order:3; }
   .ecnf .ecnf-slogan{ order:4; display:inline-flex; align-items:center; gap:10px; margin:0 0 0 auto !important; }
   .ecnf .ecnf-slogan .ecnf-legal-leaf{ display:inline-flex; }
+}
+/* tablets: the slogan takes its own centred line, clear of the floating chat button */
+@media (min-width:768px) and (max-width:999px){
+  .ecnf .ecnf-slogan{ flex-basis:100%; justify-content:center; margin:0 !important; }
+}
+@media (min-width:768px){
 
   /* tablet art: soap composition beside the brand block, leaves in the top-left corner */
   .ecnf .ecnf-art--tr, .ecnf .ecnf-art--linen{ display:none; }
-  .ecnf .ecnf-art--soaps{ display:block !important; top:6px; right:-18px; width:300px; transform:scaleX(-1); -webkit-mask-image:linear-gradient(to top, transparent 0, #000 18%); mask-image:linear-gradient(to top, transparent 0, #000 18%); }
+  .ecnf .ecnf-art--edge{ display:none !important; }
+  .ecnf .ecnf-art--soaps{ display:block !important; top:-16px; right:-30px; width:290px; transform:none; -webkit-mask-image:linear-gradient(to top, transparent 0, #000 18%); mask-image:linear-gradient(to top, transparent 0, #000 18%); }
   .ecnf .ecnf-art--shadow{ display:block !important; top:-70px; left:42%; width:520px; opacity:.06; filter:grayscale(1) blur(2px); mix-blend-mode:multiply; transform:rotate(18deg); }
 }
 
 /* ---------- desktop: brand | Shop | Help | Order & Support ---------- */
 @media (min-width:1000px){
   .ecnf{ margin:0 auto 28px; width:calc(100% - 40px); }
-  .ecnf-main{ grid-template-columns:minmax(0,33fr) minmax(0,17fr) minmax(0,17fr) minmax(0,33fr); column-gap:28px; padding:50px 52px 40px 132px; }
+  .ecnf-main{ grid-template-columns:minmax(0,35fr) minmax(0,16fr) minmax(0,16fr) minmax(0,33fr); column-gap:28px; padding:50px 52px 40px 132px; }
   .ecnf-brand{ grid-column:auto; max-width:none; }
-  .ecnf .ecnf-about{ max-width:340px; }
+  .ecnf .ecnf-about{ max-width:360px; }
   .ecnf-col--shop, .ecnf-col--help{ padding-left:12px; }
   .ecnf .ecnf-h, .ecnf .ecnf-h--static{ font-size:22px !important; }
 
-  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px 52px; }
+  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px 52px !important; }
 
-  .ecnf .ecnf-art--soaps{ top:auto; right:auto; bottom:-8px; left:-24px; width:300px; transform:scaleX(-1); }
+  .ecnf .ecnf-art--soaps{ top:auto; right:auto; bottom:52px; left:-30px; width:262px; transform:scaleX(-1); }
   .ecnf .ecnf-art--tl{ display:block !important; top:-26px; left:-30px; width:150px; transform:rotate(4deg); opacity:.95; }
-  .ecnf .ecnf-art--tr{ display:block; top:-26px; right:-40px; width:150px; transform:scaleX(-1) rotate(-8deg); opacity:.95; }
-  .ecnf .ecnf-art--edge{ display:block !important; top:44%; right:-86px; width:170px; transform:rotate(-100deg); opacity:.9; }
+  .ecnf .ecnf-art--tr{ display:block; top:-34px; right:-50px; width:146px; transform:scaleX(-1) rotate(-8deg); opacity:.95; }
+  .ecnf .ecnf-art--edge{ display:block !important; top:40%; right:-74px; bottom:auto; left:auto; width:170px; transform:rotate(-100deg); opacity:.9; }
   .ecnf .ecnf-art--shadow{ top:-90px; left:36%; width:620px; }
 }
+/* small laptops: wider support column (number and button stay on one line); the legal strip ends before the
+   floating chat button, which sits over the card's right edge at these widths */
+@media (min-width:1000px) and (max-width:1199px){
+  .ecnf-main{ grid-template-columns:minmax(0,31fr) minmax(0,15fr) minmax(0,15fr) minmax(0,39fr); column-gap:22px; padding:48px 40px 38px 122px; }
+  .ecnf .ecnf-wa{ padding:0 18px; }
+  .ecnf .ecnf-art--soaps{ left:-50px; bottom:52px; width:206px; }
+  .ecnf .ecnf-art--edge{ right:-104px; }
+  .ecnf .ecnf-art--tl{ width:128px; left:-34px; }
+}
+@media (min-width:1000px) and (max-width:1339px){ .ecnf-legal{ padding-right:150px !important; } }
 @media (min-width:1200px){
-  .ecnf-main{ padding-left:168px; padding-right:60px; }
+  .ecnf-main{ padding-left:150px; padding-right:60px; }
   .ecnf .ecnf-art--tl{ width:176px; left:-34px; }
-  .ecnf .ecnf-art--soaps{ width:330px; }
+  .ecnf .ecnf-art--soaps{ width:280px; }
 }
