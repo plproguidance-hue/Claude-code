@@ -28,8 +28,9 @@ function econur_footer_config() {
         'help' => array(
             array('My account',       '/my-account/'),
             array('Cart',             '/cart/'),
-            array('Refund & returns', '/refund_returns/'),
-            array('Privacy policy',   '/privacy-policy/'),
+            // shown only while the page is published (both are unpublished drafts today, so linking them would 404)
+            array('Refund & returns', 'page:11'),
+            array('Privacy policy',   'page:3'),
         ),
         // [icon, text, link]
         'support' => array(
@@ -66,7 +67,15 @@ function econur_footer_art($id, $class, $sizes) {
 
 function econur_footer_links($links) {
     $h = '<ul class="ecnf-links">';
-    foreach ($links as $l) $h .= '<li><a href="' . esc_url($l[1]) . '">' . esc_html($l[0]) . '</a></li>';
+    foreach ($links as $l) {
+        $url = $l[1];
+        if (0 === strpos($url, 'page:')) {
+            $id = (int) substr($url, 5);
+            if ('publish' !== get_post_status($id)) continue;
+            $url = get_permalink($id);
+        }
+        $h .= '<li><a href="' . esc_url($url) . '">' . esc_html($l[0]) . '</a></li>';
+    }
     return $h . '</ul>';
 }
 
