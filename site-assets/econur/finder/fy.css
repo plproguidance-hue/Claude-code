@@ -1,7 +1,7 @@
 
 /* Find your bar v2: concern finder ([econur_finder] in inc/finder.php) with the reassurance row inside the same card */
 .ecn-fy{ --fy-teal:#0D585F; --fy-teal-dark:#0A474D; --fy-ink:#1E2624; --fy-muted:#6F6B63; --fy-line:#E9E2D6; --fy-wash:#EDF4F2; --fy-leaf:url("https://econur.shop/wp-content/uploads/2026/09/econur-sale-sprig.webp");
-  position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin:0; padding:20px 14px 16px; border:1px solid #EFE8DC; border-radius:20px;
+  position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin:0; padding:20px 14px 14px; border:1px solid #EFE8DC; border-radius:20px;
   background:radial-gradient(60% 45% at 100% 0%, rgba(233,241,236,.9), rgba(233,241,236,0) 70%), linear-gradient(180deg, #FCFAF5 0%, #F8F4EC 100%); box-shadow:0 10px 30px rgba(52,44,30,.05); }
 .ecn-fy::before{ content:""; position:absolute; z-index:-1; top:-14px; right:-26px; width:150px; height:78px; background:var(--fy-leaf) right top / contain no-repeat; transform:scaleX(-1); opacity:.26; pointer-events:none;
   -webkit-mask-image:radial-gradient(100% 100% at 0% 0%, #000 40%, rgba(0,0,0,0) 100%); mask-image:radial-gradient(100% 100% at 0% 0%, #000 40%, rgba(0,0,0,0) 100%); }
@@ -40,7 +40,7 @@
 .ecn-fy-attrs{ list-style:none; display:flex; flex-wrap:wrap; gap:6px 14px; margin:2px 0 0; padding:0; }
 .ecn-fy-attrs li{ display:inline-flex; align-items:center; gap:6px; margin:0; font-size:12.5px; line-height:1.3; color:#4E5A57; }
 .ecn-fy-attrs svg{ flex:none; width:14px; height:14px; color:var(--fy-teal); }
-.ecn-fy-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:6px; }
+.ecn-fy-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:4px; }
 .ecn-fy-price{ display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px; min-width:0; line-height:1.15; }
 .ecn-fy-price b{ font-size:23px; font-weight:700; color:var(--fy-teal); }
 .ecn-fy-price b .woocommerce-Price-amount{ color:inherit !important; font-weight:inherit; }
@@ -62,10 +62,10 @@
 .ecn-fy .ecn-trustx-copy b{ font-family:var(--ecn-font-head); font-weight:500; font-size:15px; color:var(--fy-ink); }
 .ecn-fy .ecn-trustx-copy span{ font-size:12.5px; line-height:1.4; color:var(--fy-muted); max-width:none; }
 @media (prefers-reduced-motion:reduce){ .ecn-fy-panel.is-in{ animation:none; } .ecn-fy .ecn-fy-tab, .ecn-fy-cta svg{ transition:none; } }
-@media (max-width:374px){ .ecn-fy{ padding:18px 12px 14px; } .ecn-fy-tabs{ margin:0 -12px; padding:2px 12px 4px; } .ecn-fy .ecn-fy-tab{ width:78px; } .ecn-fy .ecn-fy-title{ font-size:26px !important; } .ecn-fy .ecn-fy-name{ font-size:21px !important; } .ecn-fy .ecn-fy-cta{ padding:0 16px; } .ecn-fy-price b{ font-size:21px; } }
+@media (max-width:374px){ .ecn-fy{ padding:18px 12px 12px; } .ecn-fy-tabs{ margin:0 -12px; padding:2px 12px 4px; } .ecn-fy .ecn-fy-tab{ width:78px; } .ecn-fy .ecn-fy-title{ font-size:26px !important; } .ecn-fy .ecn-fy-name{ font-size:21px !important; } .ecn-fy .ecn-fy-cta{ padding:0 16px; } .ecn-fy-price b{ font-size:21px; } }
 /* tablets: photo beside the details, reassurance as three columns */
 @media (min-width:600px){
-  .ecn-fy{ padding:26px 24px 22px; border-radius:22px; gap:16px; }
+  .ecn-fy{ padding:26px 24px 18px; border-radius:22px; gap:16px; }
   .ecn-fy::before{ width:220px; height:114px; opacity:.3; }
   .ecn-fy-eyebrow{ font-size:10.5px; }
   .ecn-fy .ecn-fy-title{ font-size:36px !important; }
@@ -86,10 +86,10 @@
 }
 /* desktop: concern list on the left (about 36%), recommendation on the right */
 @media (min-width:1000px){
-  .ecn-fy{ grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-areas:"head panel" "tabs panel" "trust trust"; grid-template-rows:auto 1fr auto; column-gap:32px; row-gap:18px; padding:34px 36px 30px; border-radius:24px; box-shadow:0 14px 40px rgba(52,44,30,.06); }
+  .ecn-fy{ grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-areas:"head panel" "tabs panel" "trust trust"; grid-template-rows:auto 1fr auto; column-gap:32px; row-gap:14px; padding:32px 36px 24px; border-radius:24px; box-shadow:0 14px 40px rgba(52,44,30,.06); }
   .ecn-fy::before{ top:-20px; right:-34px; width:300px; height:156px; opacity:.3; }
   .ecn-fy-head{ grid-area:head; }
-  .ecn-fy-tabs{ grid-area:tabs; flex-direction:column; gap:12px; overflow:visible; }
+  .ecn-fy-tabs{ grid-area:tabs; flex-direction:column; gap:10px; overflow:visible; }
   .ecn-fy-panels{ grid-area:panel; }
   .ecn-fy-trust{ grid-area:trust; }
   .ecn-fy-eyebrow{ font-size:11px; margin-bottom:8px; }
@@ -112,7 +112,8 @@
   .ecn-fy-media{ flex:none; }
   .ecn-fy-img{ height:auto; min-height:0; aspect-ratio:16 / 9.2; }
   .ecn-fy-badge{ top:14px; right:14px; padding:7px 13px; font-size:12px; }
-  .ecn-fy-body{ gap:9px; padding:22px 28px 24px; }
+  .ecn-fy-body{ gap:8px; padding:22px 28px 22px; }
+  .ecn-fy-foot{ padding-top:0; }
   .ecn-fy .ecn-fy-name{ font-size:32px !important; }
   .ecn-fy-ing{ font-size:16px; }
   .ecn-fy-attrs{ gap:8px 22px; margin-top:4px; }
