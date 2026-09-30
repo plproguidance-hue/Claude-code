@@ -170,3 +170,14 @@
   .ehc-faq > .ehc-art--leaves{ top:-50px; left:-56px; width:160px; }
   .ehc-cta > .ehc-art--cta-soap{ display:none; }
 }
+/* questions and reassurance titles in the reference's regular-weight serif (same self-hosted file the review section
+   uses, under this section's own name so nothing else changes) */
+@font-face{ font-family:"EHC Fraunces Text"; font-style:normal; font-weight:400; font-display:swap; src:url("/wp-content/plugins/econur-reviews/assets/fraunces-400-latin.woff2") format("woff2"); unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+.ehc .ehc-q button, .ehc-trust-copy b{ font-family:"EHC Fraunces Text", var(--ehc-serif) !important; font-weight:400 !important; }
+/* desktop: CTA closer to the reference's proportions */
+@media (min-width:1000px){
+  .ehc-cta{ padding:44px 60px 32px; }
+  .ehc .ehc-cta-sub{ margin-top:12px !important; }
+  .ehc-btns{ margin-top:24px; }
+  .ehc .ehc-trust{ margin-top:30px !important; }
+}
