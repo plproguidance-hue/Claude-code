@@ -74,7 +74,8 @@ function enr_rr_bd_mobile($raw) {
 function enr_rr_order_screen() {
     $hpos = class_exists('\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController')
         && wc_get_container()->get(\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class)->custom_orders_table_usage_is_enabled();
-    return $hpos ? wc_get_page_screen_id('shop-order') : 'shop_order';
+    if (!$hpos) return 'shop_order';
+    return function_exists('wc_get_page_screen_id') ? wc_get_page_screen_id('shop-order') : 'woocommerce_page_wc-orders';
 }
 
 add_action('add_meta_boxes', function ($screen_id, $object = null) {
