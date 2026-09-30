@@ -1,0 +1,37 @@
+/* Two promises v2: same two-card layout, lighter overlay, current-brand photography */
+#packaging .ecn-sh{ margin:0 0 4px; }
+#packaging .ecn-sh-title{ font-size:28px !important; line-height:1.08 !important; }
+#packaging .ecn-usp{ grid-template-columns:minmax(0,1fr); gap:16px; }
+#packaging .ecn-usp-tile{ isolation:isolate; border-radius:18px; background:#EFE8DC; box-shadow:0 8px 24px rgba(52,44,30,.07); transition:box-shadow .4s ease; }
+#packaging .ecn-usp-tile img{ aspect-ratio:5 / 4; height:auto; object-fit:cover; transition:transform .4s ease; }
+#packaging .ecn-usp-copy{ top:auto; justify-content:flex-end; gap:6px; padding:64px 20px 20px;
+  background:linear-gradient(180deg, rgba(10,30,30,0) 0%, rgba(10,30,30,.34) 30%, rgba(9,27,27,.68) 62%, rgba(8,24,24,.84) 100%); }
+#packaging .ecn-usp-copy b{ font-size:24px; line-height:1.1; color:#FFFDF9; text-shadow:0 1px 14px rgba(0,0,0,.22); }
+#packaging .ecn-usp-copy span{ max-width:44ch; font-size:14px; line-height:1.5; color:rgba(255,253,249,.92); text-shadow:0 1px 10px rgba(0,0,0,.2); }
+.elementor-43 .elementor-element.elementor-element-d4c3b5f.e-con{ --padding-bottom:32px; }
+@media (max-width:374px){ #packaging .ecn-usp-tile img{ aspect-ratio:6 / 5; } #packaging .ecn-usp-copy{ padding:56px 16px 16px; } #packaging .ecn-usp-copy b{ font-size:22px; } #packaging .ecn-usp-copy span{ font-size:13.5px; } }
+@media (prefers-reduced-motion:reduce){ #packaging .ecn-usp-tile, #packaging .ecn-usp-tile img{ transition:none; } }
+@media (min-width:700px){
+  #packaging .ecn-sh-title{ font-size:36px !important; }
+  #packaging .ecn-usp{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; }
+  #packaging .ecn-usp-tile img{ aspect-ratio:4 / 3; }
+  #packaging .ecn-usp-copy{ padding:72px 24px 24px; }
+  #packaging .ecn-usp-copy b{ font-size:28px; }
+  #packaging .ecn-usp-copy span{ font-size:15px; }
+  .elementor-43 .elementor-element.elementor-element-d4c3b5f.e-con{ --padding-bottom:40px; }
+}
+@media (min-width:1000px){
+  #packaging .ecn-sh{ margin-bottom:6px; }
+  #packaging .ecn-sh-title{ font-size:42px !important; }
+  #packaging .ecn-usp{ gap:22px; }
+  #packaging .ecn-usp-tile{ border-radius:20px; }
+  #packaging .ecn-usp-tile img{ aspect-ratio:3 / 2; }
+  #packaging .ecn-usp-copy{ padding:88px 32px 30px; }
+  #packaging .ecn-usp-copy b{ font-size:33px; }
+  #packaging .ecn-usp-copy span{ font-size:16px; }
+  .elementor-43 .elementor-element.elementor-element-d4c3b5f.e-con{ --padding-bottom:44px; }
+}
+@media (hover:hover) and (min-width:1000px){
+  #packaging .ecn-usp-tile:hover{ box-shadow:0 16px 36px rgba(52,44,30,.13); }
+  #packaging .ecn-usp-tile:hover img{ transform:scale(1.03); }
+}
