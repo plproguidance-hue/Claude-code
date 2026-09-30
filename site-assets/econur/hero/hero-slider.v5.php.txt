@@ -1,0 +1,249 @@
+<?php
+/**
+ * Econur hero slider. [econur_hero]
+ * v2 (29 Sep 2026): photo banners with real HTML copy (eyebrow, heading, text, CTA) over the clean left side,
+ * a desktop + optional mobile image per slide, fade transition, 5.5 s autoplay (pauses on hover / focus / touch,
+ * with a pause button), swipe, arrows and one dot per slide.
+ * Slides live in the option `econur_hero_slides`, edited under Appearance > Hero Slides.
+ * Previous version (4 image-only slides): inc/hero-slider.php.bak-hero5-20260929
+ */
+
+function econur_hero_default_slides() {
+    return array(
+        array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'width' => 16, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'Shop Face Care', 'url' => '/product-category/face-care/'),
+        array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'width' => 30, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'Explore Brightening Bar', 'url' => '/product/licorice-brightening-bar/'),
+        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'Explore Active Defense', 'url' => '/product/active-defense-bar/'),
+        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'Explore Herbfresh', 'url' => '/product/herbifresh-bar/'),
+        array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'Explore Caffeind Bar', 'url' => '/product/caffiend-bar/'),
+    );
+}
+
+function econur_hero_slides() {
+    $slides = get_option('econur_hero_slides');
+    if (!is_array($slides) || !$slides) $slides = econur_hero_default_slides();
+    $out = array();
+    foreach ($slides as $s) {
+        if (empty($s['on']) && isset($s['on'])) continue;
+        if (!wp_attachment_is_image((int) ($s['desktop'] ?? 0))) continue;
+        $out[] = wp_parse_args($s, array('mobile' => 0, 'width' => 30, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => ''));
+    }
+    return $out;
+}
+
+/* painted width of the banner per breakpoint (full banner from 768px up; phones show a 16:10 frame cut from the right) */
+define('ECONUR_HERO_SIZES', '(min-width: 1824px) 1760px, (min-width: 1280px) calc(100vw - 64px), (min-width: 1024px) calc(100vw - 48px), (min-width: 768px) calc(100vw - 32px), calc(150vw - 36px)');
+// WordPress re-adds "auto, " to lazy images when it filters content; remove it again for the hero banners only.
+add_filter('wp_content_img_tag', function ($img) {
+    return str_replace('sizes="auto, ' . ECONUR_HERO_SIZES . '"', 'sizes="' . ECONUR_HERO_SIZES . '"', $img);
+});
+
+add_shortcode('econur_hero', function () {
+    $slides = econur_hero_slides();
+    $n = count($slides);
+    if (!$n) return '';
+    $arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    // mobile frame ratio: the first slide's own mobile image when there is one, otherwise 16:10 cut from the right of the banner
+    $m_ratio = '';
+    if (!empty($slides[0]['mobile'])) { $mm = wp_get_attachment_metadata((int) $slides[0]['mobile']); if (!empty($mm['width']) && !empty($mm['height'])) $m_ratio = ' style="--ecn-hx-m-ar:' . (int) $mm['width'] . ' / ' . (int) $mm['height'] . '"'; }
+
+    $o  = econur_hero_css();
+    $o .= '<section class="ecn-hsl ecn-hx' . ($m_ratio ? ' has-mobile' : '') . '" aria-roledescription="carousel" aria-label="Econur featured products"' . $m_ratio . '>';
+    $o .= '<h1 class="ecn-visually-hidden">Econur: 100% natural, handmade skincare in zero-plastic packaging</h1>';
+    $o .= '<div class="ecn-hx-track">';
+    foreach ($slides as $i => $s) {
+        $first = 0 === $i;
+        $d = (int) $s['desktop']; $m = (int) $s['mobile'];
+        $alt = trim((string) get_post_meta($d, '_wp_attachment_image_alt', true));
+        if ('' === $alt) $alt = wp_strip_all_tags(str_replace("\n", ' ', $s['title']));
+        $img = wp_get_attachment_image($d, 'full', false, array(
+            'alt' => $alt, 'sizes' => ECONUR_HERO_SIZES, 'decoding' => $first ? 'sync' : 'async',
+            'loading' => $first ? 'eager' : 'lazy', 'fetchpriority' => $first ? 'high' : 'low', 'class' => 'ecn-hx-img',
+        ));
+        $img = str_replace('sizes="auto, ', 'sizes="', $img);
+        $src = '';
+        if ($m && wp_attachment_is_image($m)) {
+            $set = wp_get_attachment_image_srcset($m, 'full');
+            $src = '<source media="(max-width: 767px)" srcset="' . esc_attr($set ? $set : wp_get_attachment_image_url($m, 'full')) . '" sizes="100vw">';
+        }
+        $url = $s['url'] ? (0 === strpos($s['url'], '/') ? home_url($s['url']) : $s['url']) : '';
+        $wd = max(12, min(45, (int) $s['width']));
+        $o .= '<div class="ecn-hx-slide' . ($first ? ' is-on' : '') . ($src ? ' has-m' : '') . '" style="--hx-w:' . $wd . '%" role="group" aria-roledescription="slide" aria-label="' . ($i + 1) . ' of ' . $n . '"' . ($first ? '' : ' aria-hidden="true" inert') . '>';
+        $o .= '<div class="ecn-hx-media"><picture>' . $src . $img . '</picture></div>';
+        $o .= '<div class="ecn-hx-copy">';
+        if ($s['eyebrow']) $o .= '<p class="ecn-hx-eyebrow">' . esc_html($s['eyebrow']) . '</p>';
+        if ($s['title'])   $o .= '<h2 class="ecn-hx-title">' . nl2br(esc_html($s['title']), false) . '</h2>';
+        if ($s['text'])    $o .= '<p class="ecn-hx-text">' . esc_html($s['text']) . '</p>';
+        if ($s['cta'] && $url) $o .= '<a class="ecn-hx-cta" href="' . esc_url($url) . '"><span>' . esc_html($s['cta']) . '</span>' . $arrow . '</a>';
+        $o .= '</div></div>';
+    }
+    $o .= '</div>';
+    if ($n > 1) {
+        $o .= '<button class="ecn-hx-arrow ecn-hx-prev" type="button" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg></button>';
+        $o .= '<button class="ecn-hx-arrow ecn-hx-next" type="button" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>';
+        $o .= '<div class="ecn-hx-ctl"><div class="ecn-hx-dots">';
+        foreach ($slides as $i => $s) $o .= '<button type="button" aria-label="Show slide ' . ($i + 1) . ' of ' . $n . ': ' . esc_attr(wp_strip_all_tags(str_replace("\n", ' ', $s['title']))) . '"' . (0 === $i ? ' aria-current="true" class="is-on"' : '') . '></button>';
+        $o .= '</div><button class="ecn-hx-pause" type="button" aria-label="Pause slideshow" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 6.5v11a1 1 0 0 0 1.5.86l9-5.5a1 1 0 0 0 0-1.72l-9-5.5A1 1 0 0 0 8 6.5Z"/></svg></button></div>';
+    }
+    $o .= '</section>';
+    if ($n > 1) $o .= econur_hero_js();
+    return $o;
+});
+
+function econur_hero_css() {
+    static $done = false;
+    if ($done) return '';
+    $done = true;
+    return '<style id="ecn-hx-css">
+.ecn-hx{ position:relative; box-sizing:border-box; width:calc(100% - 24px); max-width:1440px; margin:12px auto 0; border-radius:16px; overflow:hidden; background:#F4EEE4; isolation:isolate; font-family:var(--ecn-font-body); color:var(--ecn-ink); }
+.ecn-hx *{ box-sizing:border-box; }
+.ecn-hx-track{ display:grid; grid-template-columns:minmax(0,1fr); width:100%; }
+.ecn-hx-slide{ grid-area:1 / 1; position:relative; width:100%; display:flex; flex-direction:column; min-width:0; opacity:0; visibility:hidden; transition:opacity .6s ease, visibility 0s linear .6s; }
+.ecn-hx-slide.is-on{ opacity:1; visibility:visible; transition:opacity .6s ease, visibility 0s linear 0s; z-index:1; }
+.ecn-hx-media{ position:relative; overflow:hidden; height:clamp(190px, 57vw, 226px); background:#F4EEE4; }
+.ecn-hx.has-mobile .ecn-hx-media{ height:auto; aspect-ratio:var(--ecn-hx-m-ar); }
+.ecn-hx-media picture{ display:contents; }
+.ecn-hx-media img{ position:absolute; inset:0; display:block; width:100%; height:100%; max-width:none; object-fit:cover; object-position:90% 50%; border-radius:0 !important; }
+.ecn-hx.has-mobile .ecn-hx-slide.has-m .ecn-hx-media img{ object-position:50% 50%; }
+.ecn-hx-copy{ flex:1 1 auto; padding:22px 20px 0; }
+.ecn-hx-eyebrow{ margin:0 0 12px !important; font-family:var(--ecn-font-body); font-size:10.5px; font-weight:600; line-height:1.3; letter-spacing:.16em; text-transform:uppercase; color:var(--ecn-olive-dark); }
+.ecn-hx-title{ margin:0 !important; font-family:var(--ecn-font-head); font-size:clamp(38px, 2.5vw + 30px, 42px); font-weight:500; line-height:.98; letter-spacing:-.015em; color:var(--ecn-ink); }
+.ecn-hx-text{ margin:16px 0 0 !important; font-family:var(--ecn-font-body); font-size:15px; line-height:1.5; color:#55524A; }
+.ecn-hx-cta{ display:inline-flex; align-items:center; gap:10px; min-height:48px; margin-top:20px; padding:0 20px; border-radius:10px; background:var(--ecn-olive-dark); color:#FFFDF9 !important; font-family:var(--ecn-font-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; text-decoration:none !important; transition:background-color .22s ease; }
+.ecn-hx-cta svg{ width:16px; height:16px; flex:none; transition:transform .22s ease; }
+.ecn-hx-cta:hover, .ecn-hx-cta:focus-visible{ background:#094A50; }
+.ecn-hx-cta:hover svg, .ecn-hx-cta:focus-visible svg{ transform:translateX(3px); }
+.ecn-hx-cta:focus-visible, .ecn-hx-arrow:focus-visible, .ecn-hx-dots button:focus-visible, .ecn-hx-pause:focus-visible{ outline:2px solid var(--ecn-olive-dark); outline-offset:3px; }
+.ecn-hx-arrow{ display:none; }
+.ecn-hx-ctl{ display:flex; align-items:center; justify-content:center; padding:16px 12px 12px; }
+.ecn-hx-dots{ display:flex; align-items:center; }
+.ecn-hx-dots button, .ecn-hx-pause{ -webkit-appearance:none; appearance:none; position:relative; display:grid; place-items:center; width:24px; height:24px; margin:0; padding:0; border:0; border-radius:6px; background:none !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; }
+.ecn-hx-dots button::before{ content:""; width:6px; height:6px; border-radius:999px; background:#BDB3A5; transition:width .3s ease, background-color .3s ease; }
+.ecn-hx-dots button.is-on{ width:32px; }
+.ecn-hx-dots button.is-on::before{ width:20px; background:var(--ecn-olive-dark); }
+.ecn-hx-pause{ margin-left:2px; }
+.ecn-hx-pause svg{ width:11px; height:11px; opacity:.45; }
+.ecn-hx-pause .i-play, .ecn-hx.is-paused .ecn-hx-pause .i-pause{ display:none; }
+.ecn-hx.is-paused .ecn-hx-pause .i-play{ display:block; }
+@media (max-width:359px){ .ecn-hx-ctl{ justify-content:flex-start; padding-left:11px; } }
+@media (min-width:768px){
+  .ecn-hx{ width:calc(100% - 32px); margin-top:16px; margin-bottom:-4px; }
+  .ecn-hx-media, .ecn-hx.has-mobile .ecn-hx-media{ height:auto; aspect-ratio:1942 / 809; }
+  .ecn-hx .ecn-hx-media img{ object-position:100% 50%; }
+  .ecn-hx-copy{ padding:26px 32px 0; }
+  .ecn-hx-text{ max-width:460px; font-size:16px; }
+}
+@media (min-width:1024px){
+  .ecn-hx{ width:calc(100% - 40px); border-radius:18px; }
+  .ecn-hx-slide{ display:block; }
+  .ecn-hx-copy{ position:absolute; z-index:2; left:5.5%; top:46%; transform:translateY(-54%); width:var(--hx-w, 30%); max-width:430px; padding:0; }
+  .ecn-hx-eyebrow{ font-size:12px; margin-bottom:14px !important; white-space:nowrap; }
+  .ecn-hx-title{ font-size:clamp(54px, 2.2vw + 24px, 60px); font-weight:500; line-height:.98; white-space:nowrap; }
+  .ecn-hx-text{ max-width:380px; margin-top:18px !important; font-size:16px; line-height:1.5; }
+  .ecn-hx-cta{ margin-top:26px; min-height:50px; padding:0 24px; }
+  .ecn-hx-arrow{ position:absolute; z-index:3; top:50%; display:grid; place-items:center; width:36px; height:36px; margin-top:-18px; padding:0; border:0; border-radius:50%; background:rgba(255,253,249,.88) !important; box-shadow:0 1px 3px rgba(42,40,35,.08) !important; color:var(--ecn-ink); cursor:pointer; opacity:.75; transition:opacity .2s ease, background-color .2s ease; }
+  .ecn-hx-arrow svg{ width:16px; height:16px; }
+  .ecn-hx-prev{ left:10px; } .ecn-hx-next{ right:10px; }
+  .ecn-hx-arrow:hover, .ecn-hx-arrow:focus-visible{ opacity:1; background:rgba(255,253,249,.96) !important; }
+  .ecn-hx-ctl{ position:absolute; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); padding:0 4px; border-radius:999px; background:rgba(255,253,249,.5); }
+  .ecn-hx-dots button::before{ background:#A99E8F; }
+}
+@media (min-width:1024px) and (max-width:1279px){ .ecn-hx{ width:calc(100% - 48px); max-width:1760px; } .ecn-sec-hsl + .ecn-sec-chips > .e-con-inner, .ecn-sec-hsl + .ecn-sec-chips + .e-con > .e-con-inner{ max-width:calc(100% - 8px); } }
+@media (min-width:1280px){
+  /* wide desktop hero: 32px outer gap up to 1760px wide; the height stops at 640px (the banner is cropped a little at the top and bottom beyond that) */
+  .ecn-hx{ width:calc(100% - 64px); max-width:1760px; }
+  .ecn-hx-media{ width:100%; max-height:640px; }
+  .ecn-hx .ecn-hx-media img{ object-position:100% 50%; }
+  .ecn-hx-copy{ left:clamp(70px, 5.2%, 88px); }
+  /* the category chips and the trust row directly under the hero line up with its edges (their Elementor sections keep 20px padding) */
+  .ecn-sec-hsl + .ecn-sec-chips > .e-con-inner, .ecn-sec-hsl + .ecn-sec-chips + .e-con > .e-con-inner{ max-width:min(1760px, calc(100% - 24px)); }
+}
+@media (min-width:1024px) and (max-width:1279px){ .ecn-hx-eyebrow{ margin-bottom:10px !important; font-size:11px; } .ecn-hx-title{ font-size:40px; } .ecn-hx-text{ margin-top:12px !important; font-size:14px; line-height:1.45; } .ecn-hx-cta{ margin-top:18px; min-height:44px; padding:0 18px; font-size:13px; } }
+@media (prefers-reduced-motion: reduce){ .ecn-hx-slide, .ecn-hx-slide.is-on, .ecn-hx-cta, .ecn-hx-cta svg{ transition:none !important; } }
+</style>';
+}
+
+function econur_hero_js() {
+    return '<script>(function(){var s=document.currentScript&&document.currentScript.previousElementSibling;if(!s||!s.classList.contains("ecn-hx"))return;
+var sl=[].slice.call(s.querySelectorAll(".ecn-hx-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hx-dots button")),pb=s.querySelector(".ecn-hx-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=5500,
+rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(rm){paused=true;s.classList.add("is-paused");pb.setAttribute("aria-pressed","true");pb.setAttribute("aria-label","Play slideshow");}
+function wake(el){[].forEach.call(el.querySelectorAll("img[loading=lazy]"),function(i){i.loading="eager";});}
+function go(i){i=(i+n)%n;if(i===cur)return;var a=sl[cur],b=sl[i];wake(b);a.classList.remove("is-on");a.setAttribute("aria-hidden","true");a.inert=true;b.classList.add("is-on");b.removeAttribute("aria-hidden");b.inert=false;
+d.forEach(function(x,k){x.classList.toggle("is-on",k===i);if(k===i){x.setAttribute("aria-current","true");}else{x.removeAttribute("aria-current");}});cur=i;wake(sl[(i+1)%n]);}
+function stop(){if(timer){clearTimeout(timer);timer=null;}}function run(){stop();if(paused||hover||document.hidden)return;timer=setTimeout(function(){go(cur+1);run();},DELAY);}
+d.forEach(function(b,k){b.addEventListener("click",function(){go(k);run();});});
+s.querySelector(".ecn-hx-prev").addEventListener("click",function(){go(cur-1);run();});s.querySelector(".ecn-hx-next").addEventListener("click",function(){go(cur+1);run();});
+pb.addEventListener("click",function(){paused=!paused;s.classList.toggle("is-paused",paused);pb.setAttribute("aria-pressed",paused?"true":"false");pb.setAttribute("aria-label",paused?"Play slideshow":"Pause slideshow");run();});
+s.addEventListener("mouseenter",function(){hover=true;stop();});s.addEventListener("mouseleave",function(){hover=false;run();});
+s.addEventListener("focusin",function(){hover=true;stop();});s.addEventListener("focusout",function(e){if(!s.contains(e.relatedTarget)){hover=false;run();}});
+s.addEventListener("keydown",function(e){if(e.key==="ArrowRight"){go(cur+1);run();}else if(e.key==="ArrowLeft"){go(cur-1);run();}});
+var x0=null,y0=null;s.addEventListener("touchstart",function(e){var t=e.touches[0];x0=t.clientX;y0=t.clientY;hover=true;stop();},{passive:true});
+s.addEventListener("touchend",function(e){hover=false;if(x0!==null){var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2){go(dx<0?cur+1:cur-1);}}x0=null;run();},{passive:true});
+s.addEventListener("touchcancel",function(){hover=false;x0=null;run();},{passive:true});
+document.addEventListener("visibilitychange",run);
+if("IntersectionObserver" in window){new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run();}else{stop();}});},{threshold:.25}).observe(s);}else{run();}
+window.addEventListener("load",function(){wake(sl[1%n]);});})();</script>';
+}
+
+/* ---------------------------------------------------------------- Appearance > Hero Slides */
+add_action('admin_menu', function () {
+    add_theme_page('Hero Slides', 'Hero Slides', 'manage_options', 'econur-hero-slides', 'econur_hero_admin_page');
+});
+
+add_action('admin_post_econur_hero_save', function () {
+    if (!current_user_can('manage_options')) wp_die('Not allowed');
+    check_admin_referer('econur_hero_save');
+    $rows = isset($_POST['s']) && is_array($_POST['s']) ? wp_unslash($_POST['s']) : array();
+    $slides = array();
+    foreach ($rows as $r) {
+        $d = absint($r['desktop'] ?? 0);
+        if (!$d) continue;
+        $slides[] = array(
+            'order' => intval($r['order'] ?? 0), 'on' => empty($r['on']) ? 0 : 1, 'desktop' => $d, 'mobile' => absint($r['mobile'] ?? 0),
+            'width' => max(12, min(45, absint($r['width'] ?? 30))), 'eyebrow' => sanitize_text_field($r['eyebrow'] ?? ''), 'title' => sanitize_textarea_field($r['title'] ?? ''),
+            'text' => sanitize_textarea_field($r['text'] ?? ''), 'cta' => sanitize_text_field($r['cta'] ?? ''), 'url' => esc_url_raw(trim($r['url'] ?? '')),
+        );
+    }
+    usort($slides, function ($a, $b) { return $a['order'] - $b['order']; });
+    foreach ($slides as &$x) unset($x['order']);
+    unset($x);
+    update_option('econur_hero_slides', $slides, false);
+    do_action('litespeed_purge_all');
+    wp_safe_redirect(add_query_arg(array('page' => 'econur-hero-slides', 'saved' => 1), admin_url('themes.php')));
+    exit;
+});
+
+function econur_hero_admin_page() {
+    if (!current_user_can('manage_options')) return;
+    wp_enqueue_media();
+    $slides = get_option('econur_hero_slides');
+    if (!is_array($slides) || !$slides) $slides = econur_hero_default_slides();
+    $slides[] = array('on' => 0, 'desktop' => 0, 'mobile' => 0, 'width' => 30, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => '');
+    $thumb = function ($id) { return $id ? wp_get_attachment_image((int) $id, array(160, 80), false, array('style' => 'width:160px;height:auto;display:block')) : ''; };
+    echo '<div class="wrap"><h1>Hero Slides</h1><p>Homepage hero, shown in the order below (lowest number first). Headings: each new line is a line break. The mobile image is optional; without it phones show the desktop banner, trimmed from the left.</p>';
+    if (!empty($_GET['saved'])) echo '<div class="notice notice-success"><p>Saved. The page cache has been cleared.</p></div>';
+    echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '"><input type="hidden" name="action" value="econur_hero_save">';
+    wp_nonce_field('econur_hero_save');
+    echo '<table class="widefat striped" style="max-width:1200px"><thead><tr><th style="width:60px">Order</th><th style="width:60px">Show</th><th>Images</th><th>Text</th></tr></thead><tbody>';
+    foreach ($slides as $i => $s) {
+        $s = wp_parse_args($s, array('on' => 1, 'desktop' => 0, 'mobile' => 0, 'eyebrow' => '', 'title' => '', 'text' => '', 'cta' => '', 'url' => ''));
+        $new = !$s['desktop'];
+        echo '<tr><td><input type="number" name="s[' . $i . '][order]" value="' . ($i + 1) . '" style="width:56px"></td>';
+        echo '<td><input type="checkbox" name="s[' . $i . '][on]" value="1"' . checked(!empty($s['on']), true, false) . '></td><td>';
+        foreach (array('desktop' => 'Desktop image', 'mobile' => 'Mobile image (optional)') as $k => $label) {
+            echo '<div class="ecn-pick" style="margin:0 0 10px"><strong>' . esc_html($label) . '</strong><div class="ecn-pick-prev">' . $thumb($s[$k]) . '</div>';
+            echo '<input type="hidden" name="s[' . $i . '][' . $k . ']" value="' . (int) $s[$k] . '"><button type="button" class="button ecn-pick-btn">Choose</button> <button type="button" class="button-link ecn-pick-clear">Remove</button></div>';
+        }
+        echo '</td><td>';
+        echo '<p><label>Eyebrow<br><input class="regular-text" name="s[' . $i . '][eyebrow]" value="' . esc_attr($s['eyebrow']) . '"></label></p>';
+        echo '<p><label>Heading<br><textarea name="s[' . $i . '][title]" rows="3" class="large-text">' . esc_textarea($s['title']) . '</textarea></label></p>';
+        echo '<p><label>Description<br><textarea name="s[' . $i . '][text]" rows="2" class="large-text">' . esc_textarea($s['text']) . '</textarea></label></p>';
+        echo '<p><label>Text column width on desktop (% of banner width, keep the text clear of the products)<br><input type="number" min="12" max="45" name="s[' . $i . '][width]" value="' . (int) ($s['width'] ?? 30) . '" style="width:80px"></label></p>';
+        echo '<p><label>Button label<br><input class="regular-text" name="s[' . $i . '][cta]" value="' . esc_attr($s['cta']) . '"></label> <label>Button link<br><input class="regular-text" name="s[' . $i . '][url]" value="' . esc_attr($s['url']) . '"></label></p>';
+        if ($new) echo '<p class="description">Empty row: choose a desktop image to add a new slide.</p>';
+        echo '</td></tr>';
+    }
+    echo '</tbody></table>';
+    submit_button('Save hero slides');
+    echo '</form></div>';
+    echo '<script>jQuery(function($){$(document).on("click",".ecn-pick-btn",function(e){e.preventDefault();var w=$(this).closest(".ecn-pick"),f=wp.media({title:"Choose image",library:{type:"image"},multiple:false});f.on("select",function(){var a=f.state().get("selection").first().toJSON();w.find("input").val(a.id);var u=(a.sizes&&a.sizes.medium?a.sizes.medium.url:a.url);w.find(".ecn-pick-prev").html("<img src=\""+u+"\" style=\"width:160px;height:auto;display:block\">");});f.open();});$(document).on("click",".ecn-pick-clear",function(e){e.preventDefault();var w=$(this).closest(".ecn-pick");w.find("input").val(0);w.find(".ecn-pick-prev").empty();});});</script>';
+}
