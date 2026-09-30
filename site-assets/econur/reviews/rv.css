@@ -224,3 +224,34 @@
   .ecn-rv-deco--tr{ top:-46px; right:-44px; width:370px; }
   .ecn-rv-deco--bl, .ecn-rv-deco--br{ width:200px; bottom:-36px; }
 }
+/* wide screens: scale type and inner elements with the wider block so proportions match the reference */
+@media (min-width:1360px){
+  .ecn-rv .ecn-rv-title{ font-size:66px !important; }
+  .ecn-rv-eyebrow{ font-size:14.5px; margin-bottom:12px; }
+  .ecn-rv-sub{ margin-top:16px; font-size:19.5px; }
+  .ecn-rv-summary{ margin-top:26px; }
+  .ecn-rv-feedback{ font-size:46px; }
+  .ecn-rv-summary--label .ecn-rv-stars--lg svg{ width:33px; height:33px; }
+  .ecn-rv-summary--label .ecn-rv-count{ font-size:18px; }
+  .ecn-rv-carousel{ margin-top:34px; }
+  .ecn-rv-card{ padding:30px 30px 26px; }
+  .ecn-rv-quote{ width:44px; height:33px; }
+  .ecn-rv-stars svg{ width:22px; height:22px; }
+  .ecn-rv .ecn-rv-text p{ font-size:22px; line-height:1.4; }
+  .ecn-rv-avatar{ width:62px; height:62px; font-size:28px; }
+  .ecn-rv-name{ font-size:17px; }
+  .ecn-rv-city, .ecn-rv-verified{ font-size:14.5px; }
+  .ecn-rv-buy{ min-height:130px; gap:18px; }
+  .ecn-rv-buy-img{ width:110px; height:110px; }
+  .ecn-rv-buy-eyebrow{ font-size:11px; }
+  .ecn-rv .ecn-rv-buy-name{ font-size:21px; }
+  .ecn-rv-buy-line{ font-size:14.5px; }
+  .ecn-rv .ecn-rv-arrow{ width:50px; height:50px; }
+  .ecn-rv-arrow svg{ width:21px; height:21px; }
+  .ecn-rv .ecn-rv-dot::before{ width:10px; height:10px; }
+  .ecn-rv .ecn-rv-trust{ padding:24px 10px !important; }
+  .ecn-rv-trust-ico{ width:62px; height:62px; }
+  .ecn-rv-trust-ico svg{ width:26px; height:26px; }
+  .ecn-rv-trust-copy b{ font-size:20px; }
+  .ecn-rv-trust-copy span{ font-size:14.5px; }
+}
