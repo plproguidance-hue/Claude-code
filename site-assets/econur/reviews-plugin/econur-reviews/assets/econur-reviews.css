@@ -215,3 +215,9 @@
 /* fewer than three cards: centred, no controls once they all fit */
 @media (min-width:1000px){ .enr-rv--n1 .enr-rv-track, .enr-rv--n2 .enr-rv-track{ justify-content:center; } }
 @media (min-width:700px){ .enr-rv--n1 .enr-rv-track{ justify-content:center; } }
+/* rating row: larger stars than the cards */
+.enr-rv .enr-rv-summary .enr-rv-stars--lg{ gap:4px; }
+.enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:22px; height:22px; }
+@media (min-width:700px){ .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:26px; height:26px; } }
+@media (min-width:1000px){ .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:30px; height:30px; } }
+@media (min-width:1360px){ .enr-rv .enr-rv-summary .enr-rv-stars--lg svg{ width:34px; height:34px; } .enr-rv-avg{ font-size:56px; } .enr-rv-count{ font-size:17px; } }

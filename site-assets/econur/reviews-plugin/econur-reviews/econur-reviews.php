@@ -48,7 +48,7 @@ function enr_reviews_settings() {
         'trust' => array(
             'fallback' => array(
                 array('chat', 'Real customer feedback', 'Shared with us by ECONUR customers.'),
-                array('leaf', 'Handmade, 100% natural', 'Packed in zero-plastic, compostable packaging.'),
+                array('leaf', 'Handmade, 100% natural', 'Zero-plastic, compostable packaging.'),
                 array('cash', 'Cash on delivery', 'Pay in cash when your order arrives.'),
             ),
             'live' => array(
