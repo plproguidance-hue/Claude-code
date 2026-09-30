@@ -275,7 +275,10 @@ document.querySelectorAll('.ecn-rv-carousel').forEach(function(c){
   track.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){ e.preventDefault(); go(at()+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); go(at()-1); } });
   track.addEventListener('scroll',function(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(sync); },{passive:true});
   if(window.ResizeObserver) new ResizeObserver(sync).observe(track); else window.addEventListener('resize',sync);
-  window.addEventListener('load',sync); sync();
+  // every page view starts from the configured order (Nadia, Tanvir, Priya) and the first card, even when the
+  // browser restores the page from its back/forward cache or restores the scroll position
+  function reset(){ lead=0; order(0); track.scrollLeft=0; sync(); }
+  window.addEventListener('pageshow',reset); window.addEventListener('load',sync); reset();
 });
 })();</script>
     <?php
