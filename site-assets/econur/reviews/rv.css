@@ -1,11 +1,11 @@
 /* What customers say v2: review cards, carousel and reassurance strip ([econur_reviews] in inc/reviews.php) */
 .ecn-rv{ --rv-teal:#0D585F; --rv-green:#1F6B4F; --rv-ink:#1E2624; --rv-muted:#6B675F; --rv-line:#ECE5D8; --rv-card:#FFFDF8; --rv-gold:#C9A24A; --rv-sage:#E3E9DD;
-  position:relative; isolation:isolate; overflow:hidden; margin:0 16px; padding:30px 18px 20px; border:1px solid #EDE6D8; border-radius:22px;
+  position:relative; isolation:isolate; overflow:hidden; margin:0 16px; padding:40px 18px 20px; border:1px solid #EDE6D8; border-radius:22px;
   background:radial-gradient(70% 40% at 50% 0%, rgba(232,239,228,.75), rgba(232,239,228,0) 70%), linear-gradient(180deg, #FBF8F1 0%, #F7F3EA 100%); box-shadow:0 12px 34px rgba(52,44,30,.05); }
 .ecn-rv > *{ position:relative; z-index:1; }
 /* botanical corners: decorative, behind the content */
 .ecn-rv > .ecn-rv-deco{ position:absolute; z-index:0; display:block; height:auto !important; max-width:none !important; margin:0 !important; border-radius:0 !important; box-shadow:none !important; pointer-events:none; user-select:none; }
-.ecn-rv-deco--tl{ top:-18px; left:-34px; width:150px; opacity:.95; }
+.ecn-rv-deco--tl{ top:-30px; left:-34px; width:92px; opacity:.95; }
 .ecn-rv-deco--tr{ display:none !important; }
 .ecn-rv-deco--bl{ bottom:-26px; left:-34px; width:120px; opacity:.85; transform:rotate(200deg) scaleX(-1); }
 .ecn-rv-deco--br{ bottom:-26px; right:-34px; width:120px; opacity:.85; transform:rotate(160deg); }
@@ -33,8 +33,8 @@
 .ecn-rv-slide{ flex:0 0 calc(100% - 22px); margin:0 !important; padding:0; scroll-snap-align:start; display:flex; }
 /* card */
 .ecn-rv-card{ display:flex; flex-direction:column; width:100%; padding:20px 20px 18px; background:var(--rv-card); border:1px solid var(--rv-line); border-radius:18px; box-shadow:0 8px 24px rgba(52,44,30,.06); transition:transform .3s ease, box-shadow .3s ease; }
-.ecn-rv-top{ display:flex; align-items:center; gap:10px; }
-.ecn-rv-quote{ font-family:var(--ecn-font-head); font-size:54px; line-height:.62; height:28px; color:#D5DACB; }
+.ecn-rv-top{ display:flex; align-items:center; gap:12px; }
+.ecn-rv-quote{ flex:none; display:block; width:30px; height:23px; fill:#D6DBCC; }
 .ecn-rv .ecn-rv-text{ margin:14px 0 18px !important; padding:0 !important; border:0 !important; background:none !important; font-style:normal !important; quotes:none; }
 .ecn-rv .ecn-rv-text::before, .ecn-rv .ecn-rv-text::after{ content:none !important; }
 .ecn-rv .ecn-rv-text p{ margin:0 !important; font-family:var(--ecn-font-head); font-size:18px; font-weight:400; font-style:normal; line-height:1.42; color:var(--rv-ink); }
@@ -86,8 +86,9 @@
 }
 @media (prefers-reduced-motion:reduce){ .ecn-rv-card, .ecn-rv .ecn-rv-thumb{ transition:none; } .ecn-rv-card:hover{ transform:none; } }
 @media (max-width:374px){
-  .ecn-rv{ padding:26px 14px 16px; }
-  .ecn-rv .ecn-rv-title{ font-size:29px !important; }
+  .ecn-rv{ padding:38px 14px 16px; }
+  .ecn-rv-deco--tl{ width:80px; }
+  .ecn-rv .ecn-rv-title{ font-size:26.5px !important; }
   .ecn-rv-track{ margin:-8px -14px 0 !important; padding:8px 14px 16px !important; scroll-padding:0 14px; }
   .ecn-rv-card{ padding:18px 16px 16px; }
   .ecn-rv .ecn-rv-text p{ font-size:17px; }
@@ -129,7 +130,7 @@
   .ecn-rv-track{ gap:22px; margin:-8px -8px 0 !important; padding:8px 8px 20px !important; scroll-padding:0 8px; }
   .ecn-rv-slide{ flex-basis:calc((100% - 44px) / 3); }
   .ecn-rv-card{ padding:26px 26px 22px; border-radius:20px; }
-  .ecn-rv-quote{ font-size:66px; height:32px; }
+  .ecn-rv-quote{ width:38px; height:29px; }
   .ecn-rv-stars svg{ width:19px; height:19px; }
   .ecn-rv .ecn-rv-text{ margin:18px 0 22px !important; }
   .ecn-rv .ecn-rv-text p{ font-size:20.5px; line-height:1.4; }

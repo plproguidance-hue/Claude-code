@@ -94,7 +94,7 @@ add_shortcode('econur_reviews', function () {
         if (!empty($r['date']) && ($ts = strtotime($r['date']))) $date = '<time class="ecn-rv-date" datetime="' . esc_attr(gmdate('Y-m-d', $ts)) . '">' . esc_html(date_i18n('M j, Y', $ts)) . '</time>';
 
         $cards .= '<li class="ecn-rv-slide" role="group" aria-roledescription="slide" aria-label="' . esc_attr($n . ' of ' . $total) . '"><article class="ecn-rv-card' . ($buy ? ' has-buy' : '') . '">'
-            . '<div class="ecn-rv-top"><span class="ecn-rv-quote" aria-hidden="true">&ldquo;</span>' . econur_reviews_stars($r['rating']) . '</div>'
+            . '<div class="ecn-rv-top"><svg class="ecn-rv-quote" viewBox="0 0 34 26" aria-hidden="true" focusable="false"><path d="M13.6 2.2C7.4 3.9 2.6 8.8 2.6 16v7.4h10.2V13.2H7.9c.4-3.9 2.9-6.6 6.9-8Zm17 0c-6.2 1.7-11 6.6-11 13.8v7.4h10.2V13.2h-4.9c.4-3.9 2.9-6.6 6.9-8Z"/></svg>' . econur_reviews_stars($r['rating']) . '</div>'
             . '<blockquote class="ecn-rv-text"><p>' . esc_html($r['text']) . '</p></blockquote>'
             . '<div class="ecn-rv-who"><span class="ecn-rv-avatar" aria-hidden="true">' . esc_html($initial) . '</span>'
             . '<div class="ecn-rv-who-copy"><b class="ecn-rv-name">' . esc_html($name) . '</b>'
