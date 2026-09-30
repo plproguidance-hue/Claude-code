@@ -2,14 +2,14 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.1.1
+ * Version:           1.2.0
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.1.1');
+define('ECONUR_REVIEWS_VERSION', '1.2.0');
 
 require_once __DIR__ . '/includes/review-requests.php';
 
@@ -33,7 +33,7 @@ function enr_reviews_settings() {
             array('name' => 'Nadia Rahman', 'city' => 'Dhaka',
                   'about' => array('image' => 140, 'focus' => '32% 74%', 'title' => 'An ECONUR bar', 'line' => 'A permanent fixture in the shower'),
                   'text' => 'Softest my skin has felt in years. This bar is a permanent fixture in my shower now and I will not go back to commercial soap.'),
-            array('name' => 'Tanvir Hossain', 'city' => 'Chattogram', 'product' => 14, 'product_label' => 'Product mentioned',
+            array('name' => 'Tanvir Hossain', 'city' => 'Chattogram', 'product' => 14,
                   'text' => 'The Active Defense Bar cleared my blackheads in two weeks. Genuinely impressed.'),
             array('name' => 'Priya Chowdhury', 'city' => 'Sylhet',
                   'about' => array('image' => 103, 'focus' => '58% 42%', 'title' => 'A full ECONUR set', 'line' => 'Ordered as a gift'),
@@ -252,7 +252,8 @@ function enr_reviews_card($r, $n, $total, $live, $cfg) {
         $img_id = (int) get_post_meta($p->get_id(), 'econur_home_card_image', true);
         if (!$img_id || !wp_attachment_is_image($img_id)) $img_id = (int) $p->get_image_id();
         $img = enr_reviews_thumb($img_id, $p->get_name(), $cfg['thumb_focus'][$p->get_id()] ?? '', '112px');
-        $label = $live ? ($verified ? 'Purchased' : 'Reviewed') : ($r['product_label'] ?? 'Product mentioned');
+        // Same lower block on every card. Testimonials: what the customer's own words refer to (no purchase claim).
+        $label = $live ? ($verified ? 'Purchased' : 'Reviewed') : 'From the review';
         $line = enr_reviews_product_line($p);
         $lower = '<div class="enr-rv-buy">'
             . ($img ? '<a class="enr-rv-buy-img" href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . $img . '</a>' : '')
@@ -264,11 +265,12 @@ function enr_reviews_card($r, $n, $total, $live, $cfg) {
         $a = $r['about'];
         $img = enr_reviews_thumb((int) ($a['image'] ?? 0), $a['title'], $a['focus'] ?? '', '240px');
         $lower = '<div class="enr-rv-buy">' . ($img ? '<span class="enr-rv-buy-img">' . $img . '</span>' : '')
-            . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">About</span><span class="enr-rv-buy-name">' . esc_html($a['title']) . '</span>'
+            . '<div class="enr-rv-buy-copy"><span class="enr-rv-buy-eyebrow">From the review</span><span class="enr-rv-buy-name">' . esc_html($a['title']) . '</span>'
             . (!empty($a['line']) ? '<span class="enr-rv-buy-line">' . esc_html($a['line']) . '</span>' : '') . '</div></div>';
     }
 
-    $date = '';
+    // The date row keeps its space on every card; it stays empty when no confirmed date exists.
+    $date = '<span class="enr-rv-date is-empty" aria-hidden="true"></span>';
     if ($live && !empty($r['date']) && ($ts = strtotime($r['date']))) {
         $date = '<time class="enr-rv-date" datetime="' . esc_attr(gmdate('Y-m-d', $ts)) . '">' . esc_html(date_i18n(get_option('date_format'), $ts)) . '</time>';
     }
@@ -304,7 +306,18 @@ function enr_reviews_render($data, $cfg) {
     foreach ($items as $r) $cards .= enr_reviews_card($r, ++$n, $total, $live, $cfg);
 
     $summary = '';
-    if ($live && $data['stats']['count']) {
+    if (!$live) {
+        // Testimonials have no rating figures. Same block, truthful content: how many customer stories are shown,
+        // their initials and where the customers are.
+        $cities = array_values(array_unique(array_filter(array_map(function ($r) { return trim((string) ($r['city'] ?? '')); }, $items))));
+        $where = count($cities) > 1 ? implode(', ', array_slice($cities, 0, -1)) . ' and ' . end($cities) : ($cities[0] ?? '');
+        $faces = '';
+        foreach (array_slice($items, 0, 5) as $r) { $nm = trim($r['name']); $faces .= '<span>' . esc_html(function_exists('mb_substr') ? mb_strtoupper(mb_substr($nm, 0, 1)) : strtoupper(substr($nm, 0, 1))) . '</span>'; }
+        $line = sprintf(_n('%s customer story', '%s customer stories', $total, 'econur-reviews'), '') . ($where ? ' from ' . $where : '');
+        $summary = '<div class="enr-rv-summary enr-rv-summary--stories"><div class="enr-rv-summary-row"><span class="enr-rv-avg" aria-hidden="true">' . (int) $total . '</span>'
+            . '<span class="enr-rv-faces" aria-hidden="true">' . $faces . '</span></div>'
+            . '<p class="enr-rv-count"><span class="enr-rv-sr">' . (int) $total . ' </span>' . esc_html(ucfirst(trim($line))) . '</p></div>';
+    } elseif ($data['stats']['count']) {
         $s = $data['stats'];
         $what = $s['verified'] === $s['count'] ? _n('verified review', 'verified reviews', $s['count'], 'econur-reviews') : _n('review', 'reviews', $s['count'], 'econur-reviews');
         $summary = '<div class="enr-rv-summary"><div class="enr-rv-summary-row"><span class="enr-rv-avg" aria-hidden="true">' . esc_html(number_format_i18n($s['average'], 1)) . '</span>'
@@ -317,7 +330,7 @@ function enr_reviews_render($data, $cfg) {
     $uid = 'enr-rv-' . wp_unique_id();
     $main = '<div class="enr-rv-carousel" role="region" aria-roledescription="carousel" aria-label="Customer reviews">'
         . '<ul class="enr-rv-track" id="' . $uid . '-track" tabindex="0" aria-label="Reviews, use the arrow keys to move">' . $cards . '</ul>'
-        . '<div class="enr-rv-nav"' . ($total < 2 ? ' hidden' : '') . '><button type="button" class="enr-rv-arrow enr-rv-prev" aria-controls="' . $uid . '-track" aria-label="Previous review" disabled>' . enr_reviews_icon('prev') . '</button>'
+        . '<div class="enr-rv-nav"' . ($total < 2 ? ' hidden' : '') . '><button type="button" class="enr-rv-arrow enr-rv-prev" aria-controls="' . $uid . '-track" aria-label="Previous review">' . enr_reviews_icon('prev') . '</button>'
         . '<div class="enr-rv-dots">' . $dots . '</div>'
         . '<button type="button" class="enr-rv-arrow enr-rv-next" aria-controls="' . $uid . '-track" aria-label="Next review">' . enr_reviews_icon('next') . '</button></div>'
         . '</div>';
