@@ -2,14 +2,14 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.1.0');
+define('ECONUR_REVIEWS_VERSION', '1.1.1');
 
 require_once __DIR__ . '/includes/review-requests.php';
 
@@ -222,11 +222,15 @@ function enr_reviews_stars($n, $class = 'enr-rv-stars') {
 }
 
 // One line about a product: its key ingredients, else the start of its short description.
+// Abbreviations in the product data are written out here (the product data itself is left as it is).
 function enr_reviews_product_line($product) {
-    if (function_exists('econur_finder_ingredients')) { $l = econur_finder_ingredients($product->get_id()); if ($l) return $l; }
-    $parts = array_values(array_filter(array_map('trim', explode('|', (string) get_post_meta($product->get_id(), 'econur_key_ingredients', true)))));
-    if ($parts) return implode(', ', $parts);
-    return wp_trim_words(wp_strip_all_tags($product->get_short_description()), 8, '…');
+    $l = '';
+    if (function_exists('econur_finder_ingredients')) $l = (string) econur_finder_ingredients($product->get_id());
+    if ($l === '') {
+        $parts = array_values(array_filter(array_map('trim', explode('|', (string) get_post_meta($product->get_id(), 'econur_key_ingredients', true)))));
+        $l = $parts ? implode(', ', $parts) : wp_trim_words(wp_strip_all_tags($product->get_short_description()), 8, '…');
+    }
+    return preg_replace('/\bEO\b/', 'essential oil', $l);
 }
 
 function enr_reviews_thumb($img_id, $alt, $focus, $sizes) {
