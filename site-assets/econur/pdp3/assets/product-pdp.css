@@ -933,3 +933,18 @@ body.single-product .ecn-pdp .ecn-lp-buycol > .ecn-lp-service{ margin-top:12px !
   .ecn-lp-extra{ gap:10px; }
 }
 @media (max-width:374px){ .ecn-lp-extra{ grid-template-columns:minmax(0,1fr); } }
+/* v7.5 balance pass: slightly taller photo, tighter panel so both columns end close together */
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:5 / 6; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:22px 28px 20px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:6px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:10px !important; gap:4px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:14px !important; padding-top:14px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:12px 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ padding:11px 8px 9px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ margin-top:12px !important; row-gap:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-opt{ min-height:44px; }
+}
+body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ grid-area:auto !important; order:0; }
