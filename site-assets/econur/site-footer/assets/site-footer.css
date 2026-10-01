@@ -174,3 +174,25 @@
   .ecnf .ecnf-art--edge{ right:-104px; }
   .ecnf .ecnf-art--tl{ width:128px; left:-34px; }
 }
+/* ---------- desktop refinement: about 12% less height, content row higher, Shop a little closer to the brand,
+   Help evenly spaced, WhatsApp button closer to the support rows, lighter right-edge sprig ---------- */
+@media (min-width:1000px){
+  .ecnf-main{ grid-template-columns:minmax(0,24fr) minmax(0,15.5fr) minmax(0,15.5fr) minmax(272px,23.2fr); padding-top:36px; padding-bottom:28px; }
+  .ecnf .ecnf-h--static::after{ margin-top:12px; }
+  .ecnf .ecnf-panel .ecnf-links{ padding-top:12px !important; }
+  .ecnf .ecnf-links a{ padding:5px 0; }
+  .ecnf .ecnf-panel .ecnf-support{ padding-top:16px !important; }
+  .ecnf .ecnf-support li + li{ margin-top:10px !important; }
+  .ecnf .ecnf-wa{ margin-top:14px; }
+  .ecnf .ecnf-about{ margin-top:14px !important; }
+  .ecnf .ecnf-social{ margin-top:18px !important; }
+  .ecnf-legal{ min-height:54px; padding-top:11px !important; padding-bottom:11px !important; }
+  .ecnf .ecnf-art--soaps{ bottom:46px; left:-44px; }
+  .ecnf .ecnf-art--edge{ width:140px; right:-62px; }
+}
+@media (min-width:1000px) and (max-width:1199px){
+  .ecnf-main{ grid-template-columns:minmax(0,31fr) minmax(0,15fr) minmax(0,15fr) minmax(0,39fr); padding-top:36px; padding-bottom:28px; }
+  .ecnf .ecnf-art--soaps{ bottom:46px; left:-88px; }
+  .ecnf-brand{ padding-right:10px; }
+  .ecnf .ecnf-art--edge{ right:-92px; }
+}

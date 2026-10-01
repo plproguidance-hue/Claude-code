@@ -28,9 +28,8 @@ function econur_footer_config() {
         'help' => array(
             array('My account',       '/my-account/'),
             array('Cart',             '/cart/'),
-            // shown only while the page is published (both are unpublished drafts today, so linking them would 404)
-            array('Refund & returns', 'page:11'),
-            array('Privacy policy',   'page:3'),
+            array('Refund & returns', '/refund_returns/'),
+            array('Privacy policy',   '/privacy-policy/'),
         ),
         // [icon, text, link]
         'support' => array(
@@ -156,7 +155,7 @@ add_action('wp', function () {
 });
 
 add_action('wp_enqueue_scripts', function () {
-    $v = '1.0.2';
+    $v = '1.0.3';
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));
