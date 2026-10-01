@@ -751,3 +751,11 @@ body.single-product .ecn-pdp form.cart .quantity.ecn-qty{ width:auto; }
   .ecn-sbar, .ecn-toast, .ecn-zoom, .ecn-g-nav, .ecn-g-zoom{ display:none !important; }
 }
 @media (min-width:1000px){ body.single-product .ecn-pdp .ecn-pdp-info .ecn-pdp-price{ font-size:40px; } }
+
+/* ===================== v7.3: header aligned with the landing column, leaf spray under the gallery ===================== */
+.ecn-lp-art--hero{ display:none; }
+.ecn-lp-final-img img{ object-position:30% 62%; }
+@media (min-width:1000px){
+  body.single-product #masthead .site-primary-header-wrap.ast-container{ max-width:1388px !important; padding-left:24px !important; padding-right:24px !important; }
+  .ecn-g .ecn-lp-art--hero{ display:block; top:calc(100% + 6px); left:-46px; width:250px; opacity:.85; transform:rotate(-10deg) scaleX(-1); }
+}
