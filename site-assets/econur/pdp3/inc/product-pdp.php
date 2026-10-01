@@ -9,7 +9,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '6.1.0';
+const ECONUR_PDP_VER = '6.1.1';
 require_once __DIR__ . '/newsletter.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 
@@ -68,18 +68,6 @@ add_filter('woocommerce_variable_price_html', function ($html, $p) {
     $v = $vid ? wc_get_product($vid) : null;
     return $v ? $v->get_price_html() : $html;
 }, 20, 2);
-
-// Shop / breadcrumb band under the site header (full width, product pages only).
-add_action('astra_content_before', function () {
-    if (!function_exists('is_product') || !is_product()) return;
-    $p = wc_get_product(get_queried_object_id()); if (!$p) return;
-    $cat = econur_pdp_category($p);
-    $crumbs = '<a href="' . esc_url(home_url('/')) . '">Home</a>';
-    if ($cat) $crumbs .= '<span aria-hidden="true">/</span><a href="' . esc_url(get_term_link($cat)) . '">' . esc_html($cat->name) . '</a>';
-    $crumbs .= '<span aria-hidden="true">/</span><span aria-current="page">' . esc_html($p->get_name()) . '</span>';
-    echo '<div class="ecn-pdp-hero">' . econur_pdp_art('leaves', 'ecn-pdp-hero-art ecn-pdp-hero-art--l') . econur_pdp_art('leaves', 'ecn-pdp-hero-art ecn-pdp-hero-art--r')
-        . '<p class="ecn-pdp-hero-t">Shop</p><nav class="ecn-pdp-crumbs" aria-label="Breadcrumb">' . $crumbs . '</nav></div>';
-});
 
 // Newsletter band before the footer (sign-ups are saved by inc/newsletter.php).
 add_action('astra_content_after', function () {
