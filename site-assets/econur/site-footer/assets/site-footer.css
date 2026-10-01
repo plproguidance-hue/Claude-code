@@ -97,7 +97,7 @@
 
 /* ---------- tablets and up: columns with plain headings ---------- */
 @media (min-width:768px){
-  .ecnf{ margin:0 20px 24px; }
+  .ecnf{ margin:0 14px 20px; }
   .ecnf-card{ border-radius:26px; }
   .ecnf .ecnf-h--static{ display:block; }
   .ecnf .ecnf-h--static::after{ content:""; display:block; width:26px; height:2px; margin-top:14px; border-radius:2px; background:var(--ecnf-teal); opacity:.85; }
@@ -144,19 +144,20 @@
 }
 
 /* ---------- desktop: brand | Shop | Help | Order & Support ----------
-   A wide section: side gaps grow with the viewport (about 28px at 1366, 31px at 1440, 50px at 1920), capped at
-   1820px. Type, logo, icons and button keep their size; the extra width goes to the column gaps and the art sits
-   on the outer edges, so the middle stays clean. */
+   A near-full-width section: small side gaps (about 11px at 1366, 12px at 1440, 15px at 1920), no max-width.
+   Column positions follow the approved reference (brand from ~15.5% of the width, Shop ~42%, Help ~57%,
+   Order & Support ~72%); type, logo, icons and button keep their size, and the art stays on the outer edges. */
 @media (min-width:1000px){
-  .ecnf{ --ecnf-gap:clamp(20px, calc(3.61vw - 21.3px), 55px); width:calc(100% - 2 * var(--ecnf-gap)); max-width:1820px; margin:-6px auto 28px; }
-  .ecnf-main{ grid-template-columns:minmax(0,30fr) minmax(0,15fr) minmax(0,15fr) minmax(0,29fr); column-gap:clamp(24px, 3.2vw, 68px); padding:50px clamp(52px, 5.5vw, 112px) 40px clamp(122px, 9.6vw, 196px); }
-  .ecnf-brand{ grid-column:auto; max-width:none; }
+  .ecnf{ --ecnf-gap:clamp(10px, .8vw, 18px); width:calc(100% - 2 * var(--ecnf-gap)); max-width:none; margin:-6px auto 20px; }
+  .ecnf-main{ grid-template-columns:minmax(0,26.4fr) minmax(0,15.3fr) minmax(0,15.2fr) minmax(272px,21.1fr); column-gap:0; padding:50px 6.3% 40px 15.5%; }
+  .ecnf-brand{ grid-column:auto; max-width:none; padding-right:32px; }
   .ecnf .ecnf-about{ max-width:360px; }
-  .ecnf-support-wrap{ max-width:400px; }
+  .ecnf-col--shop, .ecnf-col--help{ padding-right:24px; }
+  .ecnf .ecnf-wa{ max-width:300px; }
   .ecnf .ecnf-h, .ecnf .ecnf-h--static{ font-size:22px !important; }
 
   /* legal strip spans the whole card; its right end stays clear of the floating chat button */
-  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px max(clamp(52px, 4.6vw, 96px), calc(130px - var(--ecnf-gap))) 14px clamp(52px, 4.6vw, 96px) !important; }
+  .ecnf-legal{ flex-wrap:nowrap; justify-content:flex-start; padding:14px max(5%, calc(130px - var(--ecnf-gap))) 14px 5% !important; }
 
   .ecnf .ecnf-art--soaps{ top:auto; right:auto; bottom:52px; left:-30px; width:clamp(262px, 16vw, 310px); transform:scaleX(-1); }
   .ecnf .ecnf-art--tl{ display:block !important; top:-26px; left:-34px; width:clamp(150px, 11vw, 200px); transform:rotate(4deg); opacity:.95; }

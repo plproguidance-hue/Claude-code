@@ -156,7 +156,7 @@ add_action('wp', function () {
 });
 
 add_action('wp_enqueue_scripts', function () {
-    $v = '1.0.1';
+    $v = '1.0.2';
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));
