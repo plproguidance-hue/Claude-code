@@ -21,7 +21,8 @@
   body.home .ecn-fp-track{ margin:0 -14px !important; padding:4px 14px 10px !important; scroll-padding-inline:14px; scrollbar-width:none; }
   body.home .ecn-fp-track::-webkit-scrollbar{ display:none; }
   body.home .ecn-fp-card{ flex:0 0 clamp(220px, 64vw, 280px) !important; }
-  body.home .ecn-fp-media img{ aspect-ratio:1 / 1 !important; height:auto !important; }
+  body.home .ecn-fp-img{ aspect-ratio:1 / 1 !important; }
+  body.home .ecn-fp-media img{ width:100% !important; height:100% !important; object-fit:cover; }
   body.home .ecn-fp-add{ min-height:44px; }
   body.home .ecn-fp-heart{ width:40px !important; height:40px !important; }
   body.home .ecn-fp-nav{ width:40px !important; height:40px !important; }

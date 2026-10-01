@@ -9,5 +9,5 @@ defined('ABSPATH') || exit;
 add_action('wp_head', function () {
     if (!is_front_page()) return;
     printf("<link rel='stylesheet' id='econur-mobile-home-css' href='%s' media='(max-width: 767px)' />\n",
-        esc_url(get_stylesheet_directory_uri() . '/assets/mobile-home.css?ver=1.0.0'));
+        esc_url(get_stylesheet_directory_uri() . '/assets/mobile-home.css?ver=1.0.1'));
 }, 200);
