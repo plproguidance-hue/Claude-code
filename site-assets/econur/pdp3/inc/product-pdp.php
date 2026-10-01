@@ -1,15 +1,16 @@
 <?php
 /**
- * Econur single product page, v6 (reference layout: gallery | buy box, tabs, related, trust strip, newsletter).
+ * Econur single product page, v6.1 (reference layout: gallery | buy box, tabs, related, trust strip, newsletter).
  * WooCommerce's content-single-product template part is pointed at inc/templates/content-single-product.php, which
  * calls econur_pdp_render(). Everything comes from WooCommerce data and the econur_* product fields; anything a
  * product does not have is left out (no placeholder content).
  * Styles: assets/product-pdp.css, script: assets/product-pdp.js (product pages only).
- * Previous version (v5): inc/product-page.php
+ * Newsletter sign-up: inc/newsletter.php. Previous version (v5): inc/product-page.php
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '6.0.2';
+const ECONUR_PDP_VER = '6.1.0';
+require_once __DIR__ . '/newsletter.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 
 /* ------------------------------------------------------------------ setup */
@@ -20,6 +21,14 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('econur-pdp', $u . 'product-pdp.css', array('econur-child'), ECONUR_PDP_VER);
     wp_enqueue_script('econur-pdp', $u . 'product-pdp.js', array('jquery'), ECONUR_PDP_VER, array('in_footer' => true, 'strategy' => 'defer'));
 }, 1000);
+
+// The store notice above the header, as on the homepage (inc/announce-bar.php keeps it on the front page).
+add_action('astra_header_before', function () {
+    if (!function_exists('is_product') || !is_product() || !function_exists('econur_top_announce_html')) return;
+    echo '<div class="ecn ecn-announce ecn-announce--top" role="region" aria-label="Store notice">'
+        . wp_kses(econur_top_announce_html(), array('strong' => array(), 'b' => array(), 'a' => array('href' => array()), 'span' => array('class' => array())))
+        . '</div>';
+}, 5);
 
 // Use this theme's product content template (inc/templates/content-single-product.php).
 add_filter('wc_get_template_part', function ($template, $slug, $name) {
@@ -72,17 +81,14 @@ add_action('astra_content_before', function () {
         . '<p class="ecn-pdp-hero-t">Shop</p><nav class="ecn-pdp-crumbs" aria-label="Breadcrumb">' . $crumbs . '</nav></div>';
 });
 
-// Newsletter band before the footer: only when the site's newsletter tool (Hostinger Reach) is connected,
-// so the form always reaches a real mailing list.
+// Newsletter band before the footer (sign-ups are saved by inc/newsletter.php).
 add_action('astra_content_after', function () {
-    if (!function_exists('is_product') || !is_product() || !econur_pdp_newsletter_ready()) return;
-    $form = do_blocks('<!-- wp:hostinger-reach/subscription /-->');
-    if ('' === trim(wp_strip_all_tags($form, true)) && false === strpos($form, '<form')) return;
+    if (!function_exists('is_product') || !is_product() || !function_exists('econur_newsletter_form')) return;
     echo '<section class="ecn-pdp-news" aria-labelledby="ecn-pdp-news-t">' . econur_pdp_art('leaves', 'ecn-pdp-news-art ecn-pdp-news-art--l') . econur_pdp_art('leaves', 'ecn-pdp-news-art ecn-pdp-news-art--r')
-        . '<p class="ecn-pdp-eyebrow">Our Newsletter</p><h2 class="ecn-pdp-news-t" id="ecn-pdp-news-t">Subscribe to Our Newsletter to <span>Get Updates on Our Latest Offers</span></h2>'
-        . '<p class="ecn-pdp-news-sub">New bars, restocks and offers, straight to your inbox.</p><div class="ecn-pdp-news-form">' . $form . '</div></section>';
+        . '<div class="ecn-pdp-news-in"><p class="ecn-pdp-eyebrow ecn-pdp-news-eyebrow">Our Newsletter</p><h2 class="ecn-pdp-news-t" id="ecn-pdp-news-t">Subscribe to Our Newsletter to <span>Get Updates on Our Latest Offers</span></h2>'
+        . '<p class="ecn-pdp-news-sub">Be the first to hear about new ECONUR bars, restocks and offers.</p>'
+        . econur_newsletter_form('product-' . get_queried_object_id()) . '</div></section>';
 });
-function econur_pdp_newsletter_ready() { return '' !== (string) get_option('hostinger_reach_api_key', ''); }
 
 /* ---------------------------------------------------------------- helpers */
 
@@ -150,12 +156,23 @@ function econur_pdp_stock($p) {
     if ($p->is_on_backorder()) return array('soon', 'On backorder');
     return array('in', 'In Stock');
 }
-// Product photos: featured image, WooCommerce gallery, then the product's own homepage card photo.
+// Product photos: featured image, WooCommerce gallery, then the product's own homepage card photo (if not already in).
 function econur_pdp_images($p) {
     $ids = array_merge(array((int) $p->get_image_id()), array_map('intval', $p->get_gallery_image_ids()));
     $card = (int) get_post_meta($p->get_id(), 'econur_home_card_image', true);
     if ($card) $ids[] = $card;
     return array_values(array_unique(array_filter($ids, function ($id) { return $id && wp_attachment_is_image($id); })));
+}
+
+// Focus point for a photo shown in a square frame (attachment field _econur_focus, e.g. "72% 50%").
+function econur_pdp_focus($img) {
+    $f = trim((string) get_post_meta($img, '_econur_focus', true));
+    return preg_match('/^\d{1,3}% \d{1,3}%$/', $f) ? $f : '';
+}
+// Width/height ratio of a photo (1 when unknown).
+function econur_pdp_ratio($img) {
+    $m = wp_get_attachment_metadata($img);
+    return (!empty($m['width']) && !empty($m['height'])) ? $m['width'] / $m['height'] : 1;
 }
 
 function econur_pdp_icon($n) {
@@ -221,12 +238,14 @@ function econur_pdp_render($product) {
     echo '<div id="product-' . esc_attr($id) . '" class="' . esc_attr(implode(' ', wc_get_product_class('ecn-pdp', $product))) . '">';
     echo '<section class="ecn-pdp-main">';
 
-    /* gallery */
+    /* gallery: square frame; wide photos are cropped around their focus point and get a matching srcset size */
     $n = count($imgs);
     echo '<div class="ecn-g' . ($n > 1 ? ' has-many' : '') . '" data-count="' . esc_attr($n) . '"><div class="ecn-g-main"><div class="ecn-g-track" tabindex="0" aria-label="' . esc_attr($name . ' photos') . '">';
     foreach ($imgs as $i => $img) {
+        $r = max(1, econur_pdp_ratio($img)); $focus = econur_pdp_focus($img);
+        $sizes = '(min-width: 1360px) ' . round(620 * $r) . 'px, (min-width: 1000px) ' . round(46 * $r) . 'vw, ' . round(100 * $r) . 'vw';
         echo '<figure class="ecn-g-slide" id="ecn-g-' . esc_attr($i) . '"' . ($n > 1 ? ' aria-label="' . esc_attr(sprintf('Photo %d of %d', $i + 1, $n)) . '"' : '') . '>'
-            . wp_get_attachment_image($img, 'full', false, array('class' => 'ecn-g-img', 'alt' => 0 === $i ? $name : $name . ' photo ' . ($i + 1), 'loading' => 0 === $i ? 'eager' : 'lazy', 'fetchpriority' => 0 === $i ? 'high' : 'auto', 'decoding' => 0 === $i ? 'sync' : 'async', 'sizes' => '(min-width: 1000px) 560px, calc(100vw - 32px)'))
+            . wp_get_attachment_image($img, 'full', false, array('class' => 'ecn-g-img', 'alt' => 0 === $i ? $name : $name . ' photo ' . ($i + 1), 'loading' => 0 === $i ? 'eager' : 'lazy', 'fetchpriority' => 0 === $i ? 'high' : 'auto', 'decoding' => 0 === $i ? 'sync' : 'async', 'sizes' => $sizes, 'style' => $focus ? 'object-position:' . $focus : ''))
             . '</figure>';
     }
     echo '</div>';
@@ -234,7 +253,11 @@ function econur_pdp_render($product) {
     echo '</div>';
     if ($n > 1) {
         echo '<div class="ecn-g-thumbs" aria-label="Choose a photo">';
-        foreach ($imgs as $i => $img) echo '<button type="button" class="ecn-g-thumb' . (0 === $i ? ' is-on' : '') . '" data-i="' . esc_attr($i) . '" aria-label="' . esc_attr(sprintf('Show photo %d', $i + 1)) . '"' . (0 === $i ? ' aria-current="true"' : '') . '>' . wp_get_attachment_image($img, 'woocommerce_thumbnail', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '96px')) . '</button>';
+        foreach ($imgs as $i => $img) {
+            $wide = econur_pdp_ratio($img) > 1.25; $focus = econur_pdp_focus($img);
+            echo '<button type="button" class="ecn-g-thumb' . (0 === $i ? ' is-on' : '') . '" data-i="' . esc_attr($i) . '" aria-label="' . esc_attr(sprintf('Show photo %d', $i + 1)) . '"' . (0 === $i ? ' aria-current="true"' : '') . '>'
+                . wp_get_attachment_image($img, $wide ? 'medium_large' : 'woocommerce_thumbnail', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $wide ? '240px' : '100px', 'style' => $focus ? 'object-position:' . $focus : '')) . '</button>';
+        }
         echo '</div>';
     }
     echo '</div>';
@@ -263,6 +286,7 @@ function econur_pdp_render($product) {
     if ($product->is_type('variable') && $buyable) echo '<p class="ecn-pdp-label">Size/Volume</p>';
     if ($buyable) {
         woocommerce_template_single_add_to_cart();
+        echo '<p class="ecn-pdp-ask"><a class="ecn-pdp-wa-link" href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></p>';
     } else {
         echo '<div class="ecn-pdp-coming"><p><b>Launching soon.</b> Want a message the day it is ready?</p><div class="ecn-pdp-coming-row">'
             . '<a class="ecn-pdp-wa is-main" href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $name . ' is available.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Notify me on WhatsApp</span></a>'
@@ -304,15 +328,15 @@ function econur_pdp_render($product) {
     if ($desc || $checks) {
         $b = $desc ? '<div class="ecn-pdp-desc">' . wp_kses_post(wpautop($desc)) . '</div>' : '';
         if ($checks) { $b .= '<ul class="ecn-pdp-checks">'; foreach ($checks as $c) $b .= '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($c) . '</span></li>'; $b .= '</ul>'; }
-        if ($table) $b .= '<div class="ecn-pdp-desc-table">' . $table . '</div>';
         $tabs['description'] = array('Description', $b);
     }
     if ($table) $tabs['info'] = array('Additional Information', $table, 'Additional Info');
     if (comments_open($id)) {
         ob_start(); comments_template(); $form = ob_get_clean();
+        $btn = '<button type="button" class="ecn-pdp-btn-outline ecn-rev-write" aria-controls="review_form_wrapper" aria-expanded="false">Write a review</button>';
         $head = $rc > 0
-            ? '<div class="ecn-pdp-rev-sum"><p class="ecn-pdp-rev-avg"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b><span class="ecn-stars" style="--r:' . esc_attr(round($avg / 5 * 100)) . '%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span></p><p class="ecn-pdp-rev-n">Based on ' . esc_html($rc) . ' customer ' . (1 === $rc ? 'review' : 'reviews') . '</p><a class="ecn-pdp-btn-outline" href="#review_form_wrapper">Write a review</a></div>'
-            : '<div class="ecn-pdp-rev-sum is-empty"><p class="ecn-pdp-rev-empty">No reviews yet</p><p class="ecn-pdp-rev-n">Be the first to review ' . esc_html($name) . '.</p></div>';
+            ? '<div class="ecn-pdp-rev-sum"><p class="ecn-pdp-rev-avg"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b><span class="ecn-stars" style="--r:' . esc_attr(round($avg / 5 * 100)) . '%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="screen-reader-text">' . esc_html(sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '</span></p><p class="ecn-pdp-rev-n">Based on <b>' . esc_html($rc) . '</b> customer ' . (1 === $rc ? 'review' : 'reviews') . '</p>' . $btn . '</div>'
+            : '<div class="ecn-pdp-rev-sum is-empty"><p class="ecn-pdp-rev-empty">No reviews yet</p><p class="ecn-pdp-rev-n">Be the first to review ' . esc_html($name) . '.</p>' . $btn . '</div>';
         $tabs['reviews'] = array('Review', $head . '<div class="ecn-pdp-rev' . ($rc > 0 ? ' has-reviews' : ' no-reviews') . '">' . $form . '</div>', 'Review');
     }
     if ($tabs) {
@@ -333,11 +357,11 @@ function econur_pdp_render($product) {
 
     econur_pdp_related($product);
 
-    /* trust strip (the store's own delivery and payment terms, as on the homepage); phones show the shorter wording */
+    /* trust strip: the store's own delivery and payment terms, worded as on the homepage */
     echo '<ul class="ecn-pdp-trust" aria-label="Delivery and payment">'
-        . '<li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small><span class="ecn-tr-l">Pay when the parcel arrives, anywhere in Bangladesh.</span><span class="ecn-tr-s">Anywhere in Bangladesh</span></small></span></li>'
-        . '<li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small><span class="ecn-tr-l">Inside Dhaka 1 to 2 days, outside Dhaka 2 to 4 days.</span><span class="ecn-tr-s">Inside Dhaka 1–2 days, outside 2–4 days</span></small></span></li>'
-        . '<li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small><span class="ecn-tr-l">Every order is confirmed by phone within 12 hours.</span><span class="ecn-tr-s">Confirmed by phone within 12 hours</span></small></span></li>'
+        . '<li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li>'
+        . '<li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small>Inside Dhaka 1–2 days, Outside Dhaka 2–4 days</small></span></li>'
+        . '<li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order is confirmed within 12 hours</small></span></li>'
         . '</ul>';
 
     if (isset(WC()->structured_data)) WC()->structured_data->generate_product_data($product);
@@ -368,35 +392,71 @@ function econur_pdp_rows($p) {
     return $rows;
 }
 
-// Related products: same category first, then the rest of the range; buyable products only, up to 8.
+// Related products: same category first, then the rest of the range, up to 8. Products on sale come first;
+// products without a price yet are shown as "Coming soon" with a link to their page.
 function econur_pdp_related($product) {
     $id = $product->get_id();
     $ids = array_merge(wc_get_related_products($id, 8), wc_get_products(array('status' => 'publish', 'limit' => 12, 'return' => 'ids', 'exclude' => array($id), 'orderby' => 'menu_order', 'order' => 'ASC')));
     $ids = array_values(array_unique(array_map('intval', $ids)));
-    $cards = ''; $n = 0;
+    $buy = array(); $soon = array();
     foreach ($ids as $pid) {
-        if ($n >= 8 || $pid === $id) continue;
+        if ($pid === $id) continue;
         $p = wc_get_product($pid);
-        if (!$p || !$p->is_visible() || '' === $p->get_price() || !$p->is_in_stock()) continue;
-        $v = econur_pdp_card_variation($p);
-        if (!$v) continue;
-        $link = get_permalink($pid); $name = $p->get_name();
+        if (!$p || !$p->is_visible()) continue;
+        if ('' === $p->get_price()) { $soon[] = array($p, null); continue; }
+        $v = $p->is_in_stock() ? econur_pdp_card_variation($p) : null;
+        if ($v) $buy[] = array($p, $v);
+    }
+    $list = array_slice(array_merge($buy, $soon), 0, 8);
+    if (!$list) return;
+    $cards = '';
+    foreach ($list as $row) {
+        list($p, $v) = $row;
+        $pid = $p->get_id(); $link = get_permalink($pid); $name = $p->get_name();
         $img = (int) get_post_meta($pid, 'econur_home_card_image', true);
         if (!$img || !wp_attachment_is_image($img)) $img = (int) $p->get_image_id();
         $focus = (string) get_post_meta($pid, 'econur_home_card_focus', true);
-        $size = econur_pdp_size_label($v);
-        $cards .= '<article class="ecn-rel-card"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">'
-            . wp_get_attachment_image($img, 'medium_large', false, array('alt' => $name, 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 1000px) 270px, 62vw', 'style' => $focus ? 'object-position:' . esc_attr($focus) : ''))
-            . '</a>' . econur_pdp_heart($p, 'ecn-rel-heart') . '</div><div class="ecn-rel-body"><h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($name) . '</a></h3>'
-            . '<p class="ecn-rel-price">' . wp_kses_post($v->get_price_html()) . ($size ? '<small>' . esc_html($size) . '</small>' : '') . '</p>'
-            . '<button type="button" class="ecn-rel-add" data-id="' . esc_attr($v->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($name . ($size ? ' (' . $size . ')' : '')) . '" aria-label="' . esc_attr('Add ' . $name . ($size ? ', ' . $size : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button></div></article>';
-        $n++;
+        $size = $v ? econur_pdp_size_label($v) : '';
+        $cards .= '<article class="ecn-rel-card' . ($v ? '' : ' is-soon') . '"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">'
+            . wp_get_attachment_image($img, 'medium_large', false, array('alt' => $name, 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 1000px) 310px, 62vw', 'style' => $focus ? 'object-position:' . esc_attr($focus) : ''))
+            . '</a>' . econur_pdp_heart($p, 'ecn-rel-heart') . '</div><div class="ecn-rel-body"><h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($name) . '</a></h3>';
+        if ($v) {
+            $cards .= '<p class="ecn-rel-price">' . wp_kses_post($v->get_price_html()) . ($size ? '<small>' . esc_html($size) . '</small>' : '') . '</p>'
+                . '<button type="button" class="ecn-rel-add" data-id="' . esc_attr($v->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($name . ($size ? ' (' . $size . ')' : '')) . '" aria-label="' . esc_attr('Add ' . $name . ($size ? ', ' . $size : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button>';
+        } else {
+            $cards .= '<p class="ecn-rel-price is-soon">Coming soon</p><a class="ecn-rel-view" href="' . esc_url($link) . '">View product</a>';
+        }
+        $cards .= '</div></article>';
     }
-    if (!$cards) return;
+    $n = count($list);
     echo '<section class="ecn-rel" aria-labelledby="ecn-rel-t"><p class="ecn-pdp-eyebrow ecn-rel-eyebrow">Related Products</p><h2 class="ecn-rel-t" id="ecn-rel-t">Explore <span>Related Products</span></h2>'
-        . '<div class="ecn-rel-wrap"><div class="ecn-rel-track" tabindex="0" aria-label="Related products">' . $cards . '</div>'
+        . '<div class="ecn-rel-wrap' . ($n > 4 ? ' has-nav' : '') . '"><div class="ecn-rel-track" tabindex="0" aria-label="Related products">' . $cards . '</div>'
         . ($n > 4 ? '<button type="button" class="ecn-rel-nav ecn-rel-prev" aria-label="Previous products">' . econur_pdp_icon('prev') . '</button><button type="button" class="ecn-rel-nav ecn-rel-next" aria-label="Next products">' . econur_pdp_icon('next') . '</button>' : '')
         . '</div><div class="ecn-rel-dots" aria-hidden="true"></div></section>';
+}
+
+/* ---------------------------------------------------------------- reviews */
+
+// Review cards from the real review data: initial, name, verified buyer (only when WooCommerce says so), date, stars, text.
+add_filter('woocommerce_product_review_list_args', function ($args) {
+    if (function_exists('is_product') && is_product()) $args['callback'] = 'econur_pdp_review_card';
+    return $args;
+});
+function econur_pdp_review_card($comment, $args, $depth) {
+    $GLOBALS['comment'] = $comment;
+    $name = get_comment_author($comment);
+    $rating = (int) get_comment_meta($comment->comment_ID, 'rating', true);
+    $verified = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($comment->comment_ID);
+    $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($name), 0, 1)) : strtoupper(substr(trim($name), 0, 1));
+    $ago = human_time_diff(get_comment_date('U', $comment), current_time('timestamp')) . ' ago';
+    echo '<li ' . comment_class('ecn-rev-card', $comment, null, false) . ' id="li-comment-' . esc_attr($comment->comment_ID) . '"><div id="comment-' . esc_attr($comment->comment_ID) . '" class="ecn-rev-in">'
+        . '<span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div class="ecn-rev-body"><p class="ecn-rev-who"><b>' . esc_html($name) . '</b>'
+        . ($verified ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '') . '</p>'
+        . '<p class="ecn-rev-when"><time datetime="' . esc_attr(get_comment_date('c', $comment)) . '">' . esc_html($ago) . '</time></p>'
+        . ($rating ? '<p class="ecn-rev-stars"><span class="ecn-stars" style="--r:' . esc_attr($rating * 20) . '%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="screen-reader-text">' . esc_html(sprintf('Rated %d out of 5', $rating)) . '</span></p>' : '')
+        . ('0' === $comment->comment_approved ? '<p class="ecn-rev-wait">Your review is awaiting approval.</p>' : '')
+        . '<div class="ecn-rev-text">' . wp_kses_post(wpautop(get_comment_text($comment))) . '</div></div></div>';
+    // the closing </li> is printed by WordPress (end-callback)
 }
 
 /* --------------------------------------------- sticky bar, toast, config */

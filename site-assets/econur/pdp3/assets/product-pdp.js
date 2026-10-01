@@ -1,5 +1,5 @@
-/* ECONUR product page: gallery, size pills, quantity, live price/stock, tabs, saved hearts, share, related row,
-   sticky Add to Cart (phones). WooCommerce's own variation form still does the real work. */
+/* ECONUR product page: gallery, size pills, quantity, live price/stock, tabs, review form toggle, saved hearts, share,
+   related row, newsletter sign-up, sticky Add to Cart (phones). WooCommerce's own variation form still does the real work. */
 (function () {
   function init() {
     var C = window.ECN_PD || {}, page = document.querySelector('.ecn-pdp'); if (!page) return;
@@ -93,7 +93,14 @@
       t.addEventListener('keydown', function (e) { var k = e.key, n = null; if (k === 'ArrowRight') n = tabs[(i + 1) % tabs.length]; else if (k === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length]; else if (k === 'Home') n = tabs[0]; else if (k === 'End') n = tabs[tabs.length - 1]; if (n) { e.preventDefault(); n.focus(); n.click(); } });
     });
     document.addEventListener('click', function (e) { var a = e.target.closest('[data-tab-open]'); if (!a) return; e.preventDefault(); openTab(a.getAttribute('data-tab-open'), true); });
-    if (/^#(reviews|comments|comment-\d+|review_form_wrapper|review_form|respond|ecn-tab-reviews)$/.test(location.hash)) { openTab('reviews', false); var tgt = document.querySelector(location.hash === '#ecn-tab-reviews' ? '#ecn-pdp-tabs' : location.hash); if (tgt) setTimeout(function () { tgt.scrollIntoView({ block: 'start' }); }, 60); }
+
+    /* ---------- reviews: the form opens from "Write a review" (it stays open without JavaScript) ---------- */
+    var rev = page.querySelector('.ecn-pdp-rev'), wr = page.querySelector('.ecn-rev-write'), rf = page.querySelector('#review_form_wrapper');
+    function writeOpen(on, focus) { if (!rev || !rf) return; rev.classList.toggle('is-writing', on); if (wr) wr.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on && focus) { var f = rf.querySelector('p.stars a, #comment'); rf.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 300); } }
+    if (rev && rf) { rev.classList.add('is-collapsible'); if (wr) wr.addEventListener('click', function () { writeOpen(!rev.classList.contains('is-writing'), true); }); }
+    else if (wr) wr.hidden = true;
+
+    if (/^#(reviews|comments|comment-\d+|review_form_wrapper|review_form|respond|ecn-tab-reviews)$/.test(location.hash)) { openTab('reviews', false); if (/review_form|respond/.test(location.hash)) writeOpen(true, false); var tgt = document.querySelector(location.hash === '#ecn-tab-reviews' ? '#ecn-pdp-tabs' : location.hash); if (tgt) setTimeout(function () { tgt.scrollIntoView({ block: 'start' }); }, 60); }
 
     /* ---------- saved hearts (same list as the homepage: localStorage "ecn_saved") ---------- */
     var KEY = 'ecn_saved';
@@ -133,5 +140,26 @@
     /* a size with only one choice is picked straight away, so the button is ready to use */
     if (form) form.querySelectorAll('.ecn-pdp-sizes').forEach(function (w) { var only = w.querySelectorAll('.ecn-pdp-sz'), sel = w.previousElementSibling; if (only.length === 1 && sel && !sel.value) only[0].click(); });
   }
+
+  /* newsletter sign-up (saved by the theme; works without JavaScript too) */
+  function initNews() {
+    [].forEach.call(document.querySelectorAll('.ecn-nl-form'), function (f) {
+      var em = f.querySelector('.ecn-nl-email'), btn = f.querySelector('.ecn-nl-btn'), msg = f.querySelector('.ecn-nl-msg');
+      function say(t, ok) { msg.textContent = t; msg.className = 'ecn-nl-msg ' + (ok ? 'is-ok' : 'is-error'); }
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var v = (em.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { say('Please enter a valid email address.', false); em.setAttribute('aria-invalid', 'true'); em.focus(); return; }
+        em.removeAttribute('aria-invalid'); btn.disabled = true; f.classList.add('is-busy');
+        fetch(f.action, { method: 'POST', body: new FormData(f), credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+          .then(function (r) { return r.json(); })
+          .then(function (res) { say(res && res.message ? res.message : 'Sorry, something went wrong. Please try again.', !!(res && res.ok)); if (res && res.ok) f.reset(); })
+          .catch(function () { say('Sorry, something went wrong. Please try again.', false); })
+          .then(function () { btn.disabled = false; f.classList.remove('is-busy'); });
+      });
+    });
+  }
+  if (document.readyState !== 'loading') initNews(); else document.addEventListener('DOMContentLoaded', initNews);
+
   if (window.jQuery) window.jQuery(function () { setTimeout(init, 0); }); else if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
