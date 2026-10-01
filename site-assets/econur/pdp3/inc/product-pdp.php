@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.6.0';
+const ECONUR_PDP_VER = '7.7.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -337,9 +337,9 @@ function econur_pdp_render($product) {
     if ($lp['subtitle']) echo '<p class="ecn-lp-sub">' . esc_html($lp['subtitle']) . '</p>';
     if ('' !== $product->get_price()) {
         $save = ($unit && $unit->is_on_sale() && (float) $unit->get_regular_price() > (float) $unit->get_price()) ? (float) $unit->get_regular_price() - (float) $unit->get_price() : 0;
-        echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div><span class="ecn-lp-save" data-ecn-save' . ($save > 0 ? '' : ' hidden') . '>Save ' . esc_html(econur_pdp_money($save)) . '</span></div>';
+        echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div>' . ($size ? '<span class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</span>' : '') . '<span class="ecn-lp-save" data-ecn-save' . ($save > 0 ? '' : ' hidden') . '>Save ' . esc_html(econur_pdp_money($save)) . '</span></div>';
     }
-    if ($size) echo '<p class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</p>';
+    if ($size && '' === $product->get_price()) echo '<p class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</p>';
     if ($lp['bullets']) {
         echo '<ul class="ecn-lp-checks">';
         foreach ($lp['bullets'] as $b) echo '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($b) . '</span></li>';
@@ -350,9 +350,9 @@ function econur_pdp_render($product) {
         // pack choice: 1 / 2 / 3 of the selected size (quantity in the real WooCommerce form; optional tiered discount)
         $t = $lp['tiers']; $best = $t ? max($t) : 0;
         $packs = array(
-            1 => array('', 'Standard', 'Best for first-time use'),
-            2 => array(econur_lp_pack_pct($t, 2) ? 'Save ' . rtrim(rtrim(number_format(econur_lp_pack_pct($t, 2), 1), '0'), '.') . '%' : 'Stock up', 'Stay stocked up', ''),
-            3 => array(($t && econur_lp_pack_pct($t, 3) === $best) ? 'Best Value' : 'Regular use', 'Ideal for regular use', ''),
+            1 => array('', 'Starter', 'Best for first-time use'),
+            2 => array(econur_lp_pack_pct($t, 2) ? 'Save ' . rtrim(rtrim(number_format(econur_lp_pack_pct($t, 2), 1), '0'), '.') . '%' : 'Most Popular', 'Stay stocked up', ''),
+            3 => array('Best Value', 'Ideal for regular use', ''),
         );
         echo '<fieldset class="ecn-lp-packs"><legend class="ecn-lp-label">Choose your order</legend><div class="ecn-lp-packs-row">';
         foreach ($packs as $q => $pk) {
@@ -363,7 +363,7 @@ function econur_pdp_render($product) {
                 . '<span class="ecn-lp-pack-q">' . esc_html($q . ' ' . (1 === $q ? $unit_word[0] : $unit_word[1])) . '</span>'
                 . '<span class="ecn-lp-pack-p" data-pack-price>' . ($unit ? esc_html(econur_pdp_money($unit->get_price() * $q * (1 - $pct / 100))) : '') . '</span>'
                 . ($pct ? '<span class="ecn-lp-pack-s" data-pack-save></span>' : '')
-                . '<span class="ecn-lp-pack-n">' . (1 === $q ? '<b>Standard</b>' : '') . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
+                . '<span class="ecn-lp-pack-n">' . (1 === $q ? '<b>Starter</b>' : '') . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
         }
         echo '</div></fieldset>';
         if ($product->is_type('variable')) echo '<p class="ecn-lp-label">Choose size</p>';

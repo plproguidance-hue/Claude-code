@@ -5,7 +5,7 @@
  * (short description, econur_benefits, econur_highlights, econur_how_* and so on), so nothing is invented.
  *
  *  econur_lp_subtitle  one line under the title
- *  econur_lp_bullets   quick benefits, one per line (up to 5)
+ *  econur_lp_bullets   quick benefits, one per line (up to 3)
  *  econur_lp_badges    the three badges on the main photo, one per line
  *  econur_lp_faq       extra FAQ entries, one per line: "Question :: Answer"
  *  econur_lp_routine   product IDs for "Complete your routine", e.g. "18, 22"
@@ -19,7 +19,7 @@ defined('ABSPATH') || exit;
 function econur_lp_field_defs() {
     return array(
         'econur_lp_subtitle' => array('Subtitle', 'text', 'One short line under the title. Empty = the short description.'),
-        'econur_lp_bullets'  => array('Quick benefits', 'lines', 'One per line, up to 5. Empty = the first benefits from the product\'s benefit list, plus "Handcrafted in Bangladesh".'),
+        'econur_lp_bullets'  => array('Quick benefits', 'lines', 'One per line, up to 3. Empty = the first two benefits from the product\'s benefit list, plus "Handcrafted in Bangladesh".'),
         'econur_lp_badges'   => array('Photo badges', 'lines', 'Three short labels shown on the main photo, one per line. Empty = the first highlights plus "Handcrafted in Bangladesh".'),
         'econur_lp_faq'      => array('Extra FAQ', 'lines', 'One per line: Question :: Answer. Shown before the standard questions.'),
         'econur_lp_routine'  => array('Complete your routine', 'text', 'Product IDs to pair with this one, e.g. 18, 22. Empty = two other bars from the "Find your bar" guide.'),
@@ -99,12 +99,13 @@ function econur_lp_data($product) {
     $d['subtitle'] = trim((string) get_post_meta($id, 'econur_lp_subtitle', true));
     if ('' === $d['subtitle']) $d['subtitle'] = $short;
 
+    // three short benefits at the top of the page (approved design)
     $b = econur_lp_lines($id, 'econur_lp_bullets');
     if (!$b) {
-        $b = array_slice(econur_meta_list($id, 'econur_benefits'), 0, 4);
+        $b = array_slice(econur_meta_list($id, 'econur_benefits'), 0, 2);
         if ($b) $b[] = 'Handcrafted in Bangladesh';
     }
-    $d['bullets'] = array_slice($b, 0, 5);
+    $d['bullets'] = array_slice($b, 0, 3);
 
     // ad angle (message match)
     $d['angle'] = '';

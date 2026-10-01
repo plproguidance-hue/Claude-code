@@ -1000,3 +1000,78 @@ body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product 
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ font-size:12.5px; gap:8px; padding:8px 10px; }
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:26px; height:26px; }
 }
+
+/* ===================== v7.7: FINAL approved top section (middle scale, same on every desktop width) =====================
+   1300px section, 49/51 columns, 70x78 thumbnails, ~535x595 photo with one 3-part benefit bar along its bottom,
+   price + weight on one line, 3 benefits, compact panel ending at Quantity + Add to Cart (above the fold). */
+.ecn-lp-pricerow{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; }
+body.single-product .ecn-pdp .ecn-lp-pricerow .ecn-pdp-size{ display:inline-block; margin:0 !important; font-size:16px; font-weight:500; color:var(--pd-muted); }
+.ecn-lp-pricerow .ecn-lp-save{ align-self:center; }
+
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero{ width:auto; max-width:1300px; margin:0 auto; grid-template-columns:minmax(0,49fr) minmax(0,51fr); column-gap:32px; }
+  body.single-product #primary{ margin-top:32px !important; }
+  /* gallery: 70 x 78 thumbnails, 16px gap, 9:10 photo */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:70px minmax(0,1fr); column-gap:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumbs{ gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:70px; height:78px; border-radius:10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb img{ border-radius:9px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:9 / 10; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main{ border-radius:14px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-zoom{ top:18px; right:18px; width:44px; height:44px; }
+  /* one 3-part benefit bar laid along the bottom of the photo */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ grid-column:-2 / -1; grid-row:1; align-self:end; position:relative; z-index:3; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:0; margin:0 16px 16px !important; padding:0 6px !important; border:1px solid rgba(236,228,214,.9); border-radius:12px; background:rgba(255,254,251,.96); box-shadow:0 6px 18px rgba(30,24,14,.10); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ justify-content:center; gap:10px; min-height:62px; padding:8px 10px; border:0; border-radius:0; background:none; font-size:13.5px; font-weight:600; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li + li{ border-left:1px solid #E8E0D2; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:34px; height:34px; padding:6px; border:1px solid #CFE0DB; border-radius:50%; background:#F4F8F6; }
+  /* panel */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:26px 28px 22px !important; border-radius:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-cat{ margin:0 0 4px; font-size:14.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-rating{ margin-top:4px; font-size:14.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:38px !important; line-height:1.15 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-stock{ font-size:12.5px; padding:4px 12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-sub{ margin-top:8px !important; font-size:15.5px; line-height:1.6; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-price{ margin:0; font-size:36px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:10px !important; gap:6px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks li{ font-size:15px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:16px !important; padding-top:16px !important; border-top:1px solid #ECE5D8 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:14px 0 10px !important; font-size:16px; font-weight:700; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row{ gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ min-height:106px; padding:16px 10px 12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-q{ font-size:15.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-p{ font-size:19px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n{ font-size:12.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-sz{ min-height:44px; height:44px; padding:0 26px !important; font-size:16px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-opt{ min-height:44px; padding:6px 18px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-r{ font-size:15.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-p b{ font-size:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:130px minmax(0,1fr) !important; margin-top:12px !important; row-gap:12px; column-gap:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .quantity.ecn-qty, body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ height:52px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ font-size:17px !important; }
+  body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ height:48px !important; font-size:15.5px !important; }
+}
+/* narrower desktops/tablets in two columns: the benefit bar's labels stay readable */
+@media (min-width:900px) and (max-width:1199px){
+  body.single-product .ecn-pdp .ecn-lp-hero{ column-gap:24px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:58px minmax(0,1fr); column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:58px; height:64px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ margin:0 10px 10px !important; padding:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:4px; min-height:60px; padding:6px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:28px; height:28px; padding:5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:22px 20px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:32px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:112px minmax(0,1fr) !important; }
+}
+@media (min-width:1200px) and (max-width:1439px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ font-size:12.5px; gap:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:30px; height:30px; }
+}
+@media (max-width:899px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ gap:0; margin-top:12px !important; padding:0 4px !important; border:1px solid #ECE4D6; border-radius:12px; background:#FFFEFB; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ min-height:60px; padding:8px 4px; border:0; border-radius:0; background:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li + li{ border-left:1px solid #E8E0D2; }
+}
