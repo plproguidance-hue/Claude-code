@@ -1,0 +1,37 @@
+/* ECONUR homepage, desktop only (min-width 1000px): Bestsellers as one row of four with arrows, tighter section
+   rhythm. Scoped to the homepage; phones and tablets never apply it (the link carries the same media condition). */
+@media (min-width:1000px){
+
+  /* ---------- Bestsellers: one row, the same 4 cards per view as before, arrows beside "Shop all" ---------- */
+  body.home #bestsellers ul.ecn-home-grid{ display:flex !important; grid-template-columns:none !important; gap:20px; overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory; scrollbar-width:none; margin:0 !important; padding:2px 0 8px !important; }
+  body.home #bestsellers ul.ecn-home-grid::-webkit-scrollbar{ display:none; }
+  body.home #bestsellers ul.ecn-home-grid > li.ecn-pcard{ flex:0 0 calc((100% - 60px) / 4) !important; width:auto !important; max-width:none !important; grid-column:auto !important; margin:0 !important; scroll-snap-align:start; }
+  body.home #bestsellers .ecn-sh .ecn-sh-link{ margin-left:auto; }
+  body.home #bestsellers .ecn-bs-tools:not([hidden]){ display:flex; align-items:center; gap:10px; margin-left:12px; }
+  body.home .ecn-bs-nav{ -webkit-appearance:none; appearance:none; display:grid; place-items:center; width:40px; height:40px; padding:0; border-radius:50%;
+    border:1px solid var(--ecn-teal, #0D585F); background:var(--ecn-teal, #0D585F); color:#fff; cursor:pointer; box-shadow:0 4px 12px rgba(13,88,95,.18);
+    transition:background-color .2s ease, border-color .2s ease, color .2s ease; }
+  body.home .ecn-bs-nav[hidden]{ display:none; }
+  body.home .ecn-bs-nav svg{ width:17px; height:17px; }
+  body.home .ecn-bs-nav:hover:not(:disabled), body.home .ecn-bs-nav:focus-visible:not(:disabled){ background:#0A474D; border-color:#0A474D; color:#fff; }
+  body.home .ecn-bs-nav:focus-visible{ outline:2px solid var(--ecn-teal, #0D585F); outline-offset:2px; }
+  body.home .ecn-bs-nav:disabled{ cursor:default; background:#fff; border-color:#E4DDD0; color:#A8A399; box-shadow:none; }
+  body.home #bestsellers > .e-con-inner{ row-gap:22px !important; }
+
+  /* ---------- section rhythm: each value reviewed per section ---------- */
+  body.home .elementor-43 .elementor-element.elementor-element-9dd311c{ --padding-top:22px; }
+  body.home .ecn-trust3{ padding-top:16px !important; padding-bottom:16px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-833f8ca{ --padding-top:32px; --padding-bottom:38px; }
+  body.home .ecn-sb{ margin-bottom:32px !important; }
+  body.home .ecn-fp{ padding-top:28px !important; padding-bottom:24px !important; }
+  body.home .ecn-fp-head{ margin-bottom:14px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-e5a1f07{ --padding-bottom:32px; }
+  body.home .elementor-43 .elementor-element.elementor-element-d4c3b5f{ --padding-bottom:36px; }
+  body.home .ecn-fy{ padding-top:28px !important; padding-bottom:20px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-a7f7fda{ --padding-bottom:40px; }
+  body.home .enr-rv{ padding-top:54px !important; padding-bottom:32px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-1a7c00e{ --padding-bottom:24px; }
+  body.home .elementor-43 .elementor-element.elementor-element-2625fd5{ --padding-top:28px; --padding-bottom:48px; }
+  body.home .ehc-cta{ padding-top:30px !important; }
+}
