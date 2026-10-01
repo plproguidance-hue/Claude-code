@@ -601,7 +601,10 @@ function econur_lp_favorites($product, $lp) {
             $chips = '';
             if ($p->is_type('variable')) {
                 $opts = array();
-                foreach ($p->get_children() as $cid) { $v = wc_get_product($cid); if ($v && $v->is_purchasable() && $v->is_in_stock() && '' !== $v->get_price()) $opts[] = $v; }
+                // one chip per size (the size shown on the card wins when two variations share a label), smallest first
+                foreach ($p->get_children() as $cid) { $v = wc_get_product($cid); if (!$v || !$v->is_purchasable() || !$v->is_in_stock() || '' === $v->get_price()) continue; $lbl = econur_pdp_size_label($v); if (!isset($opts[$lbl]) || $v->get_id() === $u->get_id()) $opts[$lbl] = $v; }
+                uksort($opts, function ($a, $b) { return ((float) $a <=> (float) $b) ?: strcmp($a, $b); });
+                $opts = array_values($opts);
                 if (count($opts) > 1) {
                     $chips = '<div class="ecn-rel-sizes" role="radiogroup" aria-label="' . esc_attr('Size for ' . $nm) . '">';
                     foreach ($opts as $v) { $lbl = econur_pdp_size_label($v); $on = $v->get_id() === $u->get_id();

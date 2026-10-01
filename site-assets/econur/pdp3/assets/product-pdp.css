@@ -750,3 +750,4 @@ body.single-product .ecn-pdp form.cart .quantity.ecn-qty{ width:auto; }
   .ecn-lp-hero, .ecn-lp-band, .ecn-lp-sec, .ecn-lp-finder, .ecn-lp-final, .ecnf, .ecn-lp-rcard, .ecn-rel-card, .ecn-lp-ing, .ecn-lp-step{ break-inside:avoid; page-break-inside:avoid; }
   .ecn-sbar, .ecn-toast, .ecn-zoom, .ecn-g-nav, .ecn-g-zoom{ display:none !important; }
 }
+@media (min-width:1000px){ body.single-product .ecn-pdp .ecn-pdp-info .ecn-pdp-price{ font-size:40px; } }
