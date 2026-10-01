@@ -45,14 +45,12 @@ def convert(css, prefix='', skip=()):
         for d in tinycss2.parse_declaration_list(r.content, skip_comments=True, skip_whitespace=True):
             if d.type != 'declaration' or d.name.startswith('--') or d.lower_name not in PROPS:
                 continue
+            # every sizing declaration is repeated in source order (scaled where it has pixel values), so the
+            # cascade inside the wide sheet is exactly the cascade of the source sheets
             v = tinycss2.serialize(d.value).strip()
-            if re.search(r'vw|vh|clamp\(', v):
-                continue
-            if d.lower_name == 'max-width' and any(float(x) > 900 for x in re.findall(r'(\d*\.?\d+)px', v)):
-                continue
-            nv = PX.sub(fluid, v)
-            if nv != v:
-                decls.append('%s:%s%s' % (d.name, nv, ' !important' if d.important else ''))
+            keep = re.search(r'vw|vh|clamp\(', v) or (d.lower_name == 'max-width' and any(float(x) > 900 for x in re.findall(r'(\d*\.?\d+)px', v)))
+            nv = v if keep else PX.sub(fluid, v)
+            decls.append('%s:%s%s' % (d.name, nv, ' !important' if d.important else ''))
         if decls:
             if prefix:
                 sel = ', '.join(prefix + ' ' + s.strip() for s in sel.split(','))
