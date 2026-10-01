@@ -6,6 +6,10 @@
  * WooCommerce's own add-to-cart buttons; InitiateCheckout on the checkout page; Purchase once per order on the
  * thank-you page. Optional custom events from the product page: PackSelected, SizeSelected, WhatsAppClick,
  * BundleAddToCart.
+ * AddToCart from the product page's own form (Add to Cart and Buy Now) is confirmed by WooCommerce first: when the
+ * item is really in the cart the server sends the Conversions API event and leaves a short-lived cookie with the same
+ * event_id, and the next page (product page again, or checkout for Buy Now) fires the browser event from it. A failed
+ * add sends nothing.
  * Server (Conversions API, only when an access token is saved): the same standard events with the same event_id,
  * so Meta de-duplicates them. Event IDs are made in the browser (pages are cached, so they cannot be baked into
  * the HTML) and relayed through admin-ajax; Purchase is sent from the server when the order is first shown.
@@ -49,6 +53,7 @@ add_action('wp_head', function () {
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','<?php echo esc_js($pid); ?>');fbq('track','PageView');
+(function(){var m=document.cookie.match(/(?:^|; )ecn_atc=([^;]+)/);if(!m)return;document.cookie='ecn_atc=; Max-Age=0; path=/; SameSite=Lax';try{var a=JSON.parse(decodeURIComponent(m[1]));if(a&&a.id&&a.d)fbq('track','AddToCart',a.d,{eventID:a.id});}catch(e){}})();
 window.ECN_META=<?php echo wp_json_encode($cfg); ?>;
 window.ecnMeta=function(ev,data,custom){try{var id=ev.toLowerCase()+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);data=data||{};if(!data.currency&&data.value!==undefined)data.currency=ECN_META.currency;
 fbq(custom?'trackCustom':'track',ev,data,{eventID:id});
@@ -101,6 +106,19 @@ add_action('woocommerce_thankyou', function ($order_id) {
     $ud['country'] = array(hash('sha256', strtolower($order->get_billing_country() ? $order->get_billing_country() : 'bd')));
     econur_meta_send('Purchase', $eid, $order->get_checkout_order_received_url(), $data, $ud);
 }, 5);
+
+// AddToCart confirmed by WooCommerce for a normal form post (product page Add to Cart / Buy Now). Ajax adds (routine,
+// favourites, shop buttons) report their own event after a successful response, so they are skipped here.
+add_action('woocommerce_add_to_cart', function ($key, $product_id, $qty, $variation_id) {
+    if (!econur_meta_pixel_id() || wp_doing_ajax() || !empty($_GET['wc-ajax']) || headers_sent()) return;
+    $p = wc_get_product($variation_id ? $variation_id : $product_id); if (!$p) return;
+    $pct = function_exists('econur_lp_pack_tiers') ? econur_lp_pack_pct(econur_lp_pack_tiers((int) $product_id), (int) $qty) : 0;
+    $data = array('content_ids' => array((string) $p->get_id()), 'content_type' => 'product', 'content_name' => $p->get_name(), 'quantity' => (int) $qty,
+        'value' => round((float) $p->get_price() * (int) $qty * (1 - $pct / 100), 2), 'currency' => get_woocommerce_currency());
+    $eid = 'addtocart_' . strtolower(wp_generate_password(12, false));
+    setcookie('ecn_atc', rawurlencode(wp_json_encode(array('id' => $eid, 'd' => $data))), array('expires' => time() + 300, 'path' => '/', 'secure' => is_ssl(), 'httponly' => false, 'samesite' => 'Lax'));
+    econur_meta_send('AddToCart', $eid, wp_get_referer() ? wp_get_referer() : home_url('/'), $data);
+}, 20, 4);
 
 /* ---------- Conversions API ---------- */
 

@@ -90,8 +90,10 @@
     var sizeEl = page.querySelector('[data-ecn-size]'); size = sizeEl ? sizeEl.textContent : '';
     function lineTotal(n) { return unit * n * (1 - pct(n) / 100); }
     var ptP = page.querySelector('[data-ptype-price]'), ptR = page.querySelector('[data-ptype-reg]'), ptS = page.querySelector('[data-ptype-save]');
+    var waLinks = [].slice.call(page.querySelectorAll('[data-ecn-wa-live]'));
     function refresh() {
       var n = qty(), t = lineTotal(n);
+      if (waLinks.length) { var bits = [size, n > 1 ? n + ' ' + (/bar/i.test(C.name || '') ? 'bars' : 'pcs') : ''].filter(Boolean).join(', '), msg = 'Hi Econur, I have a question about ' + C.name + (bits ? ' (' + bits + ')' : '') + '.'; waLinks.forEach(function (a) { a.href = 'https://wa.me/' + (C.wa || '') + '?text=' + encodeURIComponent(msg); }); }
       if (ptP && unit) { var base = (unitReg > unit ? unitReg : unit) * n, sv = base - t; ptP.textContent = money(t); if (ptR) { ptR.hidden = !(sv > 0.5); ptR.textContent = sv > 0.5 ? money(base) : ''; } if (ptS) { ptS.hidden = !(sv > 0.5); ptS.textContent = sv > 0.5 ? 'Save ' + money(sv) : ''; } }
       if (atcPrice) atcPrice.textContent = unit ? ' — ' + money(t) : '';
       if (finalP) finalP.textContent = unit ? ' — ' + money(t) : '';
@@ -138,8 +140,7 @@
     function flagSize() { var sz = form.querySelector('.ecn-pdp-sizes') || form; sz.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); sz.classList.add('ecn-flag'); var f = sz.querySelector('.ecn-pdp-sz'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 350); setTimeout(function () { sz.classList.remove('ecn-flag'); }, 1600); }
     var bn = form ? form.querySelector('.ecn-pdp-buynow') : null;
     if (bn) bn.addEventListener('click', function (e) { if (needsSize()) { e.preventDefault(); flagSize(); return; } if (addBtn && addBtn.classList.contains('wc-variation-is-unavailable')) e.preventDefault(); });
-    // Meta AddToCart when the real form is sent (Add to Cart and Buy Now)
-    if (form) form.addEventListener('submit', function () { var n = qty(); meta('AddToCart', { content_ids: [String(vidNow)], content_type: 'product', content_name: C.name, value: Math.round(lineTotal(n) * 100) / 100, quantity: n }); });
+    // Meta AddToCart for the form (Add to Cart, Buy Now) is sent only after WooCommerce has added the item: see inc/meta-tracking.php
 
     /* ---------- sticky Add to Cart (phones): only once the main button has scrolled away ---------- */
     var bar = document.getElementById('ecnSbar'), sbBtn = document.getElementById('ecnSbarBtn'), anchor = form ? (addBtn || form) : page.querySelector('.ecn-pdp-coming');
@@ -224,6 +225,14 @@
       if (rn) rn.addEventListener('click', function () { rt.scrollBy({ left: rStep(), behavior: reduce ? 'auto' : 'smooth' }); });
       rt.addEventListener('scroll', function () { requestAnimationFrame(rSync); }, { passive: true }); window.addEventListener('resize', rSync); rSync();
     }
+    page.querySelectorAll('.ecn-rel-sizes').forEach(function (grp) {
+      var card = grp.closest('.ecn-rel-card'), btn = card.querySelector('.ecn-rel-add'), pr = card.querySelector('.ecn-rel-pr'), nm = (card.querySelector('.ecn-rel-name') || {}).textContent || '';
+      grp.querySelectorAll('.ecn-rel-size').forEach(function (c) { c.addEventListener('click', function () {
+        grp.querySelectorAll('.ecn-rel-size').forEach(function (x) { var on = x === c; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+        if (pr) pr.innerHTML = c.getAttribute('data-price-html');
+        if (btn) { var sz = c.getAttribute('data-size'); btn.setAttribute('data-id', c.getAttribute('data-id')); btn.setAttribute('data-price', c.getAttribute('data-price')); btn.setAttribute('data-name', nm.trim() + ' (' + sz + ')'); btn.setAttribute('aria-label', 'Add ' + nm.trim() + ', ' + sz + ' to cart'); btn.classList.remove('is-done'); }
+      }); });
+    });
     page.querySelectorAll('.ecn-rel-add').forEach(function (b) { b.addEventListener('click', function () {
       if (b.disabled) return; b.disabled = true; b.classList.add('is-busy');
       ajaxAdd(b.getAttribute('data-id')).then(function (res) {

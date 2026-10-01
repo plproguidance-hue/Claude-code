@@ -657,3 +657,96 @@ body.single-product .ecn-pdp .ecn-lp-ptype .ecn-lp-label{ margin:0 0 10px !impor
   .ecn-lp-final-trust small{ white-space:nowrap; }
 }
 @media (max-width:767px){ .ecn-lp-concern b{ font-size:13px; line-height:1.3; } }
+
+/* ===================== v7.2: scale, rhythm and functional clean-up (matches the approved mockup at 100% zoom) ===================== */
+/* a wider landing column: about 1340px of content on large screens */
+body.single-product .site-content > .ast-container{ max-width:1388px !important; }
+
+/* purchase rows without a save button (the site has no wishlist): [qty | Add to Cart] then [Buy Now | WhatsApp] */
+body.single-product .ecn-pdp .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp form.cart:not(.variations_form){ grid-template-columns:136px minmax(0,.55fr) minmax(0,1fr) !important; grid-template-areas:"pt pt pt" "qty add add" "buy buy wa" !important; }
+@media (max-width:1099px){
+  body.single-product .ecn-pdp .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp form.cart:not(.variations_form){ grid-template-columns:auto minmax(0,1fr) !important; grid-template-areas:"pt pt" "qty add" "buy buy" "wa wa" !important; }
+}
+body.single-product .ecn-pdp form.cart .quantity.ecn-qty{ width:auto; }
+.ecn-pdp-coming-row .ecn-pdp-wa.is-main{ flex:1 1 auto; }
+
+/* drawn illustrations (ingredients without a photo, how-to steps) */
+.ecn-lp-ill{ display:block; width:88%; height:88%; }
+.ecn-lp-ing-img.is-art{ background:radial-gradient(circle at 40% 30%, #F6F9F4 0%, #E2EDE4 100%); }
+.ecn-lp-ing-img.is-art .ecn-lp-ill{ width:92%; height:92%; }
+.ecn-lp-step-art{ background:radial-gradient(circle at 35% 30%, #F4F9FA, #DCEBEF); overflow:visible; }
+.ecn-lp-step-art .ecn-lp-ill{ width:78%; height:78%; }
+
+/* favourites: size chips on cards with more than one size */
+.ecn-rel-sizes{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 0; }
+.ecn-rel-size{ -webkit-appearance:none; appearance:none; min-height:32px; margin:0; padding:0 12px !important; border:1px solid var(--pd-line2) !important; border-radius:999px !important; background:#fff !important; color:var(--pd-ink) !important; font-size:13px !important; font-weight:600 !important; line-height:1 !important; cursor:pointer; }
+.ecn-rel-size.is-on{ border-color:var(--pd-teal) !important; background:var(--pd-teal) !important; color:#fff !important; }
+.ecn-rel-pr del, .ecn-rel-pr ins{ text-decoration-thickness:1px; }
+
+@media (min-width:1000px){
+  /* hero: larger type and controls */
+  body.single-product .ecn-pdp .ecn-pdp-info .ecn-pdp-title{ font-size:42px !important; }
+  .ecn-pdp-price{ font-size:40px; }
+  body.single-product .ecn-pdp .ecn-lp-sub{ font-size:16px; line-height:1.55; }
+  .ecn-lp-checks li{ font-size:15.5px; }
+  body.single-product .ecn-pdp .ecn-lp-label{ font-size:16px; }
+  .ecn-lp-pack{ padding-top:18px; padding-bottom:14px; }
+  .ecn-lp-pack-q{ font-size:16px; }
+  .ecn-lp-pack-p{ font-size:19px; }
+  .ecn-lp-ptype-r{ font-size:15.5px; }
+  .ecn-lp-ptype-p b{ font-size:17px; }
+  body.single-product .ecn-pdp form.cart .quantity.ecn-qty, body.single-product .ecn-pdp form.cart .single_add_to_cart_button{ height:58px !important; }
+  body.single-product .ecn-pdp form.cart .single_add_to_cart_button{ font-size:17px !important; }
+  body.single-product .ecn-pdp .ecn-pdp-buynow, body.single-product .ecn-pdp form.cart .ecn-pdp-wa{ height:52px !important; font-size:16px !important; }
+  .ecn-lp-service{ padding:16px 10px !important; }
+  .ecn-lp-service b{ font-size:14.5px; }
+  .ecn-lp-service small{ font-size:13px; }
+  .ecn-lp-service svg{ width:24px; height:24px; }
+
+  /* section rhythm: 56–64px between sections */
+  .ecn-lp-sec{ margin-top:60px; }
+  .ecn-lp-band{ margin-top:60px; padding:46px 0 50px; }
+  .ecn-lp-head{ margin-bottom:26px; }
+  body.single-product .ecn-pdp .ecn-lp-lead{ font-size:16px; margin-top:8px; }
+  .ecn-lp-finder{ margin-top:60px; padding:32px 44px; }
+  .ecn-lp-final{ margin-top:64px; }
+
+  /* complete your routine: compact product cards, as in the mockup */
+  .ecn-lp-rcard{ padding:16px 16px 18px; }
+  .ecn-lp-rimg{ width:82%; aspect-ratio:6 / 5; margin:0 auto 12px; }
+  .ecn-lp-rcard b{ font-size:18px; }
+  .ecn-lp-rcard small{ font-size:13.5px; }
+  .ecn-lp-rprice{ font-size:18px; }
+  .ecn-lp-rsum h3{ font-size:24px !important; }
+  .ecn-lp-rsum p{ font-size:14.5px; }
+
+  /* why: richer ingredient cards */
+  .ecn-lp-ing{ align-items:center; gap:20px; padding:18px; }
+  .ecn-lp-ing-img{ width:140px; aspect-ratio:1 / 1; }
+  .ecn-lp-ing p{ font-size:14.5px; line-height:1.55; }
+
+  /* how to use: large step visuals */
+  .ecn-lp-step{ gap:20px; padding:18px 20px; }
+  .ecn-lp-step-art{ width:128px; height:128px; }
+  .ecn-lp-step-art b{ width:36px; height:36px; font-size:15px; }
+  .ecn-lp-step p{ font-size:14.5px; line-height:1.55; }
+
+  /* reviews: a compact form beside the summary */
+  .ecn-lp-rv-all.is-inline #review_form_wrapper{ padding:22px 26px !important; }
+  .ecn-lp-rv-all.is-inline .comment-form p{ margin-bottom:12px !important; }
+  .ecn-lp-rv-all.is-inline .comment-form textarea{ min-height:84px; height:84px; }
+  .ecn-lp-rv-all.is-inline .comment-notes{ margin-bottom:6px !important; }
+  .ecn-pdp-rev .comment-form-rating{ margin-bottom:10px !important; }
+
+  /* FAQ rows */
+  .ecn-lp-faq-i summary{ padding:14px 22px; font-size:15.5px; }
+
+  /* more favourites: landscape photos like the mockup */
+  .ecn-rel-media{ aspect-ratio:3 / 2; }
+}
+
+/* printing or saving as PDF: keep each section in one piece */
+@media print{
+  .ecn-lp-hero, .ecn-lp-band, .ecn-lp-sec, .ecn-lp-finder, .ecn-lp-final, .ecnf, .ecn-lp-rcard, .ecn-rel-card, .ecn-lp-ing, .ecn-lp-step{ break-inside:avoid; page-break-inside:avoid; }
+  .ecn-sbar, .ecn-toast, .ecn-zoom, .ecn-g-nav, .ecn-g-zoom{ display:none !important; }
+}
