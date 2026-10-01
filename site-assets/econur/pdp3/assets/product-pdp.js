@@ -92,7 +92,7 @@
       t.addEventListener('click', function () { openTab(t.id.replace('ecn-tab-', ''), false); });
       t.addEventListener('keydown', function (e) { var k = e.key, n = null; if (k === 'ArrowRight') n = tabs[(i + 1) % tabs.length]; else if (k === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length]; else if (k === 'Home') n = tabs[0]; else if (k === 'End') n = tabs[tabs.length - 1]; if (n) { e.preventDefault(); n.focus(); n.click(); } });
     });
-    document.addEventListener('click', function (e) { var a = e.target.closest('[data-tab-open]'); if (!a) return; e.preventDefault(); openTab(a.getAttribute('data-tab-open'), true); });
+    document.addEventListener('click', function (e) { var a = e.target.closest('[data-tab-open]'); if (!a) return; e.preventDefault(); openTab(a.getAttribute('data-tab-open'), !a.hasAttribute('data-write')); if (a.hasAttribute('data-write')) writeOpen(true, true); });
 
     /* ---------- reviews: the form opens from "Write a review" (it stays open without JavaScript) ---------- */
     var rev = page.querySelector('.ecn-pdp-rev'), wr = page.querySelector('.ecn-rev-write'), rf = page.querySelector('#review_form_wrapper');

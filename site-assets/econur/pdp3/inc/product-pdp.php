@@ -9,7 +9,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '6.1.1';
+const ECONUR_PDP_VER = '6.2.0';
 require_once __DIR__ . '/newsletter.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 
@@ -255,9 +255,9 @@ function econur_pdp_render($product) {
     if ($cat) echo '<a class="ecn-pdp-cat" href="' . esc_url(get_term_link($cat)) . '">' . esc_html($cat->name) . '</a>';
     echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock>' . esc_html($stock[1]) . '</span></div>';
     if ($rc > 0) {
-        echo '<a class="ecn-pdp-rating" href="#ecn-tab-reviews" data-tab-open="reviews"><span class="ecn-stars" style="--r:' . esc_attr(round($avg / 5 * 100)) . '%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>' . esc_html(number_format_i18n($avg, 1)) . ' (' . esc_html($rc) . ' ' . (1 === $rc ? 'Review' : 'Reviews') . ')</span><span class="screen-reader-text">' . esc_html(sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '</span></a>';
+        echo '<div class="ecn-pdp-rating"><a href="#ecn-tab-reviews" data-tab-open="reviews"><span class="ecn-stars" style="--r:' . esc_attr(round($avg / 5 * 100)) . '%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>' . esc_html(number_format_i18n($avg, 1)) . ' (' . esc_html($rc) . ' ' . (1 === $rc ? 'Review' : 'Reviews') . ')</span><span class="screen-reader-text">' . esc_html(sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '</span></a></div>';
     } elseif (comments_open($id)) {
-        echo '<a class="ecn-pdp-rating is-empty" href="#ecn-tab-reviews" data-tab-open="reviews"><span class="ecn-stars" style="--r:0%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>No reviews yet</span></a>';
+        echo '<div class="ecn-pdp-rating is-empty"><span class="ecn-stars" style="--r:0%" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>No reviews yet</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#review_form_wrapper" data-tab-open="reviews" data-write="1">Be the first to review</a></div>';
     }
     if ($buyable || '' !== $product->get_price()) echo '<div class="ecn-pdp-price">' . $product->get_price_html() . '</div>';
     if ($size) echo '<p class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</p>';
@@ -266,7 +266,7 @@ function econur_pdp_render($product) {
 
     $ben = array_slice(econur_pdp_pairs($id, 'econur_highlights'), 0, 3);
     if ($ben) {
-        echo '<ul class="ecn-pdp-benefits">';
+        echo '<ul class="ecn-pdp-benefits" style="--n:' . count($ben) . '">';
         foreach ($ben as $b) { $t = ucfirst(strtolower($b[0])); echo '<li>' . econur_pdp_icon(econur_pdp_benefit_icon($t)) . '<span>' . esc_html($t) . '</span></li>'; }
         echo '</ul>';
     }
@@ -314,9 +314,10 @@ function econur_pdp_render($product) {
     $checks = econur_meta_list($id, 'econur_benefits');
     $tabs = array();
     if ($desc || $checks) {
+        // description on the left, the product's own benefit checklist in a card on the right
         $b = $desc ? '<div class="ecn-pdp-desc">' . wp_kses_post(wpautop($desc)) . '</div>' : '';
         if ($checks) { $b .= '<ul class="ecn-pdp-checks">'; foreach ($checks as $c) $b .= '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($c) . '</span></li>'; $b .= '</ul>'; }
-        $tabs['description'] = array('Description', $b);
+        $tabs['description'] = array('Description', '<div class="ecn-pdp-desc-grid' . ($desc && $checks ? ' has-checks' : '') . '">' . $b . '</div>');
     }
     if ($table) $tabs['info'] = array('Additional Information', $table, 'Additional Info');
     if (comments_open($id)) {
