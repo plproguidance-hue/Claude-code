@@ -171,6 +171,7 @@ body.single-product .ecn-pdp form.cart .ecn-pdp-heart{ grid-area:heart; width:50
 .ecn-lp-sec{ position:relative; margin-top:76px; }
 .ecn-lp-head{ max-width:760px; margin:0 auto 30px; text-align:center; }
 body.single-product .ecn-pdp .ecn-lp-h2{ margin:0 !important; font-family:var(--pd-serif) !important; font-size:40px !important; font-weight:500 !important; line-height:1.14 !important; letter-spacing:-.015em !important; color:var(--pd-ink) !important; }
+body.single-product .ecn-pdp .ecn-lp-h2, body.single-product .ecn-pdp .ecn-lp-final h2{ text-wrap:balance; }
 body.single-product .ecn-pdp .ecn-lp-lead{ margin-top:10px; font-size:15.5px; line-height:1.6; color:var(--pd-muted); }
 body.single-product .ecn-pdp h3{ margin:0 !important; font-family:var(--pd-serif) !important; font-weight:500 !important; color:var(--pd-ink) !important; }
 .ecn-lp-btn{ -webkit-appearance:none; appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:9px; height:50px; padding:0 26px !important; border:0 !important; border-radius:999px !important; background:var(--pd-teal) !important; color:#fff !important; font-size:15px !important; font-weight:600 !important; cursor:pointer; transition:background-color .2s ease; }
@@ -180,7 +181,7 @@ body.single-product .ecn-pdp h3{ margin:0 !important; font-family:var(--pd-serif
 .ecn-lp-btn-o{ -webkit-appearance:none; appearance:none; display:inline-flex; align-items:center; justify-content:center; height:46px; padding:0 26px !important; border:1.5px solid var(--pd-teal) !important; border-radius:999px !important; background:#fff !important; color:var(--pd-teal) !important; font-size:14.5px !important; font-weight:600 !important; cursor:pointer; }
 .ecn-lp-btn-o:hover, .ecn-lp-btn-o[aria-expanded="true"]{ background:#EEF4F2 !important; }
 .ecn-lp-chip{ display:inline-flex; padding:3px 12px; border-radius:999px; background:#F7EBC9; color:#8A6A23; font-size:12px; font-weight:700; }
-.ecn-lp-art{ position:absolute; z-index:0; width:200px; height:auto; pointer-events:none; opacity:.9; mix-blend-mode:multiply; }
+.ecn-lp-art{ position:absolute; z-index:0; width:200px; height:auto; pointer-events:none; opacity:.9; -webkit-mask-image:radial-gradient(closest-side, #000 62%, rgba(0,0,0,0) 100%); mask-image:radial-gradient(closest-side, #000 62%, rgba(0,0,0,0) 100%); }
 
 /* full-width bands: a background that runs to the window edges behind the 1300px content */
 .ecn-lp-band{ position:relative; isolation:isolate; margin-top:72px; padding:56px 0 60px; }
