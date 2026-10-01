@@ -537,7 +537,7 @@ function econur_lp_faq($product, $lp) {
 /* ===== find your bar: three concerns from the homepage guide (oily / acne-prone, brightening, daily care) ===== */
 function econur_lp_finder($product) {
     if (!function_exists('econur_finder_concerns')) return;
-    $want = array('oily' => array('Oily / Acne-prone', 'drop'), 'tone' => array('Brightening', 'bulb'), 'daily' => array('Daily Care', 'sprout'));
+    $want = array('oily' => array("Oily / Acne\u{2011}prone", 'drop'), 'tone' => array('Brightening', 'bulb'), 'daily' => array('Daily Care', 'sprout'));
     $by = array(); foreach (econur_finder_concerns() as $c) $by[$c['key']] = $c;
     $cards = '';
     foreach ($want as $key => $w) {

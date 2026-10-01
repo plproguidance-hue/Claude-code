@@ -648,3 +648,12 @@ body.single-product .ecn-pdp .ecn-lp-ptype .ecn-lp-label{ margin:0 0 10px !impor
 @media (min-width:768px){
   .ecn-lp-final-trust li + li{ padding-left:16px; border-left:1px solid rgba(255,255,255,.18); }
 }
+.ecn-lp-rv-all.is-inline .comment-form > p{ float:none !important; width:auto !important; max-width:none !important; }
+.ecn-lp-rv-all.is-inline .comment-form input[type=text], .ecn-lp-rv-all.is-inline .comment-form input[type=email]{ width:100% !important; max-width:none !important; }
+.ecn-pdp-rev .comment-form-rating{ margin-bottom:16px !important; }
+.ecn-pdp-rev .comment-notes{ font-size:13.5px; color:var(--pd-muted); }
+@media (min-width:1100px){
+  .ecn-lp-final-trust{ grid-template-columns:repeat(3, max-content); justify-content:start; gap:18px; }
+  .ecn-lp-final-trust small{ white-space:nowrap; }
+}
+@media (max-width:767px){ .ecn-lp-concern b{ font-size:13px; line-height:1.3; } }

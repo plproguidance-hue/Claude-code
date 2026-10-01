@@ -246,7 +246,7 @@
         var v = (em.value || '').trim();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { say('Please enter a valid email address.', false); em.setAttribute('aria-invalid', 'true'); em.focus(); return; }
         em.removeAttribute('aria-invalid'); btn.disabled = true; f.classList.add('is-busy');
-        fetch(f.action, { method: 'POST', body: new FormData(f), credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+        fetch(f.getAttribute('action'), { method: 'POST', body: new FormData(f), credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
           .then(function (r) { return r.json(); })
           .then(function (res) { say(res && res.message ? res.message : 'Sorry, something went wrong. Please try again.', !!(res && res.ok)); if (res && res.ok) f.reset(); })
           .catch(function () { say('Sorry, something went wrong. Please try again.', false); })
