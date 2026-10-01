@@ -49,6 +49,7 @@ function econur_footer_icon($n) {
         'phone' => '<path d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.8 17.8 0 0 1-7.8-2.8 17.5 17.5 0 0 1-5.4-5.4A17.8 17.8 0 0 1 3 5.2 1.8 1.8 0 0 1 4.8 3.2h2.6a1.8 1.8 0 0 1 1.8 1.6c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8.3 10.3a14.4 14.4 0 0 0 5.4 5.4l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.6 1.8Z"/>',
         'arrow' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
         'leaf'  => '<path d="M5 19c0-8 5-13.5 15-14-.4 9.6-5.8 15-13.4 15"/><path d="M5 19c2.6-4.3 5.6-7.2 9.5-9.4"/>',
+        'heart' => '<path d="M12 20s-7.5-4.6-7.5-10.3A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"/>',
         'instagram' => '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor" stroke="none"/>',
     );
     $fill = array(
@@ -147,15 +148,88 @@ function econur_footer_markup() {
         . '</footer>';
 }
 
+/* ---------------------------------------------------------------------------------------------------------------
+   Product landing pages: the approved landing-page footer. Brand | Quick Links | Help & Support | Stay Connected
+   (newsletter sign-up saved by inc/newsletter.php), then copyright, "Made with love in Bangladesh" and the legal
+   links. Only real destinations: Privacy Policy / Terms of Service / Refund & returns appear once those pages are
+   published; in-page links point at sections of the product page itself. Other pages keep the footer above. */
+function econur_footer_page_link($label, $page_id) {
+    return ($page_id && 'publish' === get_post_status($page_id)) ? array($label, get_permalink($page_id)) : null;
+}
+function econur_footer_landing_markup() {
+    $c = econur_footer_config(); $art = $c['art'];
+    $pid = get_queried_object_id(); $p = function_exists('wc_get_product') ? wc_get_product($pid) : null;
+    $wa = function ($t) use ($c) { return $c['whatsapp_url'] . '?text=' . rawurlencode($t); };
+
+    $quick = array(array('Shop All', home_url('/shop/')), array('Our Story', home_url('/#packaging')));
+    if ($p && get_post_meta($pid, 'econur_ingredient_notes', true)) $quick[] = array('Ingredients', '#ecn-ingredients');
+    $quick[] = array('Skincare Guide', home_url('/#finder'));
+    if ($p) $quick[] = array('Customer Reviews', '#ecn-reviews');
+
+    $help = array(
+        array('Track Your Order', $wa('Hi Econur, I would like to check the status of my order. Order number: '), true),
+        econur_footer_page_link('Return & Refund', (int) get_option('woocommerce_refund_returns_page_id', 11)),
+        $p ? array('FAQ', '#ecn-faq') : null,
+        array('My Account', home_url('/my-account/')),
+        array('Contact Us', $c['whatsapp_url'], true),
+    );
+    $links = function ($rows) {
+        $h = '<ul class="ecnf-links">';
+        foreach (array_filter($rows) as $l) $h .= '<li><a href="' . esc_url($l[1]) . '"' . (!empty($l[2]) ? ' target="_blank" rel="noopener"' : '') . '>' . esc_html($l[0]) . '</a></li>';
+        return $h . '</ul>';
+    };
+
+    $legal = array_filter(array(
+        econur_footer_page_link('Privacy Policy', (int) get_option('wp_page_for_privacy_policy')),
+        econur_footer_page_link('Terms of Service', function_exists('wc_terms_and_conditions_page_id') ? (int) wc_terms_and_conditions_page_id() : 0),
+    ));
+    $legal_html = '';
+    foreach ($legal as $l) $legal_html .= '<a href="' . esc_url($l[1]) . '">' . esc_html($l[0]) . '</a>';
+
+    $social = '<ul class="ecnf-social">';
+    foreach ($c['social'] as $s) $social .= '<li><a href="' . esc_url($s[2]) . '" target="_blank" rel="noopener" aria-label="' . esc_attr($s[1]) . '">' . econur_footer_icon($s[0]) . '</a></li>';
+    $social .= '</ul>';
+    $logo = $c['logo'] && wp_attachment_is_image($c['logo'])
+        ? wp_get_attachment_image($c['logo'], 'full', false, array('class' => 'ecnf-logo-img', 'alt' => 'Econur', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(max-width: 767px) 170px, 220px'))
+        : '<span class="ecnf-logo-text">Econur</span>';
+    $form = function_exists('econur_newsletter_form') ? econur_newsletter_form('product-' . $pid, array('placeholder' => 'Your email address', 'button' => 'Subscribe', 'button_html' => econur_footer_icon('arrow'))) : '';
+
+    wp_enqueue_style('econur-footer');
+    wp_enqueue_script('econur-footer');
+
+    return '<footer class="ecnf ecnf--lp" id="colophon">'
+        . '<div class="ecnf-card">'
+        . econur_footer_art($art['leaves'], 'ecnf-art--shadow', '520px')
+        . econur_footer_art($art['leaves'], 'ecnf-art--tr', '(max-width: 767px) 150px, 200px')
+        . econur_footer_art($art['sprig'], 'ecnf-art--edge', '(max-width: 767px) 130px, 180px')
+        . '<div class="ecnf-main">'
+        . '<div class="ecnf-brand">'
+        . '<a class="ecnf-logo" href="' . esc_url(home_url('/')) . '" aria-label="Econur home">' . $logo . '</a>'
+        . '<p class="ecnf-about">' . esc_html($c['about']) . '</p>'
+        . $social
+        . '</div>'
+        . econur_footer_col('quick', 'Quick Links', $links($quick))
+        . econur_footer_col('help', 'Help & Support', $links($help))
+        . ($form ? '<div class="ecnf-connect" id="ecnf-connect"><h2 class="ecnf-h ecnf-h--plain">Stay Connected</h2><p class="ecnf-connect-t">Get skincare tips and new product updates from ECONUR.</p>' . $form . '</div>' : '')
+        . '</div>'
+        . '<div class="ecnf-legal ecnf-legal--lp">'
+        . '<p class="ecnf-copy">© ' . esc_html(wp_date('Y')) . ' ECONUR. All rights reserved.</p>'
+        . '<p class="ecnf-made">Made with <span class="ecnf-heart" aria-label="love" role="img">' . econur_footer_icon('heart') . '</span> in Bangladesh</p>'
+        . ($legal_html ? '<p class="ecnf-policies">' . $legal_html . '</p>' : '<p class="ecnf-policies" aria-hidden="true"></p>')
+        . '</div>'
+        . '</div>'
+        . '</footer>';
+}
+
 // swap the Astra footer-builder output for this footer (same hook and position)
 add_action('wp', function () {
     if (is_admin() || !class_exists('Astra_Builder_Footer')) return;
     remove_action('astra_footer', array(Astra_Builder_Footer::get_instance(), 'footer_markup'), 10);
-    add_action('astra_footer', function () { echo econur_footer_markup(); }, 10);
+    add_action('astra_footer', function () { echo (function_exists('is_product') && is_product()) ? econur_footer_landing_markup() : econur_footer_markup(); }, 10);
 });
 
 add_action('wp_enqueue_scripts', function () {
-    $v = '1.0.3';
+    $v = '1.1.0';
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));

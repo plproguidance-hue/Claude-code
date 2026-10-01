@@ -28,7 +28,8 @@ add_action('init', function () {
 });
 
 // The form. $source says where it was shown (e.g. "product-14").
-function econur_newsletter_form($source = '') {
+function econur_newsletter_form($source = '', $opt = array()) {
+    $opt = array_merge(array('placeholder' => 'Enter Email Address', 'button' => 'Subscribe', 'button_html' => ''), $opt);
     $uid = 'ecn-nl-' . wp_unique_id();
     // result of a sign-up sent without JavaScript (the handler redirects back with ?ecn_nl=ok|error)
     $state = isset($_GET['ecn_nl']) && in_array($_GET['ecn_nl'], array('ok', 'error'), true) ? $_GET['ecn_nl'] : '';
@@ -36,9 +37,9 @@ function econur_newsletter_form($source = '') {
     return '<form class="ecn-nl-form" action="' . esc_url(admin_url('admin-post.php')) . '" method="post" novalidate>'
         . '<input type="hidden" name="action" value="ecn_newsletter"><input type="hidden" name="src" value="' . esc_attr($source) . '">'
         . '<label class="screen-reader-text" for="' . esc_attr($uid) . '">Email address</label>'
-        . '<input class="ecn-nl-email" id="' . esc_attr($uid) . '" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="Enter Email Address">'
+        . '<input class="ecn-nl-email" id="' . esc_attr($uid) . '" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="' . esc_attr($opt['placeholder']) . '">'
         . '<span class="ecn-nl-hp" aria-hidden="true"><input type="text" name="ecn_hp" tabindex="-1" autocomplete="off" value=""></span>'
-        . '<button class="ecn-nl-btn" type="submit">Subscribe</button>'
+        . ($opt['button_html'] ? '<button class="ecn-nl-btn" type="submit" aria-label="' . esc_attr($opt['button']) . '">' . $opt['button_html'] . '</button>' : '<button class="ecn-nl-btn" type="submit">' . esc_html($opt['button']) . '</button>')
         . '<p class="ecn-nl-msg' . esc_attr($state ? ' is-' . $state : '') . '" role="status" aria-live="polite">' . esc_html($msg) . '</p></form>';
 }
 
@@ -49,7 +50,7 @@ function econur_newsletter_submit() {
     $back = wp_get_referer() ? wp_get_referer() : home_url('/');
     $reply = function ($ok, $msg) use ($ajax, $back) {
         if ($ajax) { wp_send_json(array('ok' => $ok, 'message' => $msg), $ok ? 200 : 400); }
-        wp_safe_redirect(add_query_arg('ecn_nl', $ok ? 'ok' : 'error', $back) . '#ecn-pdp-news-t'); exit;
+        wp_safe_redirect(add_query_arg('ecn_nl', $ok ? 'ok' : 'error', $back) . '#ecnf-connect'); exit;
     };
     // bots fill the hidden field: accept quietly, store nothing
     if (!empty($_POST['ecn_hp'])) $reply(true, 'Thank you for subscribing!');

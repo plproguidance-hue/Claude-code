@@ -83,14 +83,16 @@
       p.addEventListener('click', function () { var v = qty(), mx = parseInt(q.getAttribute('max') || '0', 10); if (!mx || v < mx) { q.value = v + 1; q.dispatchEvent(new Event('change', { bubbles: true })); } }); } }
 
     /* ---------- price on the buttons, pack cards and sticky bar ---------- */
-    var unit = parseFloat(C.price) || 0, unitReg = 0, size = '', vidNow = C.vid || C.pid;
+    var unit = parseFloat(C.price) || 0, unitReg = parseFloat(C.reg) || 0, origReg = unitReg, size = '', vidNow = C.vid || C.pid;
     var addBtn = form ? form.querySelector('.single_add_to_cart_button') : null, atcPrice = null;
     if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); }
     var packs = [].slice.call(page.querySelectorAll('.ecn-lp-pack')), sbP = document.getElementById('ecnSbarPrice'), sbS = document.getElementById('ecnSbarSize'), finalP = page.querySelector('[data-ecn-final-price]');
     var sizeEl = page.querySelector('[data-ecn-size]'); size = sizeEl ? sizeEl.textContent : '';
     function lineTotal(n) { return unit * n * (1 - pct(n) / 100); }
+    var ptP = page.querySelector('[data-ptype-price]'), ptR = page.querySelector('[data-ptype-reg]'), ptS = page.querySelector('[data-ptype-save]');
     function refresh() {
       var n = qty(), t = lineTotal(n);
+      if (ptP && unit) { var base = (unitReg > unit ? unitReg : unit) * n, sv = base - t; ptP.textContent = money(t); if (ptR) { ptR.hidden = !(sv > 0.5); ptR.textContent = sv > 0.5 ? money(base) : ''; } if (ptS) { ptS.hidden = !(sv > 0.5); ptS.textContent = sv > 0.5 ? 'Save ' + money(sv) : ''; } }
       if (atcPrice) atcPrice.textContent = unit ? ' — ' + money(t) : '';
       if (finalP) finalP.textContent = unit ? ' — ' + money(t) : '';
       if (sbP && unit) sbP.textContent = money(t);
@@ -122,7 +124,7 @@
         refresh();
         if (userPick) meta('SizeSelected', { content_ids: [String(vidNow)], content_name: C.name, value: unit }, true); userPick = false;
       }).on('reset_data', function () {
-        if (price) price.innerHTML = origPrice; if (sizeEl) sizeEl.textContent = origSize; size = origSize; unit = origUnit;
+        if (price) price.innerHTML = origPrice; if (sizeEl) sizeEl.textContent = origSize; size = origSize; unit = origUnit; unitReg = origReg;
         if (stockEl && origStock) { stockEl.className = origStock[0]; stockEl.textContent = origStock[1]; }
         if (saveEl && origSave) { saveEl.hidden = origSave[0]; saveEl.textContent = origSave[1]; }
         if (firstImg && origImg) { firstImg.src = origImg[0]; firstImg.srcset = origImg[1]; firstImg.sizes = origImg[2]; }
@@ -150,14 +152,23 @@
     /* ---------- reviews: full list and form open from the reviews section ---------- */
     var all = page.querySelector('.ecn-lp-rv-all'), rf = page.querySelector('#review_form_wrapper');
     var openers = [].slice.call(page.querySelectorAll('.ecn-rev-write, .ecn-rev-all'));
+    var inline = !!(all && all.classList.contains('is-inline'));
     function revOpen(on, focusForm) {
-      if (!all) return; all.classList.toggle('is-open', on); openers.forEach(function (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+      if (!all) return; if (inline) on = true; all.classList.toggle('is-open', on); openers.forEach(function (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); });
       if (on && focusForm && rf) { rf.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); var f = rf.querySelector('p.stars a, #comment'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 350); }
     }
-    if (all) { all.classList.add('is-collapsible'); openers.forEach(function (b) { b.addEventListener('click', function () { var on = !all.classList.contains('is-open'); revOpen(on, on && b.classList.contains('ecn-rev-write')); }); }); }
+    if (all) { if (!inline) all.classList.add('is-collapsible'); openers.forEach(function (b) { b.addEventListener('click', function () { var on = inline || !all.classList.contains('is-open'); revOpen(on, on && b.classList.contains('ecn-rev-write')); }); }); }
     else openers.forEach(function (b) { b.hidden = true; });
     page.querySelectorAll('[data-write]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); revOpen(true, true); }); });
     if (/^#(reviews|comments|comment-\d+|review_form_wrapper|review_form|respond)$/.test(location.hash)) { revOpen(true, false); var tgt = document.querySelector(location.hash); if (tgt) setTimeout(function () { tgt.scrollIntoView({ block: 'start' }); }, 80); }
+
+    /* ---------- links to sections of this page (See all reviews, footer links) scroll smoothly ---------- */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#"]'); if (!a || a.hasAttribute('data-write') || e.defaultPrevented) return;
+      var id = a.getAttribute('href').slice(1), t = id && document.getElementById(id); if (!t || !/^ecn-/.test(id)) return;
+      e.preventDefault(); t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
 
     /* ---------- FAQ: one answer open at a time ---------- */
     var faqs = [].slice.call(page.querySelectorAll('.ecn-lp-faq-i'));

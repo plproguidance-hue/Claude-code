@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.0.1';
+const ECONUR_PDP_VER = '7.1.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -64,6 +64,19 @@ add_action('woocommerce_after_add_to_cart_button', function () {
     echo '<button type="submit" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">Buy Now</button>';
     echo '<a class="ecn-pdp-wa" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $product->get_name() . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a>';
     echo econur_pdp_heart($product);
+});
+// Purchase type: one-time purchase is the store's only purchase type (no subscriptions), shown with its live total.
+add_action('woocommerce_before_add_to_cart_quantity', function () {
+    global $product;
+    if (!$product || !econur_pdp_is_this($product) || '' === $product->get_price()) return;
+    list($vid) = econur_pdp_default($product);
+    $u = $vid ? wc_get_product($vid) : $product;
+    $p = (float) $u->get_price(); $r = (float) $u->get_regular_price();
+    $sale = $u->is_on_sale() && $r > $p;
+    echo '<div class="ecn-lp-ptype"><p class="ecn-lp-label" id="ecn-ptype-l">Purchase type</p>'
+        . '<div class="ecn-lp-ptype-opt is-on" role="radiogroup" aria-labelledby="ecn-ptype-l"><span class="ecn-lp-ptype-r" role="radio" aria-checked="true" tabindex="0"><i aria-hidden="true"></i>One-time purchase</span>'
+        . '<span class="ecn-lp-ptype-p"><b data-ptype-price>' . esc_html(econur_pdp_money($p)) . '</b><s data-ptype-reg' . ($sale ? '' : ' hidden') . '>' . ($sale ? esc_html(econur_pdp_money($r)) : '') . '</s>'
+        . '<span class="ecn-lp-save" data-ptype-save' . ($sale ? '' : ' hidden') . '>' . ($sale ? 'Save ' . esc_html(econur_pdp_money($r - $p)) : '') . '</span></span></div></div>';
 });
 add_filter('woocommerce_add_to_cart_redirect', function ($url) { return !empty($_REQUEST['ecn_buy_now']) ? wc_get_checkout_url() : $url; });
 add_filter('wc_add_to_cart_message_html', function ($msg) { return !empty($_REQUEST['ecn_buy_now']) ? '' : $msg; });
@@ -447,7 +460,7 @@ function econur_lp_why($product) {
         $cards .= '<article class="ecn-lp-ing">' . ($img ? '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '130px')) . '</span>' : '<span class="ecn-lp-ing-img is-art" aria-hidden="true">' . econur_lp_icon('sprout') . '</span>')
             . '<div><span class="ecn-lp-ing-ic">' . econur_pdp_icon('leaf') . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p></div></article>';
     }
-    echo '<section class="ecn-lp-sec ecn-lp-why" aria-labelledby="ecn-lp-why-t">' . econur_lp_head('Why ' . $product->get_name() . '?', $lead, 'ecn-lp-why-t') . '<div class="ecn-lp-ings">' . $cards . '</div></section>';
+    echo '<section class="ecn-lp-sec ecn-lp-why" id="ecn-ingredients" aria-labelledby="ecn-lp-why-t">' . econur_lp_head('Why ' . $product->get_name() . '?', $lead, 'ecn-lp-why-t') . '<div class="ecn-lp-ings">' . $cards . '</div></section>';
 }
 
 /* ===== how to use: its own steps ===== */
@@ -465,57 +478,43 @@ function econur_lp_howto($product) {
     echo '<section class="ecn-lp-sec ecn-lp-how" aria-labelledby="ecn-lp-how-t">' . econur_lp_head('How to Use', $note ? $note : 'Simple steps, as on the label.', 'ecn-lp-how-t') . '<ol class="ecn-lp-steps">' . $out . '</ol></section>';
 }
 
-/* ===== reviews: real WooCommerce reviews; until there are some, the owner-confirmed customer testimonials ===== */
+/* ===== reviews: real WooCommerce reviews only (no samples, no borrowed testimonials) =====
+   Summary: average, stars, count and a 5-to-1 distribution from the product's own ratings (all 0% until there are
+   reviews). Right: up to three published reviews; with none, the real WooCommerce review form takes their place. */
 function econur_lp_reviews($product) {
     $id = $product->get_id(); $name = $product->get_name();
     $rc = (int) $product->get_review_count(); $avg = (float) $product->get_average_rating();
-    $cards = array();
+    $open = comments_open($id);
+    $counts = $rc ? $product->get_rating_counts() : array(); $bars = '';
+    for ($s = 5; $s >= 1; $s--) { $c = isset($counts[$s]) ? (int) $counts[$s] : 0; $pc = $rc ? round($c / $rc * 100) : 0; $bars .= '<li><span>' . $s . ' <i class="ecn-lp-rv-star" aria-hidden="true">&#9733;</i></span><i class="ecn-lp-rv-bar"><b style="width:' . $pc . '%"></b></i><em>' . $pc . '%</em></li>'; }
+    $bars = '<ul class="ecn-lp-rv-bars' . ($rc ? '' : ' is-empty') . '" aria-label="Rating distribution">' . $bars . '</ul>';
     if ($rc > 0) {
-        foreach (get_comments(array('post_id' => $id, 'status' => 'approve', 'type' => 'review', 'parent' => 0, 'number' => 3)) as $c) {
-            $r = (int) get_comment_meta($c->comment_ID, 'rating', true);
-            $cards[] = array('name' => get_comment_author($c), 'rating' => $r, 'text' => get_comment_text($c), 'verified' => function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID), 'date' => get_comment_date('', $c), 'about' => '');
-        }
-    }
-    $from_testimonials = false;
-    if (count($cards) < 3 && function_exists('enr_reviews_settings')) {
-        $cfg = enr_reviews_settings(); $mine = array(); $general = array();
-        foreach ((array) $cfg['testimonials'] as $t) {
-            if (!empty($t['product'])) { if ((int) $t['product'] === $id) $mine[] = $t; continue; }
-            $general[] = $t;
-        }
-        foreach (array_merge($mine, $general) as $t) {
-            if (count($cards) >= 3) break;
-            $about = !empty($t['product']) ? '' : (!empty($t['about']['title']) ? $t['about']['title'] : 'ECONUR');
-            $cards[] = array('name' => $t['name'], 'rating' => (int) $t['rating'], 'text' => $t['text'], 'verified' => false, 'date' => '', 'about' => $about, 'city' => isset($t['city']) ? $t['city'] : '');
-            $from_testimonials = true;
-        }
-    }
-
-    // summary card
-    if ($rc > 0) {
-        $counts = $product->get_rating_counts(); $bars = '';
-        for ($s = 5; $s >= 1; $s--) { $c = isset($counts[$s]) ? (int) $counts[$s] : 0; $pc = $rc ? round($c / $rc * 100) : 0; $bars .= '<li><span>' . $s . ' &#9733;</span><i><b style="width:' . $pc . '%"></b></i><em>' . $pc . '%</em></li>'; }
         $sum = '<p class="ecn-lp-rv-avg"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b> out of 5</p>' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1)))
-            . '<p class="ecn-lp-rv-n">Based on ' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</p><ul class="ecn-lp-rv-bars">' . $bars . '</ul>'
-            . '<button type="button" class="ecn-lp-btn-o ecn-rev-all" aria-controls="ecn-lp-rv-all" aria-expanded="false">See all ' . esc_html($rc) . ' reviews</button>';
+            . '<p class="ecn-lp-rv-n">Based on ' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</p>' . $bars
+            . '<button type="button" class="ecn-lp-btn-o ecn-rev-all" aria-controls="ecn-lp-rv-all" aria-expanded="false">See all ' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</button>';
     } else {
-        $sum = '<p class="ecn-lp-rv-avg is-empty">No reviews yet</p>' . econur_lp_stars(0) . '<p class="ecn-lp-rv-n">Be the first to review the ' . esc_html($name) . '.</p>'
-            . '<button type="button" class="ecn-lp-btn-o ecn-rev-write" aria-controls="ecn-lp-rv-all" aria-expanded="false">Write a review</button>';
+        $sum = '<p class="ecn-lp-rv-avg is-empty">No reviews yet</p>' . econur_lp_stars(0) . '<p class="ecn-lp-rv-n">Be the first to review this product</p>' . $bars
+            . ($open ? '<button type="button" class="ecn-lp-btn-o ecn-rev-write" aria-controls="ecn-lp-rv-all" aria-expanded="true">Write a Review</button>' : '');
     }
     $html = '';
-    foreach ($cards as $c) {
-        $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($c['name']), 0, 1)) : strtoupper(substr(trim($c['name']), 0, 1));
-        $html .= '<article class="ecn-lp-rv"><header><span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div><b>' . esc_html($c['name']) . '</b>'
-            . ($c['verified'] ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : (!empty($c['city']) ? '<small>' . esc_html($c['city']) . '</small>' : ''))
-            . ($c['rating'] ? '<span class="ecn-lp-rv-stars">' . econur_lp_stars($c['rating'] * 20, sprintf('Rated %d out of 5', $c['rating'])) . '</span>' : '') . '</div></header>'
-            . '<blockquote>&ldquo;' . esc_html($c['text']) . '&rdquo;</blockquote>'
-            . ($c['date'] ? '<p class="ecn-lp-rv-date">' . esc_html($c['date']) . '</p>' : ($c['about'] ? '<p class="ecn-lp-rv-date">About: ' . esc_html($c['about']) . '</p>' : '')) . '</article>';
+    if ($rc > 0) foreach (get_comments(array('post_id' => $id, 'status' => 'approve', 'type' => 'review', 'parent' => 0, 'number' => 3)) as $c) {
+        $r = (int) get_comment_meta($c->comment_ID, 'rating', true); $nm = get_comment_author($c);
+        $ver = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID);
+        $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($nm), 0, 1)) : strtoupper(substr(trim($nm), 0, 1));
+        $html .= '<article class="ecn-lp-rv"><header><span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div><b>' . esc_html($nm) . '</b>'
+            . ($ver ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '')
+            . ($r ? '<span class="ecn-lp-rv-stars">' . econur_lp_stars($r * 20, sprintf('Rated %d out of 5', $r)) . '</span>' : '') . '</div></header>'
+            . '<blockquote>' . esc_html(wp_strip_all_tags(get_comment_text($c))) . '</blockquote>'
+            . '<p class="ecn-lp-rv-date"><time datetime="' . esc_attr(get_comment_date('c', $c)) . '">' . esc_html(get_comment_date('F j, Y', $c)) . '</time></p></article>';
     }
-    $sub = $rc > 0 ? 'Real reviews from ECONUR customers.' : ($from_testimonials ? 'Real feedback shared by ECONUR customers.' : '');
-    ob_start(); if (comments_open($id)) comments_template(); $form = ob_get_clean();
+    $sub = $rc > 0 ? 'Real reviews from ECONUR customers of the ' . $name . '.' : 'Tried the ' . $name . '? Share your experience to help other customers choose.';
+    ob_start(); if ($open) comments_template(); $form = ob_get_clean();
+    $inline = $rc < 1 && $form;
     echo '<section class="ecn-lp-sec ecn-lp-reviews" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">' . econur_lp_head('Loved by Customers', $sub, 'ecn-lp-rv-t')
-        . '<div class="ecn-lp-rv-grid' . ($html ? '' : ' no-cards') . '"><div class="ecn-lp-rv-sum">' . $sum . '</div>' . ($html ? '<div class="ecn-lp-rv-cards">' . $html . '</div>' : '') . '</div>'
-        . ($form ? '<div class="ecn-lp-rv-all ecn-pdp-rev' . ($rc > 0 ? ' has-reviews' : ' no-reviews') . '" id="ecn-lp-rv-all">' . $form . '</div>' : '') . '</section>';
+        . '<div class="ecn-lp-rv-grid' . ($html || $inline ? '' : ' no-cards') . ($inline ? ' has-form' : '') . '"><div class="ecn-lp-rv-sum">' . $sum . '</div>'
+        . ($html ? '<div class="ecn-lp-rv-cards">' . $html . '</div>' : '')
+        . ($inline ? '<div class="ecn-lp-rv-all ecn-pdp-rev no-reviews is-inline is-open" id="ecn-lp-rv-all">' . $form . '</div>' : '') . '</div>'
+        . (!$inline && $form ? '<div class="ecn-lp-rv-all ecn-pdp-rev has-reviews" id="ecn-lp-rv-all">' . $form . '</div>' : '') . '</section>';
 }
 
 /* ===== FAQ: answers from the product's own data and the store's real terms ===== */
@@ -532,23 +531,23 @@ function econur_lp_faq($product, $lp) {
     if (function_exists('econur_finder_concerns')) $q[] = array('How do I choose the right bar for my skin concerns?', 'Use our Find your bar guide: pick your skin concern and it shows the matching ECONUR bar. You can also message us on WhatsApp.');
     $items = '';
     foreach ($q as $k => $row) $items .= '<details class="ecn-lp-faq-i"' . (0 === $k ? ' open' : '') . '><summary>' . esc_html($row[0]) . econur_lp_icon('down') . '</summary><div class="ecn-lp-faq-a"><p>' . esc_html($row[1]) . '</p></div></details>';
-    echo '<section class="ecn-lp-sec ecn-lp-faq" aria-labelledby="ecn-lp-faq-t"><div class="ecn-lp-faq-intro"><h2 class="ecn-lp-h2" id="ecn-lp-faq-t">Frequently Asked Questions</h2><p>Got questions? We have answers. If you need more help, <a href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener" data-ecn-wa>message us on WhatsApp</a>.</p></div><div class="ecn-lp-faq-list">' . $items . '</div></section>';
+    echo '<section class="ecn-lp-sec ecn-lp-faq" id="ecn-faq" aria-labelledby="ecn-lp-faq-t"><div class="ecn-lp-faq-intro"><h2 class="ecn-lp-h2" id="ecn-lp-faq-t">Frequently Asked Questions</h2><p>Got questions? We have answers. If you need more help, <a href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener" data-ecn-wa>message us on WhatsApp</a>.</p></div><div class="ecn-lp-faq-list">' . $items . '</div></section>';
 }
 
-/* ===== find your bar: the homepage concern guide ===== */
+/* ===== find your bar: three concerns from the homepage guide (oily / acne-prone, brightening, daily care) ===== */
 function econur_lp_finder($product) {
     if (!function_exists('econur_finder_concerns')) return;
-    $icons = array('oily' => 'drop', 'tone' => 'bulb', 'dull' => 'sparkle', 'daily' => 'sprout', 'sensitive' => 'heart');
-    $cards = ''; $n = 0;
-    foreach (econur_finder_concerns() as $c) {
-        if ($n >= 3 || (int) $c['product'] === $product->get_id()) continue;
-        $p = wc_get_product($c['product']); if (!$p || 'publish' !== $p->get_status()) continue;
-        $cards .= '<a class="ecn-lp-concern" href="' . esc_url(get_permalink($p->get_id())) . '"><span>' . econur_lp_icon(isset($icons[$c['key']]) ? $icons[$c['key']] : 'leaf') . '</span><b>' . esc_html($c['tab']) . '</b><small>' . esc_html($c['line']) . '</small></a>';
-        $n++;
+    $want = array('oily' => array('Oily / Acne-prone', 'drop'), 'tone' => array('Brightening', 'bulb'), 'daily' => array('Daily Care', 'sprout'));
+    $by = array(); foreach (econur_finder_concerns() as $c) $by[$c['key']] = $c;
+    $cards = '';
+    foreach ($want as $key => $w) {
+        if (empty($by[$key])) continue;
+        $c = $by[$key]; $p = wc_get_product($c['product']); if (!$p || 'publish' !== $p->get_status()) continue;
+        $cards .= '<a class="ecn-lp-concern" href="' . esc_url(get_permalink($p->get_id())) . '" aria-label="' . esc_attr($w[0] . ': ' . $p->get_name()) . '"><span>' . econur_lp_icon($w[1]) . '</span><b>' . esc_html($w[0]) . '</b><small>' . esc_html($c['line']) . '</small></a>';
     }
     echo '<section class="ecn-lp-finder" aria-labelledby="ecn-lp-finder-t">' . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--bl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--br')
         . '<div class="ecn-lp-finder-copy"><h2 class="ecn-lp-h2" id="ecn-lp-finder-t">Not sure which bar is right for you?</h2><p>Take a quick guide to find the ECONUR bar for your skin type and concerns.</p>'
-        . '<a class="ecn-lp-btn" href="' . esc_url(home_url('/#finder')) . '"><span>Find Your Bar</span>' . econur_lp_icon('arrow') . '</a></div><div class="ecn-lp-concerns">' . $cards . '</div></section>';
+        . '<a class="ecn-lp-btn" href="' . esc_url(home_url('/#finder')) . '"><span>Find Your Bar</span>' . econur_lp_icon('arrow') . '</a></div>' . ($cards ? '<div class="ecn-lp-concerns">' . $cards . '</div>' : '') . '</section>';
 }
 
 /* ===== more favourites: the rest of the range (buyable first) ===== */
@@ -570,7 +569,8 @@ function econur_lp_favorites($product, $lp) {
         $rcount = (int) $p->get_review_count();
         $cards .= '<article class="ecn-rel-card' . ($u ? '' : ' is-soon') . '"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . econur_lp_card_img($p, 'medium_large', '(min-width: 1000px) 300px, 62vw') . '</a>' . econur_pdp_heart($p, 'ecn-rel-heart') . '</div>'
             . '<div class="ecn-rel-body"><h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($nm) . '</a></h3>'
-            . ($rcount ? '<p class="ecn-rel-rating">' . econur_lp_stars((float) $p->get_average_rating() / 5 * 100) . '<span>' . esc_html(number_format_i18n((float) $p->get_average_rating(), 1)) . ' (' . $rcount . ')</span></p>' : '');
+            . ($rcount ? '<p class="ecn-rel-rating">' . econur_lp_stars((float) $p->get_average_rating() / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n((float) $p->get_average_rating(), 1))) . '<span>' . esc_html(number_format_i18n((float) $p->get_average_rating(), 1)) . ' (' . $rcount . ')</span></p>'
+                : '<p class="ecn-rel-rating is-empty">' . econur_lp_stars(0) . '<span>No reviews yet</span></p>');
         if ($u) {
             $cards .= '<p class="ecn-rel-price">' . wp_kses_post($u->get_price_html()) . ($sz ? '<small>' . esc_html($sz) . '</small>' : '') . '</p>'
                 . '<button type="button" class="ecn-rel-add" data-id="' . esc_attr($u->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($nm . ($sz ? ' (' . $sz . ')' : '')) . '" data-price="' . esc_attr($u->get_price()) . '" aria-label="' . esc_attr('Add ' . $nm . ($sz ? ', ' . $sz : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button>';
@@ -593,7 +593,7 @@ function econur_lp_final($product, $lp, $unit, $size) {
     $buy = $unit && '' !== $product->get_price() && $product->is_purchasable() && $unit->is_in_stock();
     echo '<section class="ecn-lp-final" aria-labelledby="ecn-lp-final-t"><div class="ecn-lp-final-img">' . econur_lp_card_img($product, 'medium_large', '(min-width: 1000px) 420px, 100vw', '') . '</div>'
         . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p>Handcrafted in Bangladesh with natural botanicals. Order today and pay when your parcel arrives.</p>'
-        . '<ul class="ecn-lp-final-trust"><li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small>Inside Dhaka 1–2 days, Outside Dhaka 2–4 days</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order within 12 hours</small></span></li></ul></div>'
+        . '<ul class="ecn-lp-final-trust"><li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>Fast delivery</b><small>Inside Dhaka 1–2 days<br>Outside Dhaka 2–4 days</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order within 12 hours</small></span></li></ul></div>'
         . '<div class="ecn-lp-final-cta">'
         . ($buy ? '<button type="button" class="ecn-lp-final-add" data-ecn-final-add>' . econur_pdp_icon('cart') . '<span>Add to Cart</span><span class="ecn-atc-price" data-ecn-final-price> — ' . esc_html(econur_pdp_money($unit->get_price())) . '</span></button>' : '')
         . '<a class="ecn-lp-final-wa" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div></section>';
@@ -642,6 +642,7 @@ add_action('wp_footer', function () {
     echo '</div><div class="ecn-toast" id="ecnToast" role="status" aria-live="polite" hidden><span id="ecnToastTxt"></span><a href="' . esc_url(wc_get_checkout_url()) . '">Checkout</a></div>';
     echo '<div class="ecn-zoom" id="ecnZoom" role="dialog" aria-modal="true" aria-label="Product photo" hidden><button type="button" class="ecn-zoom-x" aria-label="Close">&times;</button><button type="button" class="ecn-zoom-nav ecn-zoom-prev" aria-label="Previous photo">' . econur_pdp_icon('prev') . '</button><img alt=""><button type="button" class="ecn-zoom-nav ecn-zoom-next" aria-label="Next photo">' . econur_pdp_icon('next') . '</button></div>';
     $lp = econur_lp_data($product);
-    $cfg = array('ajax' => WC_AJAX::get_endpoint('add_to_cart'), 'symbol' => trim(html_entity_decode(get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8'), " \xC2\xA0"), 'dec' => wc_get_price_decimals(), 'price' => $price, 'tiers' => (object) $lp['tiers'], 'pid' => $product->get_id(), 'name' => $product->get_name(), 'vid' => $vid, 'currency' => get_woocommerce_currency(), 'checkout' => wc_get_checkout_url(), 'check' => econur_pdp_icon('check'));
+    $du = $vid ? wc_get_product($vid) : $product; $reg = ($du && $du->is_on_sale()) ? (float) $du->get_regular_price() : 0;
+    $cfg = array('reg' => $reg, 'ajax' => WC_AJAX::get_endpoint('add_to_cart'), 'symbol' => trim(html_entity_decode(get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8'), " \xC2\xA0"), 'dec' => wc_get_price_decimals(), 'price' => $price, 'tiers' => (object) $lp['tiers'], 'pid' => $product->get_id(), 'name' => $product->get_name(), 'vid' => $vid, 'currency' => get_woocommerce_currency(), 'checkout' => wc_get_checkout_url(), 'check' => econur_pdp_icon('check'));
     echo '<script>window.ECN_PD=' . wp_json_encode($cfg) . ';</script>';
 }, 40);

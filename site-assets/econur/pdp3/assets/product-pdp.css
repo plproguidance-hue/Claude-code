@@ -586,3 +586,65 @@ body.single-product .ecn-pdp .ecn-rel-add.is-busy{ opacity:.7; }
   body.single-product.ecn-sbar-on{ padding-bottom:calc(72px + env(safe-area-inset-bottom)) !important; }
   body.ecn-sbar-on .ecn-toast{ bottom:88px; }
 }
+
+/* ===================== v7.1: completeness pass against the approved mockup ===================== */
+/* headings in the mockup's deep teal ink */
+body.single-product{ --pd-head:#173F4A; }
+body.single-product .ecn-pdp .ecn-pdp-info .ecn-pdp-title, body.single-product .ecn-pdp .ecn-lp-h2, body.single-product .ecn-pdp .ecn-lp-rsum h3, body.single-product .ecn-pdp .ecn-lp-ing h3, body.single-product .ecn-pdp .ecn-lp-step h3, .ecn-lp-rcard b, .ecn-lp-rv-avg b, .ecn-lp-rv-avg.is-empty, .ecn-rel-name a, .ecn-pdp-rev #reply-title{ color:var(--pd-head) !important; }
+#ecn-ingredients, #ecn-reviews, #ecn-faq{ scroll-margin-top:24px; }
+
+/* purchase type: one-time purchase (the store's only purchase type), live total */
+body.single-product .ecn-pdp .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp form.cart:not(.variations_form){ grid-template-areas:"pt pt pt pt pt" "qty qty add add add" "buy buy buy wa heart" !important; }
+.ecn-lp-ptype{ grid-area:pt; min-width:0; }
+body.single-product .ecn-pdp .ecn-lp-ptype .ecn-lp-label{ margin:0 0 10px !important; }
+.ecn-lp-ptype-opt{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 14px; min-height:52px; padding:10px 16px; border:1px solid var(--pd-teal); border-radius:12px; background:#F1F7F4; box-shadow:inset 0 0 0 1px var(--pd-teal); }
+.ecn-lp-ptype-r{ display:inline-flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:var(--pd-ink); }
+.ecn-lp-ptype-r i{ position:relative; flex:none; width:18px; height:18px; border:1.5px solid var(--pd-teal); border-radius:50%; background:#fff; }
+.ecn-lp-ptype-r i::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--pd-teal); }
+.ecn-lp-ptype-r:focus-visible{ outline:2px solid var(--pd-teal); outline-offset:4px; border-radius:6px; }
+.ecn-lp-ptype-p{ display:inline-flex; align-items:center; gap:10px; margin-left:auto; }
+.ecn-lp-ptype-p b{ font-size:16px; font-weight:700; color:var(--pd-teal); }
+.ecn-lp-ptype-p s{ font-size:13.5px; color:var(--pd-muted); }
+.ecn-lp-ptype-p [hidden]{ display:none !important; }
+.ecn-lp-ptype-p .ecn-lp-save{ padding:3px 10px; font-size:12.5px; }
+@media (max-width:1099px){
+  body.single-product .ecn-pdp .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp form.cart:not(.variations_form){ grid-template-areas:"pt pt pt" "qty add add" "buy buy buy" "wa wa heart" !important; }
+}
+
+/* reviews: distribution always shown (0% until there are reviews); with none, the review form sits beside the summary */
+.ecn-lp-rv-star{ display:inline !important; height:auto !important; background:none !important; font-style:normal; color:var(--pd-star); }
+.ecn-lp-rv-bars li > span{ white-space:nowrap; }
+.ecn-lp-rv-bars .ecn-lp-rv-bar{ display:block; height:7px; overflow:hidden; border-radius:999px; background:#EEE8DC; }
+.ecn-lp-rv-bars.is-empty li{ color:#9A958A; }
+.ecn-lp-rv-bars.is-empty .ecn-lp-rv-star{ color:#CFC8BA; }
+.ecn-lp-rv-grid.has-form{ grid-template-columns:320px minmax(0,1fr); }
+.ecn-lp-rv-all.is-inline{ max-width:none; margin:0; }
+.ecn-lp-rv-all.is-inline #reviews, .ecn-lp-rv-all.is-inline #review_form_wrapper{ height:100%; }
+.ecn-lp-rv-all.is-inline #review_form_wrapper{ border-color:#EDE6DA; background:#FFFEFB; }
+.ecn-lp-rv-all.is-inline .comment-form{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:16px; }
+.ecn-lp-rv-all.is-inline .comment-form > *{ grid-column:1 / -1; }
+.ecn-lp-rv-all.is-inline .comment-form > .comment-form-author{ grid-column:1; }
+.ecn-lp-rv-all.is-inline .comment-form > .comment-form-email{ grid-column:2; }
+.ecn-lp-rv-all.is-inline .comment-form textarea{ min-height:96px; }
+.ecn-lp-rv-all.is-inline .comment-form .form-submit{ margin-bottom:0 !important; }
+.ecn-lp-rv .ecn-rev-ver{ display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:#2C8A55; }
+.ecn-lp-rv .ecn-rev-ver svg{ width:14px; height:14px; }
+@media (max-width:999px){
+  .ecn-lp-rv-grid.has-form{ grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width:767px){
+  .ecn-lp-rv-all.is-inline .comment-form{ display:block; }
+}
+
+/* favourites: every card has a rating line (real rating, or "No reviews yet") */
+.ecn-rel-rating{ display:flex; align-items:center; gap:8px; margin:6px 0 0 !important; font-size:13px; color:var(--pd-muted); }
+.ecn-rel-rating .ecn-stars{ font-size:14px; letter-spacing:1px; }
+.ecn-rel-rating.is-empty span{ color:#8E897E; }
+
+/* finder cards: three concerns with the reference's labels */
+.ecn-lp-concern b{ font-size:15px; }
+
+/* closing call to action: thin dividers between the reassurances */
+@media (min-width:768px){
+  .ecn-lp-final-trust li + li{ padding-left:16px; border-left:1px solid rgba(255,255,255,.18); }
+}
