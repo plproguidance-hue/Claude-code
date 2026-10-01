@@ -1075,3 +1075,35 @@ body.single-product .ecn-pdp .ecn-lp-pricerow .ecn-pdp-size{ display:inline-bloc
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ min-height:60px; padding:8px 4px; border:0; border-radius:0; background:none; }
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li + li{ border-left:1px solid #E8E0D2; }
 }
+@media (min-width:900px){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main{ grid-column:-2 / -1; grid-row:1; } body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-rail{ grid-row:1; } }
+/* v7.7 balance: photo 5:6, one-line benefit labels, panel ends level with the photo */
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:5 / 6; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ margin:0 12px 12px !important; padding:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:8px; min-height:58px; padding:8px 6px; white-space:nowrap; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li span{ white-space:normal; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:30px; height:30px; padding:5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:22px 26px 20px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:6px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-sub{ margin-top:6px !important; line-height:1.55; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:8px !important; gap:4px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:14px !important; padding-top:14px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:12px 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ min-height:100px; padding:14px 8px 10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ margin-top:10px !important; row-gap:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero table.variations{ margin:0 !important; }
+}
+@media (min-width:1200px) and (max-width:1439px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ font-size:12.5px; gap:6px; white-space:normal; }
+}
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:4 / 5; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding-top:20px !important; padding-bottom:18px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:12px !important; padding-top:12px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:10px 0 6px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; margin-bottom:8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 6px !important; }
+}
