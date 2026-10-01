@@ -443,7 +443,8 @@ function econur_lp_why($product) {
     $used = array(); $cards = '';
     foreach ($notes as $nt) {
         $img = econur_lp_ing_image($nt[0], $used);
-        $cards .= '<article class="ecn-lp-ing' . ($img ? ' has-img' : '') . '">' . ($img ? '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '130px')) . '</span>' : '')
+        // a matching ingredient photo when the media library has one, otherwise a drawn botanical tile (not a photo)
+        $cards .= '<article class="ecn-lp-ing">' . ($img ? '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '130px')) . '</span>' : '<span class="ecn-lp-ing-img is-art" aria-hidden="true">' . econur_lp_icon('sprout') . '</span>')
             . '<div><span class="ecn-lp-ing-ic">' . econur_pdp_icon('leaf') . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p></div></article>';
     }
     echo '<section class="ecn-lp-sec ecn-lp-why" aria-labelledby="ecn-lp-why-t">' . econur_lp_head('Why ' . $product->get_name() . '?', $lead, 'ecn-lp-why-t') . '<div class="ecn-lp-ings">' . $cards . '</div></section>';
