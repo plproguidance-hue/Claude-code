@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.4.0';
+const ECONUR_PDP_VER = '7.5.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -59,12 +59,6 @@ add_filter('woocommerce_product_add_to_cart_text', function ($text) { global $pr
 add_action('woocommerce_before_add_to_cart_button', function () {
     global $product;
     if ($product && $product->is_type('simple') && econur_pdp_is_this($product)) echo '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
-});
-add_action('woocommerce_after_add_to_cart_button', function () {
-    global $product;
-    if (!$product || !econur_pdp_is_this($product) || '' === $product->get_price()) return;
-    echo '<button type="submit" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">Buy Now</button>';
-    echo '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $product->get_name() . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a>';
 });
 // Purchase type: one-time purchase is the store's only purchase type (no subscriptions), shown with its live total.
 add_action('woocommerce_before_add_to_cart_quantity', function () {
@@ -330,7 +324,8 @@ function econur_pdp_render($product) {
     }
     echo '</div>';
 
-    // purchase card
+    // purchase column: the panel (ends at Quantity + Add to Cart), then Buy Now / WhatsApp and the service strip
+    echo '<div class="ecn-lp-buycol">';
     echo '<div class="ecn-pdp-info ecn-lp-card summary entry-summary">';
     if ($cat) echo '<a class="ecn-pdp-cat" href="' . esc_url(get_term_link($cat)) . '">' . esc_html($cat->name) . '</a>';
     if ($rc > 0) {
@@ -372,11 +367,21 @@ function econur_pdp_render($product) {
         }
         echo '</div></fieldset>';
         if ($product->is_type('variable')) echo '<p class="ecn-lp-label">Choose size</p>';
-        woocommerce_template_single_add_to_cart();
+        // the real WooCommerce form; it gets an id so Buy Now (below the panel) submits it
+        ob_start(); woocommerce_template_single_add_to_cart(); $form = ob_get_clean();
+        echo preg_replace('/<form(?![^>]*\bid=)([^>]*\bclass="[^"]*\bcart\b)/', '<form id="ecn-cart-form"$1', $form, 1);
     } else {
         echo '<div class="ecn-pdp-coming"><p><b>Launching soon.</b> Want a message the day it is ready?</p><div class="ecn-pdp-coming-row">'
             . '<a class="ecn-pdp-wa is-main" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $name . ' is available.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Notify me on WhatsApp</span></a>'
             . '</div></div>';
+    }
+
+    echo '</div>';
+
+    // secondary actions under the panel: Buy Now (adds the selected size and quantity, then checkout) and WhatsApp
+    if ($buyable) {
+        echo '<div class="ecn-lp-extra"><button type="submit" form="ecn-cart-form" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">Buy Now</button>'
+            . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div>';
     }
 
     // service strip: the store's own terms

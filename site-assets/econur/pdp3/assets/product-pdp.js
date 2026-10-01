@@ -138,7 +138,7 @@
     /* ---------- a size must be chosen before Add to Cart / Buy Now ---------- */
     function needsSize() { if (!isVar) return false; var vid = form.querySelector('input[name=variation_id]'); return !(vid && parseInt(vid.value || '0', 10) > 0); }
     function flagSize() { var sz = form.querySelector('.ecn-pdp-sizes') || form; sz.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); sz.classList.add('ecn-flag'); var f = sz.querySelector('.ecn-pdp-sz'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 350); setTimeout(function () { sz.classList.remove('ecn-flag'); }, 1600); }
-    var bn = form ? form.querySelector('.ecn-pdp-buynow') : null;
+    var bn = page.querySelector('.ecn-pdp-buynow');
     if (bn) bn.addEventListener('click', function (e) { if (needsSize()) { e.preventDefault(); flagSize(); return; } if (addBtn && addBtn.classList.contains('wc-variation-is-unavailable')) e.preventDefault(); });
     // Meta AddToCart for the form (Add to Cart, Buy Now) is sent only after WooCommerce has added the item: see inc/meta-tracking.php
 

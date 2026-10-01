@@ -888,3 +888,48 @@ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:26px; height
   body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ font-size:14px !important; padding:0 8px !important; }
   body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button svg{ display:none; }
 }
+
+/* ===================== v7.5: final approved top section — panel ends at Quantity + Add to Cart =====================
+   Buy Now / WhatsApp and the service strip sit under the panel (.ecn-lp-extra, .ecn-lp-service in .ecn-lp-buycol). */
+.ecn-lp-buycol{ min-width:0; }
+body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:118px minmax(0,1fr) !important; grid-template-areas:"pt pt" "qty add" !important; }
+.ecn-lp-extra{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:14px; }
+body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ display:inline-flex !important; width:100%; min-width:0; height:46px !important; padding:0 14px !important; font-size:15px !important; }
+body.single-product .ecn-pdp .ecn-lp-buycol > .ecn-lp-service{ margin-top:12px !important; }
+
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero{ max-width:1280px; grid-template-columns:minmax(0,47fr) minmax(0,53fr); column-gap:32px; }
+  body.single-product #masthead .site-primary-header-wrap.ast-container{ max-width:1328px !important; }
+  /* gallery: 72px rail | 7:8 photo (about 500 x 570) */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:72px minmax(0,1fr); column-gap:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:72px; height:72px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:7 / 8; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ min-height:52px; }
+  /* panel rhythm (approved mockup): 26px padding, 8 / 12 / 16 / 20 / 24px steps */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:24px 28px 22px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-cat{ margin:0 0 4px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-rating{ margin-top:4px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-sub{ margin-top:6px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-size{ margin-top:0; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:12px !important; gap:6px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:18px !important; padding-top:18px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:16px 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ padding:12px 8px 10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-sz{ min-height:42px; height:42px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ margin-top:14px !important; row-gap:12px; column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-opt{ min-height:46px; }
+}
+@media (min-width:900px) and (max-width:1099px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:58px minmax(0,1fr); column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:58px; height:58px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:108px minmax(0,1fr) !important; }
+}
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:104px minmax(0,1fr) !important; }
+  .ecn-lp-extra{ gap:10px; }
+}
+@media (max-width:374px){ .ecn-lp-extra{ grid-template-columns:minmax(0,1fr); } }
