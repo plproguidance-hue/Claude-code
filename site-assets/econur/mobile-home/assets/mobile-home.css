@@ -1,0 +1,50 @@
+/* ECONUR homepage, phones only (max-width 767px): shorter page, swipeable product rows, tighter section rhythm.
+   Every rule sits inside the phone media query and is scoped to the homepage, so tablet and desktop are untouched.
+   Loaded after the theme's Additional CSS (inc/mobile-home.php). */
+@media (max-width:767px){
+
+  /* ---------- Bestsellers: one swipe row instead of a long two-column grid ---------- */
+  body.home #bestsellers ul.ecn-home-grid{ display:flex !important; grid-template-columns:none !important; gap:12px; overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; margin:0 !important; padding:2px 0 12px !important; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  body.home #bestsellers ul.ecn-home-grid::-webkit-scrollbar{ display:none; }
+  body.home #bestsellers ul.ecn-home-grid > li.ecn-pcard{ flex:0 0 clamp(228px, 68vw, 295px) !important; width:auto !important; max-width:none !important; margin:0 !important; scroll-snap-align:start; }
+  body.home #bestsellers .ecn-pc-media img{ aspect-ratio:1 / 1 !important; height:auto !important; }
+  body.home #bestsellers .ecn-pc-body{ padding:12px 14px 12px; }
+  /* larger tap area for the small "Details" link without changing how it looks */
+  body.home #bestsellers .ecn-pc-more{ position:relative; }
+  body.home #bestsellers .ecn-pc-more::after{ content:""; position:absolute; inset:-12px -14px; }
+  /* trust strip: same 2 x 2 grid, slimmer cells */
+  body.home .ecn-trust3 li{ min-height:46px !important; padding-top:6px !important; padding-bottom:6px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-833f8ca{ --padding-top:24px; --padding-bottom:12px; }
+
+  /* ---------- Featured products: same swipe pattern, next card peeking ---------- */
+  body.home .ecn-fp-track{ margin:0 -14px !important; padding:4px 14px 10px !important; scroll-padding-inline:14px; scrollbar-width:none; }
+  body.home .ecn-fp-track::-webkit-scrollbar{ display:none; }
+  body.home .ecn-fp-card{ flex:0 0 clamp(220px, 64vw, 280px) !important; }
+  body.home .ecn-fp-media img{ aspect-ratio:1 / 1 !important; height:auto !important; }
+  body.home .ecn-fp-add{ min-height:44px; }
+  body.home .ecn-fp-heart{ width:40px !important; height:40px !important; }
+  body.home .ecn-fp-nav{ width:40px !important; height:40px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-e5a1f07{ --padding-bottom:22px; }
+
+  /* ---------- Two promises: two compact tiles ---------- */
+  body.home #packaging .ecn-usp{ gap:12px !important; }
+  body.home #packaging .ecn-usp-tile img{ aspect-ratio:3 / 2 !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-d4c3b5f{ --padding-bottom:26px; }
+
+  /* ---------- Find your bar: same content, less padding ---------- */
+  body.home .ecn-fy-trust li{ padding-top:8px !important; padding-bottom:8px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-a7f7fda{ --padding-bottom:26px; }
+
+  /* ---------- Reviews ---------- */
+  body.home .enr-rv{ padding-top:32px !important; }
+  body.home .enr-rv-trust-item{ padding-top:10px !important; padding-bottom:10px !important; }
+  body.home .elementor-43 .elementor-element.elementor-element-1a7c00e{ --padding-bottom:26px; }
+
+  /* ---------- Good to know + final CTA ---------- */
+  body.home .elementor-43 .elementor-element.elementor-element-2625fd5{ --padding-top:34px; --padding-bottom:36px; }
+  body.home .ehc-faq{ padding-top:28px !important; }
+  body.home .ehc-cta{ padding-top:28px !important; padding-bottom:22px !important; }
+  body.home .ehc-trust-item{ padding-top:8px !important; padding-bottom:8px !important; }
+  body.home .ehc-faq .ehc-art--soaps{ width:128px !important; margin-top:-20px !important; }
+}
