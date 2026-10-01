@@ -9,7 +9,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '6.0.1';
+const ECONUR_PDP_VER = '6.0.2';
 const ECONUR_WA_NUMBER = '8801410753555';
 
 /* ------------------------------------------------------------------ setup */
