@@ -129,6 +129,9 @@
         b.classList.add('is-done'); showToast(b.getAttribute('data-name') + ' added to cart', true);
       }).catch(function () { location.href = b.getAttribute('data-url'); }).then(function () { b.disabled = false; b.classList.remove('is-busy'); });
     }); });
+
+    /* a size with only one choice is picked straight away, so the button is ready to use */
+    if (form) form.querySelectorAll('.ecn-pdp-sizes').forEach(function (w) { var only = w.querySelectorAll('.ecn-pdp-sz'), sel = w.previousElementSibling; if (only.length === 1 && sel && !sel.value) only[0].click(); });
   }
   if (window.jQuery) window.jQuery(function () { setTimeout(init, 0); }); else if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();

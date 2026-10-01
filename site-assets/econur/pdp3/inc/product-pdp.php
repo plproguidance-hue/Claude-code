@@ -9,7 +9,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '6.0.0';
+const ECONUR_PDP_VER = '6.0.1';
 const ECONUR_WA_NUMBER = '8801410753555';
 
 /* ------------------------------------------------------------------ setup */
@@ -333,11 +333,11 @@ function econur_pdp_render($product) {
 
     econur_pdp_related($product);
 
-    /* trust strip (the store's own delivery and payment terms, as on the homepage) */
+    /* trust strip (the store's own delivery and payment terms, as on the homepage); phones show the shorter wording */
     echo '<ul class="ecn-pdp-trust" aria-label="Delivery and payment">'
-        . '<li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Pay when the parcel arrives, anywhere in Bangladesh.</small></span></li>'
-        . '<li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small>Inside Dhaka 1 to 2 days, outside Dhaka 2 to 4 days.</small></span></li>'
-        . '<li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order is confirmed by phone within 12 hours.</small></span></li>'
+        . '<li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small><span class="ecn-tr-l">Pay when the parcel arrives, anywhere in Bangladesh.</span><span class="ecn-tr-s">Anywhere in Bangladesh</span></small></span></li>'
+        . '<li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small><span class="ecn-tr-l">Inside Dhaka 1 to 2 days, outside Dhaka 2 to 4 days.</span><span class="ecn-tr-s">Inside Dhaka 1–2 days, outside 2–4 days</span></small></span></li>'
+        . '<li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small><span class="ecn-tr-l">Every order is confirmed by phone within 12 hours.</span><span class="ecn-tr-s">Confirmed by phone within 12 hours</span></small></span></li>'
         . '</ul>';
 
     if (isset(WC()->structured_data)) WC()->structured_data->generate_product_data($product);
