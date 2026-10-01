@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.3.1';
+const ECONUR_PDP_VER = '7.4.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -312,7 +312,7 @@ function econur_pdp_render($product) {
     echo '<div class="ecn-g-main"><div class="ecn-g-track" tabindex="0" aria-label="' . esc_attr($name . ' photos') . '">';
     foreach ($imgs as $i => $img) {
         $r = max(1, econur_pdp_ratio($img)); $focus = econur_pdp_focus($img);
-        $sizes = '(min-width: 1000px) ' . round(43 * $r) . 'vw, ' . round(100 * $r) . 'vw';
+        $sizes = '(min-width: 1000px) ' . round(500 * $r) . 'px, ' . round(100 * $r) . 'vw';
         echo '<figure class="ecn-g-slide" id="ecn-g-' . esc_attr($i) . '"' . ($n > 1 ? ' aria-label="' . esc_attr(sprintf('Photo %d of %d', $i + 1, $n)) . '"' : '') . '>'
             . wp_get_attachment_image($img, 'full', false, array('class' => 'ecn-g-img', 'alt' => 0 === $i ? $name : $name . ' photo ' . ($i + 1), 'loading' => 0 === $i ? 'eager' : 'lazy', 'fetchpriority' => 0 === $i ? 'high' : 'auto', 'decoding' => 0 === $i ? 'sync' : 'async', 'sizes' => $sizes, 'style' => $focus ? 'object-position:' . $focus : '', 'data-full' => wp_get_attachment_image_url($img, 'full')))
             . '</figure>';
@@ -320,13 +320,15 @@ function econur_pdp_render($product) {
     echo '</div>';
     if ($imgs) echo '<button type="button" class="ecn-g-zoom" aria-label="View photo full screen">' . econur_lp_icon('zoom') . '</button>';
     if ($n > 1) echo '<button type="button" class="ecn-g-nav ecn-g-prev" aria-label="Previous photo">' . econur_pdp_icon('prev') . '</button><button type="button" class="ecn-g-nav ecn-g-next" aria-label="Next photo">' . econur_pdp_icon('next') . '</button>';
+    echo '</div>';
+    // three benefit cards under the photo (the product's own highlights)
     if ($lp['badges']) {
         $bi = array('cleanse', 'leaf', 'hand');
         echo '<ul class="ecn-lp-badges" aria-label="Highlights">';
         foreach ($lp['badges'] as $k => $b) { $ic = false !== stripos($b, 'hand') ? 'hand' : ($k === 0 ? econur_pdp_benefit_icon($b) : $bi[$k]); echo '<li>' . econur_pdp_icon($ic) . '<span>' . esc_html(econur_lp_title($b)) . '</span></li>'; }
         echo '</ul>';
     }
-    echo '</div>' . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--hero') . '</div>';
+    echo '</div>';
 
     // purchase card
     echo '<div class="ecn-pdp-info ecn-lp-card summary entry-summary">';

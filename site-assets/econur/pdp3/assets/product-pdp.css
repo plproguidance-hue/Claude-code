@@ -759,3 +759,107 @@ body.single-product .ecn-pdp form.cart .quantity.ecn-qty{ width:auto; }
   body.single-product #masthead .site-primary-header-wrap.ast-container{ max-width:1388px !important; padding-left:24px !important; padding-right:24px !important; }
   .ecn-g .ecn-lp-art--hero{ display:block; top:calc(100% + 6px); left:-46px; width:250px; opacity:.85; transform:rotate(-10deg) scaleX(-1); }
 }
+
+/* ===================== v7.4: top product section (gallery + purchase panel) per the approved smaller-gallery mockup =====================
+   Only the hero is affected: every rule below is scoped to .ecn-lp-hero. tools/gen-wide.py leaves the hero out, so this
+   section looks the same from 1000px to 1920px+. */
+.ecn-lp-hero .ecn-lp-art--hero{ display:none !important; }
+
+/* benefit cards: under the photo (no longer laid over it) */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ position:static; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin:12px 0 0 !important; padding:0 !important; list-style:none; pointer-events:auto; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ display:flex; align-items:center; justify-content:center; gap:9px; min-height:50px; margin:0; padding:8px 12px; border:1px solid #ECE4D6; border-radius:12px; background:#FFFEFB; box-shadow:none; font-size:13px; font-weight:600; line-height:1.25; color:#2F3B37; text-align:left; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:26px; height:26px; padding:4px; border:1px solid #CFE0DB; border-radius:50%; color:var(--pd-teal); }
+
+@media (min-width:900px){
+  /* the section: about 1260px, gallery 47% | panel 53% */
+  body.single-product .ecn-pdp .ecn-lp-hero{ max-width:1260px; margin:0 auto; grid-template-columns:minmax(0,47fr) minmax(0,53fr); column-gap:32px; }
+  body.single-product #primary{ margin-top:32px !important; }
+
+  /* gallery: compact rail | photo, benefit cards under the photo */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g{ grid-template-columns:minmax(0,1fr); row-gap:0; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:70px minmax(0,1fr); column-gap:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-rail{ grid-column:1; grid-row:1 / span 2; align-self:start; gap:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main, body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ grid-column:-2 / -1; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumbs{ gap:12px; padding:1px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:68px; height:68px; border:1px solid #E6DFD2 !important; border-radius:10px !important; box-shadow:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb img{ border-radius:9px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb.is-on{ border:2px solid var(--pd-teal) !important; box-shadow:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-more{ width:34px; height:34px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main{ border-radius:14px; box-shadow:0 6px 18px rgba(52,44,30,.06); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:5 / 6; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-zoom{ top:14px; right:14px; width:40px; height:40px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-zoom svg{ width:18px; height:18px; }
+
+  /* purchase panel */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:28px 30px 26px !important; border:1px solid #EAE2D4; border-radius:16px; background:#FFFEFA; box-shadow:0 1px 2px rgba(52,44,30,.03); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-cat{ margin:0 0 6px; font-size:14.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-rating{ margin-top:4px; font-size:14px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:10px; gap:8px 14px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:36px !important; line-height:1.12 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-stock{ padding:4px 11px; font-size:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-sub{ margin-top:8px !important; font-size:15.5px; line-height:1.55; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-price{ font-size:34px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-size{ margin-top:2px; font-size:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:16px !important; gap:9px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks li{ font-size:15px; }
+  /* thin divider before "Choose your order" */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:22px !important; padding-top:20px !important; border-top:1px solid #ECE5D8 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:18px 0 10px !important; font-size:15.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row{ gap:10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ padding:14px 8px 12px; border-radius:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-q{ font-size:15px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-p{ font-size:17px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n{ font-size:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-sz{ min-height:42px; height:42px; padding:0 22px !important; font-size:15px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-opt{ min-height:48px; padding:8px 16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-r{ font-size:15px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype-p b{ font-size:16px; }
+  /* [qty | Add to Cart — price] then the secondary row [Buy Now | WhatsApp] */
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:118px minmax(0,1fr) minmax(0,1fr) !important; grid-template-areas:"pt pt pt" "qty add add" "buy buy wa" !important; gap:12px; margin-top:18px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .quantity.ecn-qty, body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ height:50px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ font-size:16px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-hero form.cart .ecn-pdp-wa{ height:46px !important; font-size:15px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-service{ margin-top:18px !important; padding:14px 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-service b{ font-size:13.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-service small{ font-size:12.5px; }
+}
+/* tablets in two columns: a slimmer rail */
+@media (min-width:900px) and (max-width:1099px){
+  body.single-product .ecn-pdp .ecn-lp-hero{ column-gap:24px; grid-template-columns:minmax(0,46fr) minmax(0,54fr); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:58px minmax(0,1fr); column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:58px; height:58px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:22px 20px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:30px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:4px; padding:7px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:112px minmax(0,1fr) !important; grid-template-areas:"pt pt" "qty add" "buy buy" "wa wa" !important; }
+}
+
+/* phones and small tablets: photo, thumbnails, benefit cards, then the panel */
+@media (max-width:899px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main{ order:1; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-rail{ order:2; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ order:3; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g{ display:flex; flex-direction:column; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:1 / 1; max-height:480px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:64px; height:64px; border-radius:10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb.is-on{ border:2px solid var(--pd-teal) !important; box-shadow:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ gap:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:4px; min-height:56px; padding:8px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:24px; height:24px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:20px 18px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:29px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-price{ font-size:30px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:20px !important; padding-top:18px !important; border-top:1px solid #ECE5D8 !important; }
+}
+/* phones: the three pack cards swipe sideways instead of shrinking */
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row{ display:flex; gap:10px; margin:0 -18px; padding:12px 18px 6px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 18px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row::-webkit-scrollbar{ display:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ flex:0 0 152px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:16px 8px 12px; text-align:center; scroll-snap-align:start; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n{ flex-direction:column; gap:0; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-p, body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-s{ justify-self:auto; }
+}
+/* the header's logo and icons line up with the 1260px product section (product pages only) */
+@media (min-width:1000px){ body.single-product #masthead .site-primary-header-wrap.ast-container{ max-width:1308px !important; } }
