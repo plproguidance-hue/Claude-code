@@ -50,6 +50,9 @@
       zoom.querySelector('.ecn-zoom-prev').addEventListener('click', function () { zShow(zi - 1); });
       zoom.querySelector('.ecn-zoom-next').addEventListener('click', function () { zShow(zi + 1); });
       zoom.addEventListener('click', function (e) { if (e.target === zoom) zClose(); });
+      // Escape closes the photo here; keep it from reaching the theme's mobile-cart handler (which errors on Escape)
+      var zEsc = 0; document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !zoom.hidden) zEsc = Date.now(); }, true);
+      document.addEventListener('keyup', function (e) { if (e.key === 'Escape' && Date.now() - zEsc < 1500) { e.stopImmediatePropagation(); zEsc = 0; } }, true);
       document.addEventListener('keydown', function (e) { if (zoom.hidden) return; if (e.key === 'Escape') zClose(); else if (e.key === 'ArrowRight') zShow(zi + 1); else if (e.key === 'ArrowLeft') zShow(zi - 1); else if (e.key === 'Tab') { var f = [].slice.call(zoom.querySelectorAll('button')).filter(function (b) { return b.offsetParent; }); var a = f.indexOf(document.activeElement); if (e.shiftKey && a <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && a === f.length - 1) { e.preventDefault(); f[0].focus(); } } });
     }
 
@@ -82,7 +85,7 @@
     /* ---------- price on the buttons, pack cards and sticky bar ---------- */
     var unit = parseFloat(C.price) || 0, unitReg = 0, size = '', vidNow = C.vid || C.pid;
     var addBtn = form ? form.querySelector('.single_add_to_cart_button') : null, atcPrice = null;
-    if (addBtn && unit) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); }
+    if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); }
     var packs = [].slice.call(page.querySelectorAll('.ecn-lp-pack')), sbP = document.getElementById('ecnSbarPrice'), sbS = document.getElementById('ecnSbarSize'), finalP = page.querySelector('[data-ecn-final-price]');
     var sizeEl = page.querySelector('[data-ecn-size]'); size = sizeEl ? sizeEl.textContent : '';
     function lineTotal(n) { return unit * n * (1 - pct(n) / 100); }
