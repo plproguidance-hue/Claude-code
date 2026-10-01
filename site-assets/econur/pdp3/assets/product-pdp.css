@@ -863,3 +863,28 @@ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:26px; height
 }
 /* the header's logo and icons line up with the 1260px product section (product pages only) */
 @media (min-width:1000px){ body.single-product #masthead .site-primary-header-wrap.ast-container{ max-width:1308px !important; } }
+/* v7.4 spacing pass: tighter rhythm in the panel, one-line benefit cards */
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero table.variations tr{ margin-bottom:0 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ margin-top:16px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ gap:7px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ padding:12px 8px 10px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:7px; padding:8px; font-size:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:24px; height:24px; }
+}
+/* v7.4 phones/tablets: full-width panel, radio in the card corner, Add to Cart on one line */
+@media (max-width:899px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ max-width:none; }
+}
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack input{ top:12px; left:12px; margin-top:0; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ padding-top:20px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:104px minmax(0,1fr) !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ gap:6px; padding:0 12px !important; font-size:15px !important; white-space:nowrap; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button > *{ white-space:nowrap; }
+}
+@media (max-width:374px){
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ font-size:14px !important; padding:0 8px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button svg{ display:none; }
+}
