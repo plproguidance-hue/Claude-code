@@ -265,6 +265,16 @@
       });
     });
 
+    /* ---------- Find your bar: links to this page's own bar go to the top of its purchase card ---------- */
+    page.querySelectorAll('[data-ecn-to-buy]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var f = document.getElementById('ecn-cart-form'), card = f && (f.closest('.ecn-pdp-info') || f);
+        if (!card) return;
+        e.preventDefault();
+        window.scrollTo({ top: card.getBoundingClientRect().top + window.pageYOffset - 16, behavior: reduce ? 'auto' : 'smooth' });
+      });
+    });
+
     /* ---------- Find your bar: the inline guide (one question, one recommendation) ---------- */
     var fOpen = page.querySelector('[data-ecn-finder-open]'), fGuide = document.getElementById('ecn-finder-guide');
     if (fOpen && fGuide) {

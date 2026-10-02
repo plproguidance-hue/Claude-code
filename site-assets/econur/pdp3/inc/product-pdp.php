@@ -935,7 +935,7 @@ function econur_lp_finder_block($product, $items) {
         $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx">' . esc_html($it['line']) . '</span>'
             . '<span class="ecn-need-go">' . esc_html($go) . econur_lp_icon($it['self'] ? 'up' : 'arrow') . '</span>';
         $label = $it['title'] . ': ' . $p->get_name() . ($it['self'] ? ' (this page)' : '');
-        $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '" aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
+        $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '"' . ($it['self'] ? ' data-ecn-to-buy' : '') . ' aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
     }
 
     // inline guide: one question, one recommendation (all rendered here, shown by the page script)
@@ -950,7 +950,7 @@ function econur_lp_finder_block($product, $items) {
         }
         $img = econur_lp_card_img($p, 'medium', '(max-width: 767px) 84px, 104px', '');
         $btn = $it['self']
-            ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form"><span>Choose your pack</span>' . econur_lp_icon('up') . '</a>' : '')
+            ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form" data-ecn-to-buy><span>Choose your pack</span>' . econur_lp_icon('up') . '</a>' : '')
             : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span>View Product</span>' . econur_lp_icon('arrow') . '</a>';
         $opts .= '<button type="button" class="ecn-finder-opt" data-k="' . esc_attr($k) . '" aria-pressed="false" aria-controls="ecn-pick-' . esc_attr($k) . '">' . econur_lp_icon($it['icon']) . '<span>' . esc_html($it['title']) . '</span></button>';
         $picks .= '<article class="ecn-pick" id="ecn-pick-' . esc_attr($k) . '" hidden>' . ($img ? '<span class="ecn-pick-img">' . $img . '</span>' : '')
