@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.9.0';
+const ECONUR_PDP_VER = '7.10.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -101,8 +101,8 @@ function econur_meta_list($id, $key) {
 function econur_pdp_pairs($id, $key) {
     $out = array();
     foreach (econur_meta_list($id, $key) as $row) {
-        $p = array_map('trim', explode('::', $row, 2));
-        if ('' !== $p[0]) $out[] = array($p[0], isset($p[1]) ? $p[1] : '');
+        $p = array_map('trim', explode('::', $row, 3));
+        if ('' !== $p[0]) $out[] = array($p[0], isset($p[1]) ? $p[1] : '', isset($p[2]) ? $p[2] : '');
     }
     return $out;
 }
@@ -502,13 +502,13 @@ function econur_lp_ing_image($product, $title, &$used) {
         if (false === strpos($t, $k) || in_array($k, $used, true)) continue;
         $used[] = $k;
         $m = wp_get_attachment_metadata($card); $r = (!empty($m['width']) && !empty($m['height'])) ? $m['height'] / $m['width'] : 1;
-        $a = 15 / 11; $z = $c[2];
+        $a = 1; $z = $c[2];
         $l = max(0, min(1 / $z - 1, $c[0] / $z - .5)); $tp = max(0, min($r / $z - 1 / $a, $c[1] * $r / $z - .5 / $a));
         $style = sprintf('--cw:%.3f%%;--cl:-%.3f%%;--ct:-%.3f%%', 100 / $z, $l * 100, $tp * 100);
-        return '<span class="ecn-lp-ing-img is-crop">' . wp_get_attachment_image($card, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 900px) 420px, 330px', 'style' => $style)) . '</span>';
+        return '<span class="ecn-lp-ing-img is-crop">' . wp_get_attachment_image($card, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 900px) 460px, 360px', 'style' => $style)) . '</span>';
     }
     $map = array(141 => '/charcoal/', 142 => '/turmeric/', 143 => '/coffee/', 145 => '/olive|oat/');
-    foreach ($map as $img => $re) if (!in_array($img, $used, true) && preg_match($re, $t) && wp_attachment_is_image($img)) { $used[] = $img; return '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '150px')) . '</span>'; }
+    foreach ($map as $img => $re) if (!in_array($img, $used, true) && preg_match($re, $t) && wp_attachment_is_image($img)) { $used[] = $img; return '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '160px')) . '</span>'; }
     // no photo of this ingredient on the site: a drawn botanical tile (not a photo)
     return '<span class="ecn-lp-ing-img is-art" aria-hidden="true">' . econur_lp_ing_art($title) . '</span>';
 }
@@ -519,17 +519,27 @@ function econur_lp_ing_icon($t) {
     if (preg_match('/licorice|turmeric|root|ginger/', $t)) return econur_lp_icon('sprout');
     return econur_pdp_icon('leaf');
 }
+// Small decorative leaf (drawn), for the botanical frame around "Why" and "How to Use".
+function econur_lp_fleaf($class) {
+    return '<svg class="ecn-lp-fleaf ' . esc_attr($class) . '" viewBox="0 0 60 40" aria-hidden="true" focusable="false"><path d="M2 30C14 6 38 0 58 6 50 28 26 40 2 30Z" fill="#5E9A55"/><path d="M2 30C20 22 36 14 56 7" stroke="#3F7A3E" stroke-width="1.6" fill="none"/></svg>';
+}
 function econur_lp_why($product, $lp = array()) {
     $notes = array_slice(econur_pdp_pairs($product->get_id(), 'econur_ingredient_notes'), 0, 3);
     if (!$notes) return;
     $lead = isset($lp['why_lead']) ? $lp['why_lead'] : '';
     if ('' === $lead) { $desc = trim(wp_strip_all_tags($product->get_description())); $lead = preg_match('/^(.+?[.!?])(\s|$)/', $desc, $m) ? $m[1] : ''; }
+    $pills = econur_meta_list($product->get_id(), 'econur_ingredient_pills');
     $used = array(); $cards = '';
-    foreach ($notes as $nt) {
+    foreach ($notes as $i => $nt) {
+        if (!empty($pills[$i])) $nt[2] = $pills[$i];
         $cards .= '<article class="ecn-lp-ing">' . econur_lp_ing_image($product, $nt[0], $used)
-            . '<div><span class="ecn-lp-ing-ic">' . econur_lp_ing_icon($nt[0]) . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p></div></article>';
+            . '<div><span class="ecn-lp-ing-ic">' . econur_lp_ing_icon($nt[0]) . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p>'
+            . ($nt[2] ? '<span class="ecn-lp-pill">' . esc_html($nt[2]) . '</span>' : '') . '</div></article>';
     }
-    echo '<section class="ecn-lp-sec ecn-lp-why" id="ecn-ingredients" aria-labelledby="ecn-lp-why-t">' . econur_lp_head('Why ' . $product->get_name() . '?', $lead, 'ecn-lp-why-t') . '<div class="ecn-lp-ings">' . $cards . '</div></section>';
+    echo '<section class="ecn-lp-sec ecn-lp-why" id="ecn-ingredients" aria-labelledby="ecn-lp-why-t">'
+        . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tr') . econur_lp_fleaf('is-a') . econur_lp_fleaf('is-b')
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Powered by botanical ingredients</span><h2 class="ecn-lp-h2" id="ecn-lp-why-t">' . esc_html('Why ' . $product->get_name() . '?') . '</h2>'
+        . ($lead ? '<p class="ecn-lp-lead">' . esc_html($lead) . '</p>' : '') . '</div><div class="ecn-lp-ings">' . $cards . '</div></section>';
 }
 
 /* Drawn illustrations (flat vector art, decorative): one per ingredient family and one per how-to step. */
@@ -560,29 +570,88 @@ function econur_lp_ing_art($title) {
     foreach (array(array(52, 84, -55), array(70, 76, 55), array(54, 64, -50), array(72, 56, 50), array(57, 44, -45), array(73, 36, 40), array(66, 20, 0)) as $k => $l) $sp .= $leaf($l[0], $l[1], $l[2], $k % 2 ? '#6FAE7A' : '#4E8E5C');
     return econur_lp_svg($sp);
 }
-function econur_lp_step_art($k) {
-    $bar = '<rect x="30" y="58" width="60" height="30" rx="8" fill="#EADFC8"/><rect x="30" y="58" width="60" height="10" rx="5" fill="#F4ECDC"/><path d="M44 74h32" stroke="#CDBE9F" stroke-width="3" stroke-linecap="round"/>';
-    $drop = function ($x, $y, $s) { return '<path d="M' . $x . ' ' . $y . 'c' . (4 * $s) . ' ' . (6 * $s) . ' ' . (6 * $s) . ' ' . (9 * $s) . ' ' . (6 * $s) . ' ' . (12 * $s) . 'a' . (6 * $s) . ' ' . (6 * $s) . ' 0 0 1-' . (12 * $s) . ' 0c0-' . (3 * $s) . ' ' . (2 * $s) . '-' . (6 * $s) . ' ' . (6 * $s) . '-' . (12 * $s) . 'Z" fill="#7DB8D6"/>'; };
-    $bub = function ($x, $y, $r) { return '<circle cx="' . $x . '" cy="' . $y . '" r="' . $r . '" fill="#fff" stroke="#9CC7D9" stroke-width="2"/>'; };
-    if ('wet' === $k) return econur_lp_svg('<ellipse cx="60" cy="94" rx="36" ry="6" fill="#CFE2E8"/>' . $bar . $drop(46, 18, 1) . $drop(64, 30, 1.2) . $drop(80, 14, .9) . $drop(56, 2, .8));
-    if ('rinse' === $k) return econur_lp_svg('<path d="M36 12c0 30 6 46 24 58M60 12c0 28 4 44 16 56M84 12c-2 26-2 42 4 54" stroke="#7DB8D6" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/><ellipse cx="60" cy="88" rx="36" ry="10" fill="#CFE2E8"/>' . $drop(40, 74, .9) . $drop(78, 70, 1) . $drop(60, 80, .7));
-    if ('store' === $k) return econur_lp_svg('<path d="M18 80h84l-8 14H26Z" fill="#C9A67A"/><path d="M30 80v-4M46 80v-4M62 80v-4M78 80v-4M94 80v-4" stroke="#A9865A" stroke-width="3"/>' . str_replace(array('y="58"', 'y="58" width="60" height="10"', 'M44 74h32'), array('y="46"', 'y="46" width="60" height="10"', 'M44 62h32'), $bar));
-    return econur_lp_svg('<ellipse cx="60" cy="94" rx="36" ry="6" fill="#CFE2E8"/>' . $bar . $bub(34, 54, 9) . $bub(52, 44, 12) . $bub(76, 48, 10) . $bub(92, 60, 7) . $bub(64, 30, 7) . $bub(40, 36, 5));
+/* Usage illustrations for "How to Use": lather (soap bar + foam), cleanse (face wash), rinse (water). Flat, ECONUR palette. */
+function econur_lp_ritual_art($k, $bar = '#3B3F41') {
+    static $n = 0; $n++; $fo = 'ecnFoam' . $n; $wa = 'ecnWater' . $n; // ids unique on the page
+    $svg = function ($inner) { return '<svg class="ecn-lp-ill" viewBox="0 0 160 160" aria-hidden="true" focusable="false">' . $inner . '</svg>'; };
+    $leaf = function ($x, $y, $r, $c, $s = 1) { return '<path d="M0 0C' . (6 * $s) . ' ' . (-10 * $s) . ' ' . (18 * $s) . ' ' . (-14 * $s) . ' ' . (30 * $s) . ' ' . (-12 * $s) . 'C' . (24 * $s) . ' ' . (-2 * $s) . ' ' . (12 * $s) . ' ' . (4 * $s) . ' 0 0Z" fill="' . $c . '" transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ')"/>'; };
+    $bub = function ($x, $y, $r) { return '<circle cx="' . $x . '" cy="' . $y . '" r="' . $r . '" fill="#fff" stroke="#BFDCE8" stroke-width="1.6"/>'; };
+    $foam = function ($pts) use ($fo) { $o = ''; foreach ($pts as $p) $o .= '<circle cx="' . $p[0] . '" cy="' . $p[1] . '" r="' . $p[2] . '" fill="#fff"/>'; return '<g filter="url(#' . $fo . ')">' . $o . '</g>'; };
+    $defs = '<defs><filter id="' . $fo . '" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-color="#9CC3D3" flood-opacity=".55"/></filter>'
+        . '<linearGradient id="' . $wa . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FD0F0"/><stop offset="1" stop-color="#2A9FD6"/></linearGradient></defs>';
+    if ('lather' === $k) {
+        // a soap bar in three-quarter view, foam on top, bubbles and two leaves
+        $c = $bar;
+        $out = $defs . '<ellipse cx="82" cy="128" rx="48" ry="7" fill="#CFE3EA"/>'
+            . $leaf(30, 122, -50, '#4E8E5C', 1.1) . $leaf(34, 126, -8, '#78B07E', 1)
+            . '<path d="M40 92 92 80l34 14-52 13Z" fill="' . $c . '" opacity=".85"/>'
+            . '<path d="M40 92l34 15v20L40 112Z" fill="' . $c . '"/>'
+            . '<path d="M74 107l52-13v20l-52 13Z" fill="' . $c . '" opacity=".72"/>'
+            . '<path d="M40 92l34 15 52-13" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="1.5"/>'
+            . $foam(array(array(70, 86, 11), array(84, 80, 13), array(98, 86, 10), array(78, 92, 9), array(92, 93, 8), array(62, 93, 7)))
+            . $foam(array(array(116, 116, 8), array(126, 112, 6), array(108, 121, 6)))
+            . $bub(58, 64, 5) . $bub(70, 52, 7) . $bub(88, 58, 4) . $bub(110, 66, 6) . $bub(100, 46, 3.5)
+            . '<path d="M128 58c3 4 5 7 5 9a5 5 0 0 1-10 0c0-2 2-5 5-9Z" fill="#7DC4E4"/>';
+        return $svg($out);
+    }
+    if ('cleanse' === $k) {
+        // a face being washed: headband, closed eyes, foam on both cheeks
+        $skin = '#F3C9A8'; $shade = '#E6B08C';
+        $out = $defs
+            . '<rect x="70" y="110" width="20" height="26" rx="6" fill="' . $shade . '"/>'
+            . '<path d="M34 160c4-20 20-30 46-30s42 10 46 30Z" fill="#fff"/><path d="M62 131c6 8 12 11 18 11s12-3 18-11" fill="none" stroke="#DCE9EE" stroke-width="3" stroke-linecap="round"/>'
+            . '<path d="M44 76c0-28 16-44 36-44s36 16 36 44c0 6-1 10-3 14H47c-2-4-3-8-3-14Z" fill="#5A3B2A"/>'
+            . '<ellipse cx="80" cy="84" rx="30" ry="35" fill="' . $skin . '"/>'
+            . '<ellipse cx="50" cy="88" rx="5" ry="8" fill="' . $shade . '"/><ellipse cx="110" cy="88" rx="5" ry="8" fill="' . $shade . '"/>'
+            . '<path d="M48 64c6-14 18-20 32-20s26 6 32 20c-8-4-20-6-32-6s-24 2-32 6Z" fill="#fff"/><path d="M48 64c8-4 20-6 32-6s24 2 32 6" fill="none" stroke="#E3EEF2" stroke-width="2"/>'
+            . '<path d="M64 84q5 4 10 0M86 84q5 4 10 0" fill="none" stroke="#6B4A39" stroke-width="2.2" stroke-linecap="round"/>'
+            . '<path d="M74 103q6 5 12 0" fill="none" stroke="#B86B5A" stroke-width="2.2" stroke-linecap="round"/>'
+            . '<ellipse cx="62" cy="96" rx="6" ry="3.5" fill="#F2A99A" opacity=".55"/><ellipse cx="98" cy="96" rx="6" ry="3.5" fill="#F2A99A" opacity=".55"/>'
+            // hands on the cheeks
+            . '<path d="M30 132c-2-16 2-34 12-44 4-4 9-2 9 3l-2 14 4-1c4-1 6 3 4 7l-8 21c-3 7-17 7-19 0Z" fill="' . $skin . '"/>'
+            . '<path d="M130 132c2-16-2-34-12-44-4-4-9-2-9 3l2 14-4-1c-4-1-6 3-4 7l8 21c3 7 17 7 19 0Z" fill="' . $skin . '"/>'
+            . $foam(array(array(50, 96, 6), array(56, 104, 7), array(48, 108, 5), array(110, 96, 6), array(104, 104, 7), array(112, 108, 5)))
+            . $bub(36, 78, 3.5) . $bub(124, 74, 4) . $bub(128, 86, 2.5)
+            . $leaf(18, 118, -60, '#4E8E5C', .9) . $leaf(142, 118, -120, '#4E8E5C', .9);
+        return $svg($out);
+    }
+    // rinse: a large water drop, a small one and a splash, with a sprig
+    $out = $defs . '<ellipse cx="80" cy="128" rx="44" ry="8" fill="#BFE3F2"/>'
+        . '<path d="M50 126c6-6 14-8 22-6M110 126c-6-6-14-8-22-6" stroke="#5DB8E3" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        . '<path d="M80 26c14 20 26 34 26 52a26 26 0 0 1-52 0c0-18 12-32 26-52Z" fill="url(#' . $wa . ')"/>'
+        . '<path d="M68 70c-3 8-2 16 4 21" stroke="#fff" stroke-opacity=".7" stroke-width="4" fill="none" stroke-linecap="round"/>'
+        . '<path d="M46 86c5 7 9 12 9 16a9 9 0 0 1-18 0c0-4 4-9 9-16Z" fill="url(#' . $wa . ')"/>'
+        . '<ellipse cx="80" cy="124" rx="22" ry="5" fill="none" stroke="#5DB8E3" stroke-width="2.5"/>'
+        . '<path d="M66 116c-3-4-4-8-3-11 3 2 5 6 3 11Z" fill="#5DB8E3"/><path d="M94 116c3-4 4-8 3-11-3 2-5 6-3 11Z" fill="#5DB8E3"/><path d="M80 112c-2-5-2-9 0-12 2 3 2 7 0 12Z" fill="#5DB8E3"/>'
+        . '<circle cx="58" cy="108" r="2.6" fill="#7FD0F0"/><circle cx="103" cy="106" r="3" fill="#7FD0F0"/><circle cx="112" cy="98" r="2" fill="#7FD0F0"/>'
+        . $leaf(112, 104, -70, '#4E8E5C', .8) . $leaf(116, 100, -20, '#78B07E', .7);
+    return $svg($out);
 }
-
-/* ===== how to use: its own steps ===== */
+function econur_lp_bar_color($p) {
+    $map = array('oily' => '#3B3F41', 'tone' => '#E6D3AE', 'dull' => '#8A5A3E', 'daily' => '#A7BC84', 'sensitive' => '#EFE6D2');
+    if (function_exists('econur_finder_concerns')) foreach (econur_finder_concerns() as $c) if ((int) $c['product'] === $p->get_id() && isset($map[$c['key']])) return $map[$c['key']];
+    return '#E9DCC4';
+}
 function econur_lp_howto($product) {
     $steps = array_slice(econur_pdp_pairs($product->get_id(), 'econur_how_steps'), 0, 3);
     if (!$steps) return;
     $note = trim((string) get_post_meta($product->get_id(), 'econur_how_note', true));
+    $pills = econur_meta_list($product->get_id(), 'econur_how_pills');
     $out = '';
     foreach ($steps as $i => $s) {
+        if (!empty($pills[$i])) $s[2] = $pills[$i];
         $t = strtolower($s[0]);
-        $ic = preg_match('/rinse/', $t) ? 'rinse' : (preg_match('/lather|massage|cleanse|wash|apply/', $t) ? 'lather' : (preg_match('/wet/', $t) ? 'wet' : (preg_match('/store|dry/', $t) ? 'store' : 'lather')));
-        if ($i) $out .= '<span class="ecn-lp-step-arrow" aria-hidden="true">' . econur_lp_icon('arrow') . '</span>';
-        $out .= '<li class="ecn-lp-step"><span class="ecn-lp-step-art">' . econur_lp_step_art($ic) . '<b>' . ($i + 1) . '</b></span><div><h3>' . esc_html($s[0]) . '</h3><p>' . esc_html($s[1]) . '</p></div></li>';
+        // the picture follows the step: rinse, lather/wet, or the cleanse itself
+        $k = preg_match('/rinse/', $t) ? 'rinse' : (0 === $i ? 'lather' : 'cleanse');
+        if ($i) $out .= '<li class="ecn-lp-step-arrow" aria-hidden="true">' . econur_lp_icon('arrow') . '</li>';
+        $out .= '<li class="ecn-lp-step"><b class="ecn-lp-step-n">' . ($i + 1) . '</b><span class="ecn-lp-step-art">' . econur_lp_ritual_art($k, econur_lp_bar_color($product)) . '</span>'
+            . '<div><h3>' . esc_html($s[0]) . '</h3><p>' . esc_html($s[1]) . '</p>' . ($s[2] ? '<span class="ecn-lp-pill">' . esc_html($s[2]) . '</span>' : '') . '</div></li>';
     }
-    echo '<section class="ecn-lp-sec ecn-lp-how" aria-labelledby="ecn-lp-how-t">' . econur_lp_head('How to Use', $note ? $note : 'Simple steps, as on the label.', 'ecn-lp-how-t') . '<ol class="ecn-lp-steps">' . $out . '</ol></section>';
+    echo '<section class="ecn-lp-sec ecn-lp-how" aria-labelledby="ecn-lp-how-t">'
+        . '<svg class="ecn-lp-wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 46C180 10 360 4 560 30s420 56 620 36C1300 54 1380 36 1440 26V90H0Z"/></svg>'
+        . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--ml') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--mr') . econur_lp_fleaf('is-c') . econur_lp_fleaf('is-d')
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_lp_icon('sun') . 'Simple daily ritual</span><h2 class="ecn-lp-h2" id="ecn-lp-how-t">How to Use</h2>'
+        . '<p class="ecn-lp-lead">' . esc_html($note ? $note : 'Simple steps, as on the label.') . '</p></div><ol class="ecn-lp-steps">' . $out . '</ol></section>';
 }
 
 /* ===== reviews: real WooCommerce reviews only (no samples, no borrowed testimonials) =====

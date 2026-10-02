@@ -11,6 +11,8 @@
  *  econur_lp_routine   product IDs for "Complete your routine", e.g. "18, 22"
  *  econur_lp_step      this product's step label in a routine, e.g. "Cleanse"
  *  econur_lp_why_lead  the line under "Why [product]?"
+ *  econur_ingredient_pills  a short pill under each "Why" ingredient card, in the same order: "Pill | Pill | Pill"
+ *  econur_how_pills    a short pill under each "How to Use" step, in the same order: "Pill | Pill | Pill"
  *  econur_lp_packs     pack discounts by quantity, e.g. "2:5, 3:10" (percent). Empty = no pack discount.
  *  econur_lp_cta       heading of the closing call to action
  *  econur_lp_angles    ad angles for message match, one per line: "key | subtitle | benefit; benefit; benefit"
@@ -27,6 +29,8 @@ function econur_lp_field_defs() {
         'econur_lp_routine'  => array('Complete your routine', 'text', 'Product IDs to pair with this one, e.g. 18, 22. Empty = two other bars from the "Find your bar" guide.'),
         'econur_lp_step'     => array('Routine step', 'text', 'One word for this product\'s step in "Complete your routine", e.g. Cleanse. Empty = from its "Find your bar" concern.'),
         'econur_lp_why_lead' => array('"Why" intro line', 'text', 'Short line under "Why [product]?". Empty = the first sentence of the description.'),
+        'econur_ingredient_pills' => array('"Why" ingredient pills', 'text', 'One short pill per ingredient card, same order as the ingredient notes, separated by |. e.g. Deep Cleansing | Helps Soothe | Fresh, Clean Feel'),
+        'econur_how_pills'   => array('"How to Use" step pills', 'text', 'One short pill per step, same order as the steps, separated by |. e.g. Create a gentle foam | Focus on oily areas | Use morning & night'),
         'econur_lp_packs'    => array('Pack discount', 'text', 'Optional percent off by quantity, e.g. 2:5, 3:10 (5% off 2 or more, 10% off 3 or more). Applied in the cart. Empty = no pack discount.'),
         'econur_lp_cta'      => array('Closing heading', 'text', 'Heading of the call to action at the bottom of the page.'),
         'econur_lp_angles'   => array('Ad angles', 'lines', 'For Meta ads message match, one per line: key | subtitle | benefit; benefit; benefit. Link to the product with ?angle=key.'),
