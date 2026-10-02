@@ -103,7 +103,7 @@
         var k = parseInt(pk.getAttribute('data-q'), 10), on = k === n;
         pk.classList.toggle('is-on', on); var r = pk.querySelector('input'); if (r) r.checked = on;
         var pp = pk.querySelector('[data-pack-price]'); if (pp && unit) pp.textContent = money(lineTotal(k));
-        var ps = pk.querySelector('[data-pack-save]'); if (ps) { var s = unit * k - lineTotal(k); ps.textContent = s > 0.5 ? 'Save ' + money(s) : ''; }
+        var ps = pk.querySelector('[data-pack-save]'); if (ps) { var s = unit * k - lineTotal(k); ps.textContent = s > 0.5 ? 'Save ' + money(s) : ''; } var pe = pk.querySelector('[data-pack-each]'); if (pe && unit) pe.textContent = k + ' × ' + money(unit);
       });
     }
     packs.forEach(function (pk) { var r = pk.querySelector('input'); if (!r) return; r.addEventListener('change', function () { if (!q) return; q.value = r.value; q.dispatchEvent(new Event('change', { bubbles: true })); meta('PackSelected', { content_ids: [String(vidNow)], content_name: C.name, quantity: parseInt(r.value, 10) }, true); }); });

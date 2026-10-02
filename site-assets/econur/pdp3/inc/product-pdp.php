@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.7.2';
+const ECONUR_PDP_VER = '7.8.0';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -60,8 +60,10 @@ add_action('woocommerce_before_add_to_cart_button', function () {
     global $product;
     if ($product && $product->is_type('simple') && econur_pdp_is_this($product)) echo '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
 });
-// Purchase type: one-time purchase is the store's only purchase type (no subscriptions), shown with its live total.
+// Purchase type: shown only when a store offers more than one way to buy (filter econur_lp_purchase_types > 1).
+// ECONUR sells one-time purchases only, so the row is not shown (one fewer step before Add to Cart).
 add_action('woocommerce_before_add_to_cart_quantity', function () {
+    if ((int) apply_filters('econur_lp_purchase_types', 1) < 2) return;
     global $product;
     if (!$product || !econur_pdp_is_this($product) || '' === $product->get_price()) return;
     list($vid) = econur_pdp_default($product);
@@ -317,9 +319,12 @@ function econur_pdp_render($product) {
     echo '</div>';
     // three benefit cards under the photo (the product's own highlights)
     if ($lp['badges']) {
-        $bi = array('cleanse', 'leaf', 'hand');
         echo '<ul class="ecn-lp-badges" aria-label="Highlights">';
-        foreach ($lp['badges'] as $k => $b) { $ic = false !== stripos($b, 'hand') ? 'hand' : ($k === 0 ? econur_pdp_benefit_icon($b) : $bi[$k]); echo '<li>' . econur_pdp_icon($ic) . '<span>' . esc_html(econur_lp_title($b)) . '</span></li>'; }
+        foreach ($lp['badges'] as $b) {
+            $t = strtolower($b);
+            $ic = preg_match('/hand|craft|bangladesh/', $t) ? econur_lp_icon('sprout') : (preg_match('/oil|skin|hydrat|moist/', $t) ? econur_pdp_icon('drop') : (preg_match('/clean|exfol|scrub|purif/', $t) ? econur_pdp_icon('cleanse') : econur_pdp_icon('leaf')));
+            echo '<li><span class="ecn-lp-badge-ic">' . $ic . '</span><span>' . esc_html(econur_lp_title($b)) . '</span></li>';
+        }
         echo '</ul>';
     }
     echo '</div>';
@@ -331,7 +336,7 @@ function econur_pdp_render($product) {
     if ($rc > 0) {
         echo '<div class="ecn-pdp-rating">' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '<span>' . esc_html(number_format_i18n($avg, 1)) . ' (' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . ')</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-scroll>See all reviews</a></div>';
     } elseif (comments_open($id)) {
-        echo '<div class="ecn-pdp-rating is-empty">' . econur_lp_stars(0) . '<span>No reviews yet</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1">Be the first to review</a></div>';
+        echo '<div class="ecn-pdp-rating is-empty is-new"><span class="ecn-pdp-newstar" aria-hidden="true">&#9733;</span><span>New product</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1">Be the first to review</a></div>';
     }
     echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock>' . esc_html($stock[1]) . '</span></div>';
     if ($lp['subtitle']) echo '<p class="ecn-lp-sub">' . esc_html($lp['subtitle']) . '</p>';
@@ -351,8 +356,8 @@ function econur_pdp_render($product) {
         $t = $lp['tiers']; $best = $t ? max($t) : 0;
         $packs = array(
             1 => array('', 'Starter', 'Best for first-time use'),
-            2 => array(econur_lp_pack_pct($t, 2) ? 'Save ' . rtrim(rtrim(number_format(econur_lp_pack_pct($t, 2), 1), '0'), '.') . '%' : 'Most Popular', 'Stay stocked up', ''),
-            3 => array('Best Value', 'Ideal for regular use', ''),
+            2 => array('Most Popular', 'Best for regular use', ''),
+            3 => array('Best Value', 'Great for long-term use', ''),
         );
         echo '<fieldset class="ecn-lp-packs"><legend class="ecn-lp-label">Choose your order</legend><div class="ecn-lp-packs-row">';
         foreach ($packs as $q => $pk) {
@@ -362,8 +367,7 @@ function econur_pdp_render($product) {
                 . ($pk[0] ? '<span class="ecn-lp-pack-badge is-' . (2 === $q ? 'pop' : 'val') . '">' . esc_html($pk[0]) . '</span>' : '')
                 . '<span class="ecn-lp-pack-q">' . esc_html($q . ' ' . (1 === $q ? $unit_word[0] : $unit_word[1])) . '</span>'
                 . '<span class="ecn-lp-pack-p" data-pack-price>' . ($unit ? esc_html(econur_pdp_money($unit->get_price() * $q * (1 - $pct / 100))) : '') . '</span>'
-                . ($pct ? '<span class="ecn-lp-pack-s" data-pack-save></span>' : '')
-                . '<span class="ecn-lp-pack-n"><b>' . esc_html(array(1 => 'Starter', 2 => 'Stock up', 3 => 'Regular use')[$q]) . '</b>' . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
+                . '<span class="ecn-lp-pack-n">' . (1 === $q ? '<b>Starter</b>' : (!$unit ? '' : ($pct ? '<b class="ecn-lp-pack-s" data-pack-save>Save ' . esc_html(econur_pdp_money($unit->get_price() * $q * $pct / 100)) . '</b>' : '<b class="ecn-lp-pack-each" data-pack-each>' . esc_html($q . ' × ' . econur_pdp_money($unit->get_price())) . '</b>'))) . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
         }
         echo '</div></fieldset>';
         if ($product->is_type('variable')) echo '<p class="ecn-lp-label">Choose size</p>';
@@ -376,21 +380,16 @@ function econur_pdp_render($product) {
             . '</div></div>';
     }
 
-    echo '</div>';
-
-    // secondary actions under the panel: Buy Now (adds the selected size and quantity, then checkout) and WhatsApp
+    // compact reassurance right under Add to Cart (the store's own terms), then Buy Now and WhatsApp
     if ($buyable) {
+        echo '<ul class="ecn-lp-trust" aria-label="Ordering">'
+            . '<li>' . econur_lp_icon('box') . '<span>Cash on delivery</span></li>'
+            . '<li>' . econur_pdp_icon('truck') . '<span>Delivery across Bangladesh</span></li>'
+            . '<li>' . econur_pdp_icon('phone') . '<span>We call to confirm</span></li></ul>';
         echo '<div class="ecn-lp-extra"><button type="submit" form="ecn-cart-form" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">Buy Now</button>'
             . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div>';
     }
-
-    // service strip: the store's own terms
-    echo '<ul class="ecn-lp-service" aria-label="Delivery and support">'
-        . '<li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li>'
-        . '<li>' . econur_pdp_icon('truck') . '<span><b>Delivery</b><small>Inside Dhaka 1–2 days<br>Outside Dhaka 2–4 days</small></span></li>'
-        . '<li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order within 12 hours</small></span></li>'
-        . '<li>' . econur_pdp_icon('whatsapp') . '<span><b>WhatsApp support</b><small><a href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener" data-ecn-wa>' . esc_html(ECONUR_WA_DISPLAY) . '</a></small></span></li>'
-        . '</ul>';
+    echo '</div>';
     echo '</div></section>';
 
     econur_lp_routine($product, $lp);

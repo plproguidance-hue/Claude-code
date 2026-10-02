@@ -1180,3 +1180,90 @@ body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ 
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:3px; min-height:60px; padding:6px 4px; font-size:11.5px; text-align:center; }
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:22px; height:22px; padding:4px; }
 }
+
+/* ===================== v7.8: FINAL approved above-the-fold section =====================
+   1300px section, gallery 52% | panel 48%, 76x86 thumbnails, ~572x636 photo with a floating 3-part benefit bar,
+   panel: category, New product / reviews, title + stock, promise, price + size, 3 benefits, packs, size,
+   Quantity + Add to Cart, trust row, Buy Now + WhatsApp. No Purchase type row (one-time purchase only). */
+.ecn-pdp-newstar{ font-size:17px; line-height:1; color:var(--pd-star); }
+.ecn-pdp-rating.is-new{ gap:6px 10px; }
+body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-areas:"qty add" !important; }
+/* pack third line: real saving (green pill) or the per-bar price */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n b.ecn-lp-pack-s{ align-self:center; margin:2px 0; padding:2px 10px; border-radius:999px; background:#E3F1E6; color:#2C7A4B; font-size:12.5px; font-weight:700; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n b.ecn-lp-pack-each{ font-weight:600; color:#4E5A55; }
+/* trust row under Add to Cart */
+.ecn-lp-trust{ display:flex; align-items:center; justify-content:space-between; min-height:44px; margin:12px 0 0 !important; padding:0 2px !important; list-style:none; }
+.ecn-lp-trust li{ display:flex; align-items:center; justify-content:center; gap:8px; flex:1 1 auto; min-width:0; margin:0; padding:0 10px; font-size:13.5px; font-weight:500; line-height:1.25; color:#3A4541; white-space:nowrap; }
+.ecn-lp-trust li:first-child{ justify-content:flex-start; padding-left:0; }
+.ecn-lp-trust li:last-child{ justify-content:flex-end; padding-right:0; }
+.ecn-lp-trust li + li{ border-left:1px solid #E3DBCD; }
+.ecn-lp-trust svg{ flex:none; width:20px; height:20px; color:var(--pd-teal); }
+/* Buy Now + WhatsApp inside the panel */
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra{ margin-top:12px; gap:12px; }
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra .ecn-pdp-wa{ height:46px !important; font-size:15.5px !important; }
+
+@media (min-width:900px){
+  body.single-product #primary{ margin-top:26px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero{ max-width:1300px; grid-template-columns:minmax(0,52fr) minmax(0,48fr); column-gap:26px; }
+  /* gallery */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:76px minmax(0,1fr); column-gap:14px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumbs{ gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:76px; height:86px; border-radius:10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-slide{ aspect-ratio:9 / 10; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-main{ border-radius:14px; box-shadow:0 4px 14px rgba(52,44,30,.05); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-zoom{ top:18px; right:18px; width:44px; height:44px; }
+  /* floating benefit bar */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ width:84%; min-height:76px; margin:0 0 22px !important; border-radius:16px; background:rgba(255,253,248,.95); box-shadow:0 10px 28px rgba(30,24,14,.10), 0 1px 3px rgba(30,24,14,.05); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:12px; min-height:76px; padding:8px 12px; font-size:14.5px; font-weight:500; line-height:1.3; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li span:last-child{ text-wrap:balance; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic{ flex:none; display:grid; place-items:center; width:42px; height:42px; border:1px solid #CFE0DB; border-radius:50%; background:#F1F7F4; color:var(--pd-teal); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic svg{ width:22px; height:22px; padding:0; border:0; background:none; }
+  /* panel */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card{ padding:24px 26px 22px !important; border-radius:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-cat{ margin:0 0 4px; font-size:14.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-rating{ margin-top:4px; font-size:15px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:40px !important; line-height:1.12 !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-stock{ font-size:13px; padding:5px 14px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-sub{ margin-top:8px !important; font-size:15.5px; line-height:1.55; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pricerow{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-price{ font-size:38px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks{ margin-top:8px !important; gap:5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-checks li{ font-size:15.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:14px !important; padding-top:14px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-label{ margin:12px 0 8px !important; font-size:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin:0 0 10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row{ gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ min-height:112px; padding:16px 8px 10px; border-radius:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-q{ font-size:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-p{ font-size:20px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-sz{ min-height:44px; height:44px; padding:0 30px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:132px minmax(0,1fr) !important; margin-top:14px !important; column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .quantity.ecn-qty, body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ height:54px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ font-size:18px !important; }
+}
+@media (min-width:900px) and (max-width:1199px){
+  body.single-product .ecn-pdp .ecn-lp-hero{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:22px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g.has-many{ grid-template-columns:60px minmax(0,1fr); column-gap:12px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-g-thumb{ width:60px; height:68px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ width:92%; min-height:64px; margin-bottom:14px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:3px; min-height:64px; padding:6px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic{ width:28px; height:28px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic svg{ width:16px; height:16px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:32px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .woocommerce-variation-add-to-cart, body.single-product .ecn-pdp .ecn-lp-hero form.cart:not(.variations_form){ grid-template-columns:112px minmax(0,1fr) !important; }
+  .ecn-lp-trust li{ padding:0 6px; font-size:12px; gap:5px; white-space:normal; }
+}
+@media (min-width:1200px) and (max-width:1439px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:8px; padding:8px 8px; font-size:13.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic{ width:36px; height:36px; }
+  .ecn-lp-trust li{ padding:0 8px; font-size:12.5px; gap:6px; }
+}
+/* phones and small tablets */
+@media (max-width:899px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic{ display:grid; place-items:center; width:30px; height:30px; border:1px solid #CFE0DB; border-radius:50%; background:#F1F7F4; color:var(--pd-teal); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges .ecn-lp-badge-ic svg{ width:17px; height:17px; padding:0; border:0; background:none; }
+  .ecn-lp-trust{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); align-items:start; padding:10px 0 !important; border-top:1px solid #EFE8DC; border-bottom:1px solid #EFE8DC; }
+  .ecn-lp-trust li, .ecn-lp-trust li:first-child, .ecn-lp-trust li:last-child{ flex-direction:column; justify-content:flex-start; gap:4px; padding:0 4px; font-size:12px; text-align:center; white-space:normal; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-info .ecn-pdp-title{ font-size:30px !important; }
+}
