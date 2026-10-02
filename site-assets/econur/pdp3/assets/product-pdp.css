@@ -1139,3 +1139,7 @@ body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ 
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ flex:0 0 156px; min-height:118px; }
   body.single-product .ecn-pdp .ecn-lp-extra{ margin-top:12px; }
 }
+@media (max-width:430px){
+  body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ gap:6px; padding:0 8px !important; font-size:14.5px !important; white-space:nowrap; }
+  body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa svg{ width:18px; height:18px; }
+}
