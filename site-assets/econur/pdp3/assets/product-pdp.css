@@ -1786,3 +1786,11 @@ body.single-product .ecn-pdp .ecn-rv-formbody h3{ margin:0 0 12px !important; fo
   .ecn-rv-items{ grid-template-columns:minmax(0,1fr); gap:12px; }
   .ecn-rv-item{ padding:16px; }
 }
+
+/* v7.12.2: Cancel, secondary to Submit Review */
+.econur-reviews-section .ecn-rv-form .form-submit{ display:flex; align-items:center; flex-wrap:wrap; gap:6px 18px; }
+.econur-reviews-section .ecn-rv-cancel{ -webkit-appearance:none; appearance:none; height:44px; margin:0; padding:0 6px !important; border:0 !important; background:none !important; color:#4E6B63 !important; font-size:15px !important; font-weight:600 !important; text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.econur-reviews-section .ecn-rv-cancel:hover{ color:#0F4C4F !important; }
+.econur-reviews-section .ecn-rv-cancel:focus-visible{ outline:2px solid #0F4C4F; outline-offset:2px; border-radius:6px; }
+html:not(.ecn-js) .econur-reviews-section .ecn-rv-cancel{ display:none; }
+@media (max-width:599px){ .econur-reviews-section .ecn-rv-form .form-submit{ flex-direction:column; align-items:stretch; } .econur-reviews-section .ecn-rv-cancel{ width:100%; } }

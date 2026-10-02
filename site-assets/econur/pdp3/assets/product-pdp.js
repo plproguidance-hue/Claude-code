@@ -158,6 +158,16 @@
       if (!rvSec || !rvCard || rvSec.classList.contains('is-open')) return;
       rvSec.classList.add('is-open'); rvBtns.forEach(function (b) { b.setAttribute('aria-expanded', 'true'); });
     }
+    // Cancel: back to the invitation (no reviews yet) or to the summary (reviews exist); nothing outside this section changes
+    function rvClose() {
+      if (!rvSec || !rvSec.classList.contains('is-open')) return;
+      rvSec.classList.remove('is-open'); rvBtns.forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+      document.body.classList.remove('ecn-rv-typing');
+      var back = rvSec.querySelector('.ecn-rv-invite, .ecn-rv-summary') || rvSec;
+      back.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      var w = rvSec.querySelector('[data-ecn-rv-write]'); if (w) setTimeout(function () { w.focus({ preventScroll: true }); }, reduce ? 0 : 350);
+    }
+    rvSec && rvSec.querySelectorAll('[data-ecn-rv-cancel]').forEach(function (b) { b.addEventListener('click', rvClose); });
     function rvGo(rate) {
       if (!rvCard) { if (rvSec) rvSec.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
       rvOpen();

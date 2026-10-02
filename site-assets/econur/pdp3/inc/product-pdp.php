@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.12.1';
+const ECONUR_PDP_VER = '7.12.2';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -772,7 +772,7 @@ function econur_lp_reviews($product) {
     if ($can) {
         $stars = '';
         for ($st = 1; $st <= 5; $st++) $stars .= '<input type="radio" id="ecn-rv-r' . $st . '" name="rating" value="' . $st . '" form="commentform"><label for="ecn-rv-r' . $st . '" title="' . esc_attr($st . ' out of 5') . '">' . econur_lp_rv_star() . econur_lp_rv_star(true) . '<span class="screen-reader-text">' . esc_html(sprintf(_n('%d star', '%d stars', $st), $st)) . '</span></label>';
-        $ph = 'Share your experience with the ' . $name . "...\nWhat did you like? How did it work for " . ($skin ? 'your skin?' : 'you?');
+        $ph = 'Share your experience with the ' . $name . "...\nWhat did you like? How did it work for you?";
         $commenter = wp_get_current_commenter();
         $args = array(
             'title_reply' => '', 'title_reply_to' => '', 'title_reply_before' => '', 'title_reply_after' => '', 'cancel_reply_before' => '', 'cancel_reply_after' => '',
@@ -788,7 +788,7 @@ function econur_lp_reviews($product) {
             'submit_field' => ($photos ? '<div class="ecn-rv-photos"><span class="ecn-rv-photos-ic">' . econur_lp_icon('camera') . '</span><div class="ecn-rv-photos-tx"><b>Add photos (optional)</b><span>Show how you use the product or your results.</span><span class="screen-reader-text">Up to 3 photos, JPG, PNG or WebP, 5 MB each.</span><ul class="ecn-rv-thumbs" aria-live="polite"></ul><span class="ecn-rv-err" data-for="photos" hidden></span></div>'
                 . '<label class="ecn-rv-pick" title="Up to 3 photos: JPG, PNG or WebP, 5 MB each">' . econur_lp_icon('image') . '<span>Choose Photos</span><input type="file" name="ecn_review_photos[]" accept="image/jpeg,image/png,image/webp" multiple class="ecn-rv-file"></label></div>' : '')
                 . '<p class="ecn-rv-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="ecn_rv_hp" value="" tabindex="-1" autocomplete="off"></label></p>'
-                . '<p class="form-submit">%1$s %2$s</p>',
+                . '<p class="form-submit">%1$s <button type="button" class="ecn-rv-cancel" data-ecn-rv-cancel>Cancel</button> %2$s</p>',
         );
         ob_start(); comment_form(apply_filters('econur_review_form_args', $args), $id); $form = ob_get_clean();
         // inline messages instead of the browser's own bubbles (the page script checks every field; the server checks again)
@@ -803,7 +803,7 @@ function econur_lp_reviews($product) {
         $summary .= '<p class="ecn-rv-note ecn-rv-closed">Reviews are open to customers who have purchased this product.</p>';
     }
 
-    echo '<section class="ecn-lp-sec ecn-lp-reviews ecn-rv' . ($rc > 0 ? ' has-reviews' : ' no-reviews') . '" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">'
+    echo '<section class="ecn-lp-sec ecn-lp-reviews ecn-rv econur-reviews-section' . ($rc > 0 ? ' has-reviews' : ' no-reviews') . '" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">'
         . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--tr')
         . econur_lp_fleaf('is-a') . econur_lp_fleaf('is-b') . econur_lp_fleaf('is-c')
         . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . ($rc > 0 ? 'Real stories. Real results.' : 'Your experience matters') . '</span><h2 class="ecn-lp-h2" id="ecn-lp-rv-t">Loved by Customers</h2>'
