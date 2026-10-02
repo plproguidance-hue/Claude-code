@@ -1,8 +1,10 @@
 <?php
 /**
  * ECONUR locale layer: English for identity, Bangla for buying and guidance.
- *  - Hind Siliguri for Bengali characters (Google Fonts, 400 and 600 only, about 72 KB each; only the Bengali subset is
- *    downloaded). Latin text inside Bangla lines keeps DM Sans, so product names, WhatsApp and prices look the same as everywhere else (see assets/econur-ui.css, section 7).
+ *  - the site's fonts in one Google Fonts request: Inter 400/500/600/700 (English interface and copy), Hind Siliguri 400/600
+ *    (Bengali characters; only the Bengali subset is downloaded) and Fraunces (a few display headings). Latin text inside
+ *    Bangla lines uses Inter, so product names, WhatsApp and prices look the same as everywhere else
+ *    (see assets/econur-ui.css, sections 7 and 9). Elementor's own Google Fonts (unused Roboto) are not loaded.
  *  - helpers that tag Bangla strings with lang="bn" (screen readers, line breaking, the Bangla type tokens)
  *  - Bangla product-page copy: a product meta "<key>_bn" (for example econur_how_steps_bn) is used on the product page
  *    instead of the English "<key>" when it is filled in. The English field stays as it is (admin, feeds, homepage).
@@ -10,7 +12,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_LOCALE_VER = '1.0.1';
+const ECONUR_LOCALE_VER = '1.1.0';
 
 function econur_has_bn($s) { return (bool) preg_match('/[\x{0980}-\x{09FF}]/u', (string) $s); }
 // ' lang="bn"' for a string that contains Bangla, '' otherwise
@@ -61,8 +63,11 @@ function econur_bn_skin_list($skins) {
 
 /* ---------------------------------------------------------------- font */
 add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style('econur-bn-font', 'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap', array(), null);
+    wp_enqueue_style('econur-fonts', 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600'
+        . '&family=Hind+Siliguri:wght@400;600&family=Inter:wght@400;500;600;700&display=swap', array(), null);
 }, 5);
+// the homepage's Elementor kit asks for every Roboto and Roboto Slab weight; no element uses them (the theme sets its own fonts)
+add_filter('elementor/frontend/print_google_fonts', '__return_false');
 add_filter('wp_resource_hints', function ($urls, $rel) {
     if ('preconnect' === $rel && !is_admin()) {
         $urls[] = 'https://fonts.googleapis.com';

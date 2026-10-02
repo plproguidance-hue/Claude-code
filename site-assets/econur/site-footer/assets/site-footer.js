@@ -24,7 +24,9 @@
     var targets = [].slice.call(document.querySelectorAll(AVOID)), queued = false, away = false;
     function check() {
       queued = false;
-      var b = fab.getBoundingClientRect(), shift = away ? 12 : 0, hit = false; // measure from the resting place
+      // measure from the resting place: subtract the slide-away offset actually applied (it is partial while the button animates)
+      var b = fab.getBoundingClientRect(), shift = away ? 12 : 0, hit = false;
+      if (window.DOMMatrixReadOnly) { var tf = getComputedStyle(fab).transform; shift = tf && tf !== 'none' ? new DOMMatrixReadOnly(tf).m42 : 0; }
       var f = { left: b.left, right: b.right, top: b.top - shift, bottom: b.bottom - shift, width: b.width };
       if (f.width) {
         for (var i = 0; i < targets.length && !hit; i++) {
