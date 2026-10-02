@@ -1,0 +1,106 @@
+/* ECONUR UI consistency layer 1.0
+   Loaded on every page, printed after the theme, Elementor, plugin and Customizer CSS. Polish only: it aligns
+   eyebrows, button sizes, small labels and heading sizes across the homepage, product pages and shared sections.
+   Remove this file to return to the previous look. */
+
+/* ---------- 1. Eyebrow: one pale-green pill everywhere (same as the product-page kicker); the locked
+   "What customers say" eyebrow keeps its approved centred text-with-lines treatment ---------- */
+html body .ecn-sec-sale .ecn-fp-eyebrow,
+html body .ecn-fy .ecn-fy-eyebrow,
+html body .ehc .ehc-eyebrow{
+  display:flex; width:-moz-fit-content; width:fit-content; max-width:100%; align-items:center; gap:8px;
+  height:32px; padding:0 16px; border-radius:999px; background:#E2EEDF; color:#25694B;
+  font-size:13px; font-weight:700; line-height:1; letter-spacing:.09em; text-transform:uppercase; white-space:nowrap;
+}
+html body .ecn-sec-sale .ecn-fp-eyebrow{ margin:0 0 12px; }
+html body .ecn-fy .ecn-fy-eyebrow{ margin:0 0 12px; }
+html body .ehc .ehc-eyebrow{ margin:0 auto 14px !important; }
+/* the thin side lines become the leaf icon used by the product-page kicker */
+html body .ecn-sec-sale .ecn-fp-eyebrow::before,
+html body .ecn-fy .ecn-fy-eyebrow::before,
+html body .ehc .ehc-eyebrow::before{
+  content:""; flex:none; width:16px; height:16px; margin:0; opacity:1; background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z'/%3E%3Cpath d='M2 21c0-3 1.9-5.5 5-6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z'/%3E%3Cpath d='M2 21c0-3 1.9-5.5 5-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+html body .ecn-sec-sale .ecn-fp-eyebrow::after,
+html body .ecn-fy .ecn-fy-eyebrow::after,
+html body .ehc .ehc-eyebrow::after{ content:none; display:none; }
+/* phones: the Featured eyebrow may run under the arrow buttons' column (as before) instead of pushing them off screen */
+@media (max-width:699px){ html body .ecn-sec-sale .ecn-fp-eyebrow{ max-width:none; margin-right:-96px !important; } }
+@media (max-width:767px){
+  html body .ecn-sec-sale .ecn-fp-eyebrow,
+  html body .ecn-fy .ecn-fy-eyebrow,
+  html body .ehc .ehc-eyebrow{ height:28px; padding:0 12px; gap:7px; font-size:11.5px; letter-spacing:.09em; }
+  html body .ecn-sec-sale .ecn-fp-eyebrow{ margin:0 0 10px; }
+  html body .ecn-fy .ecn-fy-eyebrow{ margin:0 0 10px; }
+  html body .ehc .ehc-eyebrow{ margin:0 auto 12px !important; }
+  html body .ecn-sec-sale .ecn-fp-eyebrow::before,
+  html body .ecn-fy .ecn-fy-eyebrow::before,
+  html body .ehc .ehc-eyebrow::before{ width:14px; height:14px; }
+}
+
+/* ---------- 2. Headings: section titles stay within 36-46px on desktop, no stranded last words ---------- */
+html body :is(h1, h2, h3){ text-wrap:balance; }
+html body :is(.ecn-lp-lead, .ehc-sub, .enr-rv-sub, .ecn-sh-sub, .ecn-fy-sub, .ecn-finder-lead, .ecn-help-lead){ text-wrap:pretty; }
+@media (min-width:1000px){
+  html body .enr-rv .enr-rv-title{ font-size:44px !important; line-height:1.08 !important; }
+  html body .ehc .ehc-title{ font-size:44px !important; }
+}
+@media (min-width:1200px){
+  html body .enr-rv .enr-rv-title{ font-size:46px !important; }
+  html body .ehc .ehc-title{ font-size:46px !important; }
+}
+
+/* ---------- 3. Small labels: nothing under 10px; card meta at 11px ---------- */
+html body .ecn-sec-sale .ecn-sb-u small{ font-size:10px; letter-spacing:.1em; }
+html body .ecn-sec-sale .ecn-fp-skin{ font-size:11px; letter-spacing:.06em; }
+html body .enr-rv-buy-eyebrow{ font-size:11px; }
+html body .ecn-sec-sale .ecn-sb-lbl{ font-size:11.5px; }
+@media (max-width:1023px){
+  html body .ecn-hx-eyebrow{ font-size:11.5px; }
+}
+@media (max-width:767px){ html body .ecn-sec-sale .ecn-fp-badge{ font-size:11px; } }
+
+/* ---------- 4. Buttons: primary = teal pill 48-52px, secondary = cream pill with teal outline ---------- */
+/* homepage hero: same pill as every other primary button */
+html body .ecn-hx-cta{ min-height:50px; padding:0 26px; border-radius:999px; font-size:15px; letter-spacing:0; text-transform:none; }
+/* bestseller cards */
+html body .woocommerce ul.products li.product .ecn-pc-btn, html body .ecn-pc-btn{ min-height:48px; }
+/* featured cards */
+html body .ecn-sec-sale .ecn-fp-add{ height:48px; font-size:14.5px; }
+/* "Shop all" next to the Bestsellers title: secondary outline */
+html body .ecn-sh-link{ min-height:44px; padding:0 16px; border:1.5px solid #0D585F; background:#FFFDF9; color:#0D585F !important; font-size:14px; transition:background-color .2s ease; }
+html body .ecn-sh-link svg{ transition:transform .2s ease; }
+@media (hover:hover){
+  html body .ecn-sh-link:hover{ background:#EEF4F2; }
+  html body .ecn-sh-link:hover svg{ transform:translateX(2px); }
+}
+/* homepage closing call to action and footer: 52px like the product page */
+@media (min-width:700px){ html body .ehc .ehc-btn{ min-height:52px; } }
+@media (min-width:768px){ html body .ecnf .ecnf-wa{ min-height:52px; } }
+@media (max-width:767px){
+  html body .ecn-hx-cta{ min-height:48px; padding:0 22px; font-size:14.5px; }
+  html body .ecn-sec-sale .ecn-fp-add{ height:48px; font-size:14px; }
+  html body .ecn-sec-sale .ecn-sb-cta{ min-height:48px; }
+}
+@media (max-width:1023px){ html body .ecn-fy .ecn-fy-cta{ min-height:48px; } }
+/* pressed state on touch screens */
+@media (hover:none){
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-sh-link, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view, .ecn-sbar-btn){ transition:transform .12s ease, background-color .2s ease; }
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-sh-link, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view, .ecn-sbar-btn):active{ transform:scale(.98); }
+}
+@media (prefers-reduced-motion:reduce){
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-sh-link, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view, .ecn-sbar-btn):active{ transform:none; }
+}
+
+/* ---------- 5. Tap targets on phones ---------- */
+html body .ecn-pc-more{ position:relative; }
+html body .ecn-pc-more::after{ content:""; position:absolute; inset:-13px -12px; }
+
+/* ---------- 6. Floating WhatsApp: steps aside while it would sit on a button, an accordion, an arrow or the footer
+   (site-footer.js adds .is-away; the button keeps its place in the tab order) ---------- */
+html body .ecn-wa-float{ transition:opacity .2s ease, transform .2s ease; }
+html body .ecn-wa-float.is-away{ opacity:0 !important; transform:translateY(12px) !important; pointer-events:none !important; }
+html body .ecn-wa-float.is-away:focus-visible{ opacity:1 !important; transform:none !important; pointer-events:auto !important; }
+@media (prefers-reduced-motion:reduce){ html body .ecn-wa-float{ transition:none; } }
