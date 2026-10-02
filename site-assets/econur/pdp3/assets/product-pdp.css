@@ -1794,3 +1794,87 @@ body.single-product .ecn-pdp .ecn-rv-formbody h3{ margin:0 0 12px !important; fo
 .econur-reviews-section .ecn-rv-cancel:focus-visible{ outline:2px solid #0F4C4F; outline-offset:2px; border-radius:6px; }
 html:not(.ecn-js) .econur-reviews-section .ecn-rv-cancel{ display:none; }
 @media (max-width:599px){ .econur-reviews-section .ecn-rv-form .form-submit{ flex-direction:column; align-items:stretch; } .econur-reviews-section .ecn-rv-cancel{ width:100%; } }
+
+/* ===================== v7.13: real-review state, locked layout (summary card, three review cards, View All Reviews) ===================== */
+.econur-reviews-section .ecn-rv-summary{ display:grid; grid-template-columns:minmax(0,.84fr) minmax(0,1fr) minmax(0,.82fr); column-gap:0; align-items:stretch; max-width:1232px; margin:0 auto; padding:26px 0; border-radius:20px; }
+.econur-reviews-section .ecn-rv-score{ display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:0 34px 0 78px; text-align:left; }
+.econur-reviews-section .ecn-rv-avg{ display:flex; align-items:baseline; gap:12px; margin:0 !important; font-size:28px; line-height:1; color:#33403B; }
+.econur-reviews-section .ecn-rv-avg b{ font-family:inherit; font-size:58px; font-weight:700; letter-spacing:-.02em; color:#0F3F3E; }
+.econur-reviews-section .ecn-rv-score .ecn-stars{ margin-top:14px; font-size:38px; letter-spacing:4px; line-height:1; }
+.econur-reviews-section .ecn-rv-based{ margin:14px 0 0 !important; font-size:17px; color:#3E433D; }
+.econur-reviews-section .ecn-rv-dist{ display:grid; align-content:center; gap:11px; margin:0 !important; padding:0 44px !important; border-left:1px solid #EAE5D9; border-top:0; list-style:none !important; }
+.econur-reviews-section .ecn-rv-dist li{ display:grid; grid-template-columns:40px minmax(0,1fr) 48px; align-items:center; gap:14px; margin:0 !important; font-size:16.5px; color:#33403B; }
+.econur-reviews-section .ecn-rv-dist li > span i{ font-style:normal; color:#2E3A35; }
+.econur-reviews-section .ecn-rv-bar{ height:12px; border-radius:99px; background:#ECEFE6; overflow:hidden; }
+.econur-reviews-section .ecn-rv-bar b{ display:block; height:100%; border-radius:99px; background:#1E6F55; }
+.econur-reviews-section .ecn-rv-dist em{ font-style:normal; text-align:left; color:#33403B; }
+.econur-reviews-section .ecn-rv-sum-cta{ display:flex; align-items:center; justify-content:center; padding:0 34px; border-left:1px solid #EAE5D9; }
+.econur-reviews-section .ecn-rv-sum-cta .ecn-rv-write{ width:298px; max-width:100%; height:76px; gap:14px; font-size:21px !important; box-shadow:0 10px 24px rgba(15,76,79,.2); }
+.econur-reviews-section .ecn-rv-sum-cta .ecn-rv-write svg{ width:23px; height:23px; }
+/* review cards */
+.econur-reviews-section .ecn-rv-items{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:22px; max-width:1314px; margin:20px auto 0; }
+.econur-reviews-section .ecn-rv-items.n1{ grid-template-columns:minmax(0,424px); justify-content:center; }
+.econur-reviews-section .ecn-rv-items.n2{ grid-template-columns:repeat(2, minmax(0,424px)); justify-content:center; }
+.econur-reviews-section .ecn-rv-item{ display:flex; flex-direction:column; gap:0; padding:30px 32px 26px; border:1px solid #ECE5D7; border-radius:18px; background:#FFFEFB; box-shadow:0 10px 28px rgba(52,44,30,.05); }
+.econur-reviews-section .ecn-rv-item header{ display:flex; align-items:center; gap:22px; }
+.econur-reviews-section .ecn-rv-av{ display:grid; place-items:center; flex:none; width:62px; height:62px; border-radius:50%; background:#E7F0E8; color:#1E5F4E; font-size:22px; font-weight:600; letter-spacing:.02em; }
+.econur-reviews-section .ecn-rv-item header > div{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+.econur-reviews-section .ecn-rv-item header b{ font-size:18.5px; font-weight:700; color:#17302B; }
+.econur-reviews-section .ecn-rv-ver{ display:inline-flex; align-items:center; gap:6px; font-size:14.5px; font-weight:500; color:#2C7A55; }
+.econur-reviews-section .ecn-rv-ver svg{ width:17px; height:17px; padding:3px; border-radius:50%; background:#2C8A55; color:#fff; stroke-width:3.2; }
+.econur-reviews-section .ecn-rv-item-stars{ display:flex; gap:5px; margin:20px 0 14px; color:#F2A81D; }
+.econur-reviews-section .ecn-rv-item-stars svg{ width:27px; height:27px; }
+.econur-reviews-section .ecn-rv-item-tx{ font-size:18px; line-height:1.45; color:#3A403C; }
+.econur-reviews-section .ecn-rv-item-tx p{ margin:0 0 8px !important; }
+.econur-reviews-section .ecn-rv-item-tx.is-long:not(.is-open){ -webkit-line-clamp:7; }
+.econur-reviews-section .ecn-rv-readmore{ margin-top:2px; font-size:15px !important; }
+.econur-reviews-section .ecn-rv-item footer{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:auto; padding-top:18px; }
+.econur-reviews-section .ecn-rv-pics{ display:flex; gap:12px; overflow-x:auto; }
+.econur-reviews-section .ecn-rv-pics a{ flex:none; display:block; }
+.econur-reviews-section .ecn-rv-pics img{ display:block; width:128px; height:124px; border-radius:8px; object-fit:cover; }
+.econur-reviews-section .ecn-rv-item time{ font-size:15px; color:#4E534D; }
+/* View All Reviews */
+.econur-reviews-section .ecn-rv-more{ -webkit-appearance:none; appearance:none; display:flex; align-items:center; justify-content:center; gap:12px; min-width:278px; height:56px; margin:28px auto 0; padding:0 30px !important; border:1.5px solid #0F4C4F !important; border-radius:999px !important; background:#FFFEFB !important; color:#0F4C4F !important; font-size:18px !important; font-weight:600 !important; cursor:pointer; transition:background-color .15s ease; }
+.econur-reviews-section .ecn-rv-more:hover{ background:#F0F6F3 !important; }
+.econur-reviews-section .ecn-rv-more svg{ width:20px; height:20px; stroke-width:2; }
+.econur-reviews-section .ecn-rv-more[hidden]{ display:none; }
+
+@media (min-width:1200px) and (max-width:1380px){
+  .econur-reviews-section .ecn-rv-score{ padding-left:48px; }
+  .econur-reviews-section .ecn-rv-dist{ padding:0 32px !important; }
+  .econur-reviews-section .ecn-rv-item{ padding:26px 26px 22px; }
+  .econur-reviews-section .ecn-rv-item-tx{ font-size:17px; }
+  .econur-reviews-section .ecn-rv-pics img{ width:112px; height:108px; }
+}
+/* tablet: summary in two rows, cards two then one */
+@media (max-width:1199px){
+  .econur-reviews-section .ecn-rv-summary{ grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); row-gap:22px; max-width:860px; padding:24px 0; }
+  .econur-reviews-section .ecn-rv-score{ padding:0 28px 0 40px; }
+  .econur-reviews-section .ecn-rv-dist{ padding:0 36px !important; }
+  .econur-reviews-section .ecn-rv-sum-cta{ grid-column:1 / -1; padding:20px 28px 0; border-left:0; border-top:1px solid #EAE5D9; }
+  .econur-reviews-section .ecn-rv-items, .econur-reviews-section .ecn-rv-items.n2{ grid-template-columns:repeat(2, minmax(0,1fr)); max-width:860px; }
+  .econur-reviews-section .ecn-rv-items.n1{ grid-template-columns:minmax(0,424px); }
+}
+/* phones: one summary card (score, bars, button), then one review card per row */
+@media (max-width:767px){
+  .econur-reviews-section .ecn-rv-summary{ grid-template-columns:minmax(0,1fr); padding:22px 0 20px; }
+  .econur-reviews-section .ecn-rv-score{ align-items:center; padding:0 20px 18px; text-align:center; }
+  .econur-reviews-section .ecn-rv-avg b{ font-size:50px; }
+  .econur-reviews-section .ecn-rv-avg{ font-size:24px; }
+  .econur-reviews-section .ecn-rv-score .ecn-stars{ font-size:32px; }
+  .econur-reviews-section .ecn-rv-based{ font-size:15.5px; }
+  .econur-reviews-section .ecn-rv-dist{ padding:18px 20px 0 !important; border-left:0; border-top:1px solid #EAE5D9; gap:10px; }
+  .econur-reviews-section .ecn-rv-dist li{ grid-template-columns:36px minmax(0,1fr) 44px; font-size:15px; gap:10px; }
+  .econur-reviews-section .ecn-rv-sum-cta{ padding:20px 20px 0; border-top:0; }
+  .econur-reviews-section .ecn-rv-sum-cta .ecn-rv-write{ width:100%; height:58px; font-size:18px !important; }
+  .econur-reviews-section .ecn-rv-items, .econur-reviews-section .ecn-rv-items.n1, .econur-reviews-section .ecn-rv-items.n2{ grid-template-columns:minmax(0,1fr); gap:14px; margin-top:14px; }
+  .econur-reviews-section .ecn-rv-item{ padding:22px 20px 20px; }
+  .econur-reviews-section .ecn-rv-av{ width:54px; height:54px; font-size:19px; }
+  .econur-reviews-section .ecn-rv-item header{ gap:16px; }
+  .econur-reviews-section .ecn-rv-item-stars{ margin:16px 0 12px; }
+  .econur-reviews-section .ecn-rv-item-stars svg{ width:25px; height:25px; }
+  .econur-reviews-section .ecn-rv-item-tx{ font-size:16.5px; }
+  .econur-reviews-section .ecn-rv-pics img{ width:104px; height:100px; }
+  .econur-reviews-section .ecn-rv-item footer{ flex-wrap:wrap; }
+  .econur-reviews-section .ecn-rv-more{ width:100%; min-width:0; height:54px; font-size:17px !important; }
+}

@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.12.2';
+const ECONUR_PDP_VER = '7.13.0';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -737,7 +737,7 @@ function econur_lp_reviews($product) {
             . '</div>';
     }
 
-    /* state 3: real reviews, real summary */
+    /* state 3: real reviews, real summary (approved layout: summary card, three cards, View All Reviews) */
     $summary = ''; $list = '';
     if ($rc > 0) {
         $counts = $product->get_rating_counts(); $bars = '';
@@ -745,18 +745,22 @@ function econur_lp_reviews($product) {
         $all = get_comments(array('post_id' => $id, 'status' => 'approve', 'type' => 'review', 'parent' => 0, 'number' => 60));
         $verified = 0; $cards = '';
         foreach ($all as $k => $c) {
-            $r = (int) get_comment_meta($c->comment_ID, 'rating', true); $nm = get_comment_author($c);
+            $r = (int) get_comment_meta($c->comment_ID, 'rating', true); $nm = trim(get_comment_author($c));
             $ver = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID);
             if ($ver) $verified++;
-            $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($nm), 0, 1)) : strtoupper(substr(trim($nm), 0, 1));
-            $txt = trim(wp_strip_all_tags(get_comment_text($c))); $long = (function_exists('mb_strlen') ? mb_strlen($txt) : strlen($txt)) > 240;
+            // initials from the reviewer's own name (no portraits are made up)
+            $parts = preg_split('/\s+/u', $nm); $ini = '';
+            foreach (array($parts[0], count($parts) > 1 ? end($parts) : '') as $w) if ('' !== $w) $ini .= function_exists('mb_substr') ? mb_strtoupper(mb_substr($w, 0, 1)) : strtoupper(substr($w, 0, 1));
+            $txt = trim(wp_strip_all_tags(get_comment_text($c))); $long = (function_exists('mb_strlen') ? mb_strlen($txt) : strlen($txt)) > 300;
             $pics = '';
-            foreach (array_filter(array_map('intval', (array) get_comment_meta($c->comment_ID, 'ecn_review_photos', true))) as $pid) {
-                if (wp_attachment_is_image($pid)) $pics .= '<a href="' . esc_url(wp_get_attachment_image_url($pid, 'large')) . '" target="_blank" rel="noopener">' . wp_get_attachment_image($pid, 'thumbnail', false, array('loading' => 'lazy', 'decoding' => 'async', 'alt' => 'Photo from ' . $nm)) . '</a>';
+            foreach (array_slice(array_filter(array_map('intval', (array) get_comment_meta($c->comment_ID, 'ecn_review_photos', true))), 0, 3) as $pid) {
+                if (wp_attachment_is_image($pid)) $pics .= '<a href="' . esc_url(wp_get_attachment_image_url($pid, 'large')) . '" target="_blank" rel="noopener">' . wp_get_attachment_image($pid, 'medium', false, array('loading' => 'lazy', 'decoding' => 'async', 'alt' => 'Photo from ' . $nm, 'sizes' => '140px')) . '</a>';
             }
-            $cards .= '<article class="ecn-rv-item" id="comment-' . esc_attr($c->comment_ID) . '"' . ($k >= 6 ? ' hidden' : '') . '><header><span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div><b>' . esc_html($nm) . '</b>'
-                . ($ver ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '') . '</div></header>'
-                . ($r ? '<div class="ecn-rv-item-stars">' . econur_lp_stars($r * 20, sprintf('Rated %d out of 5', $r)) . '</div>' : '')
+            $stars = '';
+            for ($i = 1; $i <= 5; $i++) $stars .= econur_lp_rv_star($i <= $r);
+            $cards .= '<article class="ecn-rv-item" id="comment-' . esc_attr($c->comment_ID) . '"' . ($k >= 3 ? ' hidden' : '') . '><header><span class="ecn-rv-av" aria-hidden="true">' . esc_html($ini) . '</span><div><b>' . esc_html($nm) . '</b>'
+                . ($ver ? '<span class="ecn-rv-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '') . '</div></header>'
+                . ($r ? '<div class="ecn-rv-item-stars" role="img" aria-label="' . esc_attr(sprintf('Rated %d out of 5', $r)) . '">' . $stars . '</div>' : '')
                 . '<div class="ecn-rv-item-tx' . ($long ? ' is-long' : '') . '">' . wpautop(esc_html($txt)) . '</div>' . ($long ? '<button type="button" class="ecn-rv-readmore" aria-expanded="false">Read more</button>' : '')
                 . '<footer>' . ($pics ? '<div class="ecn-rv-pics">' . $pics . '</div>' : '<span></span>') . '<time datetime="' . esc_attr(get_comment_date('c', $c)) . '">' . esc_html(get_comment_date('M j, Y', $c)) . '</time></footer></article>';
         }
@@ -764,7 +768,8 @@ function econur_lp_reviews($product) {
         $based = 'Based on ' . number_format_i18n($rc) . ' ' . ($verified && $verified === $n && $n === $rc ? 'verified ' : '') . (1 === $rc ? 'review' : 'reviews');
         $summary = '<div class="ecn-rv-card ecn-rv-summary"><div class="ecn-rv-score"><p class="ecn-rv-avg"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b> out of 5</p>' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1)))
             . '<p class="ecn-rv-based">' . esc_html($based) . '</p></div><ul class="ecn-rv-dist" aria-label="Rating distribution">' . $bars . '</ul>' . ($can ? '<div class="ecn-rv-sum-cta">' . $write() . '</div>' : '') . '</div>';
-        $list = '<div class="ecn-rv-items" id="ecn-rv-list">' . $cards . '</div>' . ($n > 6 ? '<button type="button" class="ecn-lp-btn-o ecn-rv-more" aria-controls="ecn-rv-list" aria-expanded="false">Show all ' . esc_html(number_format_i18n($n)) . ' reviews</button>' : '');
+        $list = '<div class="ecn-rv-items n' . min(3, $n) . '" id="ecn-rv-list">' . $cards . '</div>'
+            . ($n > 3 ? '<button type="button" class="ecn-rv-more" aria-controls="ecn-rv-list" aria-expanded="false"><span>View All Reviews (' . esc_html(number_format_i18n($rc)) . ')</span>' . econur_pdp_icon('next') . '</button>' : '');
     }
 
     /* state 2: the review form (WordPress / WooCommerce comment form), opened by Write a Review */
