@@ -187,7 +187,7 @@
     page.querySelectorAll('.ecn-rv-readmore').forEach(function (b) { b.addEventListener('click', function () { var t = b.previousElementSibling, on = !t.classList.contains('is-open'); t.classList.toggle('is-open', on); b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.textContent = on ? 'Show less' : 'Read more'; }); });
     page.querySelectorAll('.ecn-rv-stars input').forEach(function (r) { r.addEventListener('change', function () { rvErr('rating', false); }); });
     var rvMore = page.querySelector('.ecn-rv-more');
-    if (rvMore) rvMore.addEventListener('click', function () { page.querySelectorAll('.ecn-rv-item[hidden]').forEach(function (it) { it.hidden = false; }); rvMore.setAttribute('aria-expanded', 'true'); rvMore.hidden = true; });
+    if (rvMore) rvMore.addEventListener('click', function () { var first = null; page.querySelectorAll('.ecn-rv-item[hidden]').forEach(function (it) { it.hidden = false; if (!first) first = it; }); rvMore.setAttribute('aria-expanded', 'true'); rvMore.hidden = true; if (first) { first.setAttribute('tabindex', '-1'); first.focus({ preventScroll: true }); } });
     if (rvForm && rvCard) {
       var ta = rvForm.querySelector('#comment'), cnt = rvForm.querySelector('.ecn-rv-count b');
       if (ta && cnt) { var upd = function () { cnt.textContent = ta.value.length; if (ta.value.trim()) rvErr('comment', false); }; ta.addEventListener('input', upd); upd(); }

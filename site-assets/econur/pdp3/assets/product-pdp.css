@@ -1886,3 +1886,6 @@ html:not(.ecn-js) .econur-reviews-section .ecn-rv-cancel{ display:none; }
 .econur-reviews-section .ecn-rv-based{ margin-top:12px !important; }
 .econur-reviews-section .ecn-lp-kicker svg path:first-child{ fill:currentColor; }
 @media (max-width:767px){ .econur-reviews-section .ecn-rv-dist{ gap:9px; } }
+/* v7.13 extra cards stay collapsed until "View All Reviews" (JS only; without JS every review shows and the button is hidden) */
+html.ecn-js .econur-reviews-section .ecn-rv-item[hidden]{ display:none; }
+html:not(.ecn-js) .econur-reviews-section .ecn-rv-more{ display:none; }
