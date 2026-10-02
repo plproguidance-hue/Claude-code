@@ -739,7 +739,7 @@ function econur_lp_reviews($product) {
     $formcard = '';
     if ($can) {
         $stars = '';
-        for ($st = 5; $st >= 1; $st--) $stars .= '<input type="radio" id="ecn-rv-r' . $st . '" name="rating" value="' . $st . '" form="commentform"><label for="ecn-rv-r' . $st . '" title="' . esc_attr($st . ' out of 5') . '">' . econur_lp_rv_star() . econur_lp_rv_star(true) . '<span class="screen-reader-text">' . esc_html(sprintf(_n('%d star', '%d stars', $st), $st)) . '</span></label>';
+        for ($st = 1; $st <= 5; $st++) $stars .= '<input type="radio" id="ecn-rv-r' . $st . '" name="rating" value="' . $st . '" form="commentform"><label for="ecn-rv-r' . $st . '" title="' . esc_attr($st . ' out of 5') . '">' . econur_lp_rv_star() . econur_lp_rv_star(true) . '<span class="screen-reader-text">' . esc_html(sprintf(_n('%d star', '%d stars', $st), $st)) . '</span></label>';
         $ph = 'Share your experience with the ' . $name . "...\nWhat did you like? How did it work for " . ($skin ? 'your skin?' : 'you?');
         $req = '<span class="required" aria-hidden="true">*</span>';
         $args = array(
@@ -757,6 +757,8 @@ function econur_lp_reviews($product) {
                 . '<p class="form-submit">%1$s %2$s</p>',
         );
         ob_start(); comment_form(apply_filters('econur_review_form_args', $args), $id); $form = ob_get_clean();
+        // inline messages instead of the browser's own bubbles (the page script checks every field; the server checks again)
+        $form = preg_replace('/<form(?![^>]*novalidate)/', '<form novalidate', $form, 1);
         if ($photos) $form = preg_replace('/<form(?![^>]*enctype)/', '<form enctype="multipart/form-data"', $form, 1);
         $img = econur_lp_card_img($product, 'medium_large', '(min-width: 900px) 420px, calc(100vw - 64px)', '');
         $formcard = '<div class="ecn-rv-card ecn-rv-formcard" id="ecn-rv-form">'

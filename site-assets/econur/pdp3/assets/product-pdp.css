@@ -1590,7 +1590,7 @@ body.single-product .ecn-pdp .ecn-rv{ position:relative; isolation:isolate; marg
 body.single-product .ecn-pdp .ecn-rv::before{ content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; width:100vw; transform:translateX(-50%);
   background:radial-gradient(60% 70% at 8% 10%, rgba(214,231,205,.55) 0%, rgba(214,231,205,0) 70%), radial-gradient(55% 65% at 94% 12%, rgba(214,231,205,.5) 0%, rgba(214,231,205,0) 70%), radial-gradient(70% 60% at 50% 100%, rgba(226,238,220,.6) 0%, rgba(226,238,220,0) 70%), linear-gradient(180deg, #F7F7EF 0%, #FAF8F1 100%); }
 body.single-product .ecn-pdp .ecn-rv > *:not(.ecn-lp-art):not(.ecn-lp-fleaf){ position:relative; z-index:1; }
-body.single-product .ecn-pdp .ecn-rv .ecn-rv-art{ position:absolute; z-index:0; opacity:.8; filter:saturate(.85) contrast(.92) brightness(1.04); -webkit-mask-image:none; mask-image:none; pointer-events:none; }
+body.single-product .ecn-pdp .ecn-rv .ecn-rv-art{ position:absolute; z-index:0; opacity:.8; filter:saturate(.85) contrast(.92) brightness(1.04); -webkit-mask-image:radial-gradient(closest-side, #000 60%, rgba(0,0,0,0) 100%); mask-image:radial-gradient(closest-side, #000 60%, rgba(0,0,0,0) 100%); pointer-events:none; }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tl{ top:-18px; left:calc(50% - 50vw - 40px); width:250px; transform:rotate(-4deg); }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tr{ top:-14px; right:calc(50% - 50vw - 40px); width:250px; transform:scaleX(-1) rotate(-6deg); }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--bl{ bottom:30px; left:calc(50% - 50vw - 90px); width:190px; opacity:.6; transform:rotate(-30deg); }
@@ -1618,7 +1618,7 @@ body.single-product .ecn-pdp .ecn-rv-intro h3{ font-size:27px !important; font-w
 .ecn-rv-cue button:hover, .ecn-rv-cue button:focus-visible{ transform:scale(1.12); }
 .ecn-rv-cue svg{ width:30px; height:30px; }
 .ecn-rv-intro p{ margin:0 !important; font-size:15.5px; line-height:1.5; color:#55594F; }
-.ecn-rv-perks{ display:grid; gap:14px; margin:18px 0 0 !important; padding:0 !important; list-style:none !important; }
+.ecn-rv-perks{ flex:1 0 auto; display:grid; align-content:space-evenly; gap:14px; margin:18px 0 0 !important; padding:0 !important; list-style:none !important; }
 .ecn-rv-perks li{ display:grid; grid-template-columns:56px minmax(0,1fr); align-items:center; gap:16px; margin:0 !important; }
 .ecn-rv-perk-ic{ display:grid; place-items:center; width:56px; height:56px; border-radius:50%; background:#EEF3EE; color:#1C5F55; }
 .ecn-rv-perk-ic svg{ width:26px; height:26px; stroke-width:1.6; }
@@ -1639,7 +1639,7 @@ body.single-product .ecn-pdp .ecn-rv-intro h3{ font-size:27px !important; font-w
 .ecn-rv-score > b{ font-family:var(--pd-serif); font-size:56px; font-weight:500; line-height:1; color:var(--pd-head); }
 .ecn-rv-score .ecn-stars{ font-size:24px; }
 .ecn-rv-score p{ margin:4px 0 0 !important; font-size:14.5px; color:#5A5D57; }
-.ecn-rv-dist{ display:grid; gap:9px; margin:18px 0 0 !important; padding:0 !important; list-style:none !important; }
+.ecn-rv-dist{ flex:1 0 auto; display:grid; align-content:space-evenly; gap:9px; margin:18px 0 0 !important; padding:0 !important; list-style:none !important; }
 .ecn-rv-dist li{ display:grid; grid-template-columns:42px minmax(0,1fr) 42px; align-items:center; gap:10px; margin:0 !important; font-size:14px; color:#4E524B; }
 .ecn-rv-dist li > span i{ font-style:normal; color:#E79A2A; }
 .ecn-rv-bar{ height:8px; border-radius:99px; background:#EDE8DE; overflow:hidden; }
@@ -1656,20 +1656,24 @@ body.single-product .ecn-pdp .ecn-rv-head h3{ margin-top:6px !important; font-si
 .ecn-rv-ctx{ grid-area:ctx; position:relative; height:164px; margin:0 !important; border-radius:14px; }
 .ecn-rv-zoom{ position:absolute; inset:0; overflow:hidden; border-radius:14px; background:#EFE6D6; }
 /* the product's card photo, framed on its bar (same composition on every ECONUR card photo) */
-.ecn-rv-zoom img{ position:absolute; left:50%; top:50%; width:170% !important; max-width:none !important; height:auto !important; transform:translate(-31%, -61%); }
+.ecn-rv-zoom img{ position:absolute; left:50%; top:50%; width:170% !important; max-width:none !important; height:auto !important; transform:translate(-28%, -61%); }
 .ecn-rv-ctx figcaption{ position:absolute; left:-58px; bottom:18px; display:flex; flex-direction:column; gap:1px; padding:12px 18px; border-radius:12px; background:#E7F0E2; box-shadow:0 6px 16px rgba(52,44,30,.08); }
 .ecn-rv-ctx figcaption span{ font-size:13.5px; color:#3E4A40; }
 .ecn-rv-ctx figcaption b{ font-size:15px; font-weight:700; color:#1E3B33; }
 .ecn-rv-rate{ grid-area:rate; min-width:0; margin:16px 0 0 !important; padding:0 !important; border:0 !important; }
 .ecn-rv-rate legend, .ecn-rv-f label{ display:block; margin:0 0 8px !important; padding:0 !important; font-size:15px; font-weight:600; color:#24302B; }
-.ecn-rv-stars{ display:inline-flex; flex-direction:row-reverse; justify-content:flex-end; gap:8px; }
+.ecn-rv-stars{ display:inline-flex; gap:8px; }
 .ecn-rv-stars input{ position:absolute; width:1px; height:1px; margin:0; opacity:0; pointer-events:none; }
 .ecn-rv-stars label{ position:relative; display:grid; place-items:center; width:38px; height:38px; margin:0 !important; color:#E79A2A; cursor:pointer; }
 .ecn-rv-stars label svg{ grid-area:1 / 1; width:34px; height:34px; transition:transform .12s ease, opacity .12s ease; }
 .ecn-rv-stars label svg + svg{ opacity:0; }
-.ecn-rv-stars input:checked ~ label svg + svg, .ecn-rv-stars label:hover svg + svg, .ecn-rv-stars label:hover ~ label svg + svg{ opacity:1; }
-.ecn-rv-stars:hover input:checked ~ label svg + svg{ opacity:0; }
-.ecn-rv-stars:hover label:hover svg + svg, .ecn-rv-stars:hover label:hover ~ label svg + svg{ opacity:1; }
+/* chosen rating: that star and every star before it */
+.ecn-rv-stars:has(#ecn-rv-r1:checked) label:nth-of-type(-n+1) svg + svg, .ecn-rv-stars:has(#ecn-rv-r2:checked) label:nth-of-type(-n+2) svg + svg,
+.ecn-rv-stars:has(#ecn-rv-r3:checked) label:nth-of-type(-n+3) svg + svg, .ecn-rv-stars:has(#ecn-rv-r4:checked) label:nth-of-type(-n+4) svg + svg,
+.ecn-rv-stars:has(#ecn-rv-r5:checked) label:nth-of-type(-n+5) svg + svg{ opacity:1; }
+/* pointer over a star previews that rating */
+.ecn-rv-stars:hover label svg + svg{ opacity:0 !important; }
+.ecn-rv-stars:hover label:hover svg + svg, .ecn-rv-stars:hover label:has(~ label:hover) svg + svg{ opacity:1 !important; }
 .ecn-rv-stars label:hover svg{ transform:scale(1.08); }
 .ecn-rv-stars input:focus-visible + label{ outline:2px solid #0F4C4F; outline-offset:2px; border-radius:8px; }
 .ecn-rv-err{ display:block; margin-top:6px; font-size:13px; font-weight:600; color:#B3261E; }
