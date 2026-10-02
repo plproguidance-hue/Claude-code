@@ -1892,3 +1892,21 @@ html:not(.ecn-js) .econur-reviews-section .ecn-rv-more{ display:none; }
 /* v7.13 card fine-tune: stars sit closer to the reviewer row, review text in the mockup's darker ink */
 .econur-reviews-section .ecn-rv-item-stars{ margin-top:15px; }
 .econur-reviews-section .ecn-rv-item-tx{ color:#2C322E; }
+
+/* ===== v7.14 customer reviews: the homepage "What customers say" section (ECONUR Reviews plugin, its own CSS and JS).
+   Only the product-page wrapper, the homepage's page-level spacing for the section and the review button are set here. ===== */
+body.single-product .ecn-pdp .ecn-rv--home{ padding:0; }
+body.single-product .ecn-pdp .ecn-rv--home::before{ display:none; }
+body.single-product .ecn-pdp .ecn-rv--home .enr-rv{ max-width:1140px; margin-left:auto; margin-right:auto; }
+@media (min-width:1000px){ body.single-product .ecn-pdp .ecn-rv--home .enr-rv{ padding-top:54px !important; padding-bottom:32px !important; } }
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-rv--home .enr-rv{ padding-top:32px !important; }
+  body.single-product .ecn-pdp .ecn-rv--home .enr-rv-trust-item{ padding-top:10px !important; padding-bottom:10px !important; }
+}
+/* "Share your experience" opens this product's review form: a button stretched over the item, same look as the homepage */
+body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-trust-write{ position:relative; }
+body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-trust-btn{ all:unset; display:inline; font:inherit; color:inherit; line-height:inherit; cursor:pointer; }
+body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-trust-btn::after{ content:""; position:absolute; inset:0; border-radius:14px; }
+body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-trust-btn:focus-visible::after{ outline:2px solid #0D585F; outline-offset:2px; }
+@media (hover:hover){ body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-trust-write:hover b{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:4px; } }
+body.single-product .ecn-pdp .ecn-rv--home .ecn-rv-formwrap{ max-width:1140px; margin:18px auto 0; }

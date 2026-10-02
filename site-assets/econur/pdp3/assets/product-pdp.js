@@ -163,7 +163,7 @@
       if (!rvSec || !rvSec.classList.contains('is-open')) return;
       rvSec.classList.remove('is-open'); rvBtns.forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
       document.body.classList.remove('ecn-rv-typing');
-      var back = rvSec.querySelector('.ecn-rv-invite, .ecn-rv-summary') || rvSec;
+      var back = rvSec.querySelector('.ecn-rv-invite, .ecn-rv-summary, .ecn-rv-trust-write') || rvSec;
       back.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
       var w = rvSec.querySelector('[data-ecn-rv-write]'); if (w) setTimeout(function () { w.focus({ preventScroll: true }); }, reduce ? 0 : 350);
     }
