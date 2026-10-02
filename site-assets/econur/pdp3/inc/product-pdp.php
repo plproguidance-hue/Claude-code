@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.17.0';
+const ECONUR_PDP_VER = '7.17.1';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -1034,8 +1034,11 @@ function econur_lp_final($product, $lp, $unit, $size) {
     $name = $product->get_name(); $cat = econur_pdp_category($product);
     $title = $lp['cta'] ? $lp['cta'] : (($cat && 'face-care' === $cat->slug) ? 'Ready for Clearer, Healthier-Looking Skin?' : 'Ready to try the ' . $name . '?');
     $buy = $unit && '' !== $product->get_price() && $product->is_purchasable() && $unit->is_in_stock();
+    // coming-soon products (no price yet) and sold-out ones must not invite an order
+    $soon = '' === $product->get_price() || !$product->is_purchasable();
+    $line = $buy ? 'Order today and pay when your parcel arrives.' : ($soon ? 'Coming soon. Message us on WhatsApp to hear the day it is ready.' : 'Message us on WhatsApp for availability.');
     echo '<section class="ecn-lp-final" aria-labelledby="ecn-lp-final-t"><div class="ecn-lp-final-img">' . econur_lp_card_img($product, 'large', '(min-width: 1000px) 32vw, 100vw', '') . '</div>'
-        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p>Handcrafted in Bangladesh with natural botanicals. Order today and pay when your parcel arrives.</p>'
+        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p>Handcrafted in Bangladesh with natural botanicals. ' . esc_html($line) . '</p>'
         . '<ul class="ecn-lp-final-trust"><li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>Fast delivery</b><small>Inside Dhaka 1–2 days<br>Outside Dhaka 2–4 days</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order within 12 hours</small></span></li></ul></div>'
         . '<div class="ecn-lp-final-cta">'
         . ($buy ? '<button type="button" class="ecn-lp-final-add" data-ecn-final-add>' . econur_pdp_icon('cart') . '<span>Add to Cart</span><span class="ecn-atc-price" data-ecn-final-price> — ' . esc_html(econur_pdp_money($unit->get_price())) . '</span></button>' : '')

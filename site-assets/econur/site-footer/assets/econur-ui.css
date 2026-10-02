@@ -3,10 +3,10 @@
    eyebrows, button sizes, small labels and heading sizes across the homepage, product pages and shared sections.
    Remove this file to return to the previous look. */
 
-/* ---------- 1. Eyebrow: one pale-green pill everywhere (same as the product-page kicker) ---------- */
+/* ---------- 1. Eyebrow: one pale-green pill everywhere (same as the product-page kicker); the locked
+   "What customers say" eyebrow keeps its approved centred text-with-lines treatment ---------- */
 html body .ecn-sec-sale .ecn-fp-eyebrow,
 html body .ecn-fy .ecn-fy-eyebrow,
-html body .enr-rv .enr-rv-eyebrow,
 html body .ehc .ehc-eyebrow{
   display:flex; width:-moz-fit-content; width:fit-content; max-width:100%; align-items:center; gap:8px;
   height:32px; padding:0 16px; border-radius:999px; background:#E2EEDF; color:#25694B;
@@ -14,12 +14,10 @@ html body .ehc .ehc-eyebrow{
 }
 html body .ecn-sec-sale .ecn-fp-eyebrow{ margin:0 0 12px; }
 html body .ecn-fy .ecn-fy-eyebrow{ margin:0 0 12px; }
-html body .enr-rv .enr-rv-eyebrow{ margin:0 auto 12px; }
 html body .ehc .ehc-eyebrow{ margin:0 auto 14px !important; }
 /* the thin side lines become the leaf icon used by the product-page kicker */
 html body .ecn-sec-sale .ecn-fp-eyebrow::before,
 html body .ecn-fy .ecn-fy-eyebrow::before,
-html body .enr-rv .enr-rv-eyebrow::before,
 html body .ehc .ehc-eyebrow::before{
   content:""; flex:none; width:16px; height:16px; margin:0; opacity:1; background:currentColor;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z'/%3E%3Cpath d='M2 21c0-3 1.9-5.5 5-6'/%3E%3C/svg%3E") center / contain no-repeat;
@@ -27,22 +25,18 @@ html body .ehc .ehc-eyebrow::before{
 }
 html body .ecn-sec-sale .ecn-fp-eyebrow::after,
 html body .ecn-fy .ecn-fy-eyebrow::after,
-html body .enr-rv .enr-rv-eyebrow::after,
 html body .ehc .ehc-eyebrow::after{ content:none; display:none; }
 /* phones: the Featured eyebrow may run under the arrow buttons' column (as before) instead of pushing them off screen */
 @media (max-width:699px){ html body .ecn-sec-sale .ecn-fp-eyebrow{ max-width:none; margin-right:-96px !important; } }
 @media (max-width:767px){
   html body .ecn-sec-sale .ecn-fp-eyebrow,
   html body .ecn-fy .ecn-fy-eyebrow,
-  html body .enr-rv .enr-rv-eyebrow,
   html body .ehc .ehc-eyebrow{ height:28px; padding:0 12px; gap:7px; font-size:11.5px; letter-spacing:.09em; }
   html body .ecn-sec-sale .ecn-fp-eyebrow{ margin:0 0 10px; }
   html body .ecn-fy .ecn-fy-eyebrow{ margin:0 0 10px; }
-  html body .enr-rv .enr-rv-eyebrow{ margin:0 auto 10px; }
   html body .ehc .ehc-eyebrow{ margin:0 auto 12px !important; }
   html body .ecn-sec-sale .ecn-fp-eyebrow::before,
   html body .ecn-fy .ecn-fy-eyebrow::before,
-  html body .enr-rv .enr-rv-eyebrow::before,
   html body .ehc .ehc-eyebrow::before{ width:14px; height:14px; }
 }
 
