@@ -488,7 +488,7 @@ function econur_lp_routine($product, $lp) {
 // where one is set below (centre x, centre y, visible width; fractions of the photo). Otherwise a finder thumb.
 function econur_lp_ing_crops() {
     return apply_filters('econur_lp_ing_crops', array(
-        14 => array('charcoal' => array(.80, .72, .40), 'neem' => array(.17, .25, .36)),
+        14 => array('charcoal' => array(.83, .79, .32), 'neem' => array(.15, .20, .32)),
         18 => array('licorice' => array(.12, .79, .32), 'turmeric' => array(.84, .71, .34)),
         22 => array('coffee' => array(.20, .70, .36)),
         30 => array('olive oil' => array(.12, .44, .28)),
@@ -573,7 +573,8 @@ function econur_lp_ing_art($title) {
 /* Usage illustrations for "How to Use": lather (soap bar + foam), cleanse (face wash), rinse (water). Flat, ECONUR palette. */
 function econur_lp_ritual_art($k, $bar = '#3B3F41') {
     static $n = 0; $n++; $fo = 'ecnFoam' . $n; $wa = 'ecnWater' . $n; // ids unique on the page
-    $svg = function ($inner) { return '<svg class="ecn-lp-ill" viewBox="0 0 160 160" aria-hidden="true" focusable="false">' . $inner . '</svg>'; };
+    $vb = array('lather' => '16 28 130 130', 'rinse' => '14 16 132 132');
+    $svg = function ($inner) use ($k, $vb) { return '<svg class="ecn-lp-ill" viewBox="' . (isset($vb[$k]) ? $vb[$k] : '0 0 160 160') . '" aria-hidden="true" focusable="false">' . $inner . '</svg>'; };
     $leaf = function ($x, $y, $r, $c, $s = 1) { return '<path d="M0 0C' . (6 * $s) . ' ' . (-10 * $s) . ' ' . (18 * $s) . ' ' . (-14 * $s) . ' ' . (30 * $s) . ' ' . (-12 * $s) . 'C' . (24 * $s) . ' ' . (-2 * $s) . ' ' . (12 * $s) . ' ' . (4 * $s) . ' 0 0Z" fill="' . $c . '" transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ')"/>'; };
     $bub = function ($x, $y, $r) { return '<circle cx="' . $x . '" cy="' . $y . '" r="' . $r . '" fill="#fff" stroke="#BFDCE8" stroke-width="1.6"/>'; };
     $foam = function ($pts) use ($fo) { $o = ''; foreach ($pts as $p) $o .= '<circle cx="' . $p[0] . '" cy="' . $p[1] . '" r="' . $p[2] . '" fill="#fff"/>'; return '<g filter="url(#' . $fo . ')">' . $o . '</g>'; };
