@@ -1909,7 +1909,7 @@ body.single-product .ecn-pdp .ecn-faq-a p{ max-width:64ch; padding:0 26px 22px; 
   max-width:1280px; margin:45px auto 0; padding:50px 52px; border:1px solid #E2E4D6; border-radius:26px; scroll-margin-top:24px;
   background:radial-gradient(90% 120% at 0% 0%, rgba(233,241,228,.9), rgba(233,241,228,0) 60%), linear-gradient(135deg, #EEF4EA 0%, #F6F6EE 55%, #EFF4EA 100%); box-shadow:0 14px 34px rgba(52,44,30,.04); }
 .ecn-help-art--bl{ left:-80px; bottom:-80px; width:150px; opacity:.72; transform:rotate(16deg); }
-.ecn-help-art--br{ right:-70px; top:-72px; width:150px; opacity:.72; transform:scaleX(-1) rotate(-8deg); } /* clear of the third card */
+.ecn-help-art--br{ right:-88px; top:-28px; width:140px; opacity:.72; transform:scaleX(-1) rotate(-8deg); } /* outside the corner: clear of the accordion and the third card */
 .ecn-finder-intro{ grid-area:intro; align-self:end; }
 .ecn-finder-intro .ecn-lp-kicker{ margin-bottom:12px; }
 body.single-product .ecn-pdp .ecn-help .ecn-finder-h2{ font-size:36px !important; line-height:1.14 !important; color:#123F3D !important; text-wrap:balance; }
@@ -1986,7 +1986,7 @@ body.single-product .ecn-pdp .ecn-pick-btn{ height:46px; padding:0 22px !importa
   .ecn-help-wa{ width:100%; height:50px; }
   .ecn-help-finder{ margin-top:35px; padding:32px 18px 22px; border-radius:22px; }
   .ecn-help-art--bl{ left:-54px; bottom:-52px; width:100px; }
-  .ecn-help-art--br{ right:-46px; top:-46px; width:104px; }
+  .ecn-help-art--br{ right:-50px; top:-14px; width:96px; }
   body.single-product .ecn-pdp .ecn-help .ecn-finder-h2{ font-size:27px !important; }
   body.single-product .ecn-pdp .ecn-finder-lead{ font-size:15px; }
   .ecn-finder-cards{ grid-template-columns:minmax(0,1fr); gap:12px; margin-top:22px; }

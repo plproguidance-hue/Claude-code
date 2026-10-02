@@ -251,7 +251,7 @@
     // the focus ring is for keyboard use: a click or tap never leaves a teal outline on a closed question
     if (faqList) {
       faqList.addEventListener('pointerdown', function () { faqList.classList.add('is-pointer'); });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Tab' || /^Arrow|^Home$|^End$/.test(e.key)) faqList.classList.remove('is-pointer'); });
+      document.addEventListener('keydown', function (e) { if (/^(Tab|Enter| |Home|End)$|^Arrow/.test(e.key)) faqList.classList.remove('is-pointer'); });
     }
     function faqSet(b, open) {
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
