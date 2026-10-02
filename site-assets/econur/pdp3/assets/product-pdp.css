@@ -1988,8 +1988,8 @@ body.single-product .ecn-pdp .ecn-favs-head{ display:flex; flex-direction:column
 body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-h2{ font-size:44px !important; line-height:1.1 !important; color:#123F3D !important; }
 body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-lead{ margin-top:12px; font-size:17px; line-height:1.55; color:var(--pd-muted); }
 /* row: four equal cards, arrows outside it */
-.ecn-favs .ecn-rel-wrap{ position:relative; max-width:1220px; margin:0 auto; }
-.ecn-favs .ecn-rel-track{ display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; margin:-6px -8px 0; padding:6px 8px 14px; outline:none; }
+.ecn-favs .ecn-rel-wrap{ position:relative; max-width:min(1220px, calc(100% - 152px)); margin:0 auto; } /* room for the arrows outside the row */
+.ecn-favs .ecn-rel-track{ display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-inline:8px; scrollbar-width:none; margin:-6px -8px 0; padding:6px 8px 14px; outline:none; }
 .ecn-favs .ecn-rel-track::-webkit-scrollbar{ display:none; }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-track:focus-visible{ outline:2px solid var(--pd-teal) !important; outline-offset:2px; border-radius:18px; }
 .ecn-favs .ecn-rel-card{ position:relative; flex:0 0 calc((100% - 60px) / 4); display:flex; flex-direction:column; min-width:0; overflow:hidden; scroll-snap-align:start;
@@ -2002,7 +2002,7 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-track:focus-visible{ outline:2px
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-name{ margin:0 !important; font-family:var(--pd-serif) !important; font-size:20.5px !important; font-weight:500 !important; line-height:1.22 !important; letter-spacing:-.005em; }
 .ecn-favs .ecn-rel-name a{ color:#123F3D !important; text-decoration:none; }
 .ecn-favs .ecn-rel-name a:hover{ color:var(--pd-teal) !important; }
-body.single-product .ecn-pdp .ecn-favs .ecn-rel-line{ margin-top:6px; font-size:14.5px; line-height:1.5; color:var(--pd-muted); }
+body.single-product .ecn-pdp .ecn-favs .ecn-rel-line{ margin-top:5px; font-size:14.5px; line-height:1.5; color:var(--pd-muted); }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-rating{ display:flex; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--pd-muted); }
 .ecn-favs .ecn-rel-rating .ecn-stars{ font-size:14px; letter-spacing:1px; }
 /* price: current price prominent in teal; a genuine sale shows the old price small, muted and struck through first */
@@ -2014,12 +2014,12 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-price{ display:flex; align-items
 .ecn-favs .ecn-rel-price ins{ text-decoration:none; }
 .ecn-favs .ecn-rel-price small{ font-size:15px; font-weight:500; color:var(--pd-muted); }
 /* size pills */
-.ecn-favs .ecn-rel-sizes{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.ecn-favs .ecn-rel-sizes{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-size{ -webkit-appearance:none; appearance:none; display:inline-flex; align-items:center; justify-content:center; min-height:36px; margin:0; padding:0 16px !important; border:1px solid #D9D3C6 !important; border-radius:999px !important; background:#FFFEFB !important; color:var(--pd-teal) !important; font-size:14.5px; font-weight:600; line-height:1; cursor:pointer; transition:border-color .18s ease, background-color .18s ease, color .18s ease; }
 @media (hover:hover){ body.single-product .ecn-pdp .ecn-favs .ecn-rel-size:hover{ border-color:var(--pd-teal) !important; } }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-size.is-on{ border-color:var(--pd-teal) !important; background:var(--pd-teal) !important; color:#fff !important; }
 /* buttons: always on the card's bottom line */
-.ecn-favs .ecn-rel-cta{ margin-top:auto; padding-top:16px; }
+.ecn-favs .ecn-rel-cta{ margin-top:auto; padding-top:14px; }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-add{ -webkit-appearance:none; appearance:none; display:flex; align-items:center; justify-content:center; gap:9px; width:100%; height:48px; margin:0; padding:0 18px !important; border:0 !important; border-radius:999px !important; background:var(--pd-teal) !important; color:#fff !important; font-size:16px !important; font-weight:600 !important; line-height:1; cursor:pointer; transition:background-color .18s ease; }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-add svg{ width:19px; height:19px; }
 body.single-product .ecn-pdp .ecn-favs .ecn-rel-add:hover{ background:var(--pd-teal-d) !important; }
@@ -2049,7 +2049,7 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-nav:disabled{ opacity:.4; cursor
 /* phones: swipe, about 1.2 cards in view, buttons full card width */
 @media (max-width:767px){
   body.single-product .ecn-pdp .ecn-favs{ padding:34px 0 44px; }
-  .ecn-favs-art--tl, .ecn-favs-art--tr{ top:-20px; width:130px; opacity:.6; }
+  .ecn-favs-art--tl, .ecn-favs-art--tr{ top:-24px; width:108px; opacity:.6; }
   .ecn-favs-art--tl{ left:-58px; } .ecn-favs-art--tr{ right:-58px; }
   .ecn-favs-leaf{ display:none; }
   body.single-product .ecn-pdp .ecn-favs-head{ margin-bottom:22px; padding:0 8px; }
@@ -2057,7 +2057,7 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-nav:disabled{ opacity:.4; cursor
   body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-h2{ font-size:30px !important; }
   body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-lead{ margin-top:8px; font-size:15px; }
   .ecn-favs .ecn-rel-wrap{ max-width:none; }
-  .ecn-favs .ecn-rel-track{ gap:14px; margin:-6px -16px 0; padding:6px 16px 14px; scroll-padding-left:16px; }
+  .ecn-favs .ecn-rel-track{ gap:14px; margin:-6px -16px 0; padding:6px 16px 14px; scroll-padding-inline:16px; }
   .ecn-favs .ecn-rel-card{ flex-basis:min(80vw, 320px); }
   .ecn-favs .ecn-rel-body{ padding:16px 16px 18px; }
   body.single-product .ecn-pdp .ecn-favs .ecn-rel-name{ font-size:19px !important; }
@@ -2065,3 +2065,4 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-nav:disabled{ opacity:.4; cursor
   body.single-product .ecn-pdp .ecn-favs .ecn-rel-price{ font-size:20px; }
   .ecn-favs .ecn-rel-nav{ display:none !important; }
 }
+@media (max-width:389px){ body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-h2{ font-size:27px !important; } }
