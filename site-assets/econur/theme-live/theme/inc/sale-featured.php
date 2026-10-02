@@ -18,14 +18,14 @@ defined('ABSPATH') || exit;
 function econur_sf_defaults() {
     return array(
         'mode'     => 'auto',   // auto | always | off
-        'eyebrow'  => 'Limited-time offer',
+        'eyebrow'  => 'সীমিত সময়ের অফার',
         'headline' => '',       // empty = written automatically from the real discount
         'text'     => '',       // empty = written automatically
-        'cta_text' => 'Shop the Sale',
+        'cta_text' => 'অফারের পণ্য দেখুন',
         'cta_link' => '#ecn-featured',
         'end'      => '',       // Y-m-d\TH:i, site time zone; empty = product sale end dates
         'fp_title' => 'Featured products',
-        'fp_sub'   => 'Hand-picked bars, ready to ship with cash on delivery.',
+        'fp_sub'   => 'বাছাই করা বার, ক্যাশ অন ডেলিভারিতে পাঠানোর জন্য প্রস্তুত।',
         'fp_limit' => 8,
     );
 }
@@ -132,8 +132,9 @@ add_shortcode('econur_sale_banner', function () {
     if ('' !== trim($o['text'])) {
         $text = $o['text'];
     } else {
-        $scope = ($has_sale && $d['all']) || !$has_sale ? 'On every bar' : 'On selected bars';
-        $text = $show_end ? $scope . ', until ' . wp_date('D, j M', $show_end) . '. Cash on delivery nationwide.' : $scope . '. Cash on delivery nationwide.';
+        // Bangla supporting line (the campaign headline stays English); dates as "8 অক্টোবর"
+        $scope = ($has_sale && $d['all']) || !$has_sale ? 'সব বারে' : 'নির্বাচিত বারে';
+        $text = $show_end ? $scope . ', ' . econur_bn_date($show_end) . ' পর্যন্ত। সারা দেশে ক্যাশ অন ডেলিভারি।' : $scope . '। সারা দেশে ক্যাশ অন ডেলিভারি।';
     }
 
     $link = trim($o['cta_link']) ? $o['cta_link'] : '#ecn-featured';
@@ -145,9 +146,9 @@ add_shortcode('econur_sale_banner', function () {
         <p class="ecn-sb-note"><strong>Preview, only admins can see this.</strong> <?php echo $expired ? 'The sale end date has passed.' : ('off' === $o['mode'] ? 'The banner is switched off.' : 'It goes live on its own when a product has a sale price.'); ?><?php echo $has_sale ? '' : ' Numbers shown are samples.'; ?> <a href="<?php echo esc_url(admin_url('admin.php?page=econur-homepage-sale')); ?>">Sale settings</a></p>
       <?php endif; ?>
       <div class="ecn-sb-copy">
-        <div class="ecn-sb-top"><span class="ecn-sb-ico"><?php echo econur_sf_icon('badge'); ?></span><span class="ecn-sb-eyebrow"><?php echo esc_html($o['eyebrow']); ?></span></div>
+        <div class="ecn-sb-top"><span class="ecn-sb-ico"><?php echo econur_sf_icon('badge'); ?></span><span class="ecn-sb-eyebrow"<?php echo econur_bn_attr($o['eyebrow']); ?>><?php echo esc_html($o['eyebrow']); ?></span></div>
         <h2 class="ecn-sb-title" id="ecn-sb-title"><?php echo esc_html($head); ?></h2>
-        <p class="ecn-sb-text"><?php foreach (preg_split('/(?<=[.!?])\s+/', trim($text)) as $line) echo '<span class="ecn-sb-line">' . esc_html($line) . '</span> '; ?></p>
+        <p class="ecn-sb-text"<?php echo econur_bn_attr($text); ?>><?php foreach (preg_split('/(?<=[.!?।])\s+/u', trim($text)) as $line) echo '<span class="ecn-sb-line">' . esc_html($line) . '</span> '; ?></p>
       </div>
       <div class="ecn-sb-act">
         <?php if ($show_end) : ?>
@@ -161,7 +162,7 @@ add_shortcode('econur_sale_banner', function () {
             </div>
           </div>
         <?php endif; ?>
-        <a class="ecn-sb-cta" href="<?php echo esc_url($link); ?>"><?php echo esc_html($o['cta_text']); ?> <?php echo econur_sf_icon('arrow'); ?></a>
+        <a class="ecn-sb-cta" href="<?php echo esc_url($link); ?>"><?php echo econur_bn($o['cta_text'], 'econur-bn-cta'); ?> <?php echo econur_sf_icon('arrow'); ?></a>
       </div>
     </section>
     <?php
@@ -248,26 +249,26 @@ add_shortcode('econur_featured', function () {
 
         $badge = $pct ? '<span class="ecn-fp-badge is-sale">&minus;' . esc_html($pct) . '%</span>' : ($sold >= 5 ? '<span class="ecn-fp-badge">Best seller</span>' : '');
         $price = '<b>' . wp_kses_post(wc_price($buy->get_price())) . '</b>' . ($on ? '<s>' . wp_kses_post(wc_price($buy->get_regular_price())) . '</s>' : '') . ($size ? '<small>' . esc_html($size) . '</small>' : '');
-        $label = 'Add to Cart: ' . $name . ($size ? ', ' . $size : '');
+        $label = 'কার্টে যোগ করুন: ' . $name . ($size ? ', ' . $size : '');
 
         $cards .= '<article class="ecn-fp-card" data-pid="' . esc_attr($p->get_id()) . '">'
             . '<div class="ecn-fp-media"><a class="ecn-fp-img" href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . econur_fp_card_image($p, $name) . '</a>' . $badge
-            . '<button type="button" class="ecn-fp-heart" aria-pressed="false" aria-label="' . esc_attr('Save ' . $name) . '">' . econur_sf_icon('heart') . '</button></div>'
+            . '<button type="button" class="ecn-fp-heart" aria-pressed="false" aria-label="' . esc_attr('সেভ করুন: ' . $name) . '">' . econur_sf_icon('heart') . '</button></div>'
             . '<div class="ecn-fp-body">' . ($proof ? '<div class="ecn-fp-proof">' . $proof . '</div>' : '')
             . '<h3 class="ecn-fp-name"><a href="' . esc_url($link) . '">' . esc_html($name) . '</a></h3>'
             . '<div class="ecn-fp-foot"><div class="ecn-fp-price">' . $price . '</div>'
-            . '<button type="button" class="ecn-fp-add" data-id="' . esc_attr($buy->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($name . ($size ? ' (' . $size . ')' : '')) . '" aria-label="' . esc_attr($label) . '">' . econur_sf_icon('bag') . econur_sf_icon('check') . '<span class="ecn-fp-add-txt">Add to Cart</span></button></div>'
+            . '<button type="button" class="ecn-fp-add" data-id="' . esc_attr($buy->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($name . ($size ? ' (' . $size . ')' : '')) . '" aria-label="' . esc_attr($label) . '">' . econur_sf_icon('bag') . econur_sf_icon('check') . '<span class="ecn-fp-add-txt econur-bn-cta" lang="bn">কার্টে যোগ করুন</span></button></div>'
             . '</div></article>';
     }
 
     $GLOBALS['econur_sf_js'] = true;
     return '<section class="ecn-fp" id="ecn-featured" aria-labelledby="ecn-fp-title">'
-        . '<div class="ecn-sh ecn-fp-head"><div>' . (($eb = apply_filters('econur_fp_eyebrow', 'Natural care for everyday life')) ? '<p class="ecn-fp-eyebrow">' . esc_html($eb) . '</p>' : '') . '<h2 class="ecn-sh-title" id="ecn-fp-title">' . esc_html($o['fp_title']) . '</h2>' . ($o['fp_sub'] ? '<p class="ecn-sh-sub">' . esc_html($o['fp_sub']) . '</p>' : '') . '</div>'
-        . '<div class="ecn-fp-tools"><button type="button" class="ecn-fp-saved" aria-pressed="false" hidden>' . econur_sf_icon('heart') . '<span>Saved</span><b>0</b></button>'
+        . '<div class="ecn-sh ecn-fp-head"><div>' . (($eb = apply_filters('econur_fp_eyebrow', 'Natural care for everyday life')) ? '<p class="ecn-fp-eyebrow">' . esc_html($eb) . '</p>' : '') . '<h2 class="ecn-sh-title" id="ecn-fp-title">' . esc_html($o['fp_title']) . '</h2>' . ($o['fp_sub'] ? '<p class="ecn-sh-sub"' . econur_bn_attr($o['fp_sub']) . '>' . esc_html($o['fp_sub']) . '</p>' : '') . '</div>'
+        . '<div class="ecn-fp-tools"><button type="button" class="ecn-fp-saved" aria-pressed="false" hidden>' . econur_sf_icon('heart') . '<span lang="bn">সেভ করা</span><b>0</b></button>'
         . '<button type="button" class="ecn-fp-nav" data-dir="-1" aria-label="Previous products">' . econur_sf_icon('left') . '</button><button type="button" class="ecn-fp-nav" data-dir="1" aria-label="Next products">' . econur_sf_icon('right') . '</button></div></div>'
         . '<div class="ecn-fp-track" tabindex="0" aria-label="' . esc_attr($o['fp_title']) . '">' . $cards . '</div>'
         . '<div class="ecn-fp-dots" aria-hidden="true"></div>'
-        . '<p class="ecn-fp-empty" hidden>Nothing saved yet. Tap the heart on a bar to keep it here for later.</p>'
+        . '<p class="ecn-fp-empty" lang="bn" hidden>এখনও কিছু সেভ করা হয়নি। পরে দেখার জন্য বারের হার্ট আইকনে ট্যাপ করুন।</p>'
         . '</section>';
 });
 
@@ -279,7 +280,7 @@ add_action('wp_footer', function () {
         'ajax'     => WC_AJAX::get_endpoint('add_to_cart'),
         'checkout' => wc_get_checkout_url(),
     );
-    echo '<div class="ecn-toast" id="ecnFpToast" role="status" aria-live="polite" hidden><span></span><a href="' . esc_url($cfg['checkout']) . '">Checkout</a></div>';
+    echo '<div class="ecn-toast" id="ecnFpToast" role="status" aria-live="polite" lang="bn" hidden><span></span><a href="' . esc_url($cfg['checkout']) . '">চেকআউট</a></div>';
     ?>
 <script>(function(){
 var CFG=<?php echo wp_json_encode($cfg); ?>;
@@ -316,7 +317,7 @@ document.querySelectorAll('.ecn-fp').forEach(function(fp){
     empty.hidden=!(filter && !n);
     navState();
   }
-  fp.querySelectorAll('.ecn-fp-heart').forEach(function(h){ h.addEventListener('click',function(){ var id=h.closest('.ecn-fp-card').getAttribute('data-pid'), a=load(), i=a.indexOf(id); if(i>-1){ a.splice(i,1); } else { a.push(id); showToast('Saved. Tap "Saved" above to see your list.',false); } save(a); paint(); }); });
+  fp.querySelectorAll('.ecn-fp-heart').forEach(function(h){ h.addEventListener('click',function(){ var id=h.closest('.ecn-fp-card').getAttribute('data-pid'), a=load(), i=a.indexOf(id); if(i>-1){ a.splice(i,1); } else { a.push(id); showToast('সেভ হয়েছে। তালিকা দেখতে উপরের “সেভ করা” বাটনে ট্যাপ করুন।',false); } save(a); paint(); }); });
   savedBtn.addEventListener('click',function(){ filter=!filter; paint(); track.scrollLeft=0; });
   fp.querySelectorAll('.ecn-fp-nav').forEach(function(b){ b.addEventListener('click',function(){ var card=track.querySelector('.ecn-fp-card:not([hidden])'); var gap=parseFloat(getComputedStyle(track).columnGap)||16, step=card?card.getBoundingClientRect().width+gap:track.clientWidth*.8, per=Math.max(1,Math.round((track.clientWidth+gap)/step)); track.scrollBy({left:step*parseInt(b.getAttribute('data-dir'),10)*Math.min(2,per),behavior:'smooth'}); }); });
   var dots=fp.querySelector('.ecn-fp-dots');
@@ -334,7 +335,7 @@ document.querySelectorAll('.ecn-fp').forEach(function(fp){
         if(!res || res.error){ if(res && res.product_url){ window.location=res.product_url; } else { window.location=b.getAttribute('data-url'); } return; }
         if(res.fragments){ Object.keys(res.fragments).forEach(function(k){ document.querySelectorAll(k).forEach(function(el){ el.outerHTML=res.fragments[k]; }); }); if(window.jQuery){ window.jQuery(document.body).trigger('added_to_cart',[res.fragments,res.cart_hash]); } }
         b.classList.add('is-done'); setTimeout(function(){ b.classList.remove('is-done'); },1800);
-        showToast(b.getAttribute('data-name')+' added to cart',true);
+        showToast(b.getAttribute('data-name')+' কার্টে যোগ হয়েছে',true);
       })
       .catch(function(){ b.classList.remove('is-busy'); window.location=b.getAttribute('data-url'); });
   }); });
@@ -374,7 +375,7 @@ function econur_sf_admin_page() {
             'eyebrow'  => sanitize_text_field($in['eyebrow'] ?? ''),
             'headline' => sanitize_text_field($in['headline'] ?? ''),
             'text'     => sanitize_text_field($in['text'] ?? ''),
-            'cta_text' => sanitize_text_field($in['cta_text'] ?? '') ?: 'Shop the Sale',
+            'cta_text' => sanitize_text_field($in['cta_text'] ?? '') ?: 'অফারের পণ্য দেখুন',
             'cta_link' => $link ?: '#ecn-featured',
             'end'      => $end,
             'fp_title' => sanitize_text_field($in['fp_title'] ?? '') ?: 'Featured products',

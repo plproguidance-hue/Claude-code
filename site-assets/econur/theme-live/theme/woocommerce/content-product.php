@@ -53,7 +53,7 @@ if ($needs_choice) $order_url = $link;
 $wa = 'https://wa.me/8801410753555?text=' . rawurlencode('Hi Econur, please let me know when ' . $name . ' is available.');
 
 $badge = '';
-if ($coming)              $badge = '<span class="ecn-pc-badge ecn-pc-badge-soon">Launching soon</span>';
+if ($coming)              $badge = '<span class="ecn-pc-badge ecn-pc-badge-soon" lang="bn">শীঘ্রই আসছে</span>';
 elseif ($on_sale)         $badge = '<span class="ecn-pc-badge ecn-pc-badge-sale">Save ' . $pct . '%</span>';
 elseif ($sales >= 5)      $badge = '<span class="ecn-pc-badge">Best seller</span>';
 elseif ($manual = trim((string) get_post_meta($pid, 'econur_badge', true))) $badge = '<span class="ecn-pc-badge">' . esc_html($manual) . '</span>';
@@ -88,8 +88,8 @@ elseif ($manual = trim((string) get_post_meta($pid, 'econur_badge', true))) $bad
       </a>
     <?php endif; ?>
     <?php if ($coming) : ?>
-      <div class="ecn-pc-price"><span class="ecn-pc-soon-txt">Coming soon</span></div>
-      <a class="ecn-pc-btn ecn-pc-btn-soft" href="<?php echo esc_url($wa); ?>" target="_blank" rel="noopener">Notify me on WhatsApp</a>
+      <div class="ecn-pc-price"><span class="ecn-pc-soon-txt econur-bn-small" lang="bn">শীঘ্রই পাওয়া যাবে</span></div>
+      <a class="ecn-pc-btn ecn-pc-btn-soft" href="<?php echo esc_url($wa); ?>" target="_blank" rel="noopener"><span lang="bn" class="econur-bn-cta">WhatsApp-এ আপডেট নিন</span></a>
     <?php else : ?>
       <div class="ecn-pc-price" data-vid="<?php echo esc_attr($vid); ?>">
         <span class="ecn-pc-now"><?php echo wp_kses_post(wc_price($price)); ?></span>
@@ -104,11 +104,11 @@ elseif ($manual = trim((string) get_post_meta($pid, 'econur_badge', true))) $bad
         </div>
       <?php endif; ?>
       <?php if ($needs_choice) : ?>
-      <a class="ecn-pc-btn" href="<?php echo esc_url($order_url); ?>">Order now</a>
+      <a class="ecn-pc-btn" href="<?php echo esc_url($order_url); ?>"><span lang="bn" class="econur-bn-cta">এখনই অর্ডার করুন</span></a>
       <?php else : ?>
-      <a class="ecn-pc-btn" href="<?php echo esc_url($order_url); ?>" data-base="<?php echo esc_attr(add_query_arg(array('add-to-cart' => $pid), wc_get_checkout_url())); ?>" rel="nofollow">Order now</a>
+      <a class="ecn-pc-btn" href="<?php echo esc_url($order_url); ?>" data-base="<?php echo esc_attr(add_query_arg(array('add-to-cart' => $pid), wc_get_checkout_url())); ?>" rel="nofollow"><span lang="bn" class="econur-bn-cta">এখনই অর্ডার করুন</span></a>
       <?php endif; ?>
     <?php endif; ?>
-    <a class="ecn-pc-more" href="<?php echo esc_url($link); ?>">Details</a>
+    <a class="ecn-pc-more" href="<?php echo esc_url($link); ?>" lang="bn">বিস্তারিত</a>
   </div>
 </li>

@@ -9,6 +9,7 @@ add_action('wp_enqueue_scripts', function () {
     }
     wp_enqueue_style('econur-child', get_stylesheet_uri(), $deps, wp_get_theme()->get('Version'));
 }, 999);
+require_once get_stylesheet_directory() . '/inc/econur-locale.php'; // Bangla type + helpers, Bangla product copy (<key>_bn meta), price format ৳280
 require_once get_stylesheet_directory() . '/inc/product-pdp.php'; // product landing page v7 (v6.2 kept as inc/product-pdp.php.bak-6.2.0, v5 in inc/product-page.php)
 require_once get_stylesheet_directory() . '/inc/product-cards.php';
 require_once get_stylesheet_directory() . '/inc/hero-slider.php';

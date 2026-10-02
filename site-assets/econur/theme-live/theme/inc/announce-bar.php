@@ -8,7 +8,7 @@
 defined('ABSPATH') || exit;
 
 function econur_top_announce_html() {
-    $fallback = '<strong>Cash on delivery</strong> nationwide. We call to confirm every order within 12 hours.';
+    $fallback = '<strong>সারা দেশে ক্যাশ অন ডেলিভারি।</strong> অর্ডার নিশ্চিত করতে 12 ঘণ্টার মধ্যে আমরা ফোন করি।';
     $page_id  = (int) get_option('page_on_front');
     if (!$page_id) return $fallback;
     $data = json_decode((string) get_post_meta($page_id, '_elementor_data', true), true);
@@ -29,7 +29,8 @@ function econur_top_announce_html() {
 
 add_action('astra_header_before', function () {
     if (!is_front_page()) return;
-    echo '<div class="ecn ecn-announce ecn-announce--top" role="region" aria-label="Store notice">'
-        . wp_kses(econur_top_announce_html(), array('strong' => array(), 'b' => array(), 'a' => array('href' => array()), 'span' => array('class' => array())))
+    $html = econur_top_announce_html();
+    echo '<div class="ecn ecn-announce ecn-announce--top"' . (function_exists('econur_bn_attr') ? econur_bn_attr($html) : '') . ' role="region" aria-label="Store notice">'
+        . wp_kses($html, array('strong' => array(), 'b' => array(), 'a' => array('href' => array()), 'span' => array('class' => array(), 'lang' => array())))
         . '</div>';
 }, 5);

@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.17.1';
+const ECONUR_PDP_VER = '7.18.0';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -40,8 +40,9 @@ add_action('wp_head', function () {
 }, 1);
 add_action('astra_header_before', function () {
     if (!function_exists('is_product') || !is_product() || !function_exists('econur_top_announce_html')) return;
-    echo '<div class="ecn ecn-announce ecn-announce--top" role="region" aria-label="Store notice">'
-        . wp_kses(econur_top_announce_html(), array('strong' => array(), 'b' => array(), 'a' => array('href' => array()), 'span' => array('class' => array())))
+    $html = econur_top_announce_html();
+    echo '<div class="ecn ecn-announce ecn-announce--top"' . (function_exists('econur_bn_attr') ? econur_bn_attr($html) : '') . ' role="region" aria-label="Store notice">'
+        . wp_kses($html, array('strong' => array(), 'b' => array(), 'a' => array('href' => array()), 'span' => array('class' => array(), 'lang' => array())))
         . '</div>';
 }, 5);
 
@@ -56,10 +57,10 @@ add_filter('wc_get_template_part', function ($template, $slug, $name) {
 
 // Coming soon (no price yet) and the reference's button wording on the product page.
 add_filter('woocommerce_product_single_add_to_cart_text', function ($text) {
-    global $product; if ($product && '' === $product->get_price()) return 'Coming soon';
-    return 'Add to Cart';
+    global $product; if ($product && '' === $product->get_price()) return 'শীঘ্রই আসছে';
+    return 'কার্টে যোগ করুন';
 });
-add_filter('woocommerce_product_add_to_cart_text', function ($text) { global $product; return ($product && '' === $product->get_price()) ? 'Coming soon' : $text; });
+add_filter('woocommerce_product_add_to_cart_text', function ($text) { global $product; return ($product && '' === $product->get_price()) ? 'শীঘ্রই আসছে' : $text; });
 
 // Buy now: a second submit in the same form that goes straight to checkout (WooCommerce still validates size and stock).
 add_action('woocommerce_before_add_to_cart_button', function () {
@@ -156,10 +157,10 @@ function econur_pdp_size_label($v) {
 }
 // Stock badge: [state, label].
 function econur_pdp_stock($p) {
-    if ('' === $p->get_price()) return array('soon', 'Coming soon');
-    if (!$p->is_in_stock()) return array('out', 'Out of stock');
-    if ($p->is_on_backorder()) return array('soon', 'On backorder');
-    return array('in', 'In Stock');
+    if ('' === $p->get_price()) return array('soon', 'শীঘ্রই আসছে');
+    if (!$p->is_in_stock()) return array('out', 'স্টকে নেই');
+    if ($p->is_on_backorder()) return array('soon', 'প্রি-অর্ডার');
+    return array('in', 'স্টকে আছে');
 }
 // Product photos: featured image, WooCommerce gallery, then the product's own homepage card photo (if not already in).
 function econur_pdp_images($p) {
@@ -278,6 +279,9 @@ function econur_lp_card_img($p, $size, $sizes, $alt = null, $eager = false) {
 }
 // One-line description for a product card: its "Find your bar" line, else its first highlight.
 function econur_lp_card_line($p) {
+    // the Bangla card line (econur_card_line_bn) when it exists, so routine and favourites cards read the same
+    $bn = trim((string) get_post_meta($p->get_id(), 'econur_card_line_bn', true));
+    if ('' !== $bn) return $bn;
     if (function_exists('econur_finder_concerns')) foreach (econur_finder_concerns() as $c) if ((int) $c['product'] === $p->get_id()) return $c['line'];
     $h = econur_pdp_pairs($p->get_id(), 'econur_highlights');
     return $h ? ucfirst(strtolower($h[0][0])) : '';
@@ -352,24 +356,24 @@ function econur_pdp_render($product) {
     echo '<div class="ecn-pdp-info ecn-lp-card summary entry-summary">';
     if ($cat) echo '<a class="ecn-pdp-cat" href="' . esc_url(get_term_link($cat)) . '">' . esc_html($cat->name) . '</a>';
     if ($rc > 0) {
-        echo '<div class="ecn-pdp-rating">' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '<span>' . esc_html(number_format_i18n($avg, 1)) . ' (' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . ')</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-scroll>See all reviews</a></div>';
+        echo '<div class="ecn-pdp-rating">' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1))) . '<span>' . esc_html(number_format_i18n($avg, 1)) . ' (' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . ')</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-scroll lang="bn">সব রিভিউ দেখুন</a></div>';
     } elseif (comments_open($id)) {
-        echo '<div class="ecn-pdp-rating is-empty is-new"><span class="ecn-pdp-newstar" aria-hidden="true">&#9733;</span><span>New product</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1">Be the first to review</a></div>';
+        echo '<div class="ecn-pdp-rating is-empty is-new"><span class="ecn-pdp-newstar" aria-hidden="true">&#9733;</span><span lang="bn">নতুন পণ্য</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1" lang="bn">প্রথম রিভিউটি দিন</a></div>';
     }
-    echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock>' . esc_html($stock[1]) . '</span></div>';
+    echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock' . econur_bn_attr($stock[1]) . '>' . esc_html($stock[1]) . '</span></div>';
     // the promise: each sentence on its own line on wide screens (approved design)
     if ($lp['subtitle']) {
-        $parts = preg_split('/(?<=[.!?])\s+(?=[A-Z])/u', trim($lp['subtitle']), 2);
-        echo '<p class="ecn-lp-sub">' . (count($parts) > 1 ? '<span>' . esc_html($parts[0]) . '</span> <span>' . esc_html($parts[1]) . '</span>' : esc_html($lp['subtitle'])) . '</p>';
+        $parts = preg_split('/(?<=[.!?])\s+(?=[A-Z])|(?<=।)\s+/u', trim($lp['subtitle']), 2);
+        echo '<p class="ecn-lp-sub"' . econur_bn_attr($lp['subtitle']) . '>' . (count($parts) > 1 ? '<span>' . esc_html($parts[0]) . '</span> <span>' . esc_html($parts[1]) . '</span>' : esc_html($lp['subtitle'])) . '</p>';
     }
     if ('' !== $product->get_price()) {
         $save = ($unit && $unit->is_on_sale() && (float) $unit->get_regular_price() > (float) $unit->get_price()) ? (float) $unit->get_regular_price() - (float) $unit->get_price() : 0;
-        echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div>' . ($size ? '<span class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</span>' : '') . '<span class="ecn-lp-save" data-ecn-save' . ($save > 0 ? '' : ' hidden') . '>Save ' . esc_html(econur_pdp_money($save)) . '</span></div>';
+        echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div>' . ($size ? '<span class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</span>' : '') . '<span class="ecn-lp-save" data-ecn-save lang="bn"' . ($save > 0 ? '' : ' hidden') . '>' . esc_html(econur_pdp_money($save)) . ' সাশ্রয়</span></div>';
     }
     if ($size && '' === $product->get_price()) echo '<p class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</p>';
     if ($lp['bullets']) {
         echo '<ul class="ecn-lp-checks">';
-        foreach ($lp['bullets'] as $b) echo '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($b) . '</span></li>';
+        foreach ($lp['bullets'] as $b) echo '<li' . econur_bn_attr($b) . '>' . econur_pdp_icon('check') . '<span>' . esc_html($b) . '</span></li>';
         echo '</ul>';
     }
 
@@ -377,39 +381,39 @@ function econur_pdp_render($product) {
         // pack choice: 1 / 2 / 3 of the selected size (quantity in the real WooCommerce form; optional tiered discount)
         $t = $lp['tiers']; $best = $t ? max($t) : 0;
         $packs = array(
-            1 => array('', 'Starter', 'Best for first-time use'),
-            2 => array('Most Popular', 'Best for regular use', ''),
-            3 => array('Best Value', 'Great for long-term use', ''),
+            1 => array('', 'স্টার্টার প্যাক', 'প্রথমবার ব্যবহারে সেরা'),
+            2 => array('সবচেয়ে জনপ্রিয়', 'নিয়মিত ব্যবহারে সেরা', ''),
+            3 => array('সেরা মূল্য', 'দীর্ঘদিন ব্যবহারে দারুণ', ''),
         );
-        echo '<fieldset class="ecn-lp-packs"><legend class="ecn-lp-label">Choose your order</legend><div class="ecn-lp-packs-row">';
+        echo '<fieldset class="ecn-lp-packs"><legend class="ecn-lp-label" lang="bn">আপনার প্যাক বেছে নিন</legend><div class="ecn-lp-packs-row">';
         foreach ($packs as $q => $pk) {
             $pct = econur_lp_pack_pct($t, $q);
             echo '<label class="ecn-lp-pack' . (1 === $q ? ' is-on' : '') . '" data-q="' . esc_attr($q) . '">'
                 . '<input type="radio" name="ecn_pack" value="' . esc_attr($q) . '"' . (1 === $q ? ' checked' : '') . '>'
-                . ($pk[0] ? '<span class="ecn-lp-pack-badge is-' . (2 === $q ? 'pop' : 'val') . '">' . esc_html($pk[0]) . '</span>' : '')
+                . ($pk[0] ? '<span class="ecn-lp-pack-badge is-' . (2 === $q ? 'pop' : 'val') . '" lang="bn">' . esc_html($pk[0]) . '</span>' : '')
                 . '<span class="ecn-lp-pack-q">' . esc_html($q . ' ' . (1 === $q ? $unit_word[0] : $unit_word[1])) . '</span>'
                 . '<span class="ecn-lp-pack-p" data-pack-price>' . ($unit ? esc_html(econur_pdp_money($unit->get_price() * $q * (1 - $pct / 100))) : '') . '</span>'
-                . '<span class="ecn-lp-pack-n">' . (1 === $q ? '<b>Starter</b>' : (!$unit ? '' : ($pct ? '<b class="ecn-lp-pack-s" data-pack-save>Save ' . esc_html(econur_pdp_money($unit->get_price() * $q * $pct / 100)) . '</b>' : '<b class="ecn-lp-pack-each" data-pack-each>' . esc_html($q . ' × ' . econur_pdp_money($unit->get_price())) . '</b>'))) . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
+                . '<span class="ecn-lp-pack-n" lang="bn">' . (1 === $q ? '<b>' . esc_html($pk[1]) . '</b>' : (!$unit ? '' : ($pct ? '<b class="ecn-lp-pack-s" data-pack-save>' . esc_html(econur_pdp_money($unit->get_price() * $q * $pct / 100)) . ' সাশ্রয়</b>' : '<b class="ecn-lp-pack-each" data-pack-each>' . esc_html($q . ' × ' . econur_pdp_money($unit->get_price())) . '</b>'))) . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
         }
         echo '</div></fieldset>';
-        if ($product->is_type('variable')) echo '<p class="ecn-lp-label">Choose size</p>';
+        if ($product->is_type('variable')) echo '<p class="ecn-lp-label" lang="bn">সাইজ বেছে নিন</p>';
         // the real WooCommerce form; it gets an id so Buy Now (below the panel) submits it
         ob_start(); woocommerce_template_single_add_to_cart(); $form = ob_get_clean();
         echo preg_replace('/<form(?![^>]*\bid=)([^>]*\bclass="[^"]*\bcart\b)/', '<form id="ecn-cart-form"$1', $form, 1);
     } else {
-        echo '<div class="ecn-pdp-coming"><p><b>Launching soon.</b> Want a message the day it is ready?</p><div class="ecn-pdp-coming-row">'
-            . '<a class="ecn-pdp-wa is-main" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $name . ' is available.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Notify me on WhatsApp</span></a>'
+        echo '<div class="ecn-pdp-coming"><p lang="bn"><b>শীঘ্রই আসছে।</b> যেদিন পাওয়া যাবে, সেদিন মেসেজ পেতে চান?</p><div class="ecn-pdp-coming-row">'
+            . '<a class="ecn-pdp-wa is-main" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $name . ' is available.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ আপডেট নিন</span></a>'
             . '</div></div>';
     }
 
     // compact reassurance right under Add to Cart (the store's own terms), then Buy Now and WhatsApp
     if ($buyable) {
         echo '<ul class="ecn-lp-trust" aria-label="Ordering">'
-            . '<li>' . econur_lp_icon('box') . '<span>Cash on delivery</span></li>'
-            . '<li>' . econur_pdp_icon('truck') . '<span>Delivery across Bangladesh</span></li>'
-            . '<li>' . econur_pdp_icon('phone') . '<span>We call to confirm</span></li></ul>';
-        echo '<div class="ecn-lp-extra"><button type="submit" form="ecn-cart-form" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">Buy Now</button>'
-            . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div>';
+            . '<li lang="bn">' . econur_lp_icon('box') . '<span>পণ্য হাতে পেয়ে পেমেন্ট</span></li>'
+            . '<li lang="bn">' . econur_pdp_icon('truck') . '<span>সারা বাংলাদেশে ডেলিভারি</span></li>'
+            . '<li lang="bn">' . econur_pdp_icon('phone') . '<span>অর্ডার নিশ্চিত করতে ফোন করি</span></li></ul>';
+        echo '<div class="ecn-lp-extra"><button type="submit" form="ecn-cart-form" name="ecn_buy_now" value="1" class="ecn-pdp-buynow"><span lang="bn" class="econur-bn-cta">এখনই কিনুন</span></button>'
+            . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span></a></div>';
     }
     echo '</div>';
     echo '</div></section>';
@@ -477,23 +481,27 @@ function econur_lp_routine($product, $lp) {
         if ($k) $cards .= '<span class="ecn-lp-plus" aria-hidden="true">' . econur_lp_icon('plus') . '</span>';
         $cards .= '<a class="ecn-lp-rcard" href="' . esc_url(get_permalink($pid)) . '"><span class="ecn-lp-rimg">' . econur_lp_card_img($p, 'medium_large', '(min-width: 900px) 270px, calc(100vw - 64px)', '')
             . '<span class="ecn-lp-rstep">' . econur_lp_step_icon($step) . '<span><i>Step ' . ($k + 1) . '</i>' . ($step ? esc_html($step) : '') . '</span></span></span>'
-            . '<b>' . esc_html($p->get_name()) . '</b><small>' . esc_html(econur_lp_card_line($p)) . '</small><span class="ecn-lp-rprice">' . esc_html(econur_pdp_money($u->get_price())) . ($sz ? ' <em>' . esc_html($sz) . '</em>' : '') . '</span></a>';
+            . '<b>' . esc_html($p->get_name()) . '</b><small' . econur_bn_attr(econur_lp_card_line($p)) . '>' . esc_html(econur_lp_card_line($p)) . '</small><span class="ecn-lp-rprice">' . esc_html(econur_pdp_money($u->get_price())) . ($sz ? ' <em>' . esc_html($sz) . '</em>' : '') . '</span></a>';
     }
     // a saving only when the store has real sale prices on these sizes
     $saving = $reg - $total;
-    $checks = array('Complete daily care routine');
-    if (count($steps) === 3) $checks[] = ucfirst(strtolower($steps[0])) . ', ' . strtolower($steps[1]) . ' and ' . strtolower($steps[2]);
-    $checks[] = 'Better routine convenience';
+    $checks = array('প্রতিদিনের পূর্ণ যত্নের রুটিন');
+    $bn_steps = array('cleanse' => 'পরিষ্কার', 'brighten' => 'উজ্জ্বলতা', 'exfoliate' => 'এক্সফোলিয়েশন', 'refresh' => 'সতেজতা', 'nourish' => 'পুষ্টি');
+    if (count($steps) === 3) {
+        $st = array_map(function ($x) use ($bn_steps) { $k = strtolower(trim($x)); return isset($bn_steps[$k]) ? $bn_steps[$k] : $x; }, $steps);
+        $checks[] = $st[0] . ', ' . $st[1] . ' ও ' . $st[2];
+    }
+    $checks[] = 'রুটিন মেনে চলা আরও সহজ';
     $li = '';
-    foreach ($checks as $c) $li .= '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($c) . '</span></li>';
+    foreach ($checks as $c) $li .= '<li' . econur_bn_attr($c) . '>' . econur_pdp_icon('check') . '<span>' . esc_html($c) . '</span></li>';
     echo '<section class="ecn-lp-band ecn-lp-routine" aria-labelledby="ecn-lp-routine-t">' . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tr')
         . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Better results together</span><h2 class="ecn-lp-h2" id="ecn-lp-routine-t">Complete Your Routine</h2>'
-        . '<p class="ecn-lp-lead">' . esc_html('Pair the ' . $product->get_name() . ' with two more ECONUR essentials and add all three to your cart in one tap.') . '</p></div>'
+        . '<p class="ecn-lp-lead econur-bn-body" lang="bn">' . esc_html($product->get_name() . '-এর সাথে আরও দুটি ECONUR পণ্য মিলিয়ে নিন, এক ট্যাপেই তিনটি কার্টে যোগ করুন।') . '</p></div>'
         . '<div class="ecn-lp-routine-grid"><div class="ecn-lp-rcards">' . $cards . '</div>'
-        . '<div class="ecn-lp-rsum"><span class="ecn-lp-rsum-deco" aria-hidden="true"><i></i><i></i><i></i></span><span class="ecn-lp-chip is-routine">' . econur_lp_icon('gift') . 'Complete Routine</span><h3>Routine Bundle</h3><p>All 3 products, added to your cart together.</p>'
-        . '<p class="ecn-lp-rtotal"><b>' . esc_html(econur_pdp_money($total)) . '</b>' . ($saving > 0.5 ? '<s>' . esc_html(econur_pdp_money($reg)) . '</s><span class="ecn-lp-save">Save ' . esc_html(econur_pdp_money($saving)) . '</span>' : '') . '</p>'
+        . '<div class="ecn-lp-rsum"><span class="ecn-lp-rsum-deco" aria-hidden="true"><i></i><i></i><i></i></span><span class="ecn-lp-chip is-routine">' . econur_lp_icon('gift') . 'Complete Routine</span><h3>Routine Bundle</h3><p lang="bn">3টি পণ্যই একসাথে কার্টে যোগ হবে।</p>'
+        . '<p class="ecn-lp-rtotal"><b>' . esc_html(econur_pdp_money($total)) . '</b>' . ($saving > 0.5 ? '<s>' . esc_html(econur_pdp_money($reg)) . '</s><span class="ecn-lp-save" lang="bn">' . esc_html(econur_pdp_money($saving)) . ' সাশ্রয়</span>' : '') . '</p>'
         . '<ul class="ecn-lp-rchecks">' . $li . '</ul>'
-        . '<button type="button" class="ecn-lp-btn ecn-lp-routine-add" data-ids="' . esc_attr(implode(',', $vids)) . '" data-total="' . esc_attr($total) . '">' . econur_pdp_icon('cart') . '<span>Add Routine to Cart</span></button></div></div></section>';
+        . '<button type="button" class="ecn-lp-btn ecn-lp-routine-add" data-ids="' . esc_attr(implode(',', $vids)) . '" data-total="' . esc_attr($total) . '">' . econur_pdp_icon('cart') . '<span lang="bn" class="econur-bn-cta">পুরো রুটিন কার্টে যোগ করুন</span></button></div></div></section>';
 }
 
 /* ===== why this product: its own ingredient notes ===== */
@@ -554,13 +562,13 @@ function econur_lp_why($product, $lp = array()) {
     foreach ($notes as $i => $nt) {
         if (!empty($pills[$i])) $nt[2] = $pills[$i];
         $cards .= '<article class="ecn-lp-ing">' . econur_lp_ing_image($product, $nt[0], $used)
-            . '<div><span class="ecn-lp-ing-ic">' . econur_lp_ing_icon($nt[0]) . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p>'
-            . ($nt[2] ? '<span class="ecn-lp-pill">' . esc_html($nt[2]) . '</span>' : '') . '</div></article>';
+            . '<div><span class="ecn-lp-ing-ic">' . econur_lp_ing_icon($nt[0]) . '</span><h3>' . esc_html($nt[0]) . '</h3><p' . econur_bn_attr($nt[1]) . '>' . esc_html($nt[1]) . '</p>'
+            . ($nt[2] ? '<span class="ecn-lp-pill"' . econur_bn_attr($nt[2]) . '>' . esc_html($nt[2]) . '</span>' : '') . '</div></article>';
     }
     echo '<section class="ecn-lp-sec ecn-lp-why" id="ecn-ingredients" aria-labelledby="ecn-lp-why-t">'
         . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tr') . econur_lp_fleaf('is-a') . econur_lp_fleaf('is-b')
-        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Powered by botanical ingredients</span><h2 class="ecn-lp-h2" id="ecn-lp-why-t">' . esc_html('Why ' . $product->get_name() . '?') . '</h2>'
-        . ($lead ? '<p class="ecn-lp-lead">' . esc_html($lead) . '</p>' : '') . '</div><div class="ecn-lp-ings">' . $cards . '</div></section>';
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Powered by botanical ingredients</span><h2 class="ecn-lp-h2 econur-bn-h2" id="ecn-lp-why-t" lang="bn">' . esc_html('কেন ' . $product->get_name() . '?') . '</h2>'
+        . ($lead ? '<p class="ecn-lp-lead' . (econur_has_bn($lead) ? ' econur-bn-body' : '') . '"' . econur_bn_attr($lead) . '>' . esc_html($lead) . '</p>' : '') . '</div><div class="ecn-lp-ings">' . $cards . '</div></section>';
 }
 
 /* Drawn illustrations (flat vector art, decorative): one per ingredient family and one per how-to step. */
@@ -694,16 +702,16 @@ function econur_lp_howto($product) {
         if (!empty($pills[$i])) $s[2] = $pills[$i];
         $t = strtolower($s[0]);
         // the picture follows the step: rinse, lather/wet, or the cleanse itself
-        $k = preg_match('/rinse/', $t) ? 'rinse' : (0 === $i ? 'lather' : 'cleanse');
+        $k = preg_match('/rinse|ধুয়ে/u', $t) ? 'rinse' : (0 === $i ? 'lather' : 'cleanse');
         if ($i) $out .= '<li class="ecn-lp-step-arrow" aria-hidden="true">' . econur_lp_icon('arrow') . '</li>';
         $out .= '<li class="ecn-lp-step"><b class="ecn-lp-step-n">' . ($i + 1) . '</b><span class="ecn-lp-step-art">' . econur_lp_ritual_art($k, econur_lp_bar_color($product)) . '</span>'
-            . '<div><h3>' . esc_html($s[0]) . '</h3><p>' . esc_html($s[1]) . '</p>' . ($s[2] ? '<span class="ecn-lp-pill">' . esc_html($s[2]) . '</span>' : '') . '</div></li>';
+            . '<div' . econur_bn_attr($s[0] . $s[1]) . '><h3>' . esc_html($s[0]) . '</h3><p>' . esc_html($s[1]) . '</p>' . ($s[2] ? '<span class="ecn-lp-pill">' . esc_html($s[2]) . '</span>' : '') . '</div></li>';
     }
     echo '<section class="ecn-lp-sec ecn-lp-how" aria-labelledby="ecn-lp-how-t">'
         . '<svg class="ecn-lp-wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 46C180 10 360 4 560 30s420 56 620 36C1300 54 1380 36 1440 26V90H0Z"/></svg>'
         . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--ml') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--mr') . econur_lp_fleaf('is-c') . econur_lp_fleaf('is-d')
-        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_lp_icon('sun') . 'Simple daily ritual</span><h2 class="ecn-lp-h2" id="ecn-lp-how-t">How to Use</h2>'
-        . '<p class="ecn-lp-lead">' . esc_html($note ? $note : 'Simple steps, as on the label.') . '</p></div><ol class="ecn-lp-steps">' . $out . '</ol></section>';
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_lp_icon('sun') . 'Simple daily ritual</span><h2 class="ecn-lp-h2 econur-bn-h2" id="ecn-lp-how-t" lang="bn">ব্যবহারের নিয়ম</h2>'
+        . '<p class="ecn-lp-lead econur-bn-body" lang="bn">' . esc_html($note && econur_has_bn($note) ? $note : 'লেবেলে যেভাবে লেখা আছে, সেই সহজ ধাপগুলো।') . '</p></div><ol class="ecn-lp-steps">' . $out . '</ol></section>';
 }
 
 /* ===== reviews ("Loved by Customers"): real WooCommerce reviews only (no samples, no borrowed testimonials) =====
@@ -722,13 +730,13 @@ function econur_lp_home_reviews_on() {
 // item of the trust strip: it names this product and opens this product's review form (when reviews are open to the visitor).
 function econur_lp_home_reviews($product, $can) {
     if (!econur_lp_home_reviews_on()) return '';
-    $line = 'Review the ' . $product->get_name() . '.';
+    $line = $product->get_name() . '-এর রিভিউ দিন।';
     $cfg_filter = function ($cfg) use ($can, $line) {
         if (!$can || empty($cfg['trust'])) return $cfg;
         foreach ($cfg['trust'] as $v => $items) {
-            $k = array_search('Share your experience', array_column($items, 1), true);
+            $k = array_search('আপনার অভিজ্ঞতা শেয়ার করুন', array_column($items, 1), true);
             if (false === $k) $k = min(1, count($items) - 1); // store-review mode: the middle item becomes the review button
-            if ($k >= 0) $cfg['trust'][$v][$k] = array('star', 'Share your experience', $line);
+            if ($k >= 0) $cfg['trust'][$v][$k] = array('star', 'আপনার অভিজ্ঞতা শেয়ার করুন', $line);
         }
         return $cfg;
     };
@@ -738,11 +746,11 @@ function econur_lp_home_reviews($product, $can) {
     if ('' === $html || !$can) return $html;
     // the whole item is clickable (a button stretched over it); it looks exactly like the homepage item
     $done = false;
-    return preg_replace_callback('#<li class="enr-rv-trust-item">.*?</li>#s', function ($m) use (&$done) {
-        if ($done || false === strpos($m[0], '<b>Share your experience</b>')) return $m[0];
+    return preg_replace_callback('#<li class="enr-rv-trust-item"( lang="bn")?>.*?</li>#s', function ($m) use (&$done) {
+        if ($done || false === strpos($m[0], '<b>আপনার অভিজ্ঞতা শেয়ার করুন</b>')) return $m[0];
         $done = true;
-        return str_replace(array('<li class="enr-rv-trust-item">', '<b>Share your experience</b>'),
-            array('<li class="enr-rv-trust-item ecn-rv-trust-write">', '<b><button type="button" class="ecn-rv-trust-btn" data-ecn-rv-write aria-controls="ecn-rv-form" aria-expanded="false">Share your experience</button></b>'), $m[0]);
+        return str_replace(array('<li class="enr-rv-trust-item"', '<b>আপনার অভিজ্ঞতা শেয়ার করুন</b>'),
+            array('<li class="enr-rv-trust-item ecn-rv-trust-write"', '<b><button type="button" class="ecn-rv-trust-btn" data-ecn-rv-write aria-controls="ecn-rv-form" aria-expanded="false">আপনার অভিজ্ঞতা শেয়ার করুন</button></b>'), $m[0]);
     }, $html);
 }
 
@@ -875,30 +883,31 @@ function econur_lp_reviews($product) {
 function econur_lp_faq($product, $lp) {
     $id = $product->get_id(); $name = $product->get_name(); $q = $lp['faq_extra'];
     $skin = econur_meta_list($id, 'econur_skin_type');
-    if ($skin) $q[] = array('Is the ' . $name . ' suitable for my skin type?', 'It is made for ' . strtolower(implode(', ', array_slice($skin, 0, -1)) . (count($skin) > 1 ? ' and ' : '') . end($skin)) . '. If you are unsure, message us on WhatsApp and we will help you choose.');
+    // Bangla questions; answers translate the product's own data and the store's terms (skin types: econur_bn_skin)
+    if ($skin) { $sk = array_map('econur_bn_skin', $skin); $q[] = array($name . ' কি আমার ত্বকের জন্য উপযোগী?', 'এটি ' . implode(', ', array_slice($sk, 0, -1)) . (count($sk) > 1 ? ' ও ' : '') . end($sk) . '-এর জন্য তৈরি। নিশ্চিত না হলে WhatsApp-এ মেসেজ দিন, সঠিক বারটি বেছে নিতে আমরা সাহায্য করব।'); }
     $how = trim((string) get_post_meta($id, 'econur_how_note', true));
-    if ($how) $q[] = array('Can I use it every day?', $how);
+    if ($how) $q[] = array('এটি কি প্রতিদিন ব্যবহার করা যাবে?', $how);
     $full = trim((string) get_post_meta($id, 'econur_full_ingredients', true));
-    if ($full) $q[] = array('What are the full ingredients?', $full);
-    $q[] = array('Do you offer cash on delivery (COD)?', 'Yes. Cash on delivery is available across Bangladesh: you pay when the parcel arrives.');
-    $q[] = array('How long will it take to receive my order?', 'Inside Dhaka 1 to 2 days, outside Dhaka 2 to 4 days. We call to confirm every order within 12 hours.');
+    if ($full) $q[] = array('এতে কী কী উপাদান আছে?', $full);
+    $q[] = array('ক্যাশ অন ডেলিভারি সুবিধা আছে কি?', 'হ্যাঁ। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি আছে: পণ্য হাতে পেয়ে টাকা দেবেন।');
+    $q[] = array('অর্ডার পৌঁছাতে কত সময় লাগবে?', 'ঢাকার ভেতরে 1–2 দিন, ঢাকার বাইরে 2–4 দিন। প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে আমরা ফোন করে নিশ্চিত করি।');
     $guide = econur_lp_finder_items($product);
-    if ($guide) $q[] = array('How do I choose the right bar for my skin concerns?', 'Use the Find Your Bar guide just below: choose what your skin needs most and it shows the matching ECONUR bar. You can also chat with us on WhatsApp.');
+    if ($guide) $q[] = array('আমার ত্বকের জন্য সঠিক বার কীভাবে বেছে নেব?', 'নিচের গাইডে আপনার ত্বকের সবচেয়ে বড় প্রয়োজনটি বেছে নিন, মানানসই ECONUR বারটি দেখতে পাবেন। চাইলে WhatsApp-এও আমাদের সাথে কথা বলতে পারেন।');
     $wa = econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.');
 
     $items = '';
     foreach ($q as $k => $row) {
         $n = $k + 1;
-        $items .= '<div class="ecn-faq-i"><h3 class="ecn-faq-q"><button type="button" id="ecn-faq-b' . $n . '" aria-expanded="false" aria-controls="ecn-faq-a' . $n . '"><span>' . esc_html($row[0]) . '</span>' . econur_lp_icon('down') . '</button></h3>'
-            . '<div class="ecn-faq-a" id="ecn-faq-a' . $n . '" role="region" aria-labelledby="ecn-faq-b' . $n . '"><div><p>' . esc_html($row[1]) . '</p></div></div></div>';
+        $items .= '<div class="ecn-faq-i"' . econur_bn_attr($row[0]) . '><h3 class="ecn-faq-q"><button type="button" id="ecn-faq-b' . $n . '" aria-expanded="false" aria-controls="ecn-faq-a' . $n . '"><span>' . esc_html($row[0]) . '</span>' . econur_lp_icon('down') . '</button></h3>'
+            . '<div class="ecn-faq-a" id="ecn-faq-a' . $n . '" role="region" aria-labelledby="ecn-faq-b' . $n . '"><div><p' . (econur_has_bn($row[1]) ? ' class="econur-bn-body"' : ' lang="en"') . '>' . esc_html($row[1]) . '</p></div></div></div>';
     }
     echo '<div class="ecn-lp-sec ecn-help">' . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--faq')
         . '<section class="ecn-help-faq" id="ecn-faq" aria-labelledby="ecn-faq-t">'
         . '<div class="ecn-help-intro"><span class="ecn-lp-kicker">' . econur_lp_icon('sprout') . 'Common questions</span>'
-        . '<h2 class="ecn-lp-h2 ecn-help-h2" id="ecn-faq-t">Frequently Asked Questions</h2>'
-        . '<p class="ecn-help-lead">Got questions? We have answers. Need more help? Chat with us on WhatsApp.</p></div>'
+        . '<h2 class="ecn-lp-h2 ecn-help-h2 econur-bn-h2" id="ecn-faq-t" lang="bn">সচরাচর জিজ্ঞাসা</h2>'
+        . '<p class="ecn-help-lead econur-bn-body" lang="bn">প্রশ্ন আছে? উত্তর এখানে। আরও সাহায্য লাগলে WhatsApp-এ আমাদের সাথে কথা বলুন।</p></div>'
         . '<div class="ecn-faq-list">' . $items . '</div>'
-        . '<div class="ecn-help-cta"><a class="ecn-help-wa" href="' . esc_url($wa) . '" target="_blank" rel="noopener" data-ecn-wa>' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div>'
+        . '<div class="ecn-help-cta"><a class="ecn-help-wa" href="' . esc_url($wa) . '" target="_blank" rel="noopener" data-ecn-wa>' . econur_pdp_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span></a></div>'
         . '</section>';
     econur_lp_finder_block($product, $guide);
     echo '</div>';
@@ -927,14 +936,14 @@ function econur_lp_finder_block($product, $items) {
     $buyable = '' !== $product->get_price() && $product->is_purchasable();
     $cards = '';
     // short card lines (owner-approved copy); the guide below keeps each bar's own finder line
-    $lines = array('oily' => 'Deep cleansing that feels clean, never tight.', 'tone' => 'Gentle care for dull or uneven-looking skin.', 'daily' => 'Botanical cleansing for everyday use.');
+    $lines = array('oily' => 'গভীরভাবে পরিষ্কার করে, তবু ত্বক টানটান লাগে না।', 'tone' => 'নিষ্প্রভ বা অসমান দেখানো ত্বকের কোমল যত্ন।', 'daily' => 'প্রতিদিনের ব্যবহারের জন্য বোটানিক্যাল ক্লিনজিং।');
     foreach (array('oily', 'tone', 'daily') as $k) {
         if (empty($items[$k])) continue;
         $it = $items[$k]; $p = $it['p'];
         // the bar on this page: the card goes to its purchase options instead of reloading the page
         $href = $it['self'] ? ($buyable ? '#ecn-cart-form' : '') : get_permalink($p->get_id());
-        $go = $it['self'] ? '<span class="ecn-need-go ecn-need-cur">' . econur_pdp_icon('check') . 'Current Product</span>' : '<span class="ecn-need-go">Explore' . econur_lp_icon('arrow') . '</span>';
-        $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx">' . esc_html(isset($lines[$k]) ? $lines[$k] : $it['line']) . '</span>' . $go;
+        $go = $it['self'] ? '<span class="ecn-need-go ecn-need-cur">' . econur_pdp_icon('check') . '<span lang="bn">এই পণ্যটি</span></span>' : '<span class="ecn-need-go"><span lang="bn">দেখুন</span>' . econur_lp_icon('arrow') . '</span>';
+        $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx"' . econur_bn_attr(isset($lines[$k]) ? $lines[$k] : $it['line']) . '>' . esc_html(isset($lines[$k]) ? $lines[$k] : $it['line']) . '</span>' . $go;
         $label = $it['title'] . ': ' . $p->get_name() . ($it['self'] ? ' (this page)' : '');
         $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '"' . ($it['self'] ? ' data-ecn-to-buy' : '') . ' aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
     }
@@ -951,23 +960,23 @@ function econur_lp_finder_block($product, $items) {
         }
         $img = econur_lp_card_img($p, 'medium', '(max-width: 767px) 84px, 104px', '');
         $btn = $it['self']
-            ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form" data-ecn-to-buy><span>Choose your pack</span>' . econur_lp_icon('up') . '</a>' : '')
-            : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span>View Product</span>' . econur_lp_icon('arrow') . '</a>';
+            ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form" data-ecn-to-buy><span lang="bn">প্যাক বেছে নিন</span>' . econur_lp_icon('up') . '</a>' : '')
+            : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span lang="bn">পণ্যটি দেখুন</span>' . econur_lp_icon('arrow') . '</a>';
         $opts .= '<button type="button" class="ecn-finder-opt" data-k="' . esc_attr($k) . '" aria-pressed="false" aria-controls="ecn-pick-' . esc_attr($k) . '">' . econur_lp_icon($it['icon']) . '<span>' . esc_html($it['title']) . '</span></button>';
         $picks .= '<article class="ecn-pick" id="ecn-pick-' . esc_attr($k) . '" hidden>' . ($img ? '<span class="ecn-pick-img">' . $img . '</span>' : '')
-            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . esc_html($it['self'] ? 'Current product · ' . $it['badge'] : $it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
+            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . ($it['self'] ? '<span lang="bn">এই পণ্যটি</span> · ' : '') . esc_html($it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
             . $btn . '</article>';
     }
     echo '<section class="ecn-help-finder" id="ecn-finder" aria-labelledby="ecn-finder-t">'
         . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--bl') . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--br')
         . '<div class="ecn-finder-intro"><span class="ecn-lp-kicker">' . econur_lp_icon('sprout') . 'Find your perfect bar</span>'
-        . '<h2 class="ecn-lp-h2 ecn-finder-h2" id="ecn-finder-t">Not sure which bar is right for you?</h2>'
-        . '<p class="ecn-finder-lead">Choose what your skin needs most and we&rsquo;ll guide you to the best ECONUR option.</p></div>'
+        . '<h2 class="ecn-lp-h2 ecn-finder-h2 econur-bn-h2" id="ecn-finder-t" lang="bn">আপনার জন্য কোন বারটি সঠিক?</h2>'
+        . '<p class="ecn-finder-lead econur-bn-body" lang="bn">আপনার ত্বকের সবচেয়ে বড় প্রয়োজনটি বেছে নিন, আমরা আপনাকে সঠিক ECONUR বারটি দেখিয়ে দেব।</p></div>'
         . ($cards ? '<div class="ecn-finder-cards">' . $cards . '</div>' : '')
-        . '<div class="ecn-finder-cta"><a class="ecn-lp-btn ecn-finder-open" href="' . esc_url(home_url('/#finder')) . '" data-ecn-finder-open aria-controls="ecn-finder-guide"><span>Find Your Bar</span>' . econur_lp_icon('arrow') . '</a></div>'
-        . '<div class="ecn-finder-guide" id="ecn-finder-guide" hidden><div class="ecn-finder-ask"><p class="ecn-finder-q" id="ecn-finder-q">What is your main skin concern?</p>'
+        . '<div class="ecn-finder-cta"><a class="ecn-lp-btn ecn-finder-open" href="' . esc_url(home_url('/#finder')) . '" data-ecn-finder-open aria-controls="ecn-finder-guide"><span lang="bn" class="econur-bn-cta">সঠিক বারটি খুঁজুন</span>' . econur_lp_icon('arrow') . '</a></div>'
+        . '<div class="ecn-finder-guide" id="ecn-finder-guide" hidden><div class="ecn-finder-ask"><p class="ecn-finder-q" id="ecn-finder-q" lang="bn">আপনার ত্বকের মূল প্রয়োজন কোনটি?</p>'
         . '<div class="ecn-finder-opts" role="group" aria-labelledby="ecn-finder-q">' . $opts . '</div></div>'
-        . '<div class="ecn-finder-res" aria-live="polite"><p class="ecn-finder-hint">Choose a concern to see the matching ECONUR bar.</p>' . $picks . '</div></div>'
+        . '<div class="ecn-finder-res" aria-live="polite"><p class="ecn-finder-hint" lang="bn">একটি অপশন বেছে নিন, মানানসই ECONUR বারটি দেখতে পাবেন।</p>' . $picks . '</div></div>'
         . '</section>';
 }
 
@@ -990,9 +999,9 @@ function econur_lp_favorites($product, $lp) {
         $line = trim((string) get_post_meta($pid, 'econur_card_line', true)); if ('' === $line) $line = econur_lp_card_line($p);
         $rcount = (int) $p->get_review_count();
         $cards .= '<article class="ecn-rel-card' . ($u ? '' : ' is-soon') . '"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . econur_lp_card_img($p, 'medium_large', '(min-width: 1200px) 290px, (min-width: 768px) 30vw, 80vw') . '</a></div>'
-            . '<div class="ecn-rel-body">' . ($u ? '' : '<span class="ecn-rel-soon">Coming soon</span>')
+            . '<div class="ecn-rel-body">' . ($u ? '' : '<span class="ecn-rel-soon" lang="bn">শীঘ্রই আসছে</span>')
             . '<h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($nm) . '</a></h3>'
-            . ($line ? '<p class="ecn-rel-line">' . esc_html($line) . '</p>' : '')
+            . ($line ? '<p class="ecn-rel-line"' . econur_bn_attr($line) . '>' . esc_html($line) . '</p>' : '')
             // real reviews only: no empty stars, no "no reviews yet"
             . ($rcount ? '<p class="ecn-rel-rating">' . econur_lp_stars((float) $p->get_average_rating() / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n((float) $p->get_average_rating(), 1))) . '<span>' . esc_html(number_format_i18n((float) $p->get_average_rating(), 1)) . ' (' . $rcount . ')</span></p>' : '');
         if ($u) {
@@ -1005,16 +1014,16 @@ function econur_lp_favorites($product, $lp) {
                 uksort($opts, function ($a, $b) { return ((float) $a <=> (float) $b) ?: strcmp($a, $b); });
                 $opts = array_values($opts);
                 if (count($opts) > 1) {
-                    $chips = '<div class="ecn-rel-sizes" role="radiogroup" aria-label="' . esc_attr('Size for ' . $nm) . '">';
+                    $chips = '<div class="ecn-rel-sizes" role="radiogroup" aria-label="' . esc_attr($nm . '-এর সাইজ') . '">';
                     foreach ($opts as $v) { $lbl = econur_pdp_size_label($v); $on = $v->get_id() === $u->get_id();
                         $chips .= '<button type="button" class="ecn-rel-size' . ($on ? ' is-on' : '') . '" role="radio" aria-checked="' . ($on ? 'true' : 'false') . '" data-id="' . esc_attr($v->get_id()) . '" data-price="' . esc_attr($v->get_price()) . '" data-size="' . esc_attr($lbl) . '" data-price-html="' . esc_attr(wp_kses_post($v->get_price_html())) . '">' . esc_html($lbl) . '</button>'; }
                     $chips .= '</div>';
                 }
             }
             $cards .= '<p class="ecn-rel-price"><span class="ecn-rel-pr">' . wp_kses_post($u->get_price_html()) . '</span>' . ($sz && !$chips ? '<small>' . esc_html($sz) . '</small>' : '') . '</p>' . $chips
-                . '<div class="ecn-rel-cta"><button type="button" class="ecn-rel-add" data-id="' . esc_attr($u->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($nm . ($sz ? ' (' . $sz . ')' : '')) . '" data-price="' . esc_attr($u->get_price()) . '" aria-label="' . esc_attr('Add ' . $nm . ($sz ? ', ' . $sz : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button></div>';
+                . '<div class="ecn-rel-cta"><button type="button" class="ecn-rel-add" data-id="' . esc_attr($u->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($nm . ($sz ? ' (' . $sz . ')' : '')) . '" data-price="' . esc_attr($u->get_price()) . '" aria-label="' . esc_attr('কার্টে যোগ করুন: ' . $nm . ($sz ? ', ' . $sz : '')) . '">' . econur_pdp_icon('cart') . '<span lang="bn" class="econur-bn-cta">কার্টে যোগ করুন</span></button></div>';
         } else {
-            $cards .= '<div class="ecn-rel-cta"><a class="ecn-rel-view" href="' . esc_url($link) . '" aria-label="' . esc_attr('View product: ' . $nm) . '">View Product</a></div>';
+            $cards .= '<div class="ecn-rel-cta"><a class="ecn-rel-view" href="' . esc_url($link) . '" aria-label="' . esc_attr('পণ্যটি দেখুন: ' . $nm) . '"><span lang="bn" class="econur-bn-cta">পণ্যটি দেখুন</span></a></div>';
         }
         $cards .= '</div></article>';
     }
@@ -1036,13 +1045,13 @@ function econur_lp_final($product, $lp, $unit, $size) {
     $buy = $unit && '' !== $product->get_price() && $product->is_purchasable() && $unit->is_in_stock();
     // coming-soon products (no price yet) and sold-out ones must not invite an order
     $soon = '' === $product->get_price() || !$product->is_purchasable();
-    $line = $buy ? 'Order today and pay when your parcel arrives.' : ($soon ? 'Coming soon. Message us on WhatsApp to hear the day it is ready.' : 'Message us on WhatsApp for availability.');
+    $line = $buy ? 'আজই অর্ডার করুন, পণ্য হাতে পেয়ে টাকা দিন।' : ($soon ? 'শীঘ্রই আসছে। যেদিন পাওয়া যাবে, জানতে WhatsApp-এ মেসেজ দিন।' : 'কখন পাওয়া যাবে জানতে WhatsApp-এ মেসেজ দিন।');
     echo '<section class="ecn-lp-final" aria-labelledby="ecn-lp-final-t"><div class="ecn-lp-final-img">' . econur_lp_card_img($product, 'large', '(min-width: 1000px) 32vw, 100vw', '') . '</div>'
-        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p>Handcrafted in Bangladesh with natural botanicals. ' . esc_html($line) . '</p>'
-        . '<ul class="ecn-lp-final-trust"><li>' . econur_pdp_icon('cash') . '<span><b>Cash on delivery</b><small>Across Bangladesh</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>Fast delivery</b><small>Inside Dhaka 1–2 days<br>Outside Dhaka 2–4 days</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>We call to confirm</b><small>Every order within 12 hours</small></span></li></ul></div>'
+        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p class="econur-bn-body" lang="bn">প্রাকৃতিক বোটানিক্যাল উপাদানে বাংলাদেশে হাতে তৈরি। ' . esc_html($line) . '</p>'
+        . '<ul class="ecn-lp-final-trust" lang="bn"><li>' . econur_pdp_icon('cash') . '<span><b>ক্যাশ অন ডেলিভারি</b><small>সারা বাংলাদেশে</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>দ্রুত ডেলিভারি</b><small>ঢাকার ভেতরে 1–2 দিন<br>ঢাকার বাইরে 2–4 দিন</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>ফোনে অর্ডার নিশ্চিত</b><small>প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে</small></span></li></ul></div>'
         . '<div class="ecn-lp-final-cta">'
-        . ($buy ? '<button type="button" class="ecn-lp-final-add" data-ecn-final-add>' . econur_pdp_icon('cart') . '<span>Add to Cart</span><span class="ecn-atc-price" data-ecn-final-price> — ' . esc_html(econur_pdp_money($unit->get_price())) . '</span></button>' : '')
-        . '<a class="ecn-lp-final-wa" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div></section>';
+        . ($buy ? '<button type="button" class="ecn-lp-final-add" data-ecn-final-add>' . econur_pdp_icon('cart') . '<span lang="bn">কার্টে যোগ করুন</span><span class="ecn-atc-price" data-ecn-final-price> — ' . esc_html(econur_pdp_money($unit->get_price())) . '</span></button>' : '')
+        . '<a class="ecn-lp-final-wa" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span lang="bn">WhatsApp-এ কথা বলুন</span></a></div></section>';
 }
 
 /* ---------------------------------------------------------------- reviews */
@@ -1081,11 +1090,11 @@ add_action('wp_footer', function () {
     echo '<div class="ecn-sbar" id="ecnSbar" aria-hidden="true">';
     if ($buyable) {
         echo '<div class="ecn-sbar-p"><b id="ecnSbarPrice">' . ($price > 0 ? esc_html(econur_pdp_money($price)) : '') . '</b><small id="ecnSbarSize">' . esc_html($size) . '</small></div>'
-            . '<button type="button" class="ecn-sbar-btn" id="ecnSbarBtn" tabindex="-1">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button>';
+            . '<button type="button" class="ecn-sbar-btn" id="ecnSbarBtn" tabindex="-1">' . econur_pdp_icon('cart') . '<span lang="bn">কার্টে যোগ করুন</span></button>';
     } else {
-        echo '<div class="ecn-sbar-p"><b>' . esc_html($product->get_name()) . '</b><small>Coming soon</small></div><a class="ecn-sbar-btn" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $product->get_name() . ' is available.')) . '" target="_blank" rel="noopener" tabindex="-1"><span>Notify me</span></a>';
+        echo '<div class="ecn-sbar-p"><b>' . esc_html($product->get_name()) . '</b><small lang="bn">শীঘ্রই আসছে</small></div><a class="ecn-sbar-btn" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $product->get_name() . ' is available.')) . '" target="_blank" rel="noopener" tabindex="-1"><span lang="bn">আপডেট নিন</span></a>';
     }
-    echo '</div><div class="ecn-toast" id="ecnToast" role="status" aria-live="polite" hidden><span id="ecnToastTxt"></span><a href="' . esc_url(wc_get_checkout_url()) . '">Checkout</a></div>';
+    echo '</div><div class="ecn-toast" id="ecnToast" role="status" aria-live="polite" lang="bn" hidden><span id="ecnToastTxt"></span><a href="' . esc_url(wc_get_checkout_url()) . '">চেকআউট</a></div>';
     echo '<div class="ecn-zoom" id="ecnZoom" role="dialog" aria-modal="true" aria-label="Product photo" hidden><button type="button" class="ecn-zoom-x" aria-label="Close">&times;</button><button type="button" class="ecn-zoom-nav ecn-zoom-prev" aria-label="Previous photo">' . econur_pdp_icon('prev') . '</button><img alt=""><button type="button" class="ecn-zoom-nav ecn-zoom-next" aria-label="Next photo">' . econur_pdp_icon('next') . '</button></div>';
     $lp = econur_lp_data($product);
     $du = $vid ? wc_get_product($vid) : $product; $reg = ($du && $du->is_on_sale()) ? (float) $du->get_regular_price() : 0;

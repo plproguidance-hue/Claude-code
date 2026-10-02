@@ -2,14 +2,14 @@
 /**
  * Plugin Name:       ECONUR Reviews
  * Description:       "What customers say" section for the homepage, shortcode [econur_reviews]. Shows approved WooCommerce product reviews once there are enough of them, and the customer testimonials the store owner has confirmed until then.
- * Version:           1.3.2
+ * Version:           1.4.0
  * Requires Plugins:  woocommerce
  * Author:            ECONUR
  * Text Domain:       econur-reviews
  */
 defined('ABSPATH') || exit;
 
-define('ECONUR_REVIEWS_VERSION', '1.3.2');
+define('ECONUR_REVIEWS_VERSION', '1.4.0');
 
 require_once __DIR__ . '/includes/review-requests.php';
 
@@ -54,19 +54,19 @@ function enr_reviews_settings() {
         // is the enabled payment method for the Bangladesh-only shipping zone.
         'trust' => array(
             'fallback' => array(
-                array('chat', 'Real customer feedback', 'Shared with us by ECONUR customers.'),
-                array('star', 'Share your experience', 'Leave a review on any product page.'),
-                array('cash', 'Cash on delivery', 'Available across Bangladesh.'),
+                array('chat', 'সত্যিকারের কাস্টমার মতামত', 'ECONUR কাস্টমারদের নিজেদের শেয়ার করা।'),
+                array('star', 'আপনার অভিজ্ঞতা শেয়ার করুন', 'যেকোনো পণ্যের পেজে রিভিউ দিন।'),
+                array('cash', 'ক্যাশ অন ডেলিভারি', 'সারা বাংলাদেশে পাওয়া যায়।'),
             ),
             'live' => array(
-                array('chat', 'Customer reviews', 'Approved reviews from our product pages.'),
-                array('star', 'Star-rated', 'Every review includes a 1 to 5 star rating.'),
-                array('sync', 'Updated from WooCommerce', '%latest%'),
+                array('chat', 'কাস্টমার রিভিউ', 'আমাদের পণ্যের পেজের অনুমোদিত রিভিউ।'),
+                array('star', 'স্টার রেটিং', 'প্রতিটি রিভিউতে 1 থেকে 5 স্টার রেটিং আছে।'),
+                array('sync', 'নিয়মিত আপডেট', '%latest%'),
             ),
             'live_verified' => array(
-                array('cart', 'Verified purchases', 'Reviews from confirmed customers.'),
-                array('chat', 'Real product reviews', 'Honest feedback from real buyers.'),
-                array('sync', 'Updated from WooCommerce', '%latest%'),
+                array('cart', 'যাচাইকৃত কেনাকাটা', 'নিশ্চিত কাস্টমারদের রিভিউ।'),
+                array('chat', 'সত্যিকারের পণ্য রিভিউ', 'সত্যিকারের ক্রেতাদের সৎ মতামত।'),
+                array('sync', 'নিয়মিত আপডেট', '%latest%'),
             ),
         ),
         'decor'       => array('tl' => 154, 'tr' => 155, 'bl' => 131, 'br' => 131),
@@ -335,11 +335,12 @@ function enr_reviews_render($data, $cfg) {
         . '<button type="button" class="enr-rv-arrow enr-rv-next" aria-controls="' . $uid . '-track" aria-label="Next review">' . enr_reviews_icon('next') . '</button></div>'
         . '</div>';
 
-    $latest = (int) $cfg['min_rating'] > 1 ? sprintf('Shows our latest %d- and 5-star reviews.', (int) $cfg['min_rating']) : 'Automatically shows the latest reviews.';
-    if ((int) $cfg['min_rating'] >= 5) $latest = 'Shows our latest 5-star reviews.';
+    $latest = (int) $cfg['min_rating'] > 1 ? sprintf('সর্বশেষ %d ও 5 স্টার রিভিউগুলো দেখানো হয়।', (int) $cfg['min_rating']) : 'সর্বশেষ রিভিউগুলো নিজে থেকেই দেখানো হয়।';
+    if ((int) $cfg['min_rating'] >= 5) $latest = 'সর্বশেষ 5 স্টার রিভিউগুলো দেখানো হয়।';
     $trust = '';
     foreach ($cfg['trust'][$variant] as $t) {
-        $trust .= '<li class="enr-rv-trust-item"><span class="enr-rv-trust-ico">' . enr_reviews_icon($t[0]) . '</span><span class="enr-rv-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html(str_replace('%latest%', $latest, $t[2])) . '</span></span></li>';
+        // trust lines may be Bangla (theme locale layer): mark them so the Bangla type applies
+        $trust .= '<li class="enr-rv-trust-item"' . (preg_match('/[\x{0980}-\x{09FF}]/u', $t[1] . $t[2]) ? ' lang="bn"' : '') . '><span class="enr-rv-trust-ico">' . enr_reviews_icon($t[0]) . '</span><span class="enr-rv-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html(str_replace('%latest%', $latest, $t[2])) . '</span></span></li>';
     }
 
     $decor = '';

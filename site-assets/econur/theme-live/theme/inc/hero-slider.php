@@ -10,11 +10,11 @@
 
 function econur_hero_default_slides() {
     return array(
-        array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'width' => 16, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'Shop Face Care', 'url' => '/product-category/face-care/'),
-        array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'width' => 30, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'Explore Brightening Bar', 'url' => '/product/licorice-brightening-bar/'),
-        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'Explore Active Defense', 'url' => '/product/active-defense-bar/'),
-        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'Explore Herbfresh', 'url' => '/product/herbifresh-bar/'),
-        array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'Explore Caffeind Bar', 'url' => '/product/caffiend-bar/'),
+        array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'width' => 16, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'ফেস কেয়ার দেখুন', 'url' => '/product-category/face-care/'),
+        array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'width' => 30, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/licorice-brightening-bar/'),
+        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/active-defense-bar/'),
+        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/herbifresh-bar/'),
+        array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/caffiend-bar/'),
     );
 }
 
@@ -73,7 +73,7 @@ add_shortcode('econur_hero', function () {
         if ($s['eyebrow']) $o .= '<p class="ecn-hx-eyebrow">' . esc_html($s['eyebrow']) . '</p>';
         if ($s['title'])   $o .= '<h2 class="ecn-hx-title">' . nl2br(esc_html($s['title']), false) . '</h2>';
         if ($s['text'])    $o .= '<p class="ecn-hx-text">' . esc_html($s['text']) . '</p>';
-        if ($s['cta'] && $url) $o .= '<a class="ecn-hx-cta" href="' . esc_url($url) . '"><span>' . esc_html($s['cta']) . '</span>' . $arrow . '</a>';
+        if ($s['cta'] && $url) $o .= '<a class="ecn-hx-cta" href="' . esc_url($url) . '"><span' . econur_bn_attr($s['cta']) . '>' . esc_html($s['cta']) . '</span>' . $arrow . '</a>';
         $o .= '</div></div>';
     }
     $o .= '</div>';

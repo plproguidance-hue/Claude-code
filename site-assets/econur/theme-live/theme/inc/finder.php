@@ -108,7 +108,7 @@ add_shortcode('econur_finder', function () {
             . ($ing ? '<p class="ecn-fy-ing">' . esc_html($ing) . '</p>' : '')
             . ($attrs ? '<ul class="ecn-fy-attrs">' . $attrs . '</ul>' : '')
             . '<div class="ecn-fy-foot"><div class="ecn-fy-price">' . $price . '</div>'
-            . '<a class="ecn-fy-cta" href="' . esc_url($link) . '">View product<span class="screen-reader-text">: ' . esc_html($name) . '</span> ' . econur_finder_icon('go') . '</a></div>'
+            . '<a class="ecn-fy-cta" href="' . esc_url($link) . '"><span lang="bn" class="econur-bn-cta">পণ্যটি দেখুন</span><span class="screen-reader-text">: ' . esc_html($name) . '</span> ' . econur_finder_icon('go') . '</a></div>'
             . '</div></article>';
         $n++;
     }
@@ -116,7 +116,7 @@ add_shortcode('econur_finder', function () {
 
     $GLOBALS['econur_finder_js'] = true;
     return '<section class="ecn-fy" aria-labelledby="ecn-fy-title">'
-        . '<div class="ecn-fy-head"><p class="ecn-fy-eyebrow">Shop by concern</p><h2 class="ecn-fy-title" id="ecn-fy-title">Find your bar</h2><p class="ecn-fy-sub">Match the bar to your skin in ten seconds.</p></div>'
+        . '<div class="ecn-fy-head"><p class="ecn-fy-eyebrow">Shop by concern</p><h2 class="ecn-fy-title" id="ecn-fy-title">Find your bar</h2><p class="ecn-fy-sub" lang="bn">আপনার ত্বকের প্রয়োজন অনুযায়ী সঠিক বারটি বেছে নিন।</p></div>'
         . '<div class="ecn-fy-tabs" role="tablist" aria-label="Skin concerns">' . $tabs . '</div>'
         . '<div class="ecn-fy-panels">' . $panels . '</div>'
         . (function_exists('econur_trust_html') ? '<div class="ecn-fy-trust">' . econur_trust_html() . '</div>' : '')

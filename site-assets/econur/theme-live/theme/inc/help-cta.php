@@ -10,16 +10,17 @@ defined('ABSPATH') || exit;
 function econur_help_cta_config() {
     return array(
         'faq' => array(
-            array('q' => 'How do I pay?',
-                  'a' => 'Cash on delivery, anywhere in Bangladesh. Order, we call within 12 hours to confirm, and you pay when the parcel arrives.'),
-            array('q' => 'How long does delivery take?',
-                  'a' => 'Inside Dhaka 1 to 2 working days (৳60). Outside Dhaka 2 to 4 working days (৳120). Charges are shown at checkout before you confirm.'),
+            array('q' => 'কীভাবে পেমেন্ট করব?',
+                  'a' => 'বাংলাদেশের যেকোনো জায়গায় ক্যাশ অন ডেলিভারি। অর্ডার করার পর 12 ঘণ্টার মধ্যে আমরা ফোন করে নিশ্চিত করি, আর পণ্য হাতে পেয়ে আপনি টাকা দেবেন।'),
+            array('q' => 'অর্ডার পৌঁছাতে কত সময় লাগে?',
+                  'a' => 'ঢাকার ভেতরে 1–2 কার্যদিবস (৳60), ঢাকার বাইরে 2–4 কার্যদিবস (৳120)। অর্ডার নিশ্চিত করার আগেই চেকআউটে ডেলিভারি চার্জ দেখানো হয়।'),
+            // left in English on purpose: baby / sensitive-skin wording is in the separate claims review
             array('q' => 'Is it safe for sensitive skin or babies?',
                   'a' => 'Olivelle Bar is made for babies and sensitive skin: ultra-mild, fragrance-free, over 80% olive oil. For the other bars, patch-test first if your skin reacts easily.'),
-            array('q' => 'How do I choose the right bar?',
-                  'a' => 'Use the {finder} section above to match your skin concern with the most relevant ECONUR bar.'),
-            array('q' => 'Can I order through WhatsApp?',
-                  'a' => 'Yes. Tap “Chat on WhatsApp” and our team can help with product selection and ordering.'),
+            array('q' => 'আমার জন্য সঠিক বার কীভাবে বেছে নেব?',
+                  'a' => 'উপরের {finder} অংশে আপনার ত্বকের প্রয়োজনটি বেছে নিন, সবচেয়ে মানানসই ECONUR বারটি দেখতে পাবেন।'),
+            array('q' => 'WhatsApp-এর মাধ্যমে কি অর্ডার করা যাবে?',
+                  'a' => 'হ্যাঁ। “WhatsApp-এ কথা বলুন” বাটনে ট্যাপ করুন, পণ্য বাছাই ও অর্ডারে আমাদের টিম সাহায্য করবে।'),
         ),
         'shop_url'     => '#bestsellers',
         'whatsapp_url' => 'https://wa.me/8801410753555',
@@ -28,9 +29,9 @@ function econur_help_cta_config() {
         // the Bangladesh-only shipping zone, the finder above matches bars to skin concerns, and every order is confirmed
         // by phone (the store's cash-on-delivery policy).
         'trust' => array(
-            array('truck',  'Cash on delivery', 'Across Bangladesh'),
-            array('leaf',   'Find your bar',    'Matched to your skin concern'),
-            array('shield', 'We call to confirm', 'Every order, within 12 hours'),
+            array('truck',  'ক্যাশ অন ডেলিভারি', 'সারা বাংলাদেশে'),
+            array('leaf',   'সঠিক বারটি বেছে নিন', 'ত্বকের প্রয়োজন অনুযায়ী'),
+            array('shield', 'ফোনে অর্ডার নিশ্চিত', 'প্রতিটি অর্ডার, 12 ঘণ্টার মধ্যে'),
         ),
         // media IDs: leaf spray, pale green + ivory soap bars on stone, soap on a wood slice, leaf sprig
         'art' => array('leaves' => 154, 'soaps' => 129, 'cta_soap' => 155, 'sprig' => 131),
@@ -66,16 +67,16 @@ add_shortcode('econur_help_cta', function () {
         $open = 0 === $n;
         $q = $uid . '-q' . $n; $a = $uid . '-a' . $n;
         $answer = str_replace('{finder}', $finder, esc_html($f['a']));
-        $items .= '<div class="ehc-item' . ($open ? ' is-open' : '') . '">'
+        $items .= '<div class="ehc-item' . ($open ? ' is-open' : '') . '"' . econur_bn_attr($f['q']) . '>'
             . '<h3 class="ehc-q"><button type="button" id="' . $q . '" aria-expanded="' . ($open ? 'true' : 'false') . '" aria-controls="' . $a . '">'
             . '<span class="ehc-q-text">' . esc_html($f['q']) . '</span><span class="ehc-pm" aria-hidden="true"></span></button></h3>'
-            . '<div class="ehc-a" id="' . $a . '" role="region" aria-labelledby="' . $q . '"><div class="ehc-a-in"><p>' . $answer . '</p></div></div>'
+            . '<div class="ehc-a" id="' . $a . '" role="region" aria-labelledby="' . $q . '"><div class="ehc-a-in"><p' . (econur_has_bn($f['a']) ? ' class="econur-bn-body"' : '') . '>' . $answer . '</p></div></div>'
             . '</div>';
     }
 
     $trust = '';
     foreach ($c['trust'] as $t) {
-        $trust .= '<li class="ehc-trust-item"><span class="ehc-trust-ico">' . econur_help_cta_icon($t[0]) . '</span>'
+        $trust .= '<li class="ehc-trust-item"' . econur_bn_attr($t[1]) . '><span class="ehc-trust-ico">' . econur_help_cta_icon($t[0]) . '</span>'
             . '<span class="ehc-trust-copy"><b>' . esc_html($t[1]) . '</b><span>' . esc_html($t[2]) . '</span></span></li>';
     }
 
@@ -89,7 +90,7 @@ add_shortcode('econur_help_cta', function () {
         . '<div class="ehc-intro">'
         . '<p class="ehc-eyebrow">Help &amp; delivery</p>'
         . '<h2 class="ehc-title" id="' . $uid . '-t">Good to know</h2>'
-        . '<p class="ehc-sub">Quick answers before you order.</p>'
+        . '<p class="ehc-sub" lang="bn">অর্ডারের আগে প্রয়োজনীয় কিছু উত্তর।</p>'
         . econur_help_cta_img($art['soaps'], 'ehc-art ehc-art--soaps', '(max-width: 699px) 200px, 380px')
         . '</div>'
         . '<div class="ehc-acc">' . $items . '</div>'
@@ -99,10 +100,10 @@ add_shortcode('econur_help_cta', function () {
         . econur_help_cta_img($art['cta_soap'], 'ehc-art ehc-art--cta-soap', '(max-width: 699px) 120px, 240px')
         . '<p class="ehc-eyebrow">Ready to start?</p>'
         . '<h2 class="ehc-cta-title" id="' . $uid . '-ct">Honest skincare, delivered to your door.</h2>'
-        . '<p class="ehc-cta-sub">Cash on delivery across Bangladesh. We call to confirm every order.</p>'
+        . '<p class="ehc-cta-sub econur-bn-body" lang="bn">সারা বাংলাদেশে ক্যাশ অন ডেলিভারি। প্রতিটি অর্ডার আমরা ফোন করে নিশ্চিত করি।</p>'
         . '<div class="ehc-btns">'
-        . '<a class="ehc-btn ehc-btn--primary" href="' . esc_url($c['shop_url']) . '">Shop bestsellers ' . econur_help_cta_icon('arrow') . '</a>'
-        . '<a class="ehc-btn ehc-btn--wa" href="' . esc_url($c['whatsapp_url']) . '">' . econur_help_cta_whatsapp_icon() . 'Chat on WhatsApp</a>'
+        . '<a class="ehc-btn ehc-btn--primary" href="' . esc_url($c['shop_url']) . '"><span lang="bn" class="econur-bn-cta">বেস্টসেলার দেখুন</span> ' . econur_help_cta_icon('arrow') . '</a>'
+        . '<a class="ehc-btn ehc-btn--wa" href="' . esc_url($c['whatsapp_url']) . '">' . econur_help_cta_whatsapp_icon() . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span></a>'
         . '</div>'
         . '<ul class="ehc-trust">' . $trust . '</ul>'
         . '</div>'

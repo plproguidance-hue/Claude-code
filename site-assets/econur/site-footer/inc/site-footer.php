@@ -34,8 +34,8 @@ function econur_footer_config() {
         ),
         // [icon, text, link]
         'support' => array(
-            array('truck',    'Cash on delivery nationwide', ''),
-            array('phone',    'We call to confirm every order within 12 hours.', ''),
+            array('truck',    'সারা দেশে ক্যাশ অন ডেলিভারি', ''),
+            array('phone',    'প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে ফোনে নিশ্চিত করা হয়।', ''),
             array('whatsapp', 'WhatsApp: +880 1410-753555', $wa),
         ),
         'whatsapp_url' => $wa,
@@ -107,7 +107,7 @@ function econur_footer_markup() {
     foreach ($c['support'] as $s) {
         $text = esc_html($s[1]);
         if ($s[2]) $text = '<a href="' . esc_url($s[2]) . '" target="_blank" rel="noopener">' . $text . '</a>';
-        $support .= '<li><span class="ecnf-ico">' . econur_footer_icon($s[0]) . '</span><span class="ecnf-support-t">' . $text . '</span></li>';
+        $support .= '<li' . (function_exists('econur_bn_attr') ? econur_bn_attr($s[1]) : '') . '><span class="ecnf-ico">' . econur_footer_icon($s[0]) . '</span><span class="ecnf-support-t">' . $text . '</span></li>';
     }
     $support .= '</ul>';
 
@@ -136,7 +136,7 @@ function econur_footer_markup() {
         . econur_footer_col('help', 'Help', econur_footer_links($c['help']))
         . '<div class="ecnf-support-wrap">'
         . econur_footer_col('support', 'Order & Support', $support, false)
-        . '<a class="ecnf-wa" href="' . esc_url($c['whatsapp_url']) . '" target="_blank" rel="noopener">' . econur_footer_icon('whatsapp') . '<span>Chat on WhatsApp</span>' . econur_footer_icon('arrow') . '</a>'
+        . '<a class="ecnf-wa" href="' . esc_url($c['whatsapp_url']) . '" target="_blank" rel="noopener">' . econur_footer_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span>' . econur_footer_icon('arrow') . '</a>'
         . '</div>'
         . '</div>'
         . '<div class="ecnf-legal">'
@@ -158,12 +158,12 @@ add_action('wp', function () {
 });
 
 add_action('wp_enqueue_scripts', function () {
-    $v = '1.2.1';
+    $v = '1.3.0';
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));
     // shared UI polish (eyebrows, button sizes, small labels); printed last in <head>, below
-    wp_register_style('econur-ui', $u . 'econur-ui.css', array(), '1.0.1');
+    wp_register_style('econur-ui', $u . 'econur-ui.css', array(), '1.1.0');
 }, 20);
 
 // print the shared UI layer after the Customizer CSS (wp_head priority 101) so it can align earlier styles

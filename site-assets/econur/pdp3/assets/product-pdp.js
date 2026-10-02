@@ -8,7 +8,7 @@
     var form = page.querySelector('form.cart'), isVar = !!(form && form.classList.contains('variations_form'));
     var tiers = C.tiers || {};
     function meta(ev, data, custom) { if (window.ecnMeta) window.ecnMeta(ev, data, custom); }
-    function money(n) { return String(C.symbol || '').trim() + ' ' + Number(n).toLocaleString('en-US', { minimumFractionDigits: C.dec || 0, maximumFractionDigits: C.dec || 0 }); }
+    function money(n) { return String(C.symbol || '').trim() + Number(n).toLocaleString('en-US', { minimumFractionDigits: C.dec || 0, maximumFractionDigits: C.dec || 0 }); }
     function pct(q) { var best = 0, bq = 0; Object.keys(tiers).forEach(function (k) { var kq = parseInt(k, 10); if (q >= kq && kq > bq) { bq = kq; best = parseFloat(tiers[k]); } }); return best; }
 
     /* toast */
@@ -85,7 +85,7 @@
     /* ---------- price on the buttons, pack cards and sticky bar ---------- */
     var unit = parseFloat(C.price) || 0, unitReg = parseFloat(C.reg) || 0, origReg = unitReg, size = '', vidNow = C.vid || C.pid;
     var addBtn = form ? form.querySelector('.single_add_to_cart_button') : null, atcPrice = null;
-    if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); }
+    if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); if (/[\u0980-\u09FF]/.test(addBtn.textContent)) addBtn.setAttribute('lang', 'bn'); }
     var packs = [].slice.call(page.querySelectorAll('.ecn-lp-pack')), sbP = document.getElementById('ecnSbarPrice'), sbS = document.getElementById('ecnSbarSize'), finalP = page.querySelector('[data-ecn-final-price]');
     var sizeEl = page.querySelector('[data-ecn-size]'); size = sizeEl ? sizeEl.textContent : '';
     function lineTotal(n) { return unit * n * (1 - pct(n) / 100); }
@@ -94,7 +94,7 @@
     function refresh() {
       var n = qty(), t = lineTotal(n);
       if (waLinks.length) { var bits = [size, n > 1 ? n + ' ' + (/bar/i.test(C.name || '') ? 'bars' : 'pcs') : ''].filter(Boolean).join(', '), msg = 'Hi Econur, I have a question about ' + C.name + (bits ? ' (' + bits + ')' : '') + '.'; waLinks.forEach(function (a) { a.href = 'https://wa.me/' + (C.wa || '') + '?text=' + encodeURIComponent(msg); }); }
-      if (ptP && unit) { var base = (unitReg > unit ? unitReg : unit) * n, sv = base - t; ptP.textContent = money(t); if (ptR) { ptR.hidden = !(sv > 0.5); ptR.textContent = sv > 0.5 ? money(base) : ''; } if (ptS) { ptS.hidden = !(sv > 0.5); ptS.textContent = sv > 0.5 ? 'Save ' + money(sv) : ''; } }
+      if (ptP && unit) { var base = (unitReg > unit ? unitReg : unit) * n, sv = base - t; ptP.textContent = money(t); if (ptR) { ptR.hidden = !(sv > 0.5); ptR.textContent = sv > 0.5 ? money(base) : ''; } if (ptS) { ptS.hidden = !(sv > 0.5); ptS.textContent = sv > 0.5 ? money(sv) + ' সাশ্রয়' : ''; } }
       if (atcPrice) atcPrice.textContent = unit ? ' — ' + money(t) : '';
       if (finalP) finalP.textContent = unit ? ' — ' + money(t) : '';
       if (sbP && unit) sbP.textContent = money(t);
@@ -103,7 +103,7 @@
         var k = parseInt(pk.getAttribute('data-q'), 10), on = k === n;
         pk.classList.toggle('is-on', on); var r = pk.querySelector('input'); if (r) r.checked = on;
         var pp = pk.querySelector('[data-pack-price]'); if (pp && unit) pp.textContent = money(lineTotal(k));
-        var ps = pk.querySelector('[data-pack-save]'); if (ps) { var s = unit * k - lineTotal(k); ps.textContent = s > 0.5 ? 'Save ' + money(s) : ''; } var pe = pk.querySelector('[data-pack-each]'); if (pe && unit) pe.textContent = k + ' × ' + money(unit);
+        var ps = pk.querySelector('[data-pack-save]'); if (ps) { var s = unit * k - lineTotal(k); ps.textContent = s > 0.5 ? money(s) + ' সাশ্রয়' : ''; } var pe = pk.querySelector('[data-pack-each]'); if (pe && unit) pe.textContent = k + ' × ' + money(unit);
       });
     }
     packs.forEach(function (pk) { var r = pk.querySelector('input'); if (!r) return; r.addEventListener('change', function () { if (!q) return; q.value = r.value; q.dispatchEvent(new Event('change', { bubbles: true })); meta('PackSelected', { content_ids: [String(vidNow)], content_name: C.name, quantity: parseInt(r.value, 10) }, true); }); });
@@ -120,8 +120,8 @@
         if (v.price_html && price) { var t = document.createElement('div'); t.innerHTML = v.price_html; var src = t.querySelector('.price'); price.innerHTML = src ? src.innerHTML : v.price_html; }
         var lbl = sizeLabel(v); if (sizeEl && lbl) sizeEl.textContent = lbl; size = lbl || size;
         if (v.display_price != null) unit = parseFloat(v.display_price) || unit; unitReg = parseFloat(v.display_regular_price) || 0; vidNow = v.variation_id || vidNow;
-        if (saveEl) { var s = unitReg - unit; saveEl.hidden = !(s > 0.5); if (s > 0.5) saveEl.textContent = 'Save ' + money(s); }
-        if (stockEl) { if (!v.is_in_stock) { stockEl.className = 'ecn-pdp-stock is-out'; stockEl.textContent = 'Out of stock'; } else if (v.backorders_allowed && v.availability_html && /backorder/i.test(v.availability_html)) { stockEl.className = 'ecn-pdp-stock is-soon'; stockEl.textContent = 'On backorder'; } else { stockEl.className = 'ecn-pdp-stock is-in'; stockEl.textContent = 'In Stock'; } }
+        if (saveEl) { var s = unitReg - unit; saveEl.hidden = !(s > 0.5); if (s > 0.5) saveEl.textContent = money(s) + ' সাশ্রয়'; }
+        if (stockEl) { if (!v.is_in_stock) { stockEl.className = 'ecn-pdp-stock is-out'; stockEl.textContent = 'স্টকে নেই'; } else if (v.backorders_allowed && v.availability_html && /backorder/i.test(v.availability_html)) { stockEl.className = 'ecn-pdp-stock is-soon'; stockEl.textContent = 'প্রি-অর্ডার'; } else { stockEl.className = 'ecn-pdp-stock is-in'; stockEl.textContent = 'স্টকে আছে'; } }
         if (firstImg && v.image && v.image.src && v.image.src !== firstImg.src) { firstImg.src = v.image.src; firstImg.srcset = v.image.srcset || ''; if (v.image.sizes) firstImg.sizes = v.image.sizes; gGo(0); }
         refresh();
         if (userPick) meta('SizeSelected', { content_ids: [String(vidNow)], content_name: C.name, value: unit }, true); userPick = false;
@@ -312,7 +312,7 @@
     function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (err) {} }
     var hearts = [].slice.call(document.querySelectorAll('.ecn-pdp-heart, .ecn-rel-heart'));
     function paint() { var s = load(); hearts.forEach(function (h) { var on = s.indexOf(h.getAttribute('data-pid')) > -1; h.classList.toggle('is-on', on); h.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }
-    hearts.forEach(function (h) { h.addEventListener('click', function () { var id = h.getAttribute('data-pid'), a = load(), i = a.indexOf(id); if (i > -1) a.splice(i, 1); else { a.push(id); showToast('Saved to your list', false); } save(a); paint(); }); });
+    hearts.forEach(function (h) { h.addEventListener('click', function () { var id = h.getAttribute('data-pid'), a = load(), i = a.indexOf(id); if (i > -1) a.splice(i, 1); else { a.push(id); showToast('আপনার তালিকায় সেভ হয়েছে', false); } save(a); paint(); }); });
     paint();
 
     /* ---------- WhatsApp clicks (Meta custom event) ---------- */
@@ -336,11 +336,11 @@
       var ids = (ra.getAttribute('data-ids') || '').split(',').filter(Boolean), last = null, chain = Promise.resolve();
       ids.forEach(function (id) { chain = chain.then(function () { return ajaxAdd(id).then(function (r) { last = r; }); }); });
       chain.then(function () {
-        applyFragments(last); showToast('Routine added to cart (' + ids.length + ' items)', true);
+        applyFragments(last); showToast('রুটিন কার্টে যোগ হয়েছে (' + ids.length + 'টি পণ্য)', true);
         var v = parseFloat(ra.getAttribute('data-total')) || undefined;
         meta('AddToCart', { content_ids: ids, content_type: 'product', value: v, num_items: ids.length });
         meta('BundleAddToCart', { content_ids: ids, value: v, num_items: ids.length }, true);
-      }).catch(function () { applyFragments(last); showToast('Some items could not be added. Please try again.', false); })
+      }).catch(function () { applyFragments(last); showToast('কিছু পণ্য যোগ করা যায়নি। আবার চেষ্টা করুন।', false); })
         .then(function () { ra.disabled = false; ra.classList.remove('is-busy'); });
     });
 
@@ -361,13 +361,13 @@
       grp.querySelectorAll('.ecn-rel-size').forEach(function (c) { c.addEventListener('click', function () {
         grp.querySelectorAll('.ecn-rel-size').forEach(function (x) { var on = x === c; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
         if (pr) pr.innerHTML = c.getAttribute('data-price-html');
-        if (btn) { var sz = c.getAttribute('data-size'); btn.setAttribute('data-id', c.getAttribute('data-id')); btn.setAttribute('data-price', c.getAttribute('data-price')); btn.setAttribute('data-name', nm.trim() + ' (' + sz + ')'); btn.setAttribute('aria-label', 'Add ' + nm.trim() + ', ' + sz + ' to cart'); btn.classList.remove('is-done'); }
+        if (btn) { var sz = c.getAttribute('data-size'); btn.setAttribute('data-id', c.getAttribute('data-id')); btn.setAttribute('data-price', c.getAttribute('data-price')); btn.setAttribute('data-name', nm.trim() + ' (' + sz + ')'); btn.setAttribute('aria-label', 'কার্টে যোগ করুন: ' + nm.trim() + ', ' + sz); btn.classList.remove('is-done'); }
       }); });
     });
     page.querySelectorAll('.ecn-rel-add').forEach(function (b) { b.addEventListener('click', function () {
       if (b.disabled) return; b.disabled = true; b.classList.add('is-busy');
       ajaxAdd(b.getAttribute('data-id')).then(function (res) {
-        applyFragments(res); b.classList.add('is-done'); showToast(b.getAttribute('data-name') + ' added to cart', true);
+        applyFragments(res); b.classList.add('is-done'); showToast(b.getAttribute('data-name') + ' কার্টে যোগ হয়েছে', true);
         meta('AddToCart', { content_ids: [b.getAttribute('data-id')], content_type: 'product', content_name: b.getAttribute('data-name'), value: parseFloat(b.getAttribute('data-price')) || undefined, quantity: 1 });
       }).catch(function () { location.href = b.getAttribute('data-url'); }).then(function () { b.disabled = false; b.classList.remove('is-busy'); });
     }); });
