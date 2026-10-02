@@ -2066,3 +2066,6 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-nav:disabled{ opacity:.4; cursor
   .ecn-favs .ecn-rel-nav{ display:none !important; }
 }
 @media (max-width:389px){ body.single-product .ecn-pdp .ecn-favs-head .ecn-lp-h2{ font-size:27px !important; } }
+/* floating WhatsApp button: lifted only where the phone sticky bar exists (below 768px); from 768px up it sits where it
+   does on the homepage, so it never covers the footer's own "Chat on WhatsApp" button */
+@media (min-width:768px){ body.single-product .ecn-wa-float{ bottom:24px; } }
