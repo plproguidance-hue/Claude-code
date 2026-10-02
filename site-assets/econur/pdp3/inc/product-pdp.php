@@ -235,6 +235,10 @@ function econur_lp_icon($n) {
         'bubbles' => '<circle cx="9" cy="14" r="4.5"/><circle cx="16.5" cy="8" r="3"/><circle cx="17.5" cy="16.5" r="2"/>',
         'support' => '<path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-1.8 2.5-4 2.5h-2"/>',
         'box'     => '<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5Z"/><path d="M3.5 7.5 12 12l8.5-4.5"/><path d="M12 12v9"/>',
+        'sun'     => '<circle cx="12" cy="12" r="3.6"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+        'bean'    => '<ellipse cx="12" cy="12" rx="6.2" ry="8.6" transform="rotate(35 12 12)"/><path d="M8.4 17.6c3.2-2.4 4.4-8.4 7.2-11.2"/>',
+        'gift'    => '<rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M12 8.5v12"/><path d="M12 8.5C10.5 5 7 4.5 7 6.6 7 8 9 8.5 12 8.5Z"/><path d="M12 8.5c1.5-3.5 5-4 5-1.9 0 1.4-2 1.9-5 1.9Z"/>',
+        'oildrop' => '<path d="M10 4.5c2.6 3.4 5 6.2 5 9a5 5 0 0 1-10 0c0-2.8 2.4-5.6 5-9Z"/><path d="M15.5 8.5c1.8-2.9 4.7-3.6 5.5-3.5.1.9-.6 3.8-3.5 5.5-.8.5-1.5.6-2 .5"/>',
     );
     if (isset($p[$n])) return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $p[$n] . '</svg>';
     return econur_pdp_icon($n);
@@ -397,7 +401,7 @@ function econur_pdp_render($product) {
     echo '</div></section>';
 
     econur_lp_routine($product, $lp);
-    econur_lp_why($product);
+    econur_lp_why($product, $lp);
     econur_lp_howto($product);
     econur_lp_reviews($product);
     econur_lp_faq($product, $lp);
@@ -430,46 +434,100 @@ function econur_lp_routine_ids($product, $lp) {
     }
     return $out;
 }
+// Routine step for a product card ("Cleanse", "Brighten"...): its "Routine step" field, else from its "Find your bar" concern.
+function econur_lp_step($p) {
+    $s = trim((string) get_post_meta($p->get_id(), 'econur_lp_step', true));
+    if ('' !== $s) return $s;
+    $map = array('oily' => 'Cleanse', 'tone' => 'Brighten', 'dull' => 'Exfoliate', 'daily' => 'Refresh', 'sensitive' => 'Nourish');
+    if (function_exists('econur_finder_concerns')) foreach (econur_finder_concerns() as $c) if ((int) $c['product'] === $p->get_id() && isset($map[$c['key']])) return $map[$c['key']];
+    return '';
+}
+function econur_lp_step_icon($s) {
+    $s = strtolower($s);
+    if (preg_match('/bright|glow|tone/', $s)) return econur_lp_icon('sun');
+    if (preg_match('/exfol|scrub|polish|buff/', $s)) return econur_lp_icon('bean');
+    if (preg_match('/nourish|moist|hydrat|soft/', $s)) return econur_pdp_icon('drop');
+    if (preg_match('/fresh|herb/', $s)) return econur_pdp_icon('leaf');
+    return econur_lp_icon('sparkle');
+}
 function econur_lp_routine($product, $lp) {
     $me = econur_lp_unit($product);
     if (!$me) return;
     $others = econur_lp_routine_ids($product, $lp);
     if (count($others) < 2) return;
     $items = array_merge(array($product->get_id()), $others);
-    $cards = ''; $total = 0; $reg = 0; $vids = array();
+    $cards = ''; $total = 0; $reg = 0; $vids = array(); $steps = array();
     foreach ($items as $k => $pid) {
-        $p = wc_get_product($pid); $u = econur_lp_unit($p); $sz = econur_pdp_size_label($u);
+        $p = wc_get_product($pid); $u = econur_lp_unit($p); $sz = econur_pdp_size_label($u); $step = econur_lp_step($p);
+        if ($step) $steps[] = $step;
         $total += (float) $u->get_price(); $reg += (float) ($u->get_regular_price() ? $u->get_regular_price() : $u->get_price()); $vids[] = $u->get_id();
         if ($k) $cards .= '<span class="ecn-lp-plus" aria-hidden="true">' . econur_lp_icon('plus') . '</span>';
-        $cards .= '<a class="ecn-lp-rcard" href="' . esc_url(get_permalink($pid)) . '"><span class="ecn-lp-rimg">' . econur_lp_card_img($p, 'medium_large', '(min-width: 1000px) 16vw, 80px', '') . '</span>'
+        $cards .= '<a class="ecn-lp-rcard" href="' . esc_url(get_permalink($pid)) . '"><span class="ecn-lp-rimg">' . econur_lp_card_img($p, 'medium_large', '(min-width: 900px) 270px, calc(100vw - 64px)', '')
+            . '<span class="ecn-lp-rstep">' . econur_lp_step_icon($step) . '<span><i>Step ' . ($k + 1) . '</i>' . ($step ? esc_html($step) : '') . '</span></span></span>'
             . '<b>' . esc_html($p->get_name()) . '</b><small>' . esc_html(econur_lp_card_line($p)) . '</small><span class="ecn-lp-rprice">' . esc_html(econur_pdp_money($u->get_price())) . ($sz ? ' <em>' . esc_html($sz) . '</em>' : '') . '</span></a>';
     }
+    // a saving only when the store has real sale prices on these sizes
     $saving = $reg - $total;
+    $checks = array('Complete daily care routine');
+    if (count($steps) === 3) $checks[] = ucfirst(strtolower($steps[0])) . ', ' . strtolower($steps[1]) . ' and ' . strtolower($steps[2]);
+    $checks[] = 'Better routine convenience';
+    $li = '';
+    foreach ($checks as $c) $li .= '<li>' . econur_pdp_icon('check') . '<span>' . esc_html($c) . '</span></li>';
     echo '<section class="ecn-lp-band ecn-lp-routine" aria-labelledby="ecn-lp-routine-t">' . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--tr')
-        . econur_lp_head('Complete Your Routine', 'Pair the ' . $product->get_name() . ' with two more ECONUR bars and add all three to your cart in one tap.', 'ecn-lp-routine-t')
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Better results together</span><h2 class="ecn-lp-h2" id="ecn-lp-routine-t">Complete Your Routine</h2>'
+        . '<p class="ecn-lp-lead">' . esc_html('Pair the ' . $product->get_name() . ' with two more ECONUR essentials and add all three to your cart in one tap.') . '</p></div>'
         . '<div class="ecn-lp-routine-grid"><div class="ecn-lp-rcards">' . $cards . '</div>'
-        . '<div class="ecn-lp-rsum"><span class="ecn-lp-chip">Complete Routine</span><h3>Routine Bundle</h3><p>All 3 products, added to your cart together.</p>'
+        . '<div class="ecn-lp-rsum"><span class="ecn-lp-rsum-deco" aria-hidden="true"><i></i><i></i><i></i></span><span class="ecn-lp-chip is-routine">' . econur_lp_icon('gift') . 'Complete Routine</span><h3>Routine Bundle</h3><p>All 3 products, added to your cart together.</p>'
         . '<p class="ecn-lp-rtotal"><b>' . esc_html(econur_pdp_money($total)) . '</b>' . ($saving > 0.5 ? '<s>' . esc_html(econur_pdp_money($reg)) . '</s><span class="ecn-lp-save">Save ' . esc_html(econur_pdp_money($saving)) . '</span>' : '') . '</p>'
+        . '<ul class="ecn-lp-rchecks">' . $li . '</ul>'
         . '<button type="button" class="ecn-lp-btn ecn-lp-routine-add" data-ids="' . esc_attr(implode(',', $vids)) . '" data-total="' . esc_attr($total) . '">' . econur_pdp_icon('cart') . '<span>Add Routine to Cart</span></button></div></div></section>';
 }
 
 /* ===== why this product: its own ingredient notes ===== */
-function econur_lp_ing_image($title, &$used) {
-    $map = array(141 => '/charcoal/', 142 => '/turmeric|licorice/', 143 => '/coffee/', 144 => '/moringa|green tea|basil|mint|herb/', 145 => '/olive|oat/');
-    foreach ($map as $img => $re) if (!in_array($img, $used, true) && preg_match($re, strtolower($title)) && wp_attachment_is_image($img)) { $used[] = $img; return $img; }
-    return 0;
+// Ingredient photos already on the site. A product's own card photo shows its ingredients, so a crop of it is used
+// where one is set below (centre x, centre y, visible width; fractions of the photo). Otherwise a finder thumb.
+function econur_lp_ing_crops() {
+    return apply_filters('econur_lp_ing_crops', array(
+        14 => array('charcoal' => array(.80, .72, .40), 'neem' => array(.17, .24, .36)),
+        18 => array('licorice' => array(.12, .79, .32), 'turmeric' => array(.84, .71, .34)),
+        22 => array('coffee' => array(.20, .70, .36)),
+        30 => array('olive oil' => array(.12, .44, .28)),
+    ));
 }
-function econur_lp_why($product) {
+function econur_lp_ing_image($product, $title, &$used) {
+    $t = strtolower($title); $pid = $product->get_id();
+    $crops = econur_lp_ing_crops();
+    $card = (int) get_post_meta($pid, 'econur_home_card_image', true);
+    if ($card && !empty($crops[$pid]) && wp_attachment_is_image($card)) foreach ($crops[$pid] as $k => $c) {
+        if (false === strpos($t, $k) || in_array($k, $used, true)) continue;
+        $used[] = $k;
+        $m = wp_get_attachment_metadata($card); $r = (!empty($m['width']) && !empty($m['height'])) ? $m['height'] / $m['width'] : 1;
+        $a = 15 / 11; $z = $c[2];
+        $l = max(0, min(1 / $z - 1, $c[0] / $z - .5)); $tp = max(0, min($r / $z - 1 / $a, $c[1] * $r / $z - .5 / $a));
+        $style = sprintf('--cw:%.3f%%;--cl:-%.3f%%;--ct:-%.3f%%', 100 / $z, $l * 100, $tp * 100);
+        return '<span class="ecn-lp-ing-img is-crop">' . wp_get_attachment_image($card, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 900px) 420px, 330px', 'style' => $style)) . '</span>';
+    }
+    $map = array(141 => '/charcoal/', 142 => '/turmeric/', 143 => '/coffee/', 145 => '/olive|oat/');
+    foreach ($map as $img => $re) if (!in_array($img, $used, true) && preg_match($re, $t) && wp_attachment_is_image($img)) { $used[] = $img; return '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '150px')) . '</span>'; }
+    // no photo of this ingredient on the site: a drawn botanical tile (not a photo)
+    return '<span class="ecn-lp-ing-img is-art" aria-hidden="true">' . econur_lp_ing_art($title) . '</span>';
+}
+function econur_lp_ing_icon($t) {
+    $t = strtolower($t);
+    if (preg_match('/essential|tea tree|oil/', $t)) return econur_lp_icon('oildrop');
+    if (preg_match('/charcoal|clay|coffee|milk|honey|water/', $t)) return econur_lp_icon('water');
+    if (preg_match('/licorice|turmeric|root|ginger/', $t)) return econur_lp_icon('sprout');
+    return econur_pdp_icon('leaf');
+}
+function econur_lp_why($product, $lp = array()) {
     $notes = array_slice(econur_pdp_pairs($product->get_id(), 'econur_ingredient_notes'), 0, 3);
     if (!$notes) return;
-    $desc = trim(wp_strip_all_tags($product->get_description()));
-    $lead = preg_match('/^(.+?[.!?])(\s|$)/', $desc, $m) ? $m[1] : '';
+    $lead = isset($lp['why_lead']) ? $lp['why_lead'] : '';
+    if ('' === $lead) { $desc = trim(wp_strip_all_tags($product->get_description())); $lead = preg_match('/^(.+?[.!?])(\s|$)/', $desc, $m) ? $m[1] : ''; }
     $used = array(); $cards = '';
     foreach ($notes as $nt) {
-        $img = econur_lp_ing_image($nt[0], $used);
-        // a matching ingredient photo when the media library has one, otherwise a drawn botanical tile (not a photo)
-        $cards .= '<article class="ecn-lp-ing">' . ($img ? '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($img, 'full', false, array('alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '130px')) . '</span>' : '<span class="ecn-lp-ing-img is-art" aria-hidden="true">' . econur_lp_ing_art($nt[0]) . '</span>')
-            . '<div><span class="ecn-lp-ing-ic">' . econur_pdp_icon('leaf') . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p></div></article>';
+        $cards .= '<article class="ecn-lp-ing">' . econur_lp_ing_image($product, $nt[0], $used)
+            . '<div><span class="ecn-lp-ing-ic">' . econur_lp_ing_icon($nt[0]) . '</span><h3>' . esc_html($nt[0]) . '</h3><p>' . esc_html($nt[1]) . '</p></div></article>';
     }
     echo '<section class="ecn-lp-sec ecn-lp-why" id="ecn-ingredients" aria-labelledby="ecn-lp-why-t">' . econur_lp_head('Why ' . $product->get_name() . '?', $lead, 'ecn-lp-why-t') . '<div class="ecn-lp-ings">' . $cards . '</div></section>';
 }

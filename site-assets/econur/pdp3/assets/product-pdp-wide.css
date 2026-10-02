@@ -21,38 +21,6 @@ body.single-product .ecn-pdp h3{ margin:0 !important; }
 .ecn-lp-btn-o{ height:39.1px; padding:0 22.1px !important; border-radius:849.15px !important; font-size:12.32px !important; }
 .ecn-lp-chip{ padding:2.55px 10.2px; border-radius:849.15px; font-size:10.2px; }
 .ecn-lp-art{ width:170px; height:auto; }
-.ecn-lp-band{ margin-top:61.2px; padding:47.6px 0 51px; }
-.ecn-lp-band::before{ top:0; bottom:0; left:50%; width:100vw; }
-.ecn-lp-band .ecn-lp-art--tl{ top:-20.4px; left:-76.5px; }
-.ecn-lp-band .ecn-lp-art--tr{ top:-17px; right:-76.5px; }
-.ecn-lp-routine-grid{ grid-template-columns:minmax(0,1fr) 255px; gap:18.7px; }
-.ecn-lp-rcards{ gap:8.5px; min-width:0; }
-.ecn-lp-rcard{ gap:3.4px; min-width:0; padding:13.6px 11.9px 15.3px; border-radius:13.6px; }
-.ecn-lp-rimg{ width:100%; margin-bottom:8.5px; border-radius:10.2px; }
-.ecn-lp-rimg img{ width:100% !important; height:100% !important; }
-.ecn-lp-rcard b{ font-size:14.45px; line-height:1.25; }
-.ecn-lp-rcard small{ font-size:10.62px; line-height:1.4; }
-.ecn-lp-rprice{ margin-top:3.4px; font-size:14.45px; }
-.ecn-lp-rprice em{ font-size:10.62px; }
-.ecn-lp-plus{ width:25.5px; height:25.5px; }
-.ecn-lp-plus svg{ width:20.4px; height:20.4px; }
-.ecn-lp-rsum{ gap:6.8px; padding:18.7px; border-radius:15.3px; }
-.ecn-lp-rsum h3{ font-size:18.7px !important; }
-.ecn-lp-rsum p{ font-size:11.9px; line-height:1.5; }
-.ecn-lp-rtotal{ gap:5.1px 8.5px; margin-top:3.4px !important; }
-.ecn-lp-rtotal b{ font-size:25.5px; }
-.ecn-lp-rtotal s{ font-size:12.75px; }
-.ecn-lp-rsum .ecn-lp-btn{ width:100%; margin-top:5.1px; }
-.ecn-lp-ings{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:17px; }
-.ecn-lp-ing{ gap:13.6px; min-width:0; padding:13.6px; border-radius:13.6px; }
-.ecn-lp-ing-img{ width:110.5px; border-radius:10.2px; }
-.ecn-lp-ing-img img{ width:100% !important; height:100% !important; }
-.ecn-lp-ing-img.is-art svg{ width:44.2px; height:44.2px; }
-.ecn-lp-ing > div{ min-width:0; padding:3.4px 2px; }
-.ecn-lp-ing-ic{ width:32.3px; height:32.3px; margin-bottom:10.2px; border-radius:50%; }
-.ecn-lp-ing-ic svg{ width:17px; height:17px; }
-.ecn-lp-ing h3{ font-size:17px !important; line-height:1.25 !important; }
-.ecn-lp-ing p{ margin-top:6.8px !important; font-size:11.9px; line-height:1.55; }
 .ecn-lp-steps{ gap:8.5px; margin:0 !important; padding:0 !important; }
 .ecn-lp-step{ gap:15.3px; min-width:0; margin:0 !important; padding:15.3px 17px; border-radius:13.6px; }
 .ecn-lp-step-art{ width:81.6px; height:81.6px; border-radius:50%; }
@@ -204,26 +172,14 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-pdp-rev .comment-notes{ font-size:11.47px; }
 .ecn-lp-final-trust{ grid-template-columns:repeat(3, max-content); gap:15.3px; }
 .ecn-lp-ill{ width:88%; height:88%; }
-.ecn-lp-ing-img.is-art .ecn-lp-ill{ width:92%; height:92%; }
 .ecn-lp-step-art .ecn-lp-ill{ width:78%; height:78%; }
 .ecn-rel-sizes{ gap:5.1px; margin:6.8px 0 0; }
 .ecn-rel-size{ min-height:27.2px; margin:0; padding:0 10.2px !important; border-radius:849.15px !important; font-size:11.05px !important; line-height:1 !important; }
 .ecn-lp-sec{ margin-top:51px; }
-.ecn-lp-band{ margin-top:51px; padding:39.1px 0 42.5px; }
 .ecn-lp-head{ margin-bottom:22.1px; }
 body.single-product .ecn-pdp .ecn-lp-lead{ font-size:13.6px; margin-top:6.8px; }
 .ecn-lp-finder{ margin-top:51px; padding:27.2px 37.4px; }
 .ecn-lp-final{ margin-top:54.4px; }
-.ecn-lp-rcard{ padding:13.6px 13.6px 15.3px; }
-.ecn-lp-rimg{ width:82%; margin:0 auto 10.2px; }
-.ecn-lp-rcard b{ font-size:15.3px; }
-.ecn-lp-rcard small{ font-size:11.47px; }
-.ecn-lp-rprice{ font-size:15.3px; }
-.ecn-lp-rsum h3{ font-size:20.4px !important; }
-.ecn-lp-rsum p{ font-size:12.32px; }
-.ecn-lp-ing{ gap:17px; padding:15.3px; }
-.ecn-lp-ing-img{ width:119px; }
-.ecn-lp-ing p{ font-size:12.32px; line-height:1.55; }
 .ecn-lp-step{ gap:17px; padding:15.3px 17px; }
 .ecn-lp-step-art{ width:108.8px; height:108.8px; }
 .ecn-lp-step-art b{ width:30.6px; height:30.6px; font-size:12.75px; }
@@ -234,6 +190,7 @@ body.single-product .ecn-pdp .ecn-lp-lead{ font-size:13.6px; margin-top:6.8px; }
 .ecn-lp-rv-all.is-inline .comment-notes{ margin-bottom:5.1px !important; }
 .ecn-pdp-rev .comment-form-rating{ margin-bottom:8.5px !important; }
 .ecn-lp-faq-i summary{ padding:11.9px 18.7px; font-size:13.17px; }
+.ecn-lp-chip.is-routine svg{ width:15.3px; height:15.3px; }
 body.single-product .ecnf{ width:auto; max-width:1140px; margin:0 13.6px 17px; padding:0; }
 body.single-product .ecnf-card{ border-radius:18.7px; }
 body.single-product .ecnf .ecnf-art{ max-width:none !important; height:auto !important; margin:0 !important; border-radius:0 !important; }

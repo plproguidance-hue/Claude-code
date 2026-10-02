@@ -9,6 +9,8 @@
  *  econur_lp_badges    the three badges on the main photo, one per line
  *  econur_lp_faq       extra FAQ entries, one per line: "Question :: Answer"
  *  econur_lp_routine   product IDs for "Complete your routine", e.g. "18, 22"
+ *  econur_lp_step      this product's step label in a routine, e.g. "Cleanse"
+ *  econur_lp_why_lead  the line under "Why [product]?"
  *  econur_lp_packs     pack discounts by quantity, e.g. "2:5, 3:10" (percent). Empty = no pack discount.
  *  econur_lp_cta       heading of the closing call to action
  *  econur_lp_angles    ad angles for message match, one per line: "key | subtitle | benefit; benefit; benefit"
@@ -23,6 +25,8 @@ function econur_lp_field_defs() {
         'econur_lp_badges'   => array('Photo badges', 'lines', 'Three short labels shown on the main photo, one per line. Empty = the first highlights plus "Handcrafted in Bangladesh".'),
         'econur_lp_faq'      => array('Extra FAQ', 'lines', 'One per line: Question :: Answer. Shown before the standard questions.'),
         'econur_lp_routine'  => array('Complete your routine', 'text', 'Product IDs to pair with this one, e.g. 18, 22. Empty = two other bars from the "Find your bar" guide.'),
+        'econur_lp_step'     => array('Routine step', 'text', 'One word for this product\'s step in "Complete your routine", e.g. Cleanse. Empty = from its "Find your bar" concern.'),
+        'econur_lp_why_lead' => array('"Why" intro line', 'text', 'Short line under "Why [product]?". Empty = the first sentence of the description.'),
         'econur_lp_packs'    => array('Pack discount', 'text', 'Optional percent off by quantity, e.g. 2:5, 3:10 (5% off 2 or more, 10% off 3 or more). Applied in the cart. Empty = no pack discount.'),
         'econur_lp_cta'      => array('Closing heading', 'text', 'Heading of the call to action at the bottom of the page.'),
         'econur_lp_angles'   => array('Ad angles', 'lines', 'For Meta ads message match, one per line: key | subtitle | benefit; benefit; benefit. Link to the product with ?angle=key.'),
@@ -132,6 +136,7 @@ function econur_lp_data($product) {
         if (!empty($p[0]) && !empty($p[1])) $d['faq_extra'][] = $p;
     }
     $d['routine'] = array_values(array_filter(array_map('intval', explode(',', (string) get_post_meta($id, 'econur_lp_routine', true)))));
+    $d['why_lead'] = trim((string) get_post_meta($id, 'econur_lp_why_lead', true));
     $d['tiers'] = econur_lp_pack_tiers($id);
     $d['cta'] = trim((string) get_post_meta($id, 'econur_lp_cta', true));
     return $d;
