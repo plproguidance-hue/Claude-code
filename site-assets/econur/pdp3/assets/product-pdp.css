@@ -578,6 +578,7 @@ body.single-product .ecn-pdp .ecn-rel-add.is-busy{ opacity:.7; }
   /* sticky Add to Cart */
   .ecn-sbar{ position:fixed; left:0; right:0; bottom:0; z-index:9990; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 16px calc(10px + env(safe-area-inset-bottom)); background:rgba(255,254,251,.98); box-shadow:0 -8px 24px rgba(30,24,14,.10); border-top:1px solid #EFE8DC; transform:translateY(110%); transition:transform .24s ease; }
   .ecn-sbar.is-on{ transform:translateY(0); }
+  body.ecn-rv-typing .ecn-sbar.is-on{ transform:translateY(110%); } /* out of the way while a review is being written */
   .ecn-sbar-p{ display:flex; flex-direction:column; min-width:0; }
   .ecn-sbar-p b{ font-size:20px; font-weight:700; line-height:1.15; color:var(--pd-teal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ecn-sbar-p small{ font-size:12.5px; color:var(--pd-muted); }

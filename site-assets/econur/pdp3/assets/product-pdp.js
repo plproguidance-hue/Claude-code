@@ -173,6 +173,7 @@
     }
     page.querySelectorAll('[data-ecn-rv-write], [data-write]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); rvGo(0); }); });
     page.querySelectorAll('[data-ecn-rv-rate]').forEach(function (b) { b.addEventListener('click', function () { rvGo(b.getAttribute('data-ecn-rv-rate')); }); });
+    if (rvCard) { rvCard.addEventListener('focusin', function () { document.body.classList.add('ecn-rv-typing'); }); rvCard.addEventListener('focusout', function () { setTimeout(function () { if (!rvCard.contains(document.activeElement)) document.body.classList.remove('ecn-rv-typing'); }, 0); }); }
     page.querySelectorAll('.ecn-rv-readmore').forEach(function (b) { b.addEventListener('click', function () { var t = b.previousElementSibling, on = !t.classList.contains('is-open'); t.classList.toggle('is-open', on); b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.textContent = on ? 'Show less' : 'Read more'; }); });
     page.querySelectorAll('.ecn-rv-stars input').forEach(function (r) { r.addEventListener('change', function () { rvErr('rating', false); }); });
     var more = page.querySelector('.ecn-rv-more');
