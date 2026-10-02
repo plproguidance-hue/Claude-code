@@ -13,7 +13,8 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.10.1';
+const ECONUR_PDP_VER = '7.11.0';
+require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -210,7 +211,7 @@ function econur_pdp_benefit_icon($t) {
 }
 // Decorative botanical image from the media library (leaf spray), hidden from assistive technology.
 function econur_pdp_art($which, $class) {
-    $ids = array('leaves' => 154);
+    $ids = array('leaves' => 154, 'sprig' => 131);
     if (empty($ids[$which]) || !wp_attachment_is_image($ids[$which])) return '';
     return wp_get_attachment_image($ids[$which], 'full', false, array('class' => $class, 'alt' => '', 'aria-hidden' => 'true', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '220px'));
 }
@@ -238,6 +239,12 @@ function econur_lp_icon($n) {
         'sun'     => '<circle cx="12" cy="12" r="3.6"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
         'bean'    => '<ellipse cx="12" cy="12" rx="6.2" ry="8.6" transform="rotate(35 12 12)"/><path d="M8.4 17.6c3.2-2.4 4.4-8.4 7.2-11.2"/>',
         'gift'    => '<rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M12 8.5v12"/><path d="M12 8.5C10.5 5 7 4.5 7 6.6 7 8 9 8.5 12 8.5Z"/><path d="M12 8.5c1.5-3.5 5-4 5-1.9 0 1.4-2 1.9-5 1.9Z"/>',
+        'users'   => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 13.7c.5-.1 1-.2 1.5-.2 2.5 0 4.5 1.9 4.5 4.8"/><circle cx="4.6" cy="9.4" r="2" /><path d="M2 17c.2-1.6 1-2.8 2.2-3.3"/>',
+        'message' => '<path d="M4 5.5h16a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V17.5H4A1.5 1.5 0 0 1 2.5 16V7A1.5 1.5 0 0 1 4 5.5Z"/><path d="M7 10h10M7 13.5h7"/>',
+        'camera'  => '<path d="M4 7.5h3.2L8.8 5h6.4l1.6 2.5H20a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5V9A1.5 1.5 0 0 1 4 7.5Z"/><circle cx="12" cy="13.3" r="3.7"/>',
+        'image'   => '<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="m3.5 17 5-4.5 3.5 3 3-2.5 5.5 4.5"/>',
+        'pencil'  => '<path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5V15.5Z"/><path d="m13.5 6.5 4 4"/>',
+        'send'    => '<path d="M21 3 10.5 13.5"/><path d="M21 3 14.5 21l-4-7.5L3 9.5Z"/>',
         'oildrop' => '<path d="M10 4.5c2.6 3.4 5 6.2 5 9a5 5 0 0 1-10 0c0-2.8 2.4-5.6 5-9Z"/><path d="M15.5 8.5c1.8-2.9 4.7-3.6 5.5-3.5.1.9-.6 3.8-3.5 5.5-.8.5-1.5.6-2 .5"/>',
     );
     if (isset($p[$n])) return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $p[$n] . '</svg>';
@@ -693,43 +700,103 @@ function econur_lp_howto($product) {
         . '<p class="ecn-lp-lead">' . esc_html($note ? $note : 'Simple steps, as on the label.') . '</p></div><ol class="ecn-lp-steps">' . $out . '</ol></section>';
 }
 
-/* ===== reviews: real WooCommerce reviews only (no samples, no borrowed testimonials) =====
-   Summary: average, stars, count and a 5-to-1 distribution from the product's own ratings (all 0% until there are
-   reviews). Right: up to three published reviews; with none, the real WooCommerce review form takes their place. */
+/* ===== reviews ("Loved by Customers"): real WooCommerce reviews only (no samples, no borrowed testimonials) =====
+   Left: with no reviews yet, an invitation to review; once reviews exist, the real average, count and 5-to-1
+   distribution. Right: the product's own WordPress / WooCommerce review form (rating, review, name, email, optional
+   photos, see inc/review-photos.php). Approved reviews show as cards below. */
+function econur_lp_rv_star($filled = false) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.8l2.75 5.72 6.25.82-4.58 4.33 1.15 6.2L12 16.84 6.43 19.87l1.15-6.2L3 9.34l6.25-.82Z" fill="' . ($filled ? 'currentColor' : 'none') . '" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+}
 function econur_lp_reviews($product) {
     $id = $product->get_id(); $name = $product->get_name();
     $rc = (int) $product->get_review_count(); $avg = (float) $product->get_average_rating();
     $open = comments_open($id);
-    $counts = $rc ? $product->get_rating_counts() : array(); $bars = '';
-    for ($s = 5; $s >= 1; $s--) { $c = isset($counts[$s]) ? (int) $counts[$s] : 0; $pc = $rc ? round($c / $rc * 100) : 0; $bars .= '<li><span>' . $s . ' <i class="ecn-lp-rv-star" aria-hidden="true">&#9733;</i></span><i class="ecn-lp-rv-bar"><b style="width:' . $pc . '%"></b></i><em>' . $pc . '%</em></li>'; }
-    $bars = '<ul class="ecn-lp-rv-bars' . ($rc ? '' : ' is-empty') . '" aria-label="Rating distribution">' . $bars . '</ul>';
+    $can = $open && !('yes' === get_option('woocommerce_review_rating_verification_required') && !wc_customer_bought_product('', get_current_user_id(), $id));
+    $photos = function_exists('econur_rv_photos_enabled') && econur_rv_photos_enabled();
+    $cat = econur_pdp_category($product); $skin = !($cat && preg_match('/hair|scalp|tooth|oral|dental/', $cat->slug . ' ' . $cat->name));
+    $write = $can ? '<button type="button" class="ecn-rv-write" data-ecn-rv-write>' . econur_lp_icon('pencil') . '<span>Write a Review</span></button><p class="ecn-rv-micro"><i aria-hidden="true"></i>It only takes a minute<i aria-hidden="true"></i></p>' : '';
+
+    // left card
     if ($rc > 0) {
-        $sum = '<p class="ecn-lp-rv-avg"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b> out of 5</p>' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1)))
-            . '<p class="ecn-lp-rv-n">Based on ' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</p>' . $bars
-            . '<button type="button" class="ecn-lp-btn-o ecn-rev-all" aria-controls="ecn-lp-rv-all" aria-expanded="false">See all ' . esc_html($rc) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</button>';
+        $counts = $product->get_rating_counts(); $bars = '';
+        for ($st = 5; $st >= 1; $st--) { $c = isset($counts[$st]) ? (int) $counts[$st] : 0; $pc = round($c / $rc * 100); $bars .= '<li><span>' . $st . ' <i aria-hidden="true">&#9733;</i></span><i class="ecn-rv-bar"><b style="width:' . $pc . '%"></b></i><em>' . $pc . '%</em></li>'; }
+        $side = '<div class="ecn-rv-card ecn-rv-side is-summary"><div class="ecn-rv-score"><b>' . esc_html(number_format_i18n($avg, 1)) . '</b><div>' . econur_lp_stars($avg / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n($avg, 1)))
+            . '<p>Based on ' . esc_html(number_format_i18n($rc)) . ' ' . (1 === $rc ? 'review' : 'reviews') . '</p></div></div>'
+            . '<ul class="ecn-rv-dist" aria-label="Rating distribution">' . $bars . '</ul>' . $write . '</div>';
     } else {
-        $sum = '<p class="ecn-lp-rv-avg is-empty">No reviews yet</p>' . econur_lp_stars(0) . '<p class="ecn-lp-rv-n">Be the first to review this product</p>' . $bars
-            . ($open ? '<button type="button" class="ecn-lp-btn-o ecn-rev-write" aria-controls="ecn-lp-rv-all" aria-expanded="true">Write a Review</button>' : '');
+        $cue = '';
+        if ($can) for ($st = 1; $st <= 5; $st++) $cue .= '<button type="button" data-ecn-rv-rate="' . $st . '" aria-label="' . esc_attr(sprintf('Rate %d out of 5', $st)) . '">' . econur_lp_rv_star() . '</button>';
+        $perk = function ($ic, $t, $l) { return '<li><span class="ecn-rv-perk-ic">' . econur_lp_icon($ic) . '</span><div><b>' . esc_html($t) . '</b><span>' . esc_html($l) . '</span></div></li>'; };
+        $side = '<div class="ecn-rv-card ecn-rv-side"><div class="ecn-rv-intro"><span class="ecn-rv-bigic">' . econur_lp_icon('users') . '</span><div><h3>Be the first to share your experience</h3>'
+            . ($cue ? '<div class="ecn-rv-cue" role="group" aria-label="Rate this product">' . $cue . '</div>' : '')
+            . '<p>' . esc_html('Already tried the ' . $name . '?') . '<br>Tell us what you think.</p></div></div>'
+            . '<ul class="ecn-rv-perks">' . $perk('message', 'Help other customers', 'Share your honest experience.')
+            . ($photos ? $perk('camera', 'Add photos (optional)', 'Show how you use the product.') : '')
+            . $perk('gift', 'Support the ECONUR community', 'Your review helps others choose.') . '</ul>' . $write . '</div>';
     }
-    $html = '';
-    if ($rc > 0) foreach (get_comments(array('post_id' => $id, 'status' => 'approve', 'type' => 'review', 'parent' => 0, 'number' => 3)) as $c) {
-        $r = (int) get_comment_meta($c->comment_ID, 'rating', true); $nm = get_comment_author($c);
-        $ver = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID);
-        $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($nm), 0, 1)) : strtoupper(substr(trim($nm), 0, 1));
-        $html .= '<article class="ecn-lp-rv"><header><span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div><b>' . esc_html($nm) . '</b>'
-            . ($ver ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '')
-            . ($r ? '<span class="ecn-lp-rv-stars">' . econur_lp_stars($r * 20, sprintf('Rated %d out of 5', $r)) . '</span>' : '') . '</div></header>'
-            . '<blockquote>' . esc_html(wp_strip_all_tags(get_comment_text($c))) . '</blockquote>'
-            . '<p class="ecn-lp-rv-date"><time datetime="' . esc_attr(get_comment_date('c', $c)) . '">' . esc_html(get_comment_date('F j, Y', $c)) . '</time></p></article>';
+
+    // right card: the review form
+    $formcard = '';
+    if ($can) {
+        $stars = '';
+        for ($st = 5; $st >= 1; $st--) $stars .= '<input type="radio" id="ecn-rv-r' . $st . '" name="rating" value="' . $st . '" form="commentform"><label for="ecn-rv-r' . $st . '" title="' . esc_attr($st . ' out of 5') . '">' . econur_lp_rv_star() . econur_lp_rv_star(true) . '<span class="screen-reader-text">' . esc_html(sprintf(_n('%d star', '%d stars', $st), $st)) . '</span></label>';
+        $ph = 'Share your experience with the ' . $name . "...\nWhat did you like? How did it work for " . ($skin ? 'your skin?' : 'you?');
+        $req = '<span class="required" aria-hidden="true">*</span>';
+        $args = array(
+            'title_reply' => '', 'title_reply_to' => '', 'title_reply_before' => '', 'title_reply_after' => '', 'cancel_reply_before' => '', 'cancel_reply_after' => '',
+            'comment_notes_before' => '', 'comment_notes_after' => '', 'class_form' => 'comment-form ecn-rv-form', 'label_submit' => 'Submit Review',
+            'comment_field' => '<p class="ecn-rv-f ecn-rv-f--text"><label for="comment">Your review ' . $req . '</label><span class="ecn-rv-ta"><textarea id="comment" name="comment" rows="4" maxlength="' . (defined('ECONUR_RV_MAX_CHARS') ? ECONUR_RV_MAX_CHARS : 1000) . '" required placeholder="' . esc_attr($ph) . '"></textarea><span class="ecn-rv-count" aria-live="polite"><b>0</b>/' . esc_html(number_format_i18n(defined('ECONUR_RV_MAX_CHARS') ? ECONUR_RV_MAX_CHARS : 1000)) . '</span></span><span class="ecn-rv-err" data-for="comment" hidden>Please write a few words about your experience.</span></p>',
+            'fields' => array(
+                'author' => '<p class="ecn-rv-f ecn-rv-f--name"><label for="author">Name ' . $req . '</label><input id="author" name="author" type="text" autocomplete="name" placeholder="Your name" required maxlength="245"><span class="ecn-rv-err" data-for="author" hidden>Please enter your name.</span></p>',
+                'email'  => '<p class="ecn-rv-f ecn-rv-f--email"><label for="email">Email ' . $req . '</label><input id="email" name="email" type="email" autocomplete="email" placeholder="Your email address" required maxlength="100"><span class="ecn-rv-err" data-for="email" hidden>Please enter a valid email address.</span></p>',
+            ),
+            'submit_button' => '<button name="%1$s" type="submit" id="%2$s" class="%3$s">' . econur_lp_icon('send') . '<span>%4$s</span></button>',
+            'submit_field' => ($photos ? '<div class="ecn-rv-photos"><span class="ecn-rv-photos-ic">' . econur_lp_icon('camera') . '</span><div class="ecn-rv-photos-tx"><b>Add photos (optional)</b><span>Show how you use the product or your results. Up to 3 photos, JPG, PNG or WebP, 5 MB each.</span><ul class="ecn-rv-thumbs" aria-live="polite"></ul><span class="ecn-rv-err" data-for="photos" hidden></span></div>'
+                . '<label class="ecn-rv-pick">' . econur_lp_icon('image') . '<span>Choose Photos</span><input type="file" name="ecn_review_photos[]" accept="image/jpeg,image/png,image/webp" multiple class="ecn-rv-file"></label></div>' : '')
+                . '<p class="ecn-rv-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="ecn_rv_hp" value="" tabindex="-1" autocomplete="off"></label></p>'
+                . '<p class="form-submit">%1$s %2$s</p>',
+        );
+        ob_start(); comment_form(apply_filters('econur_review_form_args', $args), $id); $form = ob_get_clean();
+        if ($photos) $form = preg_replace('/<form(?![^>]*enctype)/', '<form enctype="multipart/form-data"', $form, 1);
+        $img = econur_lp_card_img($product, 'medium_large', '(min-width: 900px) 420px, calc(100vw - 64px)', '');
+        $formcard = '<div class="ecn-rv-card ecn-rv-formcard" id="ecn-rv-form">'
+            . '<div class="ecn-rv-top"><div class="ecn-rv-head"><h3>' . esc_html('Review the ' . $name) . '</h3><p class="ecn-rv-note">Your email address will not be published. Required fields are marked <span class="required">*</span></p></div>'
+            . ($img ? '<figure class="ecn-rv-ctx">' . $img . '<figcaption><span>Reviewing:</span><b>' . esc_html($name) . '</b></figcaption></figure>' : '')
+            . '<fieldset class="ecn-rv-rate"><legend>Your rating ' . $req . '</legend><div class="ecn-rv-stars">' . $stars . '</div><span class="ecn-rv-err" data-for="rating" hidden>Please choose a star rating.</span></fieldset></div>'
+            . '<div class="ecn-rv-done" role="status" aria-live="polite" tabindex="-1" hidden></div>' . $form . '</div>';
+    } elseif ($open) {
+        $formcard = '<div class="ecn-rv-card ecn-rv-formcard is-closed"><h3>' . esc_html('Review the ' . $name) . '</h3><p class="ecn-rv-note">Only logged in customers who have purchased this product may leave a review.</p></div>';
     }
-    $sub = $rc > 0 ? 'Real reviews from ECONUR customers of the ' . $name . '.' : 'Tried the ' . $name . '? Share your experience to help other customers choose.';
-    ob_start(); if ($open) comments_template(); $form = ob_get_clean();
-    $inline = $rc < 1 && $form;
-    echo '<section class="ecn-lp-sec ecn-lp-reviews" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">' . econur_lp_head('Loved by Customers', $sub, 'ecn-lp-rv-t')
-        . '<div class="ecn-lp-rv-grid' . ($html || $inline ? '' : ' no-cards') . ($inline ? ' has-form' : '') . '"><div class="ecn-lp-rv-sum">' . $sum . '</div>'
-        . ($html ? '<div class="ecn-lp-rv-cards">' . $html . '</div>' : '')
-        . ($inline ? '<div class="ecn-lp-rv-all ecn-pdp-rev no-reviews is-inline is-open" id="ecn-lp-rv-all">' . $form . '</div>' : '') . '</div>'
-        . (!$inline && $form ? '<div class="ecn-lp-rv-all ecn-pdp-rev has-reviews" id="ecn-lp-rv-all">' . $form . '</div>' : '') . '</section>';
+
+    // approved reviews
+    $list = '';
+    if ($rc > 0) {
+        $all = get_comments(array('post_id' => $id, 'status' => 'approve', 'type' => 'review', 'parent' => 0, 'number' => 50));
+        foreach ($all as $k => $c) {
+            $r = (int) get_comment_meta($c->comment_ID, 'rating', true); $nm = get_comment_author($c);
+            $ver = function_exists('wc_review_is_from_verified_owner') && wc_review_is_from_verified_owner($c->comment_ID);
+            $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr(trim($nm), 0, 1)) : strtoupper(substr(trim($nm), 0, 1));
+            $pics = '';
+            foreach (array_filter(array_map('intval', (array) get_comment_meta($c->comment_ID, 'ecn_review_photos', true))) as $pid) {
+                if (wp_attachment_is_image($pid)) $pics .= '<a href="' . esc_url(wp_get_attachment_image_url($pid, 'large')) . '" target="_blank" rel="noopener">' . wp_get_attachment_image($pid, 'thumbnail', false, array('loading' => 'lazy', 'decoding' => 'async', 'alt' => 'Photo from ' . $nm)) . '</a>';
+            }
+            $list .= '<article class="ecn-rv-item" id="comment-' . esc_attr($c->comment_ID) . '"' . ($k >= 3 ? ' hidden' : '') . '><header><span class="ecn-rev-av" aria-hidden="true">' . esc_html($initial) . '</span><div><b>' . esc_html($nm) . '</b>'
+                . ($ver ? '<span class="ecn-rev-ver">' . econur_pdp_icon('check') . 'Verified Purchase</span>' : '') . '</div>'
+                . '<time datetime="' . esc_attr(get_comment_date('c', $c)) . '">' . esc_html(get_comment_date('F j, Y', $c)) . '</time></header>'
+                . ($r ? '<div class="ecn-rv-item-stars">' . econur_lp_stars($r * 20, sprintf('Rated %d out of 5', $r)) . '</div>' : '')
+                . '<blockquote>' . wp_kses_post(wpautop(esc_html(wp_strip_all_tags(get_comment_text($c))))) . '</blockquote>' . ($pics ? '<div class="ecn-rv-pics">' . $pics . '</div>' : '') . '</article>';
+        }
+        $n = count($all);
+        $list = '<div class="ecn-rv-list" id="ecn-rv-list"><h3 class="ecn-rv-list-t">' . esc_html('Reviews of the ' . $name) . '</h3><div class="ecn-rv-items">' . $list . '</div>'
+            . ($n > 3 ? '<button type="button" class="ecn-lp-btn-o ecn-rv-more" aria-controls="ecn-rv-list" aria-expanded="false">Show all ' . esc_html(number_format_i18n($n)) . ' reviews</button>' : '') . '</div>';
+    }
+
+    echo '<section class="ecn-lp-sec ecn-lp-reviews ecn-rv" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">'
+        . econur_pdp_art('sprig', 'ecn-lp-art ecn-rv-art ecn-rv-art--tl') . econur_pdp_art('sprig', 'ecn-lp-art ecn-rv-art ecn-rv-art--tr') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--bl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--br')
+        . econur_lp_fleaf('is-a') . econur_lp_fleaf('is-b')
+        . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_lp_rv_star(true) . ($rc > 0 ? 'Real stories. Real results.' : 'Your experience matters') . '</span><h2 class="ecn-lp-h2" id="ecn-lp-rv-t">Loved by Customers</h2>'
+        . '<p class="ecn-lp-lead">' . esc_html('Tried the ' . $name . '? Share your experience to help other customers choose.') . '</p></div>'
+        . '<div class="ecn-rv-grid' . ($formcard ? '' : ' is-single') . '">' . $side . $formcard . '</div>' . $list . '</section>';
 }
 
 /* ===== FAQ: answers from the product's own data and the store's real terms ===== */

@@ -150,18 +150,73 @@
     if (sbBtn) sbBtn.addEventListener('click', addNow);
     var fin = page.querySelector('[data-ecn-final-add]'); if (fin) fin.addEventListener('click', addNow);
 
-    /* ---------- reviews: full list and form open from the reviews section ---------- */
-    var all = page.querySelector('.ecn-lp-rv-all'), rf = page.querySelector('#review_form_wrapper');
-    var openers = [].slice.call(page.querySelectorAll('.ecn-rev-write, .ecn-rev-all'));
-    var inline = !!(all && all.classList.contains('is-inline'));
-    function revOpen(on, focusForm) {
-      if (!all) return; if (inline) on = true; all.classList.toggle('is-open', on); openers.forEach(function (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); });
-      if (on && focusForm && rf) { rf.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); var f = rf.querySelector('p.stars a, #comment'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 350); }
+    /* ---------- reviews: rating, counter, photos, checks before sending, thank-you message ---------- */
+    var rvCard = page.querySelector('#ecn-rv-form'), rvForm = document.getElementById('commentform');
+    function rvGo(rate) {
+      var t = rvCard || page.querySelector('#ecn-reviews'); if (!t) return;
+      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      if (rate) { var r = document.getElementById('ecn-rv-r' + rate); if (r) { r.checked = true; rvErr('rating', false); } }
+      var f = rvCard && (rvCard.querySelector('.ecn-rv-stars input:checked') || rvCard.querySelector('.ecn-rv-stars input[value="1"]'));
+      if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, reduce ? 0 : 420);
     }
-    if (all) { if (!inline) all.classList.add('is-collapsible'); openers.forEach(function (b) { b.addEventListener('click', function () { var on = inline || !all.classList.contains('is-open'); revOpen(on, on && b.classList.contains('ecn-rev-write')); }); }); }
-    else openers.forEach(function (b) { b.hidden = true; });
-    page.querySelectorAll('[data-write]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); revOpen(true, true); }); });
-    if (/^#(reviews|comments|comment-\d+|review_form_wrapper|review_form|respond)$/.test(location.hash)) { revOpen(true, false); var tgt = document.querySelector(location.hash); if (tgt) setTimeout(function () { tgt.scrollIntoView({ block: 'start' }); }, 80); }
+    function rvErr(k, on, msg) {
+      var e = page.querySelector('.ecn-rv-err[data-for="' + k + '"]'); if (!e) return;
+      if (msg) e.textContent = msg; e.hidden = !on;
+      var f = k === 'rating' ? null : document.getElementById(k); if (f) { if (on) f.setAttribute('aria-invalid', 'true'); else f.removeAttribute('aria-invalid'); }
+    }
+    page.querySelectorAll('[data-ecn-rv-write], [data-write]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); rvGo(0); }); });
+    page.querySelectorAll('[data-ecn-rv-rate]').forEach(function (b) { b.addEventListener('click', function () { rvGo(b.getAttribute('data-ecn-rv-rate')); }); });
+    page.querySelectorAll('.ecn-rv-stars input').forEach(function (r) { r.addEventListener('change', function () { rvErr('rating', false); }); });
+    var more = page.querySelector('.ecn-rv-more');
+    if (more) more.addEventListener('click', function () { page.querySelectorAll('.ecn-rv-item[hidden]').forEach(function (it) { it.hidden = false; }); more.setAttribute('aria-expanded', 'true'); more.hidden = true; });
+    if (rvForm && rvCard) {
+      var ta = rvForm.querySelector('#comment'), cnt = rvForm.querySelector('.ecn-rv-count b');
+      if (ta && cnt) { var upd = function () { cnt.textContent = ta.value.length; if (ta.value.trim()) rvErr('comment', false); }; ta.addEventListener('input', upd); upd(); }
+      ['author', 'email'].forEach(function (k) { var f = document.getElementById(k); if (f) f.addEventListener('input', function () { rvErr(k, false); }); });
+      // photos: up to 3, JPG / PNG / WebP, 5 MB each (checked again on the server)
+      var fi = rvForm.querySelector('.ecn-rv-file'), th = rvForm.querySelector('.ecn-rv-thumbs');
+      function setFiles(list) { if (!window.DataTransfer) return false; var dt = new DataTransfer(); list.forEach(function (f) { dt.items.add(f); }); fi.files = dt.files; return true; }
+      function drawThumbs() {
+        th.innerHTML = '';
+        [].forEach.call(fi.files, function (f, i) {
+          var li = document.createElement('li'), im = document.createElement('img'), x = document.createElement('button');
+          im.alt = ''; im.src = URL.createObjectURL(f); im.onload = function () { URL.revokeObjectURL(im.src); };
+          x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+          x.addEventListener('click', function () { var keep = [].slice.call(fi.files).filter(function (g, j) { return j !== i; }); if (!setFiles(keep)) fi.value = ''; drawThumbs(); });
+          li.appendChild(im); li.appendChild(x); th.appendChild(li);
+        });
+      }
+      if (fi && th) fi.addEventListener('change', function () {
+        var ok = [], bad = 0, many = false;
+        [].forEach.call(fi.files, function (f) { if (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size > 5242880) { bad++; return; } if (ok.length >= 3) { many = true; return; } ok.push(f); });
+        if (bad || many) { if (!setFiles(ok)) fi.value = ''; rvErr('photos', true, (bad ? 'Some files were left out: please use JPG, PNG or WebP photos up to 5 MB. ' : '') + (many ? 'You can add up to 3 photos.' : '')); } else rvErr('photos', false);
+        drawThumbs();
+      });
+      rvForm.addEventListener('submit', function (e) {
+        var first = null, mark = function (k, el) { rvErr(k, true); if (!first) first = el; };
+        var rated = rvCard.querySelector('.ecn-rv-stars input:checked');
+        if (!rated) mark('rating', rvCard.querySelector('.ecn-rv-stars input[value="1"]'));
+        if (ta && !ta.value.trim()) mark('comment', ta);
+        var au = document.getElementById('author'), em = document.getElementById('email');
+        if (au && !au.value.trim()) mark('author', au);
+        if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value.trim())) mark('email', em);
+        if (first) { e.preventDefault(); first.focus(); return; }
+        var sb = rvForm.querySelector('#submit'); if (sb) { sb.disabled = true; sb.classList.add('is-busy'); var sp = sb.querySelector('span'); if (sp) sp.textContent = 'Submitting…'; }
+      });
+    }
+    // after sending: a thank-you that says what really happens (published now, or after approval)
+    var done = (document.cookie.match(/(?:^|;\s*)ecn_rv_done=([^;]+)/) || [])[1];
+    if (done && rvCard) {
+      document.cookie = 'ecn_rv_done=; Max-Age=0; path=/';
+      var d = decodeURIComponent(done).split('.'), box = rvCard.querySelector('.ecn-rv-done');
+      var msg = '<b>Thank you for sharing your experience.</b><span>' + (d[0] === '1' ? 'Your review is now live on this page.' : 'Your review has been submitted and may appear after approval.') + '</span>';
+      if (+d[1]) msg += '<span>' + (+d[1] === 1 ? 'Your photo was received' : 'Your ' + d[1] + ' photos were received') + (d[0] === '1' ? '.' : ' and will show with your review once it is approved.') + '</span>';
+      if (+d[2]) msg += '<span>' + d[2] + ' photo' + (+d[2] === 1 ? '' : 's') + ' could not be added (JPG, PNG or WebP up to 5 MB, 3 at most).</span>';
+      if (box) { box.innerHTML = msg; box.hidden = false; rvCard.classList.add('is-done'); setTimeout(function () { rvCard.scrollIntoView({ block: 'start' }); box.focus({ preventScroll: true }); }, 120); }
+    } else if (/^#(ecn-reviews|reviews|comments|comment-\d+|review_form_wrapper|review_form|respond)$/.test(location.hash)) {
+      var tg = document.querySelector(location.hash.indexOf('#comment-') === 0 ? location.hash : '#ecn-rv-form') || page.querySelector('#ecn-reviews');
+      if (tg) setTimeout(function () { tg.scrollIntoView({ block: 'start' }); }, 80);
+    }
 
     /* ---------- links to sections of this page (See all reviews, footer links) scroll smoothly ---------- */
     document.addEventListener('click', function (e) {
