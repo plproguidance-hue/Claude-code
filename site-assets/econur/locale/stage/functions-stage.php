@@ -65,7 +65,7 @@ add_filter('wp_get_attachment_image_attributes', function ($attr) {
 
 // Header account icon (desktop and mobile): open the WooCommerce My Account page (sign-in / register when logged out, the
 // customer dashboard when logged in) instead of wp-login.php. The page is looked up at runtime, so a changed slug still works.
-function econur_account_link_option($value) {
+function econur_account_link_option_stage($value) {
     if (!function_exists('wc_get_page_id')) return $value;
     $page = wc_get_page_id('myaccount');
     if ($page <= 0 || 'publish' !== get_post_status($page)) return $value;
@@ -75,5 +75,5 @@ function econur_account_link_option($value) {
     if (!isset($value['link_rel'])) $value['link_rel'] = '';
     return $value;
 }
-add_filter('astra_get_option_header-account-logout-link', 'econur_account_link_option');
-add_filter('astra_get_option_header-account-login-link', 'econur_account_link_option');
+add_filter('astra_get_option_header-account-logout-link', 'econur_account_link_option_stage');
+add_filter('astra_get_option_header-account-login-link', 'econur_account_link_option_stage');
