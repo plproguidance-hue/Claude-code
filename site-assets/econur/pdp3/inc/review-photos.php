@@ -175,3 +175,12 @@ add_action('admin_post_ecn_rv_photo', function () {
     readfile($path);
     exit;
 });
+
+/* ---------- the product page switches state (invitation / real summary) as soon as a review is approved or removed ---------- */
+function econur_rv_refresh_product($post_id) {
+    if (!$post_id || 'product' !== get_post_type($post_id)) return;
+    clean_post_cache($post_id);
+    do_action('litespeed_purge_post', $post_id);
+}
+add_action('transition_comment_status', function ($new, $old, $comment) { if ($comment) econur_rv_refresh_product((int) $comment->comment_post_ID); }, 30, 3);
+add_action('deleted_comment', function ($cid, $comment = null) { if ($comment) econur_rv_refresh_product((int) $comment->comment_post_ID); }, 30, 2);
