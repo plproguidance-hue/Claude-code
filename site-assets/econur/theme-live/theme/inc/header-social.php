@@ -11,7 +11,7 @@
  *
  * URLs: Facebook and Instagram are the ones the footer already uses (econur_footer_config()).
  * TikTok: set the real profile URL in the option "econur_social_tiktok_url" (or the econur_social_tiktok_url filter);
- * until then the TikTok icon is not printed, so the header never links to a placeholder.
+ * until then the TikTok circle is shown as a plain icon (not a link), and it becomes a link as soon as the URL is set.
  */
 defined('ABSPATH') || exit;
 
@@ -26,7 +26,8 @@ function econur_header_social_links() {
         array('instagram', 'ECONUR on Instagram', $urls['instagram'] ?? ''),
         array('tiktok',    'ECONUR on TikTok',    $tiktok),
     );
-    return array_filter($links, function ($l) { return '' !== $l[2]; });
+    // Facebook / Instagram need their URL; TikTok is always shown (as a plain icon until its URL is set)
+    return array_filter($links, function ($l) { return '' !== $l[2] || 'tiktok' === $l[0]; });
 }
 
 // the footer's Facebook "f" and Instagram outline, plus the TikTok note in the same weight (24px grid, currentColor)
@@ -45,6 +46,10 @@ add_action('astra_render_header_column', function ($row, $column) {
     if (!$links) return;
     echo '<ul class="ecn-hsocial">';
     foreach ($links as $l) {
+        if ('' === $l[2]) { // no URL yet: the same circle, not clickable and skipped by screen readers
+            echo '<li><span class="ecn-hsocial-' . esc_attr($l[0]) . ' ecn-hsocial-nolink" aria-hidden="true">' . econur_header_social_icon($l[0]) . '</span></li>';
+            continue;
+        }
         echo '<li><a class="ecn-hsocial-' . esc_attr($l[0]) . '" href="' . esc_url($l[2]) . '" target="_blank" rel="noopener noreferrer" aria-label="' . esc_attr($l[1]) . '">'
             . econur_header_social_icon($l[0]) . '</a></li>';
     }
@@ -62,7 +67,7 @@ add_action('wp_head', function () {
   #ast-desktop-header .ecn-hsocial.is-fit{ position:absolute; left:100%; top:0; bottom:0; display:flex; align-items:center; justify-content:center; gap:12px; margin:0; padding:0; list-style:none; }
   .ecn-hsocial li{ margin:0; padding:0; list-style:none; line-height:0; }
   /* same soft sage circle and teal icon as the footer's social links */
-  .ecn-hsocial a{ display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:#E3E9DD; color:#0D585F !important; text-decoration:none;
+  .ecn-hsocial a, .ecn-hsocial .ecn-hsocial-nolink{ display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:#E3E9DD; color:#0D585F !important; text-decoration:none;
     transition:background-color .2s ease, color .2s ease, transform .2s ease; }
   .ecn-hsocial a:hover, .ecn-hsocial a:focus-visible{ background:#D6E0CE; color:#0A474D !important; transform:translateY(-1px); }
   .ecn-hsocial svg{ display:block; width:18px; height:18px; }
