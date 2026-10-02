@@ -1878,3 +1878,11 @@ html:not(.ecn-js) .econur-reviews-section .ecn-rv-cancel{ display:none; }
   .econur-reviews-section .ecn-rv-item footer{ flex-wrap:wrap; }
   .econur-reviews-section .ecn-rv-more{ width:100%; min-width:0; height:54px; font-size:17px !important; }
 }
+
+/* v7.13 fine-tune against the locked mockup: compact summary, filled leaf in the badge */
+.econur-reviews-section .ecn-rv-summary{ padding:22px 0; }
+.econur-reviews-section .ecn-rv-dist{ gap:7px; }
+.econur-reviews-section .ecn-rv-score .ecn-stars{ margin-top:12px; }
+.econur-reviews-section .ecn-rv-based{ margin-top:12px !important; }
+.econur-reviews-section .ecn-lp-kicker svg path:first-child{ fill:currentColor; }
+@media (max-width:767px){ .econur-reviews-section .ecn-rv-dist{ gap:9px; } }
