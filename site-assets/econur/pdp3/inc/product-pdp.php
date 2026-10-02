@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.15.1';
+const ECONUR_PDP_VER = '7.16.0';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -987,11 +987,14 @@ function econur_lp_favorites($product, $lp) {
     $cards = '';
     foreach ($list as $row) {
         list($p, $u) = $row; $pid = $p->get_id(); $link = get_permalink($pid); $nm = $p->get_name(); $sz = $u ? econur_pdp_size_label($u) : '';
+        $line = trim((string) get_post_meta($pid, 'econur_card_line', true)); if ('' === $line) $line = econur_lp_card_line($p);
         $rcount = (int) $p->get_review_count();
-        $cards .= '<article class="ecn-rel-card' . ($u ? '' : ' is-soon') . '"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . econur_lp_card_img($p, 'medium_large', '(min-width: 1000px) 22vw, 62vw') . '</a></div>'
-            . '<div class="ecn-rel-body"><h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($nm) . '</a></h3>'
-            . ($rcount ? '<p class="ecn-rel-rating">' . econur_lp_stars((float) $p->get_average_rating() / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n((float) $p->get_average_rating(), 1))) . '<span>' . esc_html(number_format_i18n((float) $p->get_average_rating(), 1)) . ' (' . $rcount . ')</span></p>'
-                : '<p class="ecn-rel-rating is-empty">' . econur_lp_stars(0) . '<span>No reviews yet</span></p>');
+        $cards .= '<article class="ecn-rel-card' . ($u ? '' : ' is-soon') . '"><div class="ecn-rel-media"><a href="' . esc_url($link) . '" tabindex="-1" aria-hidden="true">' . econur_lp_card_img($p, 'medium_large', '(min-width: 1200px) 290px, (min-width: 768px) 30vw, 80vw') . '</a></div>'
+            . '<div class="ecn-rel-body">' . ($u ? '' : '<span class="ecn-rel-soon">Coming soon</span>')
+            . '<h3 class="ecn-rel-name"><a href="' . esc_url($link) . '">' . esc_html($nm) . '</a></h3>'
+            . ($line ? '<p class="ecn-rel-line">' . esc_html($line) . '</p>' : '')
+            // real reviews only: no empty stars, no "no reviews yet"
+            . ($rcount ? '<p class="ecn-rel-rating">' . econur_lp_stars((float) $p->get_average_rating() / 5 * 100, sprintf('Rated %s out of 5', number_format_i18n((float) $p->get_average_rating(), 1))) . '<span>' . esc_html(number_format_i18n((float) $p->get_average_rating(), 1)) . ' (' . $rcount . ')</span></p>' : '');
         if ($u) {
             // a variable product with more than one size: the shopper picks the size here, the button adds exactly that one
             $chips = '';
@@ -1009,17 +1012,21 @@ function econur_lp_favorites($product, $lp) {
                 }
             }
             $cards .= '<p class="ecn-rel-price"><span class="ecn-rel-pr">' . wp_kses_post($u->get_price_html()) . '</span>' . ($sz && !$chips ? '<small>' . esc_html($sz) . '</small>' : '') . '</p>' . $chips
-                . '<button type="button" class="ecn-rel-add" data-id="' . esc_attr($u->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($nm . ($sz ? ' (' . $sz . ')' : '')) . '" data-price="' . esc_attr($u->get_price()) . '" aria-label="' . esc_attr('Add ' . $nm . ($sz ? ', ' . $sz : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button>';
+                . '<div class="ecn-rel-cta"><button type="button" class="ecn-rel-add" data-id="' . esc_attr($u->get_id()) . '" data-url="' . esc_url($link) . '" data-name="' . esc_attr($nm . ($sz ? ' (' . $sz . ')' : '')) . '" data-price="' . esc_attr($u->get_price()) . '" aria-label="' . esc_attr('Add ' . $nm . ($sz ? ', ' . $sz : '') . ' to cart') . '">' . econur_pdp_icon('cart') . '<span>Add to Cart</span></button></div>';
         } else {
-            $cards .= '<p class="ecn-rel-price is-soon">Coming soon</p><a class="ecn-rel-view" href="' . esc_url($link) . '">View product</a>';
+            $cards .= '<div class="ecn-rel-cta"><a class="ecn-rel-view" href="' . esc_url($link) . '" aria-label="' . esc_attr('View product: ' . $nm) . '">View Product</a></div>';
         }
         $cards .= '</div></article>';
     }
     $n = count($list);
-    echo '<section class="ecn-lp-sec ecn-rel" aria-labelledby="ecn-rel-t">' . econur_lp_head('More ECONUR Favorites', 'Natural, handcrafted essentials from the ECONUR range.', 'ecn-rel-t')
+    echo '<section class="ecn-lp-sec ecn-rel ecn-favs" aria-labelledby="ecn-rel-t">'
+        . econur_pdp_art('leaves', 'ecn-favs-art ecn-favs-art--tl') . econur_pdp_art('leaves', 'ecn-favs-art ecn-favs-art--tr')
+        . econur_lp_fleaf('ecn-favs-leaf is-a') . econur_lp_fleaf('ecn-favs-leaf is-b') . econur_lp_fleaf('ecn-favs-leaf is-c')
+        . '<div class="ecn-lp-head ecn-favs-head"><span class="ecn-lp-kicker">' . econur_pdp_icon('leaf') . 'Discover more from ECONUR</span>'
+        . '<h2 class="ecn-lp-h2" id="ecn-rel-t">More ECONUR Favorites</h2><p class="ecn-lp-lead">Natural, handcrafted essentials from the ECONUR range.</p></div>'
         . '<div class="ecn-rel-wrap' . ($n > 4 ? ' has-nav' : '') . '"><div class="ecn-rel-track" tabindex="0" aria-label="More products">' . $cards . '</div>'
-        . ($n > 4 ? '<button type="button" class="ecn-rel-nav ecn-rel-prev" aria-label="Previous products">' . econur_pdp_icon('prev') . '</button><button type="button" class="ecn-rel-nav ecn-rel-next" aria-label="Next products">' . econur_pdp_icon('next') . '</button>' : '')
-        . '</div><div class="ecn-rel-dots" aria-hidden="true"></div></section>';
+        . ($n > 1 ? '<button type="button" class="ecn-rel-nav ecn-rel-prev" aria-label="Previous products">' . econur_pdp_icon('prev') . '</button><button type="button" class="ecn-rel-nav ecn-rel-next" aria-label="Next products">' . econur_pdp_icon('next') . '</button>' : '')
+        . '</div></section>';
 }
 
 /* ===== closing call to action ===== */

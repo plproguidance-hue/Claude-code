@@ -14,6 +14,7 @@
  *  econur_ingredient_pills  a short pill under each "Why" ingredient card, in the same order: "Pill | Pill | Pill"
  *  econur_how_pills    a short pill under each "How to Use" step, in the same order: "Pill | Pill | Pill"
  *  econur_lp_packs     pack discounts by quantity, e.g. "2:5, 3:10" (percent). Empty = no pack discount.
+ *  econur_card_line    one short benefit line on this product's card in "More ECONUR Favorites"
  *  econur_lp_cta       heading of the closing call to action
  *  econur_lp_angles    ad angles for message match, one per line: "key | subtitle | benefit; benefit; benefit"
  *                      (a link with ?angle=key shows that subtitle and those benefits)
@@ -32,6 +33,7 @@ function econur_lp_field_defs() {
         'econur_ingredient_pills' => array('"Why" ingredient pills', 'text', 'One short pill per ingredient card, same order as the ingredient notes, separated by |. e.g. Deep Cleansing | Helps Soothe | Fresh, Clean Feel'),
         'econur_how_pills'   => array('"How to Use" step pills', 'text', 'One short pill per step, same order as the steps, separated by |. e.g. Create a gentle foam | Focus on oily areas | Use morning & night'),
         'econur_lp_packs'    => array('Pack discount', 'text', 'Optional percent off by quantity, e.g. 2:5, 3:10 (5% off 2 or more, 10% off 3 or more). Applied in the cart. Empty = no pack discount.'),
+        'econur_card_line'   => array('Card line', 'text', 'One short benefit line on this product\'s card in "More ECONUR Favorites" on other product pages. Empty = its "Find your bar" line or first highlight.'),
         'econur_lp_cta'      => array('Closing heading', 'text', 'Heading of the call to action at the bottom of the page.'),
         'econur_lp_angles'   => array('Ad angles', 'lines', 'For Meta ads message match, one per line: key | subtitle | benefit; benefit; benefit. Link to the product with ?angle=key.'),
     );

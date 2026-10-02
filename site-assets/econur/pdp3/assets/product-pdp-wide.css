@@ -103,25 +103,8 @@ body.single-product .ecn-pdp .ecn-rev-wait{ margin:3.4px 0 !important; font-size
 .ecn-pdp-rev .comment-form-cookies-consent input{ margin:2.55px 0 0 !important; }
 .ecn-pdp-rev .comment-form-cookies-consent label{ margin:0 !important; }
 .ecn-pdp-rev .comment-form .submit{ height:40.8px; padding:0 25.5px !important; border-radius:849.15px !important; font-size:12.75px !important; }
-.ecn-rel-track{ gap:20.4px; padding:2px 2px 8.5px; }
-.ecn-rel-card{ border-radius:13.6px; }
-.ecn-rel-media > a{ inset:0; }
-.ecn-rel-media img{ width:100% !important; height:100% !important; border-radius:0 !important; }
 .ecn-rel-heart{ top:8.5px; right:8.5px; width:30.6px !important; height:30.6px !important; }
 .ecn-rel-heart svg{ width:15.3px; height:15.3px; }
-.ecn-rel-body{ gap:5.1px; padding:13.6px 15.3px 15.3px; }
-body.single-product .ecn-pdp .ecn-rel-name{ margin:0 !important; font-size:15.3px !important; line-height:1.25 !important; }
-body.single-product .ecn-pdp .ecn-rel-price{ gap:3.4px 6.8px; margin:0 0 6.8px !important; font-size:15.3px; }
-body.single-product .ecn-pdp .ecn-rel-price.is-soon{ font-size:12.32px; }
-body.single-product .ecn-pdp .ecn-rel-view{ height:39.1px; margin-top:auto; border-radius:849.15px; font-size:12.32px; }
-.ecn-rel-price del, .ecn-rel-price del .amount, .ecn-rel-price del bdi{ font-size:11.47px; }
-.ecn-rel-price small{ font-size:10.62px; }
-body.single-product .ecn-pdp .ecn-rel-add{ gap:6.8px; width:100%; height:39.1px; margin-top:auto; padding:0 13.6px !important; border-radius:849.15px !important; font-size:12.32px !important; }
-body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
-.ecn-rel-nav{ top:30%; width:37.4px; height:37.4px; padding:0 !important; border-radius:50% !important; }
-.ecn-rel-nav svg{ width:17px; height:17px; }
-.ecn-rel-prev{ left:-17px; }
-.ecn-rel-next{ right:-17px; }
 .ecn-toast{ left:50%; bottom:20.4px; gap:11.9px; max-width:calc(100vw - 32px); padding:10.2px 15.3px; border-radius:849.15px; font-size:11.9px; }
 .ecn-lp-rv-star{ height:auto !important; }
 .ecn-lp-rv-bars .ecn-lp-rv-bar{ height:5.95px; border-radius:849.15px; }
@@ -133,8 +116,6 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-lp-rv-all.is-inline .comment-form .form-submit{ margin-bottom:0 !important; }
 .ecn-lp-rv .ecn-rev-ver{ gap:3.4px; font-size:10.2px; }
 .ecn-lp-rv .ecn-rev-ver svg{ width:11.9px; height:11.9px; }
-.ecn-rel-rating{ gap:6.8px; margin:5.1px 0 0 !important; font-size:11.05px; }
-.ecn-rel-rating .ecn-stars{ font-size:11.9px; }
 .ecn-lp-final-trust li + li{ padding-left:13.6px; }
 .ecn-lp-rv-all.is-inline .comment-form > p{ width:auto !important; max-width:none !important; }
 .ecn-lp-rv-all.is-inline .comment-form input[type=text], .ecn-lp-rv-all.is-inline .comment-form input[type=email]{ width:100% !important; max-width:none !important; }
@@ -142,8 +123,6 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-pdp-rev .comment-notes{ font-size:11.47px; }
 .ecn-lp-final-trust{ grid-template-columns:repeat(3, max-content); gap:15.3px; }
 .ecn-lp-ill{ width:88%; height:88%; }
-.ecn-rel-sizes{ gap:5.1px; margin:6.8px 0 0; }
-.ecn-rel-size{ min-height:27.2px; margin:0; padding:0 10.2px !important; border-radius:849.15px !important; font-size:11.05px !important; line-height:1 !important; }
 .ecn-lp-sec{ margin-top:51px; }
 .ecn-lp-head{ margin-bottom:22.1px; }
 body.single-product .ecn-pdp .ecn-lp-lead{ font-size:13.6px; margin-top:6.8px; }
