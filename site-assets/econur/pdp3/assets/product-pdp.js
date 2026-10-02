@@ -247,7 +247,12 @@
     });
 
     /* ---------- FAQ: accordion, one answer open at a time (arrow keys move between questions) ---------- */
-    var faqBtns = [].slice.call(page.querySelectorAll('.ecn-faq-q button'));
+    var faqBtns = [].slice.call(page.querySelectorAll('.ecn-faq-q button')), faqList = page.querySelector('.ecn-faq-list');
+    // the focus ring is for keyboard use: a click or tap never leaves a teal outline on a closed question
+    if (faqList) {
+      faqList.addEventListener('pointerdown', function () { faqList.classList.add('is-pointer'); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Tab' || /^Arrow|^Home$|^End$/.test(e.key)) faqList.classList.remove('is-pointer'); });
+    }
     function faqSet(b, open) {
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
       var it = b.closest('.ecn-faq-i'); if (it) it.classList.toggle('is-open', open);

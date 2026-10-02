@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.15.0';
+const ECONUR_PDP_VER = '7.15.1';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -926,14 +926,15 @@ function econur_lp_finder_block($product, $items) {
     if (!$items) return;
     $buyable = '' !== $product->get_price() && $product->is_purchasable();
     $cards = '';
+    // short card lines (owner-approved copy); the guide below keeps each bar's own finder line
+    $lines = array('oily' => 'Deep cleansing that feels clean, never tight.', 'tone' => 'Gentle care for dull or uneven-looking skin.', 'daily' => 'Botanical cleansing for everyday use.');
     foreach (array('oily', 'tone', 'daily') as $k) {
         if (empty($items[$k])) continue;
         $it = $items[$k]; $p = $it['p'];
         // the bar on this page: the card goes to its purchase options instead of reloading the page
         $href = $it['self'] ? ($buyable ? '#ecn-cart-form' : '') : get_permalink($p->get_id());
-        $go = $it['self'] ? 'You are viewing it' : 'Explore';
-        $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx">' . esc_html($it['line']) . '</span>'
-            . '<span class="ecn-need-go">' . esc_html($go) . econur_lp_icon($it['self'] ? 'up' : 'arrow') . '</span>';
+        $go = $it['self'] ? '<span class="ecn-need-go ecn-need-cur">' . econur_pdp_icon('check') . 'Current Product</span>' : '<span class="ecn-need-go">Explore' . econur_lp_icon('arrow') . '</span>';
+        $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx">' . esc_html(isset($lines[$k]) ? $lines[$k] : $it['line']) . '</span>' . $go;
         $label = $it['title'] . ': ' . $p->get_name() . ($it['self'] ? ' (this page)' : '');
         $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '"' . ($it['self'] ? ' data-ecn-to-buy' : '') . ' aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
     }
@@ -954,7 +955,7 @@ function econur_lp_finder_block($product, $items) {
             : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span>View Product</span>' . econur_lp_icon('arrow') . '</a>';
         $opts .= '<button type="button" class="ecn-finder-opt" data-k="' . esc_attr($k) . '" aria-pressed="false" aria-controls="ecn-pick-' . esc_attr($k) . '">' . econur_lp_icon($it['icon']) . '<span>' . esc_html($it['title']) . '</span></button>';
         $picks .= '<article class="ecn-pick" id="ecn-pick-' . esc_attr($k) . '" hidden>' . ($img ? '<span class="ecn-pick-img">' . $img . '</span>' : '')
-            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . esc_html($it['self'] ? 'You are viewing it · ' . $it['badge'] : $it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
+            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . esc_html($it['self'] ? 'Current product · ' . $it['badge'] : $it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
             . $btn . '</article>';
     }
     echo '<section class="ecn-help-finder" id="ecn-finder" aria-labelledby="ecn-finder-t">'
