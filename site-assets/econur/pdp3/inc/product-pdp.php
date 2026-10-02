@@ -339,7 +339,11 @@ function econur_pdp_render($product) {
         echo '<div class="ecn-pdp-rating is-empty is-new"><span class="ecn-pdp-newstar" aria-hidden="true">&#9733;</span><span>New product</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1">Be the first to review</a></div>';
     }
     echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock>' . esc_html($stock[1]) . '</span></div>';
-    if ($lp['subtitle']) echo '<p class="ecn-lp-sub">' . esc_html($lp['subtitle']) . '</p>';
+    // the promise: each sentence on its own line on wide screens (approved design)
+    if ($lp['subtitle']) {
+        $parts = preg_split('/(?<=[.!?])\s+(?=[A-Z])/u', trim($lp['subtitle']), 2);
+        echo '<p class="ecn-lp-sub">' . (count($parts) > 1 ? '<span>' . esc_html($parts[0]) . '</span> <span>' . esc_html($parts[1]) . '</span>' : esc_html($lp['subtitle'])) . '</p>';
+    }
     if ('' !== $product->get_price()) {
         $save = ($unit && $unit->is_on_sale() && (float) $unit->get_regular_price() > (float) $unit->get_price()) ? (float) $unit->get_regular_price() - (float) $unit->get_price() : 0;
         echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div>' . ($size ? '<span class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</span>' : '') . '<span class="ecn-lp-save" data-ecn-save' . ($save > 0 ? '' : ' hidden') . '>Save ' . esc_html(econur_pdp_money($save)) . '</span></div>';
