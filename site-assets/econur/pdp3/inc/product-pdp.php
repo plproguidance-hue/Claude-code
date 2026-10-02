@@ -948,7 +948,7 @@ function econur_lp_finder_block($product, $items) {
             $size = econur_pdp_size_label($v);
             $price = '<p class="ecn-pick-price"><b>' . wp_kses_post(wc_price($v->get_price())) . '</b>' . ($sale ? '<s>' . wp_kses_post(wc_price($v->get_regular_price())) . '</s>' : '') . ($size ? '<small>' . esc_html($size) . '</small>' : '') . '</p>';
         }
-        $img = econur_lp_card_img($p, 'thumbnail', '104px', '');
+        $img = econur_lp_card_img($p, 'medium', '(max-width: 767px) 84px, 104px', '');
         $btn = $it['self']
             ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form"><span>Choose your pack</span>' . econur_lp_icon('up') . '</a>' : '')
             : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span>View Product</span>' . econur_lp_icon('arrow') . '</a>';
