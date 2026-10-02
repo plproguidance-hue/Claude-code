@@ -1,6 +1,7 @@
-/* ECONUR UI consistency layer 1.0
+/* ECONUR UI consistency layer 1.2
    Loaded on every page, printed after the theme, Elementor, plugin and Customizer CSS. Polish only: it aligns
-   eyebrows, button sizes, small labels and heading sizes across the homepage, product pages and shared sections.
+   eyebrows, button sizes, small labels and heading sizes across the homepage, product pages and shared sections,
+   and holds the site's type system (section 9: Inter for English, Hind Siliguri for Bangla, the serif for a few display headings).
    Remove this file to return to the previous look. */
 
 /* ---------- 1. Eyebrow: one pale-green pill everywhere (same as the product-page kicker); the locked
@@ -31,7 +32,7 @@ html body .ehc .ehc-eyebrow::after{ content:none; display:none; }
 @media (max-width:767px){
   html body .ecn-sec-sale .ecn-fp-eyebrow,
   html body .ecn-fy .ecn-fy-eyebrow,
-  html body .ehc .ehc-eyebrow{ height:28px; padding:0 12px; gap:7px; font-size:11.5px; letter-spacing:.09em; }
+  html body .ehc .ehc-eyebrow{ height:28px; padding:0 12px; gap:7px; font-size:12.5px; letter-spacing:.08em; }
   html body .ecn-sec-sale .ecn-fp-eyebrow{ margin:0 0 10px; }
   html body .ecn-fy .ecn-fy-eyebrow{ margin:0 0 10px; }
   html body .ehc .ehc-eyebrow{ margin:0 auto 12px !important; }
@@ -40,27 +41,27 @@ html body .ehc .ehc-eyebrow::after{ content:none; display:none; }
   html body .ehc .ehc-eyebrow::before{ width:14px; height:14px; }
 }
 
-/* ---------- 2. Headings: section titles stay within 36-46px on desktop, no stranded last words ---------- */
-html body :is(h1, h2, h3){ text-wrap:balance; }
-html body :is(.ecn-lp-lead, .ehc-sub, .enr-rv-sub, .ecn-sh-sub, .ecn-fy-sub, .ecn-finder-lead, .ecn-help-lead){ text-wrap:pretty; }
-@media (min-width:1000px){
-  html body .enr-rv .enr-rv-title{ font-size:44px !important; line-height:1.08 !important; }
-  html body .ehc .ehc-title{ font-size:44px !important; }
-}
-@media (min-width:1200px){
-  html body .enr-rv .enr-rv-title{ font-size:46px !important; }
-  html body .ehc .ehc-title{ font-size:46px !important; }
-}
+/* ---------- 2. Headings: no stranded last words; the serif "What customers say" keeps its approved 44-46px
+   (the Inter section titles are sized in section 9) ---------- */
+html body :is(h1, h2, h3){ text-wrap-style:balance; }
+html body :is(.ecn-lp-lead, .ehc-sub, .enr-rv-sub, .ecn-sh-sub, .ecn-fy-sub, .ecn-finder-lead, .ecn-help-lead){ text-wrap-style:pretty; }
+@media (min-width:1000px){ html body .enr-rv .enr-rv-title{ font-size:44px !important; line-height:1.08 !important; } }
+@media (min-width:1200px){ html body .enr-rv .enr-rv-title{ font-size:46px !important; } }
 
-/* ---------- 3. Small labels: nothing under 10px; card meta at 11px ---------- */
-html body .ecn-sec-sale .ecn-sb-u small{ font-size:10px; letter-spacing:.1em; }
-html body .ecn-sec-sale .ecn-fp-skin{ font-size:11px; letter-spacing:.06em; }
-html body .enr-rv-buy-eyebrow{ font-size:11px; }
-html body .ecn-sec-sale .ecn-sb-lbl{ font-size:11.5px; }
-@media (max-width:1023px){
-  html body .ecn-hx-eyebrow{ font-size:11.5px; }
+/* ---------- 3. Small labels: 12px at least on desktop, 12.5px on phones (badges, card meta, eyebrows, countdown units) ---------- */
+html body .ecn-sec-sale .ecn-sb-u small{ font-size:12px; letter-spacing:.06em; }
+html body :is(.ecn-sec-sale .ecn-fp-skin, .ecn-pc-skin){ font-size:12px; letter-spacing:.04em; }
+html body :is(.ecn-pc-badge, .ecn-sec-sale .ecn-fp-badge, .ecn-fy-badge){ font-size:12px; }
+html body .enr-rv-buy-eyebrow{ font-size:12px; }
+html body .ecn-sec-sale .ecn-sb-lbl{ font-size:12px; }
+@media (max-width:767px){
+  html body :is(.ecn-hx-eyebrow, .enr-rv-eyebrow, .ecn-lp-kicker, .enr-rv-buy-eyebrow, .ecn-pc-size, .ecn-fy-short,
+    .ecn-pc-skin, .ecn-sec-sale .ecn-fp-skin, .ecn-pc-badge, .ecn-sec-sale .ecn-fp-badge, .ecn-fy-badge, .ecn-sec-sale .ecn-sb-lbl,
+    .ecn-sec-sale .ecn-fp-eyebrow, .ecn-fy .ecn-fy-eyebrow, .ecn-fp-price s, .ecn-fp-price small, .ecn-fy-price small, .ecn-lp-badges li span){ font-size:12.5px; }
+  html body .ecn-sec-sale .ecn-sb-u small{ font-size:12px; letter-spacing:.04em; }
+  /* "For babies & young children" stays on one line on a 360px phone */
+  html body :is(.ecn-sec-sale .ecn-fp-skin, .ecn-pc-skin){ letter-spacing:.02em; }
 }
-@media (max-width:767px){ html body .ecn-sec-sale .ecn-fp-badge{ font-size:11px; } }
 
 /* ---------- 4. Buttons: primary = teal pill 48-52px, secondary = cream pill with teal outline ---------- */
 /* homepage hero: same pill as every other primary button */
@@ -104,3 +105,139 @@ html body .ecn-wa-float{ transition:opacity .2s ease, transform .2s ease; }
 html body .ecn-wa-float.is-away{ opacity:0 !important; transform:translateY(12px) !important; pointer-events:none !important; }
 html body .ecn-wa-float.is-away:focus-visible{ opacity:1 !important; transform:none !important; pointer-events:auto !important; }
 @media (prefers-reduced-motion:reduce){ html body .ecn-wa-float{ transition:none; } }
+
+/* ---------- 7. Bangla typography ----------
+   Bangla text is marked lang="bn". Bengali characters use Hind Siliguri (400 and 600); Latin characters in the same
+   line (ECONUR, product names, WhatsApp, prices) use Inter, because Inter comes first in the stack and has no Bengali.
+   No letter-spacing or capitals on Bangla (they break conjuncts). Sizes come from the tokens below, not per section. */
+:root{
+  --ecn-font-bn:"Hind Siliguri","Noto Sans Bengali",sans-serif;
+  --ecn-bn-stack:"Inter",var(--ecn-font-bn);
+  --ecn-bn-body:16px;   --ecn-bn-body-lh:1.65;
+  --ecn-bn-small:13.5px; --ecn-bn-small-lh:1.55;
+  --ecn-bn-cta:15.5px;
+  --ecn-bn-h2:27px;     --ecn-bn-h3:19px; --ecn-bn-head-lh:1.32;
+}
+@media (min-width:768px){ :root{ --ecn-bn-body:16.5px; --ecn-bn-small:14px; --ecn-bn-cta:16px; --ecn-bn-h2:32px; --ecn-bn-h3:21px; } }
+@media (min-width:1200px){ :root{ --ecn-bn-body:17px; --ecn-bn-h2:38px; --ecn-bn-h3:22px; } }
+
+/* :not(#ecn-bn) lifts these rules above component rules that set their own font with !important */
+html body :lang(bn):not(#ecn-bn){ font-family:var(--ecn-bn-stack) !important; letter-spacing:0 !important; text-transform:none !important; }
+html body :is(h1,h2,h3,h4):lang(bn):not(#ecn-bn){ font-weight:600 !important; line-height:var(--ecn-bn-head-lh) !important; }
+html body :is(p,li):lang(bn):not(#ecn-bn){ line-height:var(--ecn-bn-body-lh); }
+html body :is(b,strong):lang(bn):not(#ecn-bn), html body :lang(bn) :is(b,strong):not(#ecn-bn){ font-weight:600; }
+
+/* tokens, applied by class where Bangla replaces English copy */
+html body .econur-bn-h2:not(#ecn-bn){ font-size:var(--ecn-bn-h2) !important; line-height:var(--ecn-bn-head-lh) !important; }
+html body .econur-bn-h3:not(#ecn-bn){ font-size:var(--ecn-bn-h3) !important; line-height:var(--ecn-bn-head-lh) !important; }
+html body .econur-bn-body:not(#ecn-bn){ font-size:var(--ecn-bn-body) !important; line-height:var(--ecn-bn-body-lh) !important; }
+html body .econur-bn-small:not(#ecn-bn){ font-size:var(--ecn-bn-small) !important; line-height:var(--ecn-bn-small-lh) !important; }
+html body .econur-bn-cta:not(#ecn-bn){ font-size:var(--ecn-bn-cta) !important; font-weight:600 !important; line-height:1.3 !important; }
+/* the WooCommerce Add to Cart button prints its label itself (no wrapper to tag) */
+html body.single-product .single_add_to_cart_button:not(#ecn-bn){ font-family:var(--ecn-bn-stack) !important; letter-spacing:0 !important; }
+/* small Bangla labels (badges, pills, trust lines, card links) never go below 13px; their English versions keep their sizes */
+html body :is(.ecn-announce--top, .ecn-pc-more, .ecn-pc-badge, .ecn-sb-eyebrow, .ecn-trustx-copy > span, .ecn-lp-pack-n, .ecn-lp-pack-n b,
+  .ecn-lp-pack-badge, .ecn-lp-trust li span, .ecn-lp-pill, .ecn-rel-soon, .ecn-need-go, .ecn-pick-badge, .ecn-lp-final-trust small,
+  .enr-rv-trust-copy > span, .ecn-pdp-stock, .ecn-pdp-firstrev, .ecn-pdp-rating span, .ecn-lp-save, .ecn-fy-tab-copy small):lang(bn):not(#ecn-bn){ font-size:13px !important; line-height:1.45 !important; }
+html body :is(.ecn-lp-pack-badge, .ecn-pc-badge, .ecn-rel-soon):lang(bn):not(#ecn-bn){ height:auto !important; min-height:22px; padding-top:2px !important; padding-bottom:2px !important; }
+html body :is(.ecn-need-go, .ecn-pick-badge) > span:lang(bn):not(#ecn-bn){ font-size:13px !important; }
+/* the closing call to action keeps 15px labels on wide screens (the wide stylesheet scales that block to 85%) */
+html body.single-product .ecn-lp-final-cta :is(.ecn-lp-final-add, .ecn-lp-final-wa):not(#ecn-bn){ font-size:15px !important; }
+
+/* ---------- 8. Bangla polish (1.1.1) ---------- */
+/* no single stranded word on the last line of a Bangla paragraph, trust line or card line (headings keep balance) */
+/* text-wrap-style only: the shorthand would also reset white-space:nowrap (prices, labels) */
+html body :is(p, li, label, legend):lang(bn):not(#ecn-bn){ text-wrap-style:pretty; }
+html body :is(small, span):lang(bn):not(#ecn-bn){ text-wrap-style:balance; }
+/* "Why" ingredient notes and "How to Use" steps read as body copy, not captions */
+html body :is(.ecn-lp-ing p, .ecn-lp-step p):lang(bn):not(#ecn-bn){ font-size:15px !important; line-height:1.6 !important; }
+/* Bangla buttons: 15px at least (hero, "সব দেখুন", the WooCommerce Add to Cart beside the quantity on phones, the floating chat label) */
+html body .ecn-hx-cta :lang(bn):not(#ecn-bn), html body .ecn-sh-link :lang(bn):not(#ecn-bn){ font-size:15px; }
+@media (max-width:767px){ html body.single-product .single_add_to_cart_button:lang(bn):not(#ecn-bn){ font-size:15px !important; } }
+html body .ecn-wa-float:lang(bn) span:not(#ecn-bn){ font-size:15px; }
+/* "Two promises" supporting lines in Bangla */
+html body .ecn-usp-copy span:lang(bn):not(#ecn-bn){ font-size:max(14px, 1em); line-height:1.6; }
+/* narrow phones: the Bangla label and the price stay on one line beside the quantity box (the cart icon steps aside; text keeps 15px) */
+@media (max-width:400px){
+  html body.single-product .ecn-pdp form.cart .single_add_to_cart_button:not(#ecn-bn){ padding-left:12px !important; padding-right:12px !important; gap:6px !important; }
+  html body.single-product .ecn-pdp form.cart .single_add_to_cart_button::before{ display:none !important; }
+}
+
+/* ---------- 9. English type system (1.2.0) ----------
+   One token per role. Inter (400/500/600/700) carries the interface and the English copy, Hind Siliguri the Bangla
+   (section 7), and the serif is kept for a few display headings only: the hero titles, "Complete Your Routine",
+   "What customers say" and the closing call to action on the homepage and the product page.
+   The theme's own tokens (--ecn-font-body, --ecn-font-head) now point at Inter, so every component that reads them
+   (theme, product page, help, footer, reviews) follows without its own override. */
+:root{
+  --ecn-font-en:"Inter",Arial,Helvetica,sans-serif;
+  --ecn-font-display:"Fraunces",Georgia,serif;
+  /* Hind Siliguri sits right after Inter: Bangla that reaches the page without lang="bn" still gets Hind, not a system font */
+  --ecn-font-body:"Inter","Hind Siliguri","Noto Sans Bengali",Arial,Helvetica,sans-serif;
+  --ecn-font-head:var(--ecn-font-body);
+}
+
+/* the serif, used sparingly */
+html body :is(.ecn-hx-title, .enr-rv .enr-rv-title, .ehc .ehc-cta-title, #ecn-lp-routine-t, #ecn-lp-final-t){ font-family:var(--ecn-font-display) !important; }
+
+/* text that named its own serif face: FAQ questions, trust lines and the testimonial product line now use Inter
+   (the testimonial quote itself keeps its approved serif) */
+html body .ehc .ehc-q button, html body .ehc-trust-copy b{ font-family:var(--ecn-font-body) !important; font-weight:500 !important; }
+html body .ehc-trust-copy b{ font-weight:600 !important; }
+html body .enr-rv .enr-rv-buy-name, html body .enr-rv-trust-copy b{ font-family:var(--ecn-font-body) !important; font-weight:600 !important; letter-spacing:0; }
+html body .enr-rv .enr-rv-buy-name{ font-size:16px !important; line-height:1.3 !important; }
+
+/* weights: 600 for headings and titles (Inter at the serif's 500 reads too light) */
+html body :is(h1, h2, h3, h4, h5, h6){ font-weight:600; }
+html body :is(.ecn-cat-title, .ecn-sh-title, .ecn-fy-title, .ehc .ehc-title, .ecn-favs-head .ecn-lp-h2, .ecn-pdp-title, .ecn-arch-title,
+  .ecn-aml-title, .ecn-sheet-title, .ecn-sheet-sub, .ecn-pc-title, .ecn-pc-title a, .ecn-fp-name, .ecn-fp-name a, .ecn-fy .ecn-fy-name,
+  .ecn-usp-copy b, .ecn-fy-full, .ecn-lp-rcard b, .ecn-lp-rsum h3, .ecn-lp-ing h3, .ecn-rel-name, .ecn-rel-name a, .ecnf .ecnf-h,
+  .ecnf .ecnf-h--toggle button, .woocommerce-loop-product__title, .product_title):not(#ecn-en, :lang(bn)){ font-weight:600 !important; }
+html body .ecn-sec-sale .ecn-sb-title:not(#ecn-en, :lang(bn)){ font-weight:700 !important; }
+
+/* section titles: 28px phones, 34px tablets, 40px desktop */
+html body :is(.ecn-sh-title, .ecn-fy .ecn-fy-title, .ehc .ehc-title, .ecn-favs-head .ecn-lp-h2):not(#ecn-en, :lang(bn)){ font-size:28px !important; line-height:1.2 !important; letter-spacing:-.02em !important; }
+@media (min-width:768px){ html body :is(.ecn-sh-title, .ecn-fy .ecn-fy-title, .ehc .ehc-title, .ecn-favs-head .ecn-lp-h2):not(#ecn-en, :lang(bn)){ font-size:34px !important; line-height:1.15 !important; } }
+@media (min-width:1200px){ html body :is(.ecn-sh-title, .ecn-fy .ecn-fy-title, .ehc .ehc-title, .ecn-favs-head .ecn-lp-h2):not(#ecn-en, :lang(bn)){ font-size:40px !important; line-height:1.12 !important; } }
+html body .ecn-cat-title:not(#ecn-en, :lang(bn)){ letter-spacing:-.01em !important; }
+/* "Flat 60% OFF" */
+html body .ecn-sec-sale .ecn-sb-title:not(#ecn-en, :lang(bn)){ font-size:36px !important; line-height:1.05 !important; letter-spacing:-.025em !important; }
+@media (min-width:768px){ html body .ecn-sec-sale .ecn-sb-title:not(#ecn-en, :lang(bn)){ font-size:42px !important; } }
+@media (min-width:1200px){ html body .ecn-sec-sale .ecn-sb-title:not(#ecn-en, :lang(bn)){ font-size:48px !important; } }
+/* "Two promises" titles */
+html body .ecn-usp-copy b:not(#ecn-en, :lang(bn)){ font-size:22px !important; line-height:1.15 !important; letter-spacing:-.015em !important; }
+@media (min-width:768px){ html body .ecn-usp-copy b:not(#ecn-en, :lang(bn)){ font-size:26px !important; } }
+@media (min-width:1200px){ html body .ecn-usp-copy b:not(#ecn-en, :lang(bn)){ font-size:28px !important; } }
+
+/* product names: 28px phones, 36px desktop on the product page; the finder's pick 22-28px */
+html body .ecn-pdp-title:not(#ecn-en, :lang(bn)){ font-size:28px !important; line-height:1.15 !important; letter-spacing:-.02em !important; }
+@media (min-width:768px){ html body .ecn-pdp-title:not(#ecn-en, :lang(bn)){ font-size:32px !important; } }
+@media (min-width:1200px){ html body .ecn-pdp-title:not(#ecn-en, :lang(bn)){ font-size:36px !important; line-height:1.12 !important; } }
+html body .ecn-fy .ecn-fy-name:not(#ecn-en, :lang(bn)){ font-size:22px !important; line-height:1.15 !important; letter-spacing:-.015em !important; }
+@media (min-width:768px){ html body .ecn-fy .ecn-fy-name:not(#ecn-en, :lang(bn)){ font-size:24px !important; } }
+@media (min-width:1200px){ html body .ecn-fy .ecn-fy-name:not(#ecn-en, :lang(bn)){ font-size:28px !important; } }
+
+/* card titles: 17px phones, 18-19px desktop */
+html body :is(.ecn-pc-title, .ecn-pc-title a):not(#ecn-en, :lang(bn)){ font-size:17px !important; line-height:1.25 !important; letter-spacing:-.01em !important; }
+html body :is(.ecn-fp-name, .ecn-fp-name a, .ecn-rel-name, .ecn-rel-name a, .ecn-lp-rcard b):not(#ecn-en, :lang(bn)){ font-size:17px !important; line-height:1.25 !important; letter-spacing:-.01em !important; }
+html body .ecn-lp-ing h3:not(#ecn-en, :lang(bn)){ font-size:18px !important; line-height:1.25 !important; letter-spacing:-.01em !important; }
+html body .ecn-lp-rsum h3:not(#ecn-en, :lang(bn)){ font-size:22px !important; line-height:1.2 !important; letter-spacing:-.015em !important; }
+html body .ecn-fy-full:not(#ecn-en, :lang(bn)){ font-size:16px !important; letter-spacing:0 !important; }
+@media (min-width:768px){
+  html body :is(.ecn-pc-title, .ecn-pc-title a):not(#ecn-en, :lang(bn)){ font-size:18px !important; }
+  html body :is(.ecn-fp-name, .ecn-fp-name a, .ecn-rel-name, .ecn-rel-name a, .ecn-lp-rcard b, .ecn-lp-ing h3):not(#ecn-en, :lang(bn)){ font-size:19px !important; }
+  html body .ecn-lp-rsum h3:not(#ecn-en, :lang(bn)){ font-size:24px !important; }
+}
+
+/* footer column titles */
+html body .ecnf .ecnf-h:not(#ecn-en, :lang(bn)), html body .ecnf .ecnf-h--toggle button:not(#ecn-en, :lang(bn)){ font-size:17px !important; letter-spacing:-.005em !important; }
+@media (min-width:768px){ html body .ecnf :is(.ecnf-h, .ecnf-h--static):not(#ecn-en, :lang(bn)){ font-size:18px !important; } }
+
+/* buttons: 600, no tracking; product-card buttons at 15px like every other button */
+html body .ecn-pc-btn:not(#ecn-en){ font-size:15px !important; }
+html body :is(.ecn-pc-btn, .ecn-hx-cta, .single_add_to_cart_button, .ecn-pdp-buynow, .ecn-lp-final-add, .ecn-lp-final-wa, .ecn-sh-link, .button, button.button){ letter-spacing:0; }
+
+/* phones: form fields at 16px, so iOS does not zoom into them */
+@media (max-width:767px){
+  html body :is(input[type="text"], input[type="email"], input[type="tel"], input[type="search"], input[type="number"], input[type="password"], input[type="url"], select, textarea):not(#ecn-en, :lang(bn)){ font-size:16px !important; }
+}
