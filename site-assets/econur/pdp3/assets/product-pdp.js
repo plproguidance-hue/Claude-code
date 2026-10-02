@@ -98,7 +98,7 @@
       if (atcPrice) atcPrice.textContent = unit ? ' — ' + money(t) : '';
       if (finalP) finalP.textContent = unit ? ' — ' + money(t) : '';
       if (sbP && unit) sbP.textContent = money(t);
-      if (sbS) sbS.textContent = (size || '') + (n > 1 ? (size ? ' · ' : '') + n + ' pcs' : '');
+      if (sbS) { var unitW = /bar/i.test(C.name || '') ? ['bar', 'bars'] : ['pc', 'pcs']; sbS.textContent = [size, n + ' ' + (n > 1 ? unitW[1] : unitW[0])].filter(Boolean).join(' · '); }
       packs.forEach(function (pk) {
         var k = parseInt(pk.getAttribute('data-q'), 10), on = k === n;
         pk.classList.toggle('is-on', on); var r = pk.querySelector('input'); if (r) r.checked = on;

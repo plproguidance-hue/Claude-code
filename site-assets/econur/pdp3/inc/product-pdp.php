@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.7.0';
+const ECONUR_PDP_VER = '7.7.1';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -363,7 +363,7 @@ function econur_pdp_render($product) {
                 . '<span class="ecn-lp-pack-q">' . esc_html($q . ' ' . (1 === $q ? $unit_word[0] : $unit_word[1])) . '</span>'
                 . '<span class="ecn-lp-pack-p" data-pack-price>' . ($unit ? esc_html(econur_pdp_money($unit->get_price() * $q * (1 - $pct / 100))) : '') . '</span>'
                 . ($pct ? '<span class="ecn-lp-pack-s" data-pack-save></span>' : '')
-                . '<span class="ecn-lp-pack-n">' . (1 === $q ? '<b>Starter</b>' : '') . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
+                . '<span class="ecn-lp-pack-n"><b>' . esc_html(array(1 => 'Starter', 2 => 'Stock up', 3 => 'Regular use')[$q]) . '</b>' . esc_html(1 === $q ? $pk[2] : $pk[1]) . '</span></label>';
         }
         echo '</div></fieldset>';
         if ($product->is_type('variable')) echo '<p class="ecn-lp-label">Choose size</p>';

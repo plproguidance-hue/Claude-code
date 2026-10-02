@@ -1107,3 +1107,35 @@ body.single-product .ecn-pdp .ecn-lp-pricerow .ecn-pdp-size{ display:inline-bloc
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-label{ margin-top:0 !important; margin-bottom:8px !important; }
   body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-ptype .ecn-lp-label{ margin:0 0 6px !important; }
 }
+
+/* ===================== v7.7.1: polish only (sizes unchanged) ===================== */
+/* pack cards: same four lines in every card, aligned top-to-bottom; clearer selected state */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs-row{ align-items:stretch; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ justify-content:flex-start; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n{ flex-direction:column; gap:0; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-n b{ font-size:13px; line-height:1.35; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack.is-on{ border-color:var(--pd-teal); background:#E9F3F0; box-shadow:inset 0 0 0 1px var(--pd-teal); }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-badge{ line-height:1.4; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-badge.is-pop{ background:#FBE3DE; color:#B5483A; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack-badge.is-val{ background:#F6EBCB; color:#8A6A1E; }
+/* benefit strip: icon and label centred in each third */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ align-items:center; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li span{ line-height:1.25; }
+/* stock badge centred on the title line */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow{ align-items:center; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-stock{ line-height:1.2; }
+/* quantity + Add to Cart: contents centred */
+body.single-product .ecn-pdp .ecn-lp-hero form.cart .quantity.ecn-qty{ display:flex; align-items:center; justify-content:space-between; }
+body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ align-items:center; line-height:1; }
+@media (min-width:900px){
+  /* bullets -> divider: 6px tighter */
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs{ margin-top:6px !important; }
+  /* Buy Now / WhatsApp: 12px under the panel, equal height */
+  body.single-product .ecn-pdp .ecn-lp-extra{ margin-top:12px; }
+  body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ height:48px !important; }
+}
+/* phones: the pack row scrolls sideways with readable 156px cards */
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-pack{ flex:0 0 156px; min-height:118px; }
+  body.single-product .ecn-pdp .ecn-lp-extra{ margin-top:12px; }
+}
