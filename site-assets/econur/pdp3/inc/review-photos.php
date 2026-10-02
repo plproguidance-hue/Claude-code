@@ -16,7 +16,7 @@ defined('ABSPATH') || exit;
 
 const ECONUR_RV_MAX_PHOTOS = 3;
 const ECONUR_RV_MAX_BYTES  = 5242880; // 5 MB
-const ECONUR_RV_MAX_CHARS  = 1000;    // review text limit, also shown as the counter under the text box
+const ECONUR_RV_MAX_CHARS  = 500;     // review text limit, also shown as the counter under the text box (0/500)
 
 function econur_rv_photos_enabled() {
     return (bool) apply_filters('econur_review_photos_enabled', true);

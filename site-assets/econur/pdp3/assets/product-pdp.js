@@ -151,13 +151,20 @@
     var fin = page.querySelector('[data-ecn-final-add]'); if (fin) fin.addEventListener('click', addNow);
 
     /* ---------- reviews: rating, counter, photos, checks before sending, thank-you message ---------- */
-    var rvCard = page.querySelector('#ecn-rv-form'), rvForm = document.getElementById('commentform');
+    var rvSec = page.querySelector('#ecn-reviews'), rvCard = page.querySelector('#ecn-rv-form'), rvForm = document.getElementById('commentform');
+    var rvBtns = [].slice.call(page.querySelectorAll('[data-ecn-rv-write]'));
+    // state 2: the form opens in place (state 1 invitation steps aside; state 3 summary stays above it)
+    function rvOpen() {
+      if (!rvSec || !rvCard || rvSec.classList.contains('is-open')) return;
+      rvSec.classList.add('is-open'); rvBtns.forEach(function (b) { b.setAttribute('aria-expanded', 'true'); });
+    }
     function rvGo(rate) {
-      var t = rvCard || page.querySelector('#ecn-reviews'); if (!t) return;
-      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      if (!rvCard) { if (rvSec) rvSec.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
+      rvOpen();
       if (rate) { var r = document.getElementById('ecn-rv-r' + rate); if (r) { r.checked = true; rvErr('rating', false); } }
-      var f = rvCard && (rvCard.querySelector('.ecn-rv-stars input:checked') || rvCard.querySelector('.ecn-rv-stars input[value="1"]'));
-      if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, reduce ? 0 : 420);
+      requestAnimationFrame(function () { rvCard.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+      var f = rvCard.querySelector('.ecn-rv-stars input:checked') || rvCard.querySelector('.ecn-rv-stars input[value="1"]');
+      if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, reduce ? 0 : 450);
     }
     function rvErr(k, on, msg) {
       var e = page.querySelector('.ecn-rv-err[data-for="' + k + '"]'); if (!e) return;
@@ -166,6 +173,7 @@
     }
     page.querySelectorAll('[data-ecn-rv-write], [data-write]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); rvGo(0); }); });
     page.querySelectorAll('[data-ecn-rv-rate]').forEach(function (b) { b.addEventListener('click', function () { rvGo(b.getAttribute('data-ecn-rv-rate')); }); });
+    page.querySelectorAll('.ecn-rv-readmore').forEach(function (b) { b.addEventListener('click', function () { var t = b.previousElementSibling, on = !t.classList.contains('is-open'); t.classList.toggle('is-open', on); b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.textContent = on ? 'Show less' : 'Read more'; }); });
     page.querySelectorAll('.ecn-rv-stars input').forEach(function (r) { r.addEventListener('change', function () { rvErr('rating', false); }); });
     var more = page.querySelector('.ecn-rv-more');
     if (more) more.addEventListener('click', function () { page.querySelectorAll('.ecn-rv-item[hidden]').forEach(function (it) { it.hidden = false; }); more.setAttribute('aria-expanded', 'true'); more.hidden = true; });
@@ -212,10 +220,11 @@
       var msg = '<b>Thank you for sharing your experience.</b><span>' + (d[0] === '1' ? 'Your review is now live on this page.' : 'Your review has been submitted and may appear after approval.') + '</span>';
       if (+d[1]) msg += '<span>' + (+d[1] === 1 ? 'Your photo was received' : 'Your ' + d[1] + ' photos were received') + (d[0] === '1' ? '.' : ' and will show with your review once it is approved.') + '</span>';
       if (+d[2]) msg += '<span>' + d[2] + ' photo' + (+d[2] === 1 ? '' : 's') + ' could not be added (JPG, PNG or WebP up to 5 MB, 3 at most).</span>';
-      if (box) { box.innerHTML = msg; box.hidden = false; rvCard.classList.add('is-done'); setTimeout(function () { rvCard.scrollIntoView({ block: 'start' }); box.focus({ preventScroll: true }); }, 120); }
-    } else if (/^#(ecn-reviews|reviews|comments|comment-\d+|review_form_wrapper|review_form|respond)$/.test(location.hash)) {
-      var tg = document.querySelector(location.hash.indexOf('#comment-') === 0 ? location.hash : '#ecn-rv-form') || page.querySelector('#ecn-reviews');
-      if (tg) setTimeout(function () { tg.scrollIntoView({ block: 'start' }); }, 80);
+      if (box) { rvOpen(); box.innerHTML = msg; box.hidden = false; rvCard.classList.add('is-done'); setTimeout(function () { rvCard.scrollIntoView({ block: 'start' }); box.focus({ preventScroll: true }); }, 120); }
+    } else if (/^#(reviews|review_form_wrapper|review_form|respond|ecn-rv-form)$/.test(location.hash)) {
+      setTimeout(function () { rvGo(0); }, 80); // review-request links (WhatsApp, SMS, email) open the form
+    } else if (/^#(ecn-reviews|comments|comment-\d+)$/.test(location.hash)) {
+      var tg = document.querySelector(location.hash) || rvSec; if (tg) setTimeout(function () { tg.scrollIntoView({ block: 'start' }); }, 80);
     }
 
     /* ---------- links to sections of this page (See all reviews, footer links) scroll smoothly ---------- */
