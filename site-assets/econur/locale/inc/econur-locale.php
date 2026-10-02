@@ -64,6 +64,10 @@ add_filter('get_post_metadata', function ($value, $id, $key, $single) {
 }, 10, 4);
 
 /* ---------------------------------------------------------------- price format: ৳280 */
+// WooCommerce's own BDT symbol carries a non-breaking space ("&#2547;&nbsp;"); the symbol alone gives ৳280
+add_filter('woocommerce_currency_symbol', function ($symbol, $currency) {
+    return 'BDT' === $currency ? '&#2547;' : $symbol;
+}, 20, 2);
 add_filter('woocommerce_price_format', function ($format, $pos) {
     return in_array($pos, array('left', 'left_space'), true) ? '%1$s%2$s' : $format;
 }, 20, 2);

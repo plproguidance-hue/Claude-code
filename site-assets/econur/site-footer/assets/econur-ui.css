@@ -136,3 +136,8 @@ html body .econur-bn-cta:not(#ecn-bn){ font-size:var(--ecn-bn-cta) !important; f
 :root{ --ecn-font-body:'DM Sans','Hind Siliguri','Noto Sans Bengali',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
 /* the WooCommerce Add to Cart button prints its label itself (no wrapper to tag) */
 html body.single-product .single_add_to_cart_button:not(#ecn-bn){ font-family:var(--ecn-bn-stack) !important; letter-spacing:0 !important; }
+/* small Bangla labels (badges, pills, trust lines, card links) never go below 13px; their English versions keep their sizes */
+html body :is(.ecn-announce--top, .ecn-pc-more, .ecn-pc-badge, .ecn-sb-eyebrow, .ecn-trustx-copy > span, .ecn-lp-pack-n, .ecn-lp-pack-n b,
+  .ecn-lp-pack-badge, .ecn-lp-trust li span, .ecn-lp-pill, .ecn-rel-soon, .ecn-need-go, .ecn-pick-badge, .ecn-lp-final-trust small,
+  .enr-rv-trust-copy > span, .ecn-pdp-stock, .ecn-pdp-firstrev, .ecn-pdp-rating span, .ecn-lp-save):lang(bn):not(#ecn-bn){ font-size:13px !important; line-height:1.35 !important; }
+html body :is(.ecn-lp-pack-badge, .ecn-pc-badge, .ecn-rel-soon):lang(bn):not(#ecn-bn){ height:auto !important; min-height:22px; padding-top:2px !important; padding-bottom:2px !important; }
