@@ -488,7 +488,7 @@ function econur_lp_routine($product, $lp) {
 // where one is set below (centre x, centre y, visible width; fractions of the photo). Otherwise a finder thumb.
 function econur_lp_ing_crops() {
     return apply_filters('econur_lp_ing_crops', array(
-        14 => array('charcoal' => array(.80, .72, .40), 'neem' => array(.17, .24, .36)),
+        14 => array('charcoal' => array(.80, .72, .40), 'neem' => array(.17, .25, .36)),
         18 => array('licorice' => array(.12, .79, .32), 'turmeric' => array(.84, .71, .34)),
         22 => array('coffee' => array(.20, .70, .36)),
         30 => array('olive oil' => array(.12, .44, .28)),
@@ -541,6 +541,18 @@ function econur_lp_ing_art($title) {
     if (preg_match('/coffee/', $t)) return econur_lp_svg('<ellipse cx="60" cy="94" rx="38" ry="6" fill="#D9CFC1"/><g fill="#6B4430"><ellipse cx="46" cy="66" rx="15" ry="21" transform="rotate(-25 46 66)"/><ellipse cx="76" cy="72" rx="15" ry="21" transform="rotate(30 76 72)"/></g><g fill="none" stroke="#3E2619" stroke-width="3" stroke-linecap="round"><path d="M40 50c8 8 8 24 0 32" transform="rotate(-25 46 66)"/><path d="M70 56c8 8 8 24 0 32" transform="rotate(30 76 72)"/></g>');
     if (preg_match('/turmeric|licorice|ginger|root/', $t)) return econur_lp_svg('<ellipse cx="60" cy="94" rx="40" ry="6" fill="#E3D6BF"/><path d="M24 78c10-14 30-22 52-20 10 1 18 6 20 12-10 10-34 14-52 14-8 0-16-2-20-6Z" fill="#D98A2B"/><path d="M58 60c4-10 12-16 22-16-2 10-8 16-18 18Z" fill="#E7A23F"/><path d="M34 72c8-4 20-6 30-5" stroke="#B86E1C" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="84" cy="76" r="6" fill="#F2C35A"/>');
     if (preg_match('/oat|grain|rice/', $t)) return econur_lp_svg('<path d="M60 100V38" stroke="#B89A5E" stroke-width="3"/>' . implode('', array_map(function ($i) { $y = 44 + $i * 12; return '<ellipse cx="50" cy="' . $y . '" rx="6" ry="11" fill="#E2C98D" transform="rotate(-30 50 ' . $y . ')"/><ellipse cx="70" cy="' . ($y + 6) . '" rx="6" ry="11" fill="#D7BB78" transform="rotate(30 70 ' . ($y + 6) . ')"/>'; }, range(0, 4))));
+    if (preg_match('/tea tree|essential/', $t)) {
+        // amber dropper bottle with narrow tea-tree leaves
+        $lv = function ($x, $y, $r, $c) { return '<ellipse cx="' . $x . '" cy="' . $y . '" rx="3.4" ry="15" fill="' . $c . '" transform="rotate(' . $r . ' ' . $x . ' ' . $y . ')"/>'; };
+        $sprig = '<path d="M20 104C26 80 34 62 46 44" stroke="#4F7F5A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M100 104C96 84 90 68 80 52" stroke="#4F7F5A" stroke-width="2" fill="none" stroke-linecap="round"/>';
+        foreach (array(array(24, 88, -40), array(30, 76, 30), array(31, 66, -35), array(38, 56, 40), array(40, 46, -20), array(98, 90, 40), array(92, 78, -30), array(92, 66, 35), array(84, 58, -25)) as $k => $l) $sprig .= $lv($l[0], $l[1], $l[2], $k % 2 ? '#7DB383' : '#4E8E5C');
+        return econur_lp_svg('<defs><linearGradient id="ecnTT" x1="0" x2="1"><stop offset="0" stop-color="#9A5A17"/><stop offset=".45" stop-color="#D08F33"/><stop offset="1" stop-color="#8A4E12"/></linearGradient></defs>'
+            . '<ellipse cx="60" cy="106" rx="34" ry="5" fill="#D9C7A6"/>' . $sprig
+            . '<rect x="43" y="52" width="34" height="54" rx="7" fill="url(#ecnTT)"/><rect x="51" y="44" width="18" height="10" rx="2" fill="#7A4510"/>'
+            . '<rect x="49" y="36" width="22" height="9" rx="2" fill="#2F2A26"/><path d="M52 36c0-12 3-18 8-18s8 6 8 18Z" fill="#3A3430"/>'
+            . '<rect x="47" y="70" width="26" height="20" rx="2" fill="#F4ECDD"/><path d="M53 77h14M55 82h10" stroke="#B9A57F" stroke-width="2" stroke-linecap="round"/>'
+            . '<rect x="47" y="56" width="4" height="44" rx="2" fill="#fff" opacity=".28"/><path d="M90 30c3 5 5 8 5 11a5 5 0 0 1-10 0c0-3 2-6 5-11Z" fill="#E2B04A"/>');
+    }
     if (preg_match('/oil|olive|coconut|essential|tea tree|jojoba|almond|argan/', $t)) return econur_lp_svg('<ellipse cx="60" cy="98" rx="34" ry="6" fill="#C9D8CF"/><path d="M48 46h24v8c8 6 12 14 12 24v14a6 6 0 0 1-6 6H42a6 6 0 0 1-6-6V78c0-10 4-18 12-24Z" fill="#E8C76A" opacity=".9"/><path d="M38 80h44v12a6 6 0 0 1-6 6H44a6 6 0 0 1-6-6Z" fill="#D6A93C"/><rect x="50" y="32" width="20" height="14" rx="3" fill="#8A6A44"/>' . $leaf(90, 48, 35, '#5E9B6A') . $leaf(84, 64, 70, '#78B07E') . '<path d="M60 14c5 7 8 11 8 15a8 8 0 0 1-16 0c0-4 3-8 8-15Z" fill="#E8C76A"/>');
     if (preg_match('/aloe/', $t)) return econur_lp_svg('<g fill="#6FAE7A"><path d="M60 100C54 70 52 46 60 18c8 28 6 52 0 82Z"/><path d="M58 100C44 80 34 62 30 40c16 14 26 34 28 60Z" fill="#5E9B6A"/><path d="M62 100C76 80 86 62 90 40 74 54 64 74 62 100Z" fill="#82BC8B"/></g>');
     // neem, tulsi, basil, mint, moringa, green tea and other herbs: a leafy sprig
