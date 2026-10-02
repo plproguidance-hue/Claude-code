@@ -723,7 +723,7 @@ function econur_lp_home_reviews_on() {
 // item of the trust strip: it names this product and opens this product's review form (when reviews are open to the visitor).
 function econur_lp_home_reviews($product, $can) {
     if (!econur_lp_home_reviews_on()) return '';
-    $line = 'Write a review of the ' . $product->get_name() . '.';
+    $line = 'Review the ' . $product->get_name() . '.';
     $cfg_filter = function ($cfg) use ($can, $line) {
         if (!$can || empty($cfg['trust'])) return $cfg;
         foreach ($cfg['trust'] as $v => $items) {
@@ -738,8 +738,13 @@ function econur_lp_home_reviews($product, $can) {
     remove_filter('econur_reviews_settings', $cfg_filter, 99);
     if ('' === $html || !$can) return $html;
     // the whole item is clickable (a button stretched over it); it looks exactly like the homepage item
-    return preg_replace('#<li class="enr-rv-trust-item">(<span class="enr-rv-trust-ico">.*?</span>)<span class="enr-rv-trust-copy"><b>Share your experience</b>#s',
-        '<li class="enr-rv-trust-item ecn-rv-trust-write">$1<span class="enr-rv-trust-copy"><b><button type="button" class="ecn-rv-trust-btn" data-ecn-rv-write aria-controls="ecn-rv-form" aria-expanded="false">Share your experience</button></b>', $html, 1);
+    $done = false;
+    return preg_replace_callback('#<li class="enr-rv-trust-item">.*?</li>#s', function ($m) use (&$done) {
+        if ($done || false === strpos($m[0], '<b>Share your experience</b>')) return $m[0];
+        $done = true;
+        return str_replace(array('<li class="enr-rv-trust-item">', '<b>Share your experience</b>'),
+            array('<li class="enr-rv-trust-item ecn-rv-trust-write">', '<b><button type="button" class="ecn-rv-trust-btn" data-ecn-rv-write aria-controls="ecn-rv-form" aria-expanded="false">Share your experience</button></b>'), $m[0]);
+    }, $html);
 }
 
 // The section shows store-wide reviews, so every product page is refreshed when a review is approved, unapproved, edited or deleted.
