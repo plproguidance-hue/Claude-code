@@ -14,8 +14,8 @@ function econur_help_cta_config() {
                   'a' => 'বাংলাদেশের যেকোনো জায়গায় ক্যাশ অন ডেলিভারি। অর্ডার করার পর 12 ঘণ্টার মধ্যে আমরা ফোন করে নিশ্চিত করি, আর পণ্য হাতে পেয়ে আপনি টাকা দেবেন।'),
             array('q' => 'অর্ডার পৌঁছাতে কত সময় লাগে?',
                   'a' => 'ঢাকার ভেতরে 1–2 কার্যদিবস (৳60), ঢাকার বাইরে 2–4 কার্যদিবস (৳120)। অর্ডার নিশ্চিত করার আগেই চেকআউটে ডেলিভারি চার্জ দেখানো হয়।'),
-            // left in English on purpose: baby / sensitive-skin wording is in the separate claims review
-            array('q' => 'Is it safe for sensitive skin or babies?',
+            // question in Bangla; the answer stays in English on purpose: its baby / sensitive-skin wording is in the separate claims review
+            array('q' => 'সংবেদনশীল ত্বক বা শিশুদের জন্য এটি কি উপযোগী?',
                   'a' => 'Olivelle Bar is made for babies and sensitive skin: ultra-mild, fragrance-free, over 80% olive oil. For the other bars, patch-test first if your skin reacts easily.'),
             array('q' => 'আমার জন্য সঠিক বার কীভাবে বেছে নেব?',
                   'a' => 'উপরের {finder} অংশে আপনার ত্বকের প্রয়োজনটি বেছে নিন, সবচেয়ে মানানসই ECONUR বারটি দেখতে পাবেন।'),
@@ -30,7 +30,7 @@ function econur_help_cta_config() {
         // by phone (the store's cash-on-delivery policy).
         'trust' => array(
             array('truck',  'ক্যাশ অন ডেলিভারি', 'সারা বাংলাদেশে'),
-            array('leaf',   'সঠিক বারটি বেছে নিন', 'ত্বকের প্রয়োজন অনুযায়ী'),
+            array('leaf',   'সঠিক বারটি খুঁজুন', 'ত্বকের প্রয়োজন অনুযায়ী'),
             array('shield', 'ফোনে অর্ডার নিশ্চিত', 'প্রতিটি অর্ডার, 12 ঘণ্টার মধ্যে'),
         ),
         // media IDs: leaf spray, pale green + ivory soap bars on stone, soap on a wood slice, leaf sprig
@@ -70,7 +70,7 @@ add_shortcode('econur_help_cta', function () {
         $items .= '<div class="ehc-item' . ($open ? ' is-open' : '') . '"' . econur_bn_attr($f['q']) . '>'
             . '<h3 class="ehc-q"><button type="button" id="' . $q . '" aria-expanded="' . ($open ? 'true' : 'false') . '" aria-controls="' . $a . '">'
             . '<span class="ehc-q-text">' . esc_html($f['q']) . '</span><span class="ehc-pm" aria-hidden="true"></span></button></h3>'
-            . '<div class="ehc-a" id="' . $a . '" role="region" aria-labelledby="' . $q . '"><div class="ehc-a-in"><p' . (econur_has_bn($f['a']) ? ' class="econur-bn-body"' : '') . '>' . $answer . '</p></div></div>'
+            . '<div class="ehc-a" id="' . $a . '" role="region" aria-labelledby="' . $q . '"><div class="ehc-a-in"><p' . (econur_has_bn($f['a']) ? ' class="econur-bn-body"' : ' lang="en"') . '>' . $answer . '</p></div></div>'
             . '</div>';
     }
 

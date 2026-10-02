@@ -163,7 +163,7 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));
     // shared UI polish (eyebrows, button sizes, small labels); printed last in <head>, below
-    wp_register_style('econur-ui', $u . 'econur-ui.css', array(), '1.1.0');
+    wp_register_style('econur-ui', $u . 'econur-ui.css', array(), '1.1.1');
 }, 20);
 
 // print the shared UI layer after the Customizer CSS (wp_head priority 101) so it can align earlier styles

@@ -15,11 +15,11 @@ defined('ABSPATH') || exit;
  */
 function econur_finder_concerns() {
     return array(
-        array('key' => 'oily',      'product' => 14, 'thumb' => 141, 'label' => 'Oily / acne-prone skin',            'tab' => 'Oily skin',      'line' => 'Deep cleansing that feels clean, never tight.',  'badge' => 'Best for oily / acne-prone skin',            'chips' => array('Deep Cleansing', 'Made for Oily Skin')),
-        array('key' => 'tone',      'product' => 18, 'thumb' => 142, 'label' => 'Dark spots / uneven-looking tone',  'tab' => 'Uneven tone',    'line' => 'A gentle daily bar for an uneven-looking tone.',  'badge' => 'Best for an uneven-looking tone',            'chips' => array('Gentle Brightening', 'Made for Normal to Combination Skin')),
-        array('key' => 'dull',      'product' => 22, 'thumb' => 143, 'label' => 'Dull / congested-feeling skin',     'tab' => 'Dull skin',      'line' => 'Coffee-ground exfoliation for dull-looking skin.', 'badge' => 'Best for dull / congested-feeling skin',     'chips' => array('Two-Way Exfoliation', 'Smoother-Looking Texture', 'Soft Finish')),
-        array('key' => 'daily',     'product' => 26, 'thumb' => 144, 'label' => 'Daily cleanse',                     'tab' => 'Daily cleanse',  'line' => 'Herbal cleansing for daily use.',                  'badge' => 'Best for a daily cleanse',                   'chips' => array('Herbal Deep Cleanse', 'Gentle Exfoliation', 'Nourishing, Not Stripping')),
-        array('key' => 'sensitive', 'product' => 30, 'thumb' => 145, 'label' => 'Very dry / sensitive-feeling skin', 'tab' => 'Sensitive skin', 'line' => 'Ultra-mild and fragrance-free.',                   'badge' => 'Best for very dry / sensitive-feeling skin', 'chips' => array('Ultra-Mild Formula', 'Gentle for Little Ones', 'Soft, Never Tight')),
+        array('key' => 'oily',      'product' => 14, 'thumb' => 141, 'label' => 'Oily / acne-prone skin',            'tab' => 'Oily skin',      'line' => 'গভীরভাবে পরিষ্কার করে, তবু ত্বক টানটান লাগে না।',  'badge' => 'Best for oily / acne-prone skin',            'chips' => array('Deep Cleansing', 'Made for Oily Skin')),
+        array('key' => 'tone',      'product' => 18, 'thumb' => 142, 'label' => 'Dark spots / uneven-looking tone',  'tab' => 'Uneven tone',    'line' => 'অসমান দেখানো ত্বকের রঙের জন্য কোমল দৈনন্দিন বার।',  'badge' => 'Best for an uneven-looking tone',            'chips' => array('Gentle Brightening', 'Made for Normal to Combination Skin')),
+        array('key' => 'dull',      'product' => 22, 'thumb' => 143, 'label' => 'Dull / congested-feeling skin',     'tab' => 'Dull skin',      'line' => 'নিষ্প্রভ দেখানো ত্বকের জন্য কফি দানার এক্সফোলিয়েশন।', 'badge' => 'Best for dull / congested-feeling skin',     'chips' => array('Two-Way Exfoliation', 'Smoother-Looking Texture', 'Soft Finish')),
+        array('key' => 'daily',     'product' => 26, 'thumb' => 144, 'label' => 'Daily cleanse',                     'tab' => 'Daily cleanse',  'line' => 'প্রতিদিনের ব্যবহারের জন্য হারবাল ক্লিনজিং।',                  'badge' => 'Best for a daily cleanse',                   'chips' => array('Herbal Deep Cleanse', 'Gentle Exfoliation', 'Nourishing, Not Stripping')),
+        array('key' => 'sensitive', 'product' => 30, 'thumb' => 145, 'label' => 'Very dry / sensitive-feeling skin', 'tab' => 'Sensitive skin', 'line' => 'অত্যন্ত মৃদু ও সুগন্ধিহীন।',                   'badge' => 'Best for very dry / sensitive-feeling skin', 'chips' => array('Ultra-Mild Formula', 'Gentle for Little Ones', 'Soft, Never Tight')),
     );
 }
 
@@ -98,7 +98,7 @@ add_shortcode('econur_finder', function () {
 
         $tabs .= '<button type="button" class="ecn-fy-tab' . ($on ? ' is-on' : '') . '" role="tab" id="ecn-fy-tab-' . $k . '" aria-controls="ecn-fy-panel-' . $k . '" aria-selected="' . ($on ? 'true' : 'false') . '" tabindex="' . ($on ? '0' : '-1') . '">'
             . $thumb
-            . '<span class="ecn-fy-tab-copy"><b><span class="ecn-fy-full">' . esc_html($c['label']) . '</span><span class="ecn-fy-short">' . esc_html($c['tab']) . '</span></b><small>' . esc_html($c['line']) . '</small></span>'
+            . '<span class="ecn-fy-tab-copy"><b><span class="ecn-fy-full">' . esc_html($c['label']) . '</span><span class="ecn-fy-short">' . esc_html($c['tab']) . '</span></b><small' . econur_bn_attr($c['line']) . '>' . esc_html($c['line']) . '</small></span>'
             . '<span class="ecn-fy-tab-go">' . econur_finder_icon('arrow') . '</span></button>';
 
         $panels .= '<article class="ecn-fy-panel" role="tabpanel" id="ecn-fy-panel-' . $k . '" aria-labelledby="ecn-fy-tab-' . $k . '"' . ($on ? '' : ' hidden') . '>'

@@ -109,6 +109,6 @@ elseif ($manual = trim((string) get_post_meta($pid, 'econur_badge', true))) $bad
       <a class="ecn-pc-btn" href="<?php echo esc_url($order_url); ?>" data-base="<?php echo esc_attr(add_query_arg(array('add-to-cart' => $pid), wc_get_checkout_url())); ?>" rel="nofollow"><span lang="bn" class="econur-bn-cta">এখনই অর্ডার করুন</span></a>
       <?php endif; ?>
     <?php endif; ?>
-    <a class="ecn-pc-more" href="<?php echo esc_url($link); ?>" lang="bn">বিস্তারিত</a>
+    <a class="ecn-pc-more" href="<?php echo esc_url($link); ?>" lang="bn">পণ্যটি দেখুন</a>
   </div>
 </li>

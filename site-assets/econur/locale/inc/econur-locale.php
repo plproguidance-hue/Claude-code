@@ -10,7 +10,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_LOCALE_VER = '1.0.0';
+const ECONUR_LOCALE_VER = '1.0.1';
 
 function econur_has_bn($s) { return (bool) preg_match('/[\x{0980}-\x{09FF}]/u', (string) $s); }
 // ' lang="bn"' for a string that contains Bangla, '' otherwise
@@ -37,6 +37,26 @@ function econur_bn_skin($s) {
     );
     $k = strtolower(trim($s));
     return isset($map[$k]) ? $map[$k] : $s;
+}
+
+// "তৈলাক্ত ও ব্রণপ্রবণ ত্বকের" / "শিশু ও ছোট বাচ্চাদের এবং খুব শুষ্ক ত্বকের": the skin types of a product as one genitive phrase
+function econur_bn_skin_list($skins) {
+    $gen = array(
+        'oily skin' => 'তৈলাক্ত ত্বকের', 'acne-prone skin' => 'ব্রণপ্রবণ ত্বকের', 'normal skin' => 'স্বাভাবিক ত্বকের',
+        'combination skin' => 'মিশ্র ত্বকের', 'mildly oily skin' => 'হালকা তৈলাক্ত ত্বকের', 'very dry skin' => 'খুব শুষ্ক ত্বকের',
+        'babies & young children' => 'শিশু ও ছোট বাচ্চাদের', 'sensitive skin' => 'সংবেদনশীল ত্বকের', 'dry skin' => 'শুষ্ক ত্বকের',
+    );
+    $items = array();
+    foreach ((array) $skins as $s) { $k = strtolower(trim($s)); $items[] = isset($gen[$k]) ? $gen[$k] : trim($s) . '-এর'; }
+    $suffix = ' ত্বকের';
+    $all_skin = count($items) > 1 && count(array_filter($items, function ($x) use ($suffix) { return substr($x, -strlen($suffix)) === $suffix; })) === count($items);
+    if ($all_skin) {
+        $adj = array_map(function ($x) use ($suffix) { return substr($x, 0, -strlen($suffix)); }, $items);
+        $last = array_pop($adj);
+        return implode(', ', $adj) . ' ও ' . $last . $suffix;
+    }
+    $last = array_pop($items);
+    return $items ? implode(', ', $items) . ' এবং ' . $last : $last;
 }
 
 /* ---------------------------------------------------------------- font */

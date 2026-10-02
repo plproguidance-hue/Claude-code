@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.18.0';
+const ECONUR_PDP_VER = '7.18.1';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -884,7 +884,7 @@ function econur_lp_faq($product, $lp) {
     $id = $product->get_id(); $name = $product->get_name(); $q = $lp['faq_extra'];
     $skin = econur_meta_list($id, 'econur_skin_type');
     // Bangla questions; answers translate the product's own data and the store's terms (skin types: econur_bn_skin)
-    if ($skin) { $sk = array_map('econur_bn_skin', $skin); $q[] = array($name . ' কি আমার ত্বকের জন্য উপযোগী?', 'এটি ' . implode(', ', array_slice($sk, 0, -1)) . (count($sk) > 1 ? ' ও ' : '') . end($sk) . '-এর জন্য তৈরি। নিশ্চিত না হলে WhatsApp-এ মেসেজ দিন, সঠিক বারটি বেছে নিতে আমরা সাহায্য করব।'); }
+    if ($skin) $q[] = array($name . ' কি আমার ত্বকের জন্য উপযোগী?', 'এটি ' . econur_bn_skin_list($skin) . ' জন্য তৈরি। নিশ্চিত না হলে WhatsApp-এ মেসেজ দিন, সঠিক বারটি বেছে নিতে আমরা সাহায্য করব।');
     $how = trim((string) get_post_meta($id, 'econur_how_note', true));
     if ($how) $q[] = array('এটি কি প্রতিদিন ব্যবহার করা যাবে?', $how);
     $full = trim((string) get_post_meta($id, 'econur_full_ingredients', true));
@@ -942,7 +942,7 @@ function econur_lp_finder_block($product, $items) {
         $it = $items[$k]; $p = $it['p'];
         // the bar on this page: the card goes to its purchase options instead of reloading the page
         $href = $it['self'] ? ($buyable ? '#ecn-cart-form' : '') : get_permalink($p->get_id());
-        $go = $it['self'] ? '<span class="ecn-need-go ecn-need-cur">' . econur_pdp_icon('check') . '<span lang="bn">এই পণ্যটি</span></span>' : '<span class="ecn-need-go"><span lang="bn">দেখুন</span>' . econur_lp_icon('arrow') . '</span>';
+        $go = $it['self'] ? '<span class="ecn-need-go ecn-need-cur">' . econur_pdp_icon('check') . '<span lang="bn">এই পণ্যটি</span></span>' : '<span class="ecn-need-go"><span lang="bn">পণ্যটি দেখুন</span>' . econur_lp_icon('arrow') . '</span>';
         $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx"' . econur_bn_attr(isset($lines[$k]) ? $lines[$k] : $it['line']) . '>' . esc_html(isset($lines[$k]) ? $lines[$k] : $it['line']) . '</span>' . $go;
         $label = $it['title'] . ': ' . $p->get_name() . ($it['self'] ? ' (this page)' : '');
         $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '"' . ($it['self'] ? ' data-ecn-to-buy' : '') . ' aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
@@ -964,7 +964,7 @@ function econur_lp_finder_block($product, $items) {
             : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span lang="bn">পণ্যটি দেখুন</span>' . econur_lp_icon('arrow') . '</a>';
         $opts .= '<button type="button" class="ecn-finder-opt" data-k="' . esc_attr($k) . '" aria-pressed="false" aria-controls="ecn-pick-' . esc_attr($k) . '">' . econur_lp_icon($it['icon']) . '<span>' . esc_html($it['title']) . '</span></button>';
         $picks .= '<article class="ecn-pick" id="ecn-pick-' . esc_attr($k) . '" hidden>' . ($img ? '<span class="ecn-pick-img">' . $img . '</span>' : '')
-            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . ($it['self'] ? '<span lang="bn">এই পণ্যটি</span> · ' : '') . esc_html($it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
+            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . ($it['self'] ? '<span lang="bn">এই পণ্যটি</span> · ' : '') . esc_html($it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why"' . econur_bn_attr($it['line']) . '>' . esc_html($it['line']) . '</p>' . $price . '</div>'
             . $btn . '</article>';
     }
     echo '<section class="ecn-help-finder" id="ecn-finder" aria-labelledby="ecn-finder-t">'
@@ -1092,7 +1092,7 @@ add_action('wp_footer', function () {
         echo '<div class="ecn-sbar-p"><b id="ecnSbarPrice">' . ($price > 0 ? esc_html(econur_pdp_money($price)) : '') . '</b><small id="ecnSbarSize">' . esc_html($size) . '</small></div>'
             . '<button type="button" class="ecn-sbar-btn" id="ecnSbarBtn" tabindex="-1">' . econur_pdp_icon('cart') . '<span lang="bn">কার্টে যোগ করুন</span></button>';
     } else {
-        echo '<div class="ecn-sbar-p"><b>' . esc_html($product->get_name()) . '</b><small lang="bn">শীঘ্রই আসছে</small></div><a class="ecn-sbar-btn" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $product->get_name() . ' is available.')) . '" target="_blank" rel="noopener" tabindex="-1"><span lang="bn">আপডেট নিন</span></a>';
+        echo '<div class="ecn-sbar-p"><b>' . esc_html($product->get_name()) . '</b><small lang="bn">শীঘ্রই আসছে</small></div><a class="ecn-sbar-btn" data-ecn-wa href="' . esc_url(econur_pdp_wa_link('Hi Econur, please let me know when ' . $product->get_name() . ' is available.')) . '" target="_blank" rel="noopener" tabindex="-1"><span lang="bn">WhatsApp-এ আপডেট নিন</span></a>';
     }
     echo '</div><div class="ecn-toast" id="ecnToast" role="status" aria-live="polite" lang="bn" hidden><span id="ecnToastTxt"></span><a href="' . esc_url(wc_get_checkout_url()) . '">চেকআউট</a></div>';
     echo '<div class="ecn-zoom" id="ecnZoom" role="dialog" aria-modal="true" aria-label="Product photo" hidden><button type="button" class="ecn-zoom-x" aria-label="Close">&times;</button><button type="button" class="ecn-zoom-nav ecn-zoom-prev" aria-label="Previous photo">' . econur_pdp_icon('prev') . '</button><img alt=""><button type="button" class="ecn-zoom-nav ecn-zoom-next" aria-label="Next photo">' . econur_pdp_icon('next') . '</button></div>';
