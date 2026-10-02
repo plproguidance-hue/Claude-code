@@ -265,5 +265,23 @@
   }
   if (document.readyState !== 'loading') initNews(); else document.addEventListener('DOMContentLoaded', initNews);
 
+  /* "Why" and "How to Use" cards: descriptions in one row share a height, so titles and pills line up */
+  function evenRows() {
+    [['.ecn-lp-ings', '.ecn-lp-ing p'], ['.ecn-lp-steps', '.ecn-lp-step p']].forEach(function (g) {
+      [].forEach.call(document.querySelectorAll(g[0]), function (row) {
+        var ps = [].slice.call(row.querySelectorAll(g[1])), max = 0;
+        ps.forEach(function (p) { p.style.minHeight = ''; });
+        var top = ps.length ? ps[0].getBoundingClientRect().top : 0;
+        if (ps.length < 2 || ps.some(function (p) { return Math.abs(p.getBoundingClientRect().top - top) > 40; })) return; // stacked: nothing to line up
+        ps.forEach(function (p) { max = Math.max(max, p.getBoundingClientRect().height); });
+        ps.forEach(function (p) { p.style.minHeight = max + 'px'; });
+      });
+    });
+  }
+  var evenT; function evenSoon() { clearTimeout(evenT); evenT = setTimeout(evenRows, 120); }
+  window.addEventListener('resize', evenSoon); window.addEventListener('load', evenRows);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(evenRows);
+  if (document.readyState !== 'loading') evenRows(); else document.addEventListener('DOMContentLoaded', evenRows);
+
   if (window.jQuery) window.jQuery(function () { setTimeout(init, 0); }); else if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();

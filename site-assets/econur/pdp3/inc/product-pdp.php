@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.10.0';
+const ECONUR_PDP_VER = '7.10.1';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
 require_once __DIR__ . '/newsletter.php';
@@ -494,8 +494,16 @@ function econur_lp_ing_crops() {
         30 => array('olive oil' => array(.12, .44, .28)),
     ));
 }
+// A dedicated ingredient photo in the media library, titled "Ingredient: <name>" (e.g. "Ingredient: Tea Tree Essential Oil").
+function econur_lp_ing_photo_id($title) {
+    global $wpdb;
+    $id = (int) $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%%' AND post_title = %s ORDER BY ID DESC LIMIT 1", 'Ingredient: ' . $title));
+    return $id && wp_attachment_is_image($id) ? $id : 0;
+}
 function econur_lp_ing_image($product, $title, &$used) {
     $t = strtolower($title); $pid = $product->get_id();
+    $own = econur_lp_ing_photo_id($title);
+    if ($own) return '<span class="ecn-lp-ing-img">' . wp_get_attachment_image($own, 'medium_large', false, array('alt' => $title, 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(min-width: 900px) 160px, 120px')) . '</span>';
     $crops = econur_lp_ing_crops();
     $card = (int) get_post_meta($pid, 'econur_home_card_image', true);
     if ($card && !empty($crops[$pid]) && wp_attachment_is_image($card)) foreach ($crops[$pid] as $k => $c) {
@@ -552,16 +560,33 @@ function econur_lp_ing_art($title) {
     if (preg_match('/turmeric|licorice|ginger|root/', $t)) return econur_lp_svg('<ellipse cx="60" cy="94" rx="40" ry="6" fill="#E3D6BF"/><path d="M24 78c10-14 30-22 52-20 10 1 18 6 20 12-10 10-34 14-52 14-8 0-16-2-20-6Z" fill="#D98A2B"/><path d="M58 60c4-10 12-16 22-16-2 10-8 16-18 18Z" fill="#E7A23F"/><path d="M34 72c8-4 20-6 30-5" stroke="#B86E1C" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="84" cy="76" r="6" fill="#F2C35A"/>');
     if (preg_match('/oat|grain|rice/', $t)) return econur_lp_svg('<path d="M60 100V38" stroke="#B89A5E" stroke-width="3"/>' . implode('', array_map(function ($i) { $y = 44 + $i * 12; return '<ellipse cx="50" cy="' . $y . '" rx="6" ry="11" fill="#E2C98D" transform="rotate(-30 50 ' . $y . ')"/><ellipse cx="70" cy="' . ($y + 6) . '" rx="6" ry="11" fill="#D7BB78" transform="rotate(30 70 ' . ($y + 6) . ')"/>'; }, range(0, 4))));
     if (preg_match('/tea tree|essential/', $t)) {
-        // amber dropper bottle with narrow tea-tree leaves
-        $lv = function ($x, $y, $r, $c) { return '<ellipse cx="' . $x . '" cy="' . $y . '" rx="3.4" ry="15" fill="' . $c . '" transform="rotate(' . $r . ' ' . $x . ' ' . $y . ')"/>'; };
-        $sprig = '<path d="M20 104C26 80 34 62 46 44" stroke="#4F7F5A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M100 104C96 84 90 68 80 52" stroke="#4F7F5A" stroke-width="2" fill="none" stroke-linecap="round"/>';
-        foreach (array(array(24, 88, -40), array(30, 76, 30), array(31, 66, -35), array(38, 56, 40), array(40, 46, -20), array(98, 90, 40), array(92, 78, -30), array(92, 66, 35), array(84, 58, -25)) as $k => $l) $sprig .= $lv($l[0], $l[1], $l[2], $k % 2 ? '#7DB383' : '#4E8E5C');
-        return econur_lp_svg('<defs><linearGradient id="ecnTT" x1="0" x2="1"><stop offset="0" stop-color="#9A5A17"/><stop offset=".45" stop-color="#D08F33"/><stop offset="1" stop-color="#8A4E12"/></linearGradient></defs>'
-            . '<ellipse cx="60" cy="106" rx="34" ry="5" fill="#D9C7A6"/>' . $sprig
-            . '<rect x="43" y="52" width="34" height="54" rx="7" fill="url(#ecnTT)"/><rect x="51" y="44" width="18" height="10" rx="2" fill="#7A4510"/>'
-            . '<rect x="49" y="36" width="22" height="9" rx="2" fill="#2F2A26"/><path d="M52 36c0-12 3-18 8-18s8 6 8 18Z" fill="#3A3430"/>'
-            . '<rect x="47" y="70" width="26" height="20" rx="2" fill="#F4ECDD"/><path d="M53 77h14M55 82h10" stroke="#B9A57F" stroke-width="2" stroke-linecap="round"/>'
-            . '<rect x="47" y="56" width="4" height="44" rx="2" fill="#fff" opacity=".28"/><path d="M90 30c3 5 5 8 5 11a5 5 0 0 1-10 0c0-3 2-6 5-11Z" fill="#E2B04A"/>');
+        // soft-realistic amber dropper bottle with tea-tree sprigs (shown until a photo titled "Ingredient: ..." exists)
+        $lv = function ($x, $y, $r, $s) { return '<g transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ') scale(' . $s . ')"><path d="M0 0C3-9 9-16 15-19 13-11 8-4 0 0Z" fill="url(#ecnTTl)"/><path d="M1-1C6-7 10-12 14-17" stroke="#2F6338" stroke-width=".6" fill="none" opacity=".5"/></g>'; };
+        $sprig = function ($x, $y, $r, $s) use ($lv) { $o = '<g transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ') scale(' . $s . ')"><path d="M0 0C2-20 6-38 12-56" stroke="#5B7F4E" stroke-width="1.3" fill="none"/>';
+        foreach (array(array(1, -8, -20), array(3, -18, 60), array(4, -26, -30), array(6, -34, 55), array(8, -42, -25), array(10, -49, 45), array(12, -56, 0)) as $l) $o .= $lv($l[0], $l[1], $l[2], .9);
+        return $o . '</g>'; };
+        return '<svg class="ecn-lp-ill is-photo" viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs>'
+        . '<radialGradient id="ecnTTbg" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#FBF3E3"/><stop offset=".6" stop-color="#EEDDBE"/><stop offset="1" stop-color="#D9C29A"/></radialGradient>'
+        . '<filter id="ecnTTb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter><filter id="ecnTTs" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>'
+        . '<linearGradient id="ecnTTg" x1="0" x2="1"><stop offset="0" stop-color="#7A3F0E"/><stop offset=".35" stop-color="#C9802A"/><stop offset=".55" stop-color="#E3A64B"/><stop offset="1" stop-color="#6E380C"/></linearGradient>'
+        . '<linearGradient id="ecnTTo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2C46A" stop-opacity=".9"/><stop offset="1" stop-color="#B8701E" stop-opacity=".95"/></linearGradient>'
+        . '<linearGradient id="ecnTTc" x1="0" x2="1"><stop offset="0" stop-color="#1E1B19"/><stop offset=".45" stop-color="#4A433E"/><stop offset="1" stop-color="#191614"/></linearGradient>'
+        . '<linearGradient id="ecnTTl" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3F7A47"/><stop offset="1" stop-color="#8DBF7F"/></linearGradient></defs>'
+        . '<rect width="120" height="120" fill="url(#ecnTTbg)"/>'
+        // soft out-of-focus foliage behind
+        . '<g filter="url(#ecnTTb)" opacity=".55"><ellipse cx="14" cy="22" rx="18" ry="10" fill="#7FA86E"/><ellipse cx="108" cy="16" rx="16" ry="9" fill="#93B784"/><ellipse cx="112" cy="58" rx="10" ry="16" fill="#86AE74"/><circle cx="24" cy="70" r="7" fill="#fff" opacity=".8"/><circle cx="96" cy="34" r="5" fill="#fff" opacity=".7"/></g>'
+        . $sprig(26, 112, -18, 1.25) . $sprig(92, 114, 12, 1.15)
+        // surface and shadow
+        . '<ellipse cx="60" cy="108" rx="30" ry="5" fill="#8A6A3E" opacity=".35" filter="url(#ecnTTs)"/>'
+        // bottle
+        . '<path d="M44 58c0-6 4-9 9-9h14c5 0 9 3 9 9v42c0 4-3 7-7 7H51c-4 0-7-3-7-7Z" fill="url(#ecnTTg)"/>'
+        . '<path d="M46 74h28v26c0 3-2 5-5 5H51c-3 0-5-2-5-5Z" fill="url(#ecnTTo)" opacity=".55"/>'
+        . '<rect x="48" y="70" width="24" height="20" rx="2" fill="#F6EEDF" opacity=".95"/><path d="M53 77h14M55 82h10" stroke="#B49B72" stroke-width="1.4" stroke-linecap="round"/>'
+        . '<path d="M48 56c0-3 2-4 4-4" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="47.5" y="60" width="3" height="40" rx="1.5" fill="#fff" opacity=".28"/>'
+        . '<rect x="52" y="41" width="16" height="9" rx="1.5" fill="url(#ecnTTc)"/><path d="M54 41c0-12 2-19 6-19s6 7 6 19Z" fill="url(#ecnTTc)"/><ellipse cx="58" cy="28" rx="1.2" ry="3" fill="#fff" opacity=".25"/>'
+        // a drop of oil
+        . '<path d="M86 52c3 4 5 7 5 9a5 5 0 0 1-10 0c0-2 2-5 5-9Z" fill="#E7B04E"/><ellipse cx="84.5" cy="60" rx="1.2" ry="2" fill="#fff" opacity=".7"/>'
+        . '</svg>';
     }
     if (preg_match('/oil|olive|coconut|essential|tea tree|jojoba|almond|argan/', $t)) return econur_lp_svg('<ellipse cx="60" cy="98" rx="34" ry="6" fill="#C9D8CF"/><path d="M48 46h24v8c8 6 12 14 12 24v14a6 6 0 0 1-6 6H42a6 6 0 0 1-6-6V78c0-10 4-18 12-24Z" fill="#E8C76A" opacity=".9"/><path d="M38 80h44v12a6 6 0 0 1-6 6H44a6 6 0 0 1-6-6Z" fill="#D6A93C"/><rect x="50" y="32" width="20" height="14" rx="3" fill="#8A6A44"/>' . $leaf(90, 48, 35, '#5E9B6A') . $leaf(84, 64, 70, '#78B07E') . '<path d="M60 14c5 7 8 11 8 15a8 8 0 0 1-16 0c0-4 3-8 8-15Z" fill="#E8C76A"/>');
     if (preg_match('/aloe/', $t)) return econur_lp_svg('<g fill="#6FAE7A"><path d="M60 100C54 70 52 46 60 18c8 28 6 52 0 82Z"/><path d="M58 100C44 80 34 62 30 40c16 14 26 34 28 60Z" fill="#5E9B6A"/><path d="M62 100C76 80 86 62 90 40 74 54 64 74 62 100Z" fill="#82BC8B"/></g>');
@@ -570,62 +595,75 @@ function econur_lp_ing_art($title) {
     foreach (array(array(52, 84, -55), array(70, 76, 55), array(54, 64, -50), array(72, 56, 50), array(57, 44, -45), array(73, 36, 40), array(66, 20, 0)) as $k => $l) $sp .= $leaf($l[0], $l[1], $l[2], $k % 2 ? '#6FAE7A' : '#4E8E5C');
     return econur_lp_svg($sp);
 }
-/* Usage illustrations for "How to Use": lather (soap bar + foam), cleanse (face wash), rinse (water). Flat, ECONUR palette. */
+/* Usage illustrations for "How to Use", soft-realistic: shaded forms, soft shadows, glossy foam and water. */
 function econur_lp_ritual_art($k, $bar = '#3B3F41') {
-    static $n = 0; $n++; $fo = 'ecnFoam' . $n; $wa = 'ecnWater' . $n; // ids unique on the page
-    $vb = array('lather' => '16 28 130 130', 'rinse' => '14 16 132 132');
+    static $n = 0; $n++; $id = function ($s) use ($n) { return 'ecn' . $s . $n; };
+    $vb = array('lather' => '12 22 136 136', 'rinse' => '12 14 136 136');
     $svg = function ($inner) use ($k, $vb) { return '<svg class="ecn-lp-ill" viewBox="' . (isset($vb[$k]) ? $vb[$k] : '0 0 160 160') . '" aria-hidden="true" focusable="false">' . $inner . '</svg>'; };
-    $leaf = function ($x, $y, $r, $c, $s = 1) { return '<path d="M0 0C' . (6 * $s) . ' ' . (-10 * $s) . ' ' . (18 * $s) . ' ' . (-14 * $s) . ' ' . (30 * $s) . ' ' . (-12 * $s) . 'C' . (24 * $s) . ' ' . (-2 * $s) . ' ' . (12 * $s) . ' ' . (4 * $s) . ' 0 0Z" fill="' . $c . '" transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ')"/>'; };
-    $bub = function ($x, $y, $r) { return '<circle cx="' . $x . '" cy="' . $y . '" r="' . $r . '" fill="#fff" stroke="#BFDCE8" stroke-width="1.6"/>'; };
-    $foam = function ($pts) use ($fo) { $o = ''; foreach ($pts as $p) $o .= '<circle cx="' . $p[0] . '" cy="' . $p[1] . '" r="' . $p[2] . '" fill="#fff"/>'; return '<g filter="url(#' . $fo . ')">' . $o . '</g>'; };
-    $defs = '<defs><filter id="' . $fo . '" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-color="#9CC3D3" flood-opacity=".55"/></filter>'
-        . '<linearGradient id="' . $wa . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FD0F0"/><stop offset="1" stop-color="#2A9FD6"/></linearGradient></defs>';
+    // shared pieces
+    $defs = '<defs>'
+        . '<filter id="' . $id('Blur') . '" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>'
+        . '<filter id="' . $id('Soft') . '" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#6E9FB2" flood-opacity=".35"/></filter>'
+        . '<radialGradient id="' . $id('Foam') . '" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#F5FAFC"/><stop offset="1" stop-color="#D6E8F0"/></radialGradient>'
+        . '<radialGradient id="' . $id('Bub') . '" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#E8F5FA" stop-opacity=".35"/><stop offset="1" stop-color="#9FCFE2" stop-opacity=".6"/></radialGradient>'
+        . '<linearGradient id="' . $id('Leaf') . '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7DB27A"/><stop offset="1" stop-color="#3E7A47"/></linearGradient>'
+        . '<radialGradient id="' . $id('Drop') . '" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#C9EEFB"/><stop offset=".45" stop-color="#6CC6EC"/><stop offset="1" stop-color="#2286C2"/></radialGradient>';
+    $leaf = function ($x, $y, $r, $s = 1) use ($id) { return '<g transform="translate(' . $x . ' ' . $y . ') rotate(' . $r . ') scale(' . $s . ')"><path d="M0 0C7-11 20-15 33-12 26-1 13 5 0 0Z" fill="url(#' . $id('Leaf') . ')"/><path d="M1 0C11-5 21-9 31-11" stroke="#2F6338" stroke-width=".9" fill="none" opacity=".55"/></g>'; };
+    $foam = function ($pts) use ($id) { $o = ''; foreach ($pts as $p) $o .= '<circle cx="' . $p[0] . '" cy="' . $p[1] . '" r="' . $p[2] . '" fill="url(#' . $id('Foam') . ')"/>'; return '<g filter="url(#' . $id('Soft') . ')">' . $o . '</g>'; };
+    $bub = function ($x, $y, $r) use ($id) { return '<circle cx="' . $x . '" cy="' . $y . '" r="' . $r . '" fill="url(#' . $id('Bub') . ')" stroke="#A9D6E8" stroke-width=".8"/><ellipse cx="' . ($x - $r * .35) . '" cy="' . ($y - $r * .4) . '" rx="' . ($r * .28) . '" ry="' . ($r * .18) . '" fill="#fff" opacity=".9"/>'; };
+    $drop = function ($x, $y, $s) use ($id) { return '<path transform="translate(' . $x . ' ' . $y . ') scale(' . $s . ')" d="M0-12C4-6 7-2 7 2a7 7 0 0 1-14 0c0-4 3-8 7-14Z" fill="url(#' . $id('Drop') . ')"/><ellipse cx="' . ($x - 2 * $s) . '" cy="' . ($y + 0 * $s) . '" rx="' . (1.4 * $s) . '" ry="' . (2.6 * $s) . '" fill="#fff" opacity=".75"/>'; };
+
     if ('lather' === $k) {
-        // a soap bar in three-quarter view, foam on top, bubbles and two leaves
-        $c = $bar;
-        $out = $defs . '<ellipse cx="82" cy="128" rx="48" ry="7" fill="#CFE3EA"/>'
-            . $leaf(30, 122, -50, '#4E8E5C', 1.1) . $leaf(34, 126, -8, '#78B07E', 1)
-            . '<path d="M40 92 92 80l34 14-52 13Z" fill="' . $c . '" opacity=".85"/>'
-            . '<path d="M40 92l34 15v20L40 112Z" fill="' . $c . '"/>'
-            . '<path d="M74 107l52-13v20l-52 13Z" fill="' . $c . '" opacity=".72"/>'
-            . '<path d="M40 92l34 15 52-13" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="1.5"/>'
-            . $foam(array(array(70, 86, 11), array(84, 80, 13), array(98, 86, 10), array(78, 92, 9), array(92, 93, 8), array(62, 93, 7)))
-            . $foam(array(array(116, 116, 8), array(126, 112, 6), array(108, 121, 6)))
-            . $bub(58, 64, 5) . $bub(70, 52, 7) . $bub(88, 58, 4) . $bub(110, 66, 6) . $bub(100, 46, 3.5)
-            . '<path d="M128 58c3 4 5 7 5 9a5 5 0 0 1-10 0c0-2 2-5 5-9Z" fill="#7DC4E4"/>';
+        $defs .= '<linearGradient id="' . $id('Top') . '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient>'
+            . '<linearGradient id="' . $id('Side') . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>'
+            . '<pattern id="' . $id('Spk') . '" width="13" height="11" patternUnits="userSpaceOnUse"><circle cx="2" cy="3" r=".6" fill="#fff" opacity=".12"/><circle cx="8.5" cy="8" r=".5" fill="#000" opacity=".2"/><circle cx="11" cy="2.5" r=".4" fill="#fff" opacity=".1"/><circle cx="5" cy="9.5" r=".35" fill="#fff" opacity=".1"/></pattern></defs>';
+        $top = 'M38 92 92 79l36 15-54 14Z'; $l = 'M38 92l36 16v21L38 113Z'; $r = 'M74 108l54-14v21l-54 14Z';
+        $out = $defs . '<ellipse cx="84" cy="132" rx="52" ry="8" fill="#8FB3C2" opacity=".35" filter="url(#' . $id('Blur') . ')"/>'
+            . $leaf(26, 128, -48, 1.15) . $leaf(30, 131, -8, 1)
+            . '<path d="' . $l . '" fill="' . $bar . '"/><path d="' . $l . '" fill="url(#' . $id('Side') . ')"/>'
+            . '<path d="' . $r . '" fill="' . $bar . '"/><path d="' . $r . '" fill="#000" opacity=".22"/><path d="' . $r . '" fill="url(#' . $id('Side') . ')"/>'
+            . '<path d="' . $top . '" fill="' . $bar . '"/><path d="' . $top . '" fill="url(#' . $id('Top') . ')"/>'
+            . '<path d="' . $top . '" fill="url(#' . $id('Spk') . ')"/><path d="' . $l . '" fill="url(#' . $id('Spk') . ')"/><path d="' . $r . '" fill="url(#' . $id('Spk') . ')"/>'
+            . '<path d="M38 92l36 16 54-14" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.2"/>'
+            . $foam(array(array(66, 88, 11), array(80, 81, 14), array(95, 86, 11), array(74, 94, 9), array(89, 95, 9), array(58, 95, 7), array(104, 93, 7)))
+            . $foam(array(array(118, 120, 8), array(128, 116, 6), array(110, 125, 6)))
+            . $bub(56, 64, 6) . $bub(70, 50, 8) . $bub(90, 58, 5) . $bub(111, 66, 7) . $bub(101, 44, 4) . $bub(122, 82, 4)
+            . $drop(130, 64, .9) . $drop(48, 76, .6);
         return $svg($out);
     }
     if ('cleanse' === $k) {
-        // a face being washed: headband, closed eyes, foam on both cheeks
-        $skin = '#F3C9A8'; $shade = '#E6B08C';
+        $defs .= '<radialGradient id="' . $id('Skin') . '" cx=".45" cy=".38" r=".7"><stop offset="0" stop-color="#F8D9C1"/><stop offset=".75" stop-color="#EDBF9D"/><stop offset="1" stop-color="#DFA884"/></radialGradient>'
+            . '<linearGradient id="' . $id('Hand') . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3CDB0"/><stop offset="1" stop-color="#E2AE8B"/></linearGradient>'
+            . '<linearGradient id="' . $id('Hair') . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6B4632"/><stop offset="1" stop-color="#3F2A1F"/></linearGradient>'
+            . '<linearGradient id="' . $id('Towel') . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6EEF1"/></linearGradient></defs>';
         $out = $defs
-            . '<rect x="70" y="110" width="20" height="26" rx="6" fill="' . $shade . '"/>'
-            . '<path d="M34 160c4-20 20-30 46-30s42 10 46 30Z" fill="#fff"/><path d="M62 131c6 8 12 11 18 11s12-3 18-11" fill="none" stroke="#DCE9EE" stroke-width="3" stroke-linecap="round"/>'
-            . '<path d="M44 76c0-28 16-44 36-44s36 16 36 44c0 6-1 10-3 14H47c-2-4-3-8-3-14Z" fill="#5A3B2A"/>'
-            . '<ellipse cx="80" cy="84" rx="30" ry="35" fill="' . $skin . '"/>'
-            . '<ellipse cx="50" cy="88" rx="5" ry="8" fill="' . $shade . '"/><ellipse cx="110" cy="88" rx="5" ry="8" fill="' . $shade . '"/>'
-            . '<path d="M48 64c6-14 18-20 32-20s26 6 32 20c-8-4-20-6-32-6s-24 2-32 6Z" fill="#fff"/><path d="M48 64c8-4 20-6 32-6s24 2 32 6" fill="none" stroke="#E3EEF2" stroke-width="2"/>'
-            . '<path d="M64 84q5 4 10 0M86 84q5 4 10 0" fill="none" stroke="#6B4A39" stroke-width="2.2" stroke-linecap="round"/>'
-            . '<path d="M74 103q6 5 12 0" fill="none" stroke="#B86B5A" stroke-width="2.2" stroke-linecap="round"/>'
-            . '<ellipse cx="62" cy="96" rx="6" ry="3.5" fill="#F2A99A" opacity=".55"/><ellipse cx="98" cy="96" rx="6" ry="3.5" fill="#F2A99A" opacity=".55"/>'
-            // hands on the cheeks
-            . '<path d="M30 132c-2-16 2-34 12-44 4-4 9-2 9 3l-2 14 4-1c4-1 6 3 4 7l-8 21c-3 7-17 7-19 0Z" fill="' . $skin . '"/>'
-            . '<path d="M130 132c2-16-2-34-12-44-4-4-9-2-9 3l2 14-4-1c-4-1-6 3-4 7l8 21c3 7 17 7 19 0Z" fill="' . $skin . '"/>'
-            . $foam(array(array(50, 96, 6), array(56, 104, 7), array(48, 108, 5), array(110, 96, 6), array(104, 104, 7), array(112, 108, 5)))
-            . $bub(36, 78, 3.5) . $bub(124, 74, 4) . $bub(128, 86, 2.5)
-            . $leaf(18, 118, -60, '#4E8E5C', .9) . $leaf(142, 118, -120, '#4E8E5C', .9);
+            . '<rect x="69" y="108" width="22" height="30" rx="7" fill="#DDA585"/>'
+            . '<path d="M30 160c4-21 22-32 50-32s46 11 50 32Z" fill="url(#' . $id('Towel') . ')"/><path d="M60 131c7 8 13 11 20 11s13-3 20-11" fill="none" stroke="#D4E2E8" stroke-width="3" stroke-linecap="round"/>'
+            . '<path d="M43 78c0-29 16-46 37-46s37 17 37 46c0 6-1 11-3 15H46c-2-4-3-9-3-15Z" fill="url(#' . $id('Hair') . ')"/>'
+            . '<ellipse cx="80" cy="85" rx="30" ry="35" fill="url(#' . $id('Skin') . ')"/>'
+            . '<ellipse cx="50" cy="89" rx="5" ry="8" fill="#DDA585"/><ellipse cx="110" cy="89" rx="5" ry="8" fill="#DDA585"/>'
+            . '<path d="M47 66c6-15 19-21 33-21s27 6 33 21c-9-4-21-6-33-6s-24 2-33 6Z" fill="url(#' . $id('Towel') . ')"/><path d="M48 66c9-4 20-6 32-6s23 2 32 6" fill="none" stroke="#D9E6EB" stroke-width="1.6"/>'
+            . '<path d="M64 85q5 4 10 0M86 85q5 4 10 0" fill="none" stroke="#7A5442" stroke-width="2" stroke-linecap="round"/>'
+            . '<path d="M62 79q6-3 11 0M87 79q5-3 11 0" fill="none" stroke="#6B4632" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
+            . '<path d="M75 104q5 4 10 0" fill="none" stroke="#C07A66" stroke-width="2" stroke-linecap="round"/>'
+            . '<ellipse cx="62" cy="97" rx="7" ry="4" fill="#F0A493" opacity=".35" filter="url(#' . $id('Blur') . ')"/><ellipse cx="98" cy="97" rx="7" ry="4" fill="#F0A493" opacity=".35" filter="url(#' . $id('Blur') . ')"/>'
+            . '<path d="M30 134c-2-17 2-35 12-45 4-4 9-2 9 3l-2 14 4-1c4-1 6 3 4 7l-8 21c-3 7-17 7-19 1Z" fill="url(#' . $id('Hand') . ')"/>'
+            . '<path d="M130 134c2-17-2-35-12-45-4-4-9-2-9 3l2 14-4-1c-4-1-6 3-4 7l8 21c3 7 17 7 19 1Z" fill="url(#' . $id('Hand') . ')"/>'
+            . $foam(array(array(50, 97, 6), array(57, 105, 7), array(48, 110, 5), array(110, 97, 6), array(103, 105, 7), array(112, 110, 5)))
+            . $bub(36, 78, 4) . $bub(125, 72, 4.5) . $bub(129, 85, 3)
+            . $leaf(14, 122, -62, .95) . $leaf(146, 122, -118, .95);
         return $svg($out);
     }
-    // rinse: a large water drop, a small one and a splash, with a sprig
-    $out = $defs . '<ellipse cx="80" cy="128" rx="44" ry="8" fill="#BFE3F2"/>'
-        . '<path d="M50 126c6-6 14-8 22-6M110 126c-6-6-14-8-22-6" stroke="#5DB8E3" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        . '<path d="M80 26c14 20 26 34 26 52a26 26 0 0 1-52 0c0-18 12-32 26-52Z" fill="url(#' . $wa . ')"/>'
-        . '<path d="M68 70c-3 8-2 16 4 21" stroke="#fff" stroke-opacity=".7" stroke-width="4" fill="none" stroke-linecap="round"/>'
-        . '<path d="M46 86c5 7 9 12 9 16a9 9 0 0 1-18 0c0-4 4-9 9-16Z" fill="url(#' . $wa . ')"/>'
-        . '<ellipse cx="80" cy="124" rx="22" ry="5" fill="none" stroke="#5DB8E3" stroke-width="2.5"/>'
-        . '<path d="M66 116c-3-4-4-8-3-11 3 2 5 6 3 11Z" fill="#5DB8E3"/><path d="M94 116c3-4 4-8 3-11-3 2-5 6-3 11Z" fill="#5DB8E3"/><path d="M80 112c-2-5-2-9 0-12 2 3 2 7 0 12Z" fill="#5DB8E3"/>'
-        . '<circle cx="58" cy="108" r="2.6" fill="#7FD0F0"/><circle cx="103" cy="106" r="3" fill="#7FD0F0"/><circle cx="112" cy="98" r="2" fill="#7FD0F0"/>'
-        . $leaf(112, 104, -70, '#4E8E5C', .8) . $leaf(116, 100, -20, '#78B07E', .7);
+    // rinse
+    $defs .= '<linearGradient id="' . $id('Pool') . '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BDE6F5"/><stop offset="1" stop-color="#8ECFEA"/></linearGradient></defs>';
+    $out = $defs . '<ellipse cx="80" cy="130" rx="46" ry="9" fill="#7FB7CC" opacity=".35" filter="url(#' . $id('Blur') . ')"/>'
+        . '<ellipse cx="80" cy="124" rx="40" ry="8" fill="url(#' . $id('Pool') . ')"/><ellipse cx="80" cy="123" rx="24" ry="4.5" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.4"/>'
+        . '<path d="M80 22c15 21 27 35 27 54a27 27 0 0 1-54 0c0-19 12-33 27-54Z" fill="url(#' . $id('Drop') . ')"/>'
+        . '<path d="M67 66c-3 9-2 17 4 23" stroke="#fff" stroke-opacity=".75" stroke-width="4.5" fill="none" stroke-linecap="round"/><ellipse cx="92" cy="90" rx="5" ry="3" fill="#fff" opacity=".35"/>'
+        . $drop(46, 98, 1.25)
+        . '<path d="M66 118c-3-5-4-9-2-13 3 3 5 8 2 13Z" fill="url(#' . $id('Drop') . ')"/><path d="M94 118c3-5 4-9 2-13-3 3-5 8-2 13Z" fill="url(#' . $id('Drop') . ')"/><path d="M80 114c-2-6-2-10 0-14 2 4 2 8 0 14Z" fill="url(#' . $id('Drop') . ')"/>'
+        . $bub(58, 108, 2.6) . $bub(104, 106, 3) . $bub(112, 98, 2)
+        . $leaf(110, 108, -72, .85) . $leaf(116, 104, -22, .75);
     return $svg($out);
 }
 function econur_lp_bar_color($p) {

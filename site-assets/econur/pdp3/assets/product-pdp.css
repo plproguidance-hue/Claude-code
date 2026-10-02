@@ -1554,3 +1554,33 @@ body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step-arrow svg{ width:22px; hei
   body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-art--ml{ top:-46px; left:-58px; }
   body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-art--mr{ top:-40px; right:-58px; }
 }
+
+/* ===================== v7.10.1: polish of Why + How to Use (same layout, sizes and spacing) ===================== */
+/* softer botanical frame */
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-art, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-art{ opacity:.7; filter:saturate(.82) contrast(.9) brightness(1.05); }
+body.single-product .ecn-pdp .ecn-lp-fleaf{ opacity:.55; }
+/* one card family: same border, shadow, text column centred beside the picture */
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step{ border-color:#ECE5D7; box-shadow:0 6px 18px rgba(52,44,30,.045); }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing > div, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step > div{ display:flex; flex-direction:column; align-items:flex-start; justify-content:center; min-width:0; }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing p, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step p{ min-height:2.9em; }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing h3, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step h3{ letter-spacing:-.005em; }
+/* identical picture boxes */
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-img{ align-self:center; flex:none; height:auto; }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-img > img:not([style*="--cw"]){ width:100% !important; height:100% !important; object-fit:cover; }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-img.is-art .ecn-lp-ill.is-photo{ display:block; width:100%; height:100%; }
+/* icons: one size, one stroke */
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-ic{ flex:none; border:1px solid #BFD9D2; background:#FBFDFB; color:#1C6B5B; }
+body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-ic svg{ stroke-width:1.6; }
+/* pills: one style */
+.ecn-lp-pill{ letter-spacing:.005em; }
+/* arrows: thin, subtle teal */
+body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step-arrow{ color:#3F8A7A; }
+body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step-arrow svg{ width:20px; height:20px; stroke-width:1.5; }
+@media (max-width:1199px){
+  body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing p, body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step p{ min-height:0; }
+}
+@media (max-width:599px){
+  body.single-product .ecn-pdp .ecn-lp-why .ecn-lp-ing-img{ width:124px; }
+  body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step-art{ width:112px; height:112px; }
+  body.single-product .ecn-pdp .ecn-lp-how .ecn-lp-step-arrow{ opacity:.8; }
+}
