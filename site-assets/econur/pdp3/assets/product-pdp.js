@@ -246,9 +246,50 @@
       if (history.replaceState) history.replaceState(null, '', '#' + id);
     });
 
-    /* ---------- FAQ: one answer open at a time ---------- */
-    var faqs = [].slice.call(page.querySelectorAll('.ecn-lp-faq-i'));
-    faqs.forEach(function (d) { d.addEventListener('toggle', function () { if (d.open) faqs.forEach(function (o) { if (o !== d) o.open = false; }); }); });
+    /* ---------- FAQ: accordion, one answer open at a time (arrow keys move between questions) ---------- */
+    var faqBtns = [].slice.call(page.querySelectorAll('.ecn-faq-q button'));
+    function faqSet(b, open) {
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var it = b.closest('.ecn-faq-i'); if (it) it.classList.toggle('is-open', open);
+    }
+    faqBtns.forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        var open = b.getAttribute('aria-expanded') !== 'true';
+        faqBtns.forEach(function (o) { if (o !== b) faqSet(o, false); });
+        faqSet(b, open);
+      });
+      b.addEventListener('keydown', function (e) {
+        var to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: faqBtns.length - 1 }[e.key];
+        if (to === undefined) return;
+        e.preventDefault(); faqBtns[(to + faqBtns.length) % faqBtns.length].focus();
+      });
+    });
+
+    /* ---------- Find your bar: the inline guide (one question, one recommendation) ---------- */
+    var fOpen = page.querySelector('[data-ecn-finder-open]'), fGuide = document.getElementById('ecn-finder-guide');
+    if (fOpen && fGuide) {
+      var fOpts = [].slice.call(fGuide.querySelectorAll('.ecn-finder-opt')), fHint = fGuide.querySelector('.ecn-finder-hint');
+      fOpen.setAttribute('role', 'button'); fOpen.setAttribute('aria-expanded', 'false');
+      fOpen.addEventListener('click', function (e) {
+        e.preventDefault();
+        var open = fGuide.hidden;
+        fGuide.hidden = !open; fOpen.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          if (fOpts[0]) fOpts[0].focus({ preventScroll: true });
+          var r = fGuide.getBoundingClientRect(); if (r.bottom > window.innerHeight) fGuide.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+        }
+      });
+      fOpts.forEach(function (o) {
+        o.addEventListener('click', function () {
+          var k = o.getAttribute('data-k');
+          fOpts.forEach(function (x) { x.setAttribute('aria-pressed', x === o ? 'true' : 'false'); });
+          fGuide.querySelectorAll('.ecn-pick').forEach(function (c) { c.hidden = c.id !== 'ecn-pick-' + k; });
+          if (fHint) fHint.hidden = true;
+          var pick = document.getElementById('ecn-pick-' + k);
+          if (pick) { var r = pick.getBoundingClientRect(); if (r.bottom > window.innerHeight || r.top < 0) pick.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); }
+        });
+      });
+    }
 
     /* ---------- saved hearts (same list as the homepage: localStorage "ecn_saved") ---------- */
     var KEY = 'ecn_saved';

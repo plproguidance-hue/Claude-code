@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.14.0';
+const ECONUR_PDP_VER = '7.15.0';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -419,7 +419,6 @@ function econur_pdp_render($product) {
     econur_lp_howto($product);
     econur_lp_reviews($product);
     econur_lp_faq($product, $lp);
-    econur_lp_finder($product);
     econur_lp_favorites($product, $lp);
     econur_lp_final($product, $lp, $unit, $size);
 
@@ -871,7 +870,8 @@ function econur_lp_reviews($product) {
         . $invite . $summary . ($formcard ? '<div class="ecn-rv-formwrap">' . $formcard . '</div>' : '') . $list . '</section>';
 }
 
-/* ===== FAQ: answers from the product's own data and the store's real terms ===== */
+/* ===== FAQ + find your bar: one help area (questions answered, then guidance to the right bar) ===== */
+// FAQ answers come from the product's own data and the store's real terms; nothing is made up.
 function econur_lp_faq($product, $lp) {
     $id = $product->get_id(); $name = $product->get_name(); $q = $lp['faq_extra'];
     $skin = econur_meta_list($id, 'econur_skin_type');
@@ -882,26 +882,92 @@ function econur_lp_faq($product, $lp) {
     if ($full) $q[] = array('What are the full ingredients?', $full);
     $q[] = array('Do you offer cash on delivery (COD)?', 'Yes. Cash on delivery is available across Bangladesh: you pay when the parcel arrives.');
     $q[] = array('How long will it take to receive my order?', 'Inside Dhaka 1 to 2 days, outside Dhaka 2 to 4 days. We call to confirm every order within 12 hours.');
-    if (function_exists('econur_finder_concerns')) $q[] = array('How do I choose the right bar for my skin concerns?', 'Use our Find your bar guide: pick your skin concern and it shows the matching ECONUR bar. You can also message us on WhatsApp.');
+    $guide = econur_lp_finder_items($product);
+    if ($guide) $q[] = array('How do I choose the right bar for my skin concerns?', 'Use the Find Your Bar guide just below: choose what your skin needs most and it shows the matching ECONUR bar. You can also chat with us on WhatsApp.');
+    $wa = econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.');
+
     $items = '';
-    foreach ($q as $k => $row) $items .= '<details class="ecn-lp-faq-i"><summary>' . esc_html($row[0]) . econur_lp_icon('down') . '</summary><div class="ecn-lp-faq-a"><p>' . esc_html($row[1]) . '</p></div></details>';
-    echo '<section class="ecn-lp-sec ecn-lp-faq" id="ecn-faq" aria-labelledby="ecn-lp-faq-t"><div class="ecn-lp-faq-intro"><h2 class="ecn-lp-h2" id="ecn-lp-faq-t">Frequently Asked Questions</h2><p>Got questions? We have answers. If you need more help, <a href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener" data-ecn-wa>message us on WhatsApp</a>.</p></div><div class="ecn-lp-faq-list">' . $items . '</div></section>';
+    foreach ($q as $k => $row) {
+        $n = $k + 1;
+        $items .= '<div class="ecn-faq-i"><h3 class="ecn-faq-q"><button type="button" id="ecn-faq-b' . $n . '" aria-expanded="false" aria-controls="ecn-faq-a' . $n . '"><span>' . esc_html($row[0]) . '</span>' . econur_lp_icon('down') . '</button></h3>'
+            . '<div class="ecn-faq-a" id="ecn-faq-a' . $n . '" role="region" aria-labelledby="ecn-faq-b' . $n . '"><div><p>' . esc_html($row[1]) . '</p></div></div></div>';
+    }
+    echo '<div class="ecn-lp-sec ecn-help">' . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--faq')
+        . '<section class="ecn-help-faq" id="ecn-faq" aria-labelledby="ecn-faq-t">'
+        . '<div class="ecn-help-intro"><span class="ecn-lp-kicker">' . econur_lp_icon('sprout') . 'Common questions</span>'
+        . '<h2 class="ecn-lp-h2 ecn-help-h2" id="ecn-faq-t">Frequently Asked Questions</h2>'
+        . '<p class="ecn-help-lead">Got questions? We have answers. Need more help? Chat with us on WhatsApp.</p></div>'
+        . '<div class="ecn-faq-list">' . $items . '</div>'
+        . '<div class="ecn-help-cta"><a class="ecn-help-wa" href="' . esc_url($wa) . '" target="_blank" rel="noopener" data-ecn-wa>' . econur_pdp_icon('whatsapp') . '<span>Chat on WhatsApp</span></a></div>'
+        . '</section>';
+    econur_lp_finder_block($product, $guide);
+    echo '</div>';
 }
 
-/* ===== find your bar: three concerns from the homepage guide (oily / acne-prone, brightening, daily care) ===== */
-function econur_lp_finder($product) {
-    if (!function_exists('econur_finder_concerns')) return;
-    $want = array('oily' => array("Oily / Acne\u{2011}prone", 'drop'), 'tone' => array('Brightening', 'bulb'), 'daily' => array('Daily Care', 'sprout'));
-    $by = array(); foreach (econur_finder_concerns() as $c) $by[$c['key']] = $c;
-    $cards = '';
-    foreach ($want as $key => $w) {
-        if (empty($by[$key])) continue;
-        $c = $by[$key]; $p = wc_get_product($c['product']); if (!$p || 'publish' !== $p->get_status()) continue;
-        $cards .= '<a class="ecn-lp-concern" href="' . esc_url(get_permalink($p->get_id())) . '" aria-label="' . esc_attr($w[0] . ': ' . $p->get_name()) . '"><span>' . econur_lp_icon($w[1]) . '</span><b>' . esc_html($w[0]) . '</b><small>' . esc_html($c['line']) . '</small></a>';
+// The concerns of the homepage "Find your bar" guide (econur_finder_concerns), with their real, published products.
+// The three cards: oily / acne-prone, brightening (uneven-looking tone) and daily care. The inline guide offers every concern.
+function econur_lp_finder_items($product) {
+    static $cache = array();
+    $pid = $product->get_id();
+    if (isset($cache[$pid])) return $cache[$pid];
+    $out = array();
+    if (function_exists('econur_finder_concerns')) {
+        $names = array('oily' => array("Oily / Acne\u{2011}prone", 'drop'), 'tone' => array('Brightening', 'sun'), 'dull' => array('Dull-looking skin', 'sparkle'), 'daily' => array('Daily Care', 'sprout'), 'sensitive' => array('Very dry / sensitive', 'leaf'));
+        foreach (econur_finder_concerns() as $c) {
+            $p = wc_get_product($c['product']);
+            if (!$p || 'publish' !== $p->get_status() || empty($names[$c['key']])) continue;
+            $out[$c['key']] = array('title' => $names[$c['key']][0], 'icon' => $names[$c['key']][1], 'line' => $c['line'], 'badge' => $c['badge'], 'p' => $p, 'self' => $p->get_id() === $pid);
+        }
     }
-    echo '<section class="ecn-lp-finder" aria-labelledby="ecn-lp-finder-t">' . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--bl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-lp-art--br')
-        . '<div class="ecn-lp-finder-copy"><h2 class="ecn-lp-h2" id="ecn-lp-finder-t">Not sure which bar is right for you?</h2><p>Take a quick guide to find the ECONUR bar for your skin type and concerns.</p>'
-        . '<a class="ecn-lp-btn" href="' . esc_url(home_url('/#finder')) . '"><span>Find Your Bar</span>' . econur_lp_icon('arrow') . '</a></div>' . ($cards ? '<div class="ecn-lp-concerns">' . $cards . '</div>' : '') . '</section>';
+    return $cache[$pid] = $out;
+}
+
+function econur_lp_finder_block($product, $items) {
+    if (!$items) return;
+    $buyable = '' !== $product->get_price() && $product->is_purchasable();
+    $cards = '';
+    foreach (array('oily', 'tone', 'daily') as $k) {
+        if (empty($items[$k])) continue;
+        $it = $items[$k]; $p = $it['p'];
+        // the bar on this page: the card goes to its purchase options instead of reloading the page
+        $href = $it['self'] ? ($buyable ? '#ecn-cart-form' : '') : get_permalink($p->get_id());
+        $go = $it['self'] ? 'You are viewing it' : 'Explore';
+        $inner = '<span class="ecn-need-ic">' . econur_lp_icon($it['icon']) . '</span><b class="ecn-need-t">' . esc_html($it['title']) . '</b><span class="ecn-need-tx">' . esc_html($it['line']) . '</span>'
+            . '<span class="ecn-need-go">' . esc_html($go) . econur_lp_icon($it['self'] ? 'up' : 'arrow') . '</span>';
+        $label = $it['title'] . ': ' . $p->get_name() . ($it['self'] ? ' (this page)' : '');
+        $cards .= $href ? '<a class="ecn-need' . ($it['self'] ? ' is-self' : '') . '" href="' . esc_url($href) . '" aria-label="' . esc_attr($label) . '">' . $inner . '</a>' : '<div class="ecn-need is-self">' . $inner . '</div>';
+    }
+
+    // inline guide: one question, one recommendation (all rendered here, shown by the page script)
+    $opts = ''; $picks = '';
+    foreach ($items as $k => $it) {
+        $p = $it['p']; $v = econur_pdp_card_variation($p);
+        $price = '';
+        if ($v) {
+            $sale = $v->is_on_sale() && (float) $v->get_regular_price() > (float) $v->get_price();
+            $size = econur_pdp_size_label($v);
+            $price = '<p class="ecn-pick-price"><b>' . wp_kses_post(wc_price($v->get_price())) . '</b>' . ($sale ? '<s>' . wp_kses_post(wc_price($v->get_regular_price())) . '</s>' : '') . ($size ? '<small>' . esc_html($size) . '</small>' : '') . '</p>';
+        }
+        $img = econur_lp_card_img($p, 'thumbnail', '104px', '');
+        $btn = $it['self']
+            ? ($buyable ? '<a class="ecn-lp-btn ecn-pick-btn" href="#ecn-cart-form"><span>Choose your pack</span>' . econur_lp_icon('up') . '</a>' : '')
+            : '<a class="ecn-lp-btn ecn-pick-btn" href="' . esc_url(get_permalink($p->get_id())) . '"><span>View Product</span>' . econur_lp_icon('arrow') . '</a>';
+        $opts .= '<button type="button" class="ecn-finder-opt" data-k="' . esc_attr($k) . '" aria-pressed="false" aria-controls="ecn-pick-' . esc_attr($k) . '">' . econur_lp_icon($it['icon']) . '<span>' . esc_html($it['title']) . '</span></button>';
+        $picks .= '<article class="ecn-pick" id="ecn-pick-' . esc_attr($k) . '" hidden>' . ($img ? '<span class="ecn-pick-img">' . $img . '</span>' : '')
+            . '<div class="ecn-pick-copy"><span class="ecn-pick-badge">' . esc_html($it['self'] ? 'You are viewing it · ' . $it['badge'] : $it['badge']) . '</span><h3 class="ecn-pick-name">' . esc_html($p->get_name()) . '</h3><p class="ecn-pick-why">' . esc_html($it['line']) . '</p>' . $price . '</div>'
+            . $btn . '</article>';
+    }
+    echo '<section class="ecn-help-finder" id="ecn-finder" aria-labelledby="ecn-finder-t">'
+        . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--bl') . econur_pdp_art('leaves', 'ecn-help-art ecn-help-art--br')
+        . '<div class="ecn-finder-intro"><span class="ecn-lp-kicker">' . econur_lp_icon('sprout') . 'Find your perfect bar</span>'
+        . '<h2 class="ecn-lp-h2 ecn-finder-h2" id="ecn-finder-t">Not sure which bar is right for you?</h2>'
+        . '<p class="ecn-finder-lead">Choose what your skin needs most and we&rsquo;ll guide you to the best ECONUR option.</p></div>'
+        . ($cards ? '<div class="ecn-finder-cards">' . $cards . '</div>' : '')
+        . '<div class="ecn-finder-cta"><a class="ecn-lp-btn ecn-finder-open" href="' . esc_url(home_url('/#finder')) . '" data-ecn-finder-open aria-controls="ecn-finder-guide"><span>Find Your Bar</span>' . econur_lp_icon('arrow') . '</a></div>'
+        . '<div class="ecn-finder-guide" id="ecn-finder-guide" hidden><div class="ecn-finder-ask"><p class="ecn-finder-q" id="ecn-finder-q">What is your main skin concern?</p>'
+        . '<div class="ecn-finder-opts" role="group" aria-labelledby="ecn-finder-q">' . $opts . '</div></div>'
+        . '<div class="ecn-finder-res" aria-live="polite"><p class="ecn-finder-hint">Choose a concern to see the matching ECONUR bar.</p>' . $picks . '</div></div>'
+        . '</section>';
 }
 
 /* ===== more favourites: the rest of the range (buyable first) ===== */

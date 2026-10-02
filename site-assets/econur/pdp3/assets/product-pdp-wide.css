@@ -45,26 +45,6 @@ body.single-product .ecn-pdp h3{ margin:0 !important; }
 .ecn-lp-rv blockquote{ margin:0 !important; padding:0 !important; font-size:12.32px; line-height:1.6; }
 body.single-product .ecn-pdp .ecn-lp-rv-date{ margin-top:auto !important; font-size:10.62px; }
 .ecn-lp-rv-all{ max-width:697px; margin:22.1px auto 0; }
-.ecn-lp-faq{ grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:34px; }
-.ecn-lp-faq-intro p{ margin-top:11.9px !important; font-size:13.17px; line-height:1.65; }
-.ecn-lp-faq-list{ border-radius:13.6px; }
-.ecn-lp-faq-i summary{ gap:13.6px; padding:13.6px 17px; font-size:12.75px; }
-.ecn-lp-faq-i summary svg{ width:17px; height:17px; }
-.ecn-lp-faq-a{ padding:0 17px 15.3px; }
-.ecn-lp-faq-a p{ font-size:12.32px; line-height:1.65; }
-.ecn-lp-finder{ grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:23.8px; margin-top:61.2px; padding:28.9px 34px; border-radius:18.7px; }
-.ecn-lp-finder .ecn-lp-art{ width:144.5px; }
-.ecn-lp-finder .ecn-lp-art--bl{ left:-59.5px; bottom:-34px; }
-.ecn-lp-finder .ecn-lp-art--br{ right:-59.5px; top:-28.9px; }
-.ecn-lp-finder-copy{ padding-left:25.5px; }
-.ecn-lp-finder-copy .ecn-lp-h2{ font-size:25.5px !important; }
-.ecn-lp-finder-copy p{ margin:8.5px 0 17px !important; font-size:12.75px; line-height:1.6; }
-.ecn-lp-concerns{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:10.2px; }
-.ecn-lp-concern{ gap:5.1px; min-width:0; padding:15.3px 8.5px; border-radius:13.6px; }
-.ecn-lp-concern span{ width:37.4px; height:37.4px; }
-.ecn-lp-concern span svg{ width:25.5px; height:25.5px; }
-.ecn-lp-concern b{ font-size:12.32px; }
-.ecn-lp-concern small{ font-size:10.2px; line-height:1.4; }
 .ecn-lp-final{ grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,.85fr); gap:25.5px; margin-top:68px; padding:28.9px 0; }
 .ecn-lp-final::before{ top:0; bottom:0; left:50%; width:100vw; }
 .ecn-lp-final-img{ margin:-28.9px 0; min-height:204px; }
@@ -143,7 +123,6 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-rel-prev{ left:-17px; }
 .ecn-rel-next{ right:-17px; }
 .ecn-toast{ left:50%; bottom:20.4px; gap:11.9px; max-width:calc(100vw - 32px); padding:10.2px 15.3px; border-radius:849.15px; font-size:11.9px; }
-#ecn-ingredients, #ecn-reviews, #ecn-faq{ scroll-margin-top:20.4px; }
 .ecn-lp-rv-star{ height:auto !important; }
 .ecn-lp-rv-bars .ecn-lp-rv-bar{ height:5.95px; border-radius:849.15px; }
 .ecn-lp-rv-grid.has-form{ grid-template-columns:272px minmax(0,1fr); }
@@ -156,7 +135,6 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-lp-rv .ecn-rev-ver svg{ width:11.9px; height:11.9px; }
 .ecn-rel-rating{ gap:6.8px; margin:5.1px 0 0 !important; font-size:11.05px; }
 .ecn-rel-rating .ecn-stars{ font-size:11.9px; }
-.ecn-lp-concern b{ font-size:12.75px; }
 .ecn-lp-final-trust li + li{ padding-left:13.6px; }
 .ecn-lp-rv-all.is-inline .comment-form > p{ width:auto !important; max-width:none !important; }
 .ecn-lp-rv-all.is-inline .comment-form input[type=text], .ecn-lp-rv-all.is-inline .comment-form input[type=email]{ width:100% !important; max-width:none !important; }
@@ -169,14 +147,12 @@ body.single-product .ecn-pdp .ecn-rel-add svg{ width:15.3px; height:15.3px; }
 .ecn-lp-sec{ margin-top:51px; }
 .ecn-lp-head{ margin-bottom:22.1px; }
 body.single-product .ecn-pdp .ecn-lp-lead{ font-size:13.6px; margin-top:6.8px; }
-.ecn-lp-finder{ margin-top:51px; padding:27.2px 37.4px; }
 .ecn-lp-final{ margin-top:54.4px; }
 .ecn-lp-rv-all.is-inline #review_form_wrapper{ padding:18.7px 22.1px !important; }
 .ecn-lp-rv-all.is-inline .comment-form p{ margin-bottom:10.2px !important; }
 .ecn-lp-rv-all.is-inline .comment-form textarea{ min-height:71.4px; height:71.4px; }
 .ecn-lp-rv-all.is-inline .comment-notes{ margin-bottom:5.1px !important; }
 .ecn-pdp-rev .comment-form-rating{ margin-bottom:8.5px !important; }
-.ecn-lp-faq-i summary{ padding:11.9px 18.7px; font-size:13.17px; }
 .ecn-lp-chip.is-routine svg{ width:15.3px; height:15.3px; }
 body.single-product .ecnf{ width:auto; max-width:1140px; margin:0 13.6px 17px; padding:0; }
 body.single-product .ecnf-card{ border-radius:18.7px; }
