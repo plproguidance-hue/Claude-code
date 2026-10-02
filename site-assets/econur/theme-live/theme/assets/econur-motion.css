@@ -1,0 +1,100 @@
+/* ECONUR motion layer 1.0
+   One motion language for the site: tokens, a scroll reveal used on the homepage (econur-motion.js adds the
+   classes; without JavaScript nothing is hidden), and quiet hover / press feedback. Only opacity and transforms move
+   (the individual translate / scale / rotate properties, so they never fight a component's own transform), nothing
+   changes layout. Hover effects only on devices with a real pointer; everything calms down for reduced motion.
+   Remove this file (and econur-motion.js) to return to the previous behaviour. */
+
+:root{
+  --ecn-motion-fast:200ms;
+  --ecn-motion-medium:450ms;
+  --ecn-motion-reveal:650ms;
+  --ecn-ease:cubic-bezier(.22, 1, .36, 1);
+  --ecn-rv-y:20px;      /* reveal distance */
+  --ecn-rv-step:80ms;   /* stagger between items of one group */
+}
+@media (max-width:767px){ :root{ --ecn-motion-reveal:520ms; --ecn-rv-y:12px; --ecn-rv-step:50ms; } }
+
+/* ---------- scroll reveal (homepage; classes added by econur-motion.js) ---------- */
+.ecn-rv.is-wait{ opacity:0 !important; translate:var(--rv-x, 0) calc(var(--ecn-rv-y) * var(--rv-k, 1)); scale:var(--rv-s, 1); }
+.ecn-rv.is-in{ transition:opacity var(--ecn-motion-reveal) var(--ecn-ease), translate var(--ecn-motion-reveal) var(--ecn-ease), scale var(--ecn-motion-reveal) var(--ecn-ease) !important;
+  transition-delay:calc(var(--rv-i, 0) * var(--ecn-rv-step)) !important; }
+
+/* ---------- botanical decoration: a slow breeze on three leaves only (desktop) ---------- */
+@keyframes ecn-breeze{ from{ translate:0 0; rotate:0deg; } to{ translate:0 -4px; rotate:.8deg; } }
+@media (min-width:1024px){
+  .home :is(.enr-rv-deco--tl, .ehc-faq > .ehc-art--leaves, .ehc-art--sprig){ animation:ecn-breeze 8s ease-in-out infinite alternate; }
+  .home .ehc-art--sprig{ animation-duration:9.5s; animation-delay:-3s; }
+  .home .enr-rv-deco--tl{ animation-duration:7s; animation-delay:-1.5s; }
+}
+
+/* ---------- floating WhatsApp: one quiet entrance, no pulsing ---------- */
+@keyframes ecn-fab-in{ from{ opacity:0; scale:.96; } to{ opacity:1; scale:1; } }
+.ecn-wa-float{ animation:ecn-fab-in var(--ecn-motion-medium) var(--ecn-ease) .6s backwards; }
+
+/* ---------- FAQ answers fade while they open / close (the height already animates) ---------- */
+.ehc-a-in{ opacity:0; transition:visibility 0s linear .26s, opacity .2s ease; }
+.ehc-item.is-open .ehc-a-in{ opacity:1; transition:visibility 0s linear 0s, opacity .3s ease .05s; }
+.ehc .ehc-q-text{ transition:color var(--ecn-motion-fast) ease; }
+.ehc-item.is-open .ehc-q-text{ color:var(--ehc-teal, #0D585F); }
+
+/* ---------- Find Your Bar: the selected concern changes smoothly ---------- */
+.ecn-fy .ecn-fy-tab{ transition:border-color .24s ease, background-color .24s ease, box-shadow .24s ease, color .24s ease, translate .24s var(--ecn-ease) !important; }
+.ecn-fy .ecn-fy-thumb{ transition:scale .24s var(--ecn-ease); }
+
+/* ---------- hover (mouse / trackpad only) ---------- */
+@media (hover:hover) and (pointer:fine){
+  /* primary buttons: one behaviour everywhere: lift 1px, soft shadow, arrow nudges */
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view){
+    transition:background-color var(--ecn-motion-fast) ease, color var(--ecn-motion-fast) ease, border-color var(--ecn-motion-fast) ease,
+      box-shadow var(--ecn-motion-fast) ease, translate var(--ecn-motion-fast) var(--ecn-ease), transform .12s ease; }
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view):hover{
+    translate:0 -1px; box-shadow:0 8px 18px rgba(13, 88, 95, .16); }
+  html body :is(.ecn-hx-cta, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn--primary, .ecnf-wa, .ecn-sh-link) svg{ transition:transform var(--ecn-motion-fast) var(--ecn-ease); }
+  html body :is(.ecn-hx-cta, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn--primary, .ecnf-wa):hover svg{ transform:translateX(3px); }
+
+  /* product cards (Bestsellers and Featured share one language): lift 3px, slightly deeper shadow, photo 1.02 */
+  html body :is(.ecn-pcard, .ecn-sec-sale .ecn-fp-card){ transition:box-shadow .28s var(--ecn-ease), transform .28s var(--ecn-ease), border-color .28s ease; }
+  html body :is(.ecn-pcard, .ecn-sec-sale .ecn-fp-card):hover{ transform:translateY(-3px); box-shadow:0 14px 30px rgba(52, 44, 30, .11); }
+  html body .ecn-pcard .ecn-pc-media{ overflow:hidden; }
+  html body :is(.ecn-pc-media, .ecn-fp-img) img{ transition:scale .5s var(--ecn-ease); }
+  html body :is(.ecn-pcard:hover .ecn-pc-media, .ecn-fp-card:hover .ecn-fp-img) img{ scale:1.02; }
+
+  /* category pills */
+  html body .ecn-chip{ transition:background-color var(--ecn-motion-fast) ease, border-color var(--ecn-motion-fast) ease, translate var(--ecn-motion-fast) var(--ecn-ease); }
+  html body .ecn-chip:hover{ translate:0 -1px; background-color:#F3F7F4; }
+  html body .ecn-chip-img img, html body .ecn-chip-img{ transition:scale var(--ecn-motion-fast) var(--ecn-ease); }
+  html body .ecn-chip:hover .ecn-chip-img{ scale:1.04; }
+
+  /* "Two promises": photo 1.015, copy lifts 1px */
+  html body #packaging .ecn-usp-tile img, html body .ecn-usp-tile img{ transition:transform .6s var(--ecn-ease); }
+  html body #packaging .ecn-usp-tile:hover img, html body .ecn-usp-tile:hover img{ transform:scale(1.015); }
+  html body .ecn-usp-copy{ transition:translate .4s var(--ecn-ease); }
+  html body .ecn-usp-tile:hover .ecn-usp-copy{ translate:0 -1px; }
+
+  /* Find Your Bar concerns */
+  html body .ecn-fy .ecn-fy-tab:hover{ translate:2px 0; }
+  html body .ecn-fy .ecn-fy-tab:hover .ecn-fy-thumb{ scale:1.03; }
+
+  /* header icons (the social circles already lift) */
+  html body :is(.ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container){
+    transition:color var(--ecn-motion-fast) ease, translate var(--ecn-motion-fast) var(--ecn-ease); }
+  html body :is(.ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container):hover{ translate:0 -1px; }
+}
+
+/* ---------- touch: brief press feedback instead of hover ---------- */
+@media (hover:none){
+  html body :is(.ecn-pcard, .ecn-fp-card, .ecn-chip, .ecn-fy-tab, .ecn-usp-tile){ transition:scale .14s ease; }
+  html body :is(.ecn-pcard, .ecn-fp-card, .ecn-chip, .ecn-fy-tab, .ecn-usp-tile):active{ scale:.985; }
+}
+
+/* ---------- reduced motion: no reveal offsets, breeze, entrance or lifts ---------- */
+@media (prefers-reduced-motion:reduce){
+  .ecn-rv.is-wait{ opacity:1 !important; translate:none; scale:none; }
+  .home :is(.enr-rv-deco--tl, .ehc-faq > .ehc-art--leaves, .ehc-art--sprig), .ecn-wa-float{ animation:none !important; }
+  html body :is(.ecn-hx-cta, .ecn-pc-btn, .ecn-fp-add, .ecn-sb-cta, .ecn-fy-cta, .ehc-btn, .ecnf-wa, .ecn-lp-btn, .ecn-rel-add, .ecn-rel-view, .ecn-chip, .ecn-fy-tab,
+    .ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container):hover{ translate:none; }
+  html body :is(.ecn-pcard, .ecn-sec-sale .ecn-fp-card):hover{ transform:none; }
+  html body :is(.ecn-pc-media, .ecn-fp-img, .ecn-usp-tile) img, html body :is(.ecn-chip-img, .ecn-fy-thumb){ scale:none !important; transform:none !important; }
+  html body :is(.ecn-pcard, .ecn-fp-card, .ecn-chip, .ecn-fy-tab, .ecn-usp-tile):active{ scale:none; }
+}

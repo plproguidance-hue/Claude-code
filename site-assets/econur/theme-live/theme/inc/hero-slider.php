@@ -4,6 +4,8 @@
  * v2 (29 Sep 2026): photo banners with real HTML copy (eyebrow, heading, text, CTA) over the clean left side,
  * a desktop + optional mobile image per slide, fade transition, 5.5 s autoplay (pauses on hover / focus / touch,
  * with a pause button), swipe, arrows and one dot per slide.
+ * Motion pass (Oct 2026): 4 s per slide, 650 ms soft crossfade, a very slow 1.00 -> 1.02 drift on the photo (desktop),
+ * and the copy (eyebrow, heading, text, button) rises in one after another when a new slide comes in.
  * Slides live in the option `econur_hero_slides`, edited under Appearance > Hero Slides.
  * Previous version (4 image-only slides): inc/hero-slider.php.bak-hero5-20260929
  */
@@ -97,8 +99,14 @@ function econur_hero_css() {
 .ecn-hx{ position:relative; box-sizing:border-box; width:calc(100% - 24px); max-width:1440px; margin:12px auto 0; border-radius:16px; overflow:hidden; background:#F4EEE4; isolation:isolate; font-family:var(--ecn-font-body); color:var(--ecn-ink); }
 .ecn-hx *{ box-sizing:border-box; }
 .ecn-hx-track{ display:grid; grid-template-columns:minmax(0,1fr); width:100%; }
-.ecn-hx-slide{ grid-area:1 / 1; position:relative; width:100%; display:flex; flex-direction:column; min-width:0; opacity:0; visibility:hidden; transition:opacity .6s ease, visibility 0s linear .6s; }
-.ecn-hx-slide.is-on{ opacity:1; visibility:visible; transition:opacity .6s ease, visibility 0s linear 0s; z-index:1; }
+.ecn-hx-slide{ grid-area:1 / 1; position:relative; width:100%; display:flex; flex-direction:column; min-width:0; opacity:0; visibility:hidden; transition:opacity .65s ease-in-out, visibility 0s linear .65s; }
+.ecn-hx-slide.is-on{ opacity:1; visibility:visible; transition:opacity .65s ease-in-out, visibility 0s linear 0s; z-index:1; }
+/* the copy of a newly shown slide rises in, item by item (only after a slide change, never on page load) */
+@keyframes ecn-hx-in{ from{ opacity:0; translate:0 14px; } to{ opacity:1; translate:0 0; } }
+.ecn-hx.is-moved .ecn-hx-slide.is-on .ecn-hx-copy > *{ animation:ecn-hx-in .55s cubic-bezier(.22,1,.36,1) .12s both; }
+.ecn-hx.is-moved .ecn-hx-slide.is-on .ecn-hx-copy > :nth-child(2){ animation-delay:.2s; }
+.ecn-hx.is-moved .ecn-hx-slide.is-on .ecn-hx-copy > :nth-child(3){ animation-delay:.28s; }
+.ecn-hx.is-moved .ecn-hx-slide.is-on .ecn-hx-copy > :nth-child(4){ animation-delay:.36s; }
 .ecn-hx-media{ position:relative; overflow:hidden; height:clamp(190px, 57vw, 226px); background:#F4EEE4; }
 .ecn-hx.has-mobile .ecn-hx-media{ height:auto; aspect-ratio:var(--ecn-hx-m-ar); }
 .ecn-hx-media picture{ display:contents; }
@@ -108,7 +116,7 @@ function econur_hero_css() {
 .ecn-hx-eyebrow{ margin:0 0 12px !important; font-family:var(--ecn-font-body); font-size:10.5px; font-weight:600; line-height:1.3; letter-spacing:.16em; text-transform:uppercase; color:var(--ecn-olive-dark); }
 .ecn-hx-title{ margin:0 !important; font-family:var(--ecn-font-head); font-size:clamp(38px, 2.5vw + 30px, 42px); font-weight:500; line-height:.98; letter-spacing:-.015em; color:var(--ecn-ink); }
 .ecn-hx-text{ margin:16px 0 0 !important; font-family:var(--ecn-font-body); font-size:15px; line-height:1.5; color:#55524A; }
-.ecn-hx-cta{ display:inline-flex; align-items:center; gap:10px; min-height:48px; margin-top:20px; padding:0 20px; border-radius:10px; background:var(--ecn-olive-dark); color:#FFFDF9 !important; font-family:var(--ecn-font-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; text-decoration:none !important; transition:background-color .22s ease; }
+.ecn-hx-cta{ display:inline-flex; align-items:center; gap:10px; min-height:48px; margin-top:20px; padding:0 20px; border-radius:10px; background:var(--ecn-olive-dark); color:#FFFDF9 !important; font-family:var(--ecn-font-body); font-size:14px; font-weight:600; line-height:1; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; text-decoration:none !important; transition:background-color .22s ease, box-shadow .22s ease, translate .22s cubic-bezier(.22,1,.36,1); }
 .ecn-hx-cta svg{ width:16px; height:16px; flex:none; transition:transform .22s ease; }
 .ecn-hx-cta:hover, .ecn-hx-cta:focus-visible{ background:#094A50; }
 .ecn-hx-cta:hover svg, .ecn-hx-cta:focus-visible svg{ transform:translateX(3px); }
@@ -117,7 +125,7 @@ function econur_hero_css() {
 .ecn-hx-ctl{ display:flex; align-items:center; justify-content:center; padding:16px 12px 12px; }
 .ecn-hx-dots{ display:flex; align-items:center; }
 .ecn-hx-dots button, .ecn-hx-pause{ -webkit-appearance:none; appearance:none; position:relative; display:grid; place-items:center; width:24px; height:24px; margin:0; padding:0; border:0; border-radius:6px; background:none !important; box-shadow:none !important; color:var(--ecn-ink); cursor:pointer; }
-.ecn-hx-dots button::before{ content:""; width:6px; height:6px; border-radius:999px; background:#BDB3A5; transition:width .3s ease, background-color .3s ease; }
+.ecn-hx-dots button::before{ content:""; width:6px; height:6px; border-radius:999px; background:#BDB3A5; transition:width .3s cubic-bezier(.22,1,.36,1), background-color .3s ease; }
 .ecn-hx-dots button.is-on{ width:32px; }
 .ecn-hx-dots button.is-on::before{ width:20px; background:var(--ecn-olive-dark); }
 .ecn-hx-pause{ margin-left:2px; }
@@ -156,16 +164,23 @@ function econur_hero_css() {
   .ecn-hx-copy{ left:clamp(70px, 5.2%, 88px); }
 }
 @media (min-width:1024px) and (max-width:1279px){ .ecn-hx-eyebrow{ margin-bottom:10px !important; font-size:11px; } .ecn-hx-title{ font-size:40px; } .ecn-hx-text{ margin-top:12px !important; font-size:14px; line-height:1.45; } .ecn-hx-cta{ margin-top:18px; min-height:44px; padding:0 18px; font-size:13px; } }
-@media (prefers-reduced-motion: reduce){ .ecn-hx-slide, .ecn-hx-slide.is-on, .ecn-hx-cta, .ecn-hx-cta svg{ transition:none !important; } }
+/* desktop: the visible photo drifts from 1.00 to 1.02 over the slide; it resets once it has faded out */
+@media (min-width:768px){
+  .ecn-hx .ecn-hx-media img{ scale:1; transition:scale 0s linear .7s; }
+  .ecn-hx .ecn-hx-slide.is-kb .ecn-hx-media img{ scale:1.02; transition:scale 5.5s linear; }
+}
+@media (hover:hover) and (pointer:fine){ .ecn-hx-cta:hover{ translate:0 -1px; box-shadow:0 8px 18px rgba(13,88,95,.16); } }
+@media (prefers-reduced-motion: reduce){ .ecn-hx-slide, .ecn-hx-slide.is-on, .ecn-hx-cta, .ecn-hx-cta svg{ transition:none !important; } .ecn-hx .ecn-hx-copy > *{ animation:none !important; } .ecn-hx .ecn-hx-media img{ scale:1 !important; transition:none !important; } .ecn-hx-cta:hover{ translate:none; } }
 </style>';
 }
 
 function econur_hero_js() {
     return '<script>(function(){var s=document.currentScript&&document.currentScript.previousElementSibling;if(!s||!s.classList.contains("ecn-hx"))return;
-var sl=[].slice.call(s.querySelectorAll(".ecn-hx-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hx-dots button")),pb=s.querySelector(".ecn-hx-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=5500,
+var sl=[].slice.call(s.querySelectorAll(".ecn-hx-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hx-dots button")),pb=s.querySelector(".ecn-hx-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=4000,
 rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(rm){paused=true;s.classList.add("is-paused");pb.setAttribute("aria-pressed","true");pb.setAttribute("aria-label","Play slideshow");}
 function wake(el){[].forEach.call(el.querySelectorAll("img[loading=lazy]"),function(i){i.loading="eager";});}
-function go(i){i=(i+n)%n;if(i===cur)return;var a=sl[cur],b=sl[i];wake(b);a.classList.remove("is-on");a.setAttribute("aria-hidden","true");a.inert=true;b.classList.add("is-on");b.removeAttribute("aria-hidden");b.inert=false;
+function kb(el){requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("is-kb");});});}
+function go(i){i=(i+n)%n;if(i===cur)return;var a=sl[cur],b=sl[i];wake(b);s.classList.add("is-moved");setTimeout(function(){if(!a.classList.contains("is-on"))a.classList.remove("is-kb");},700);kb(b);a.classList.remove("is-on");a.setAttribute("aria-hidden","true");a.inert=true;b.classList.add("is-on");b.removeAttribute("aria-hidden");b.inert=false;
 d.forEach(function(x,k){x.classList.toggle("is-on",k===i);if(k===i){x.setAttribute("aria-current","true");}else{x.removeAttribute("aria-current");}});cur=i;wake(sl[(i+1)%n]);}
 function stop(){if(timer){clearTimeout(timer);timer=null;}}function run(){stop();if(paused||hover||document.hidden)return;timer=setTimeout(function(){go(cur+1);run();},DELAY);}
 d.forEach(function(b,k){b.addEventListener("click",function(){go(k);run();});});
@@ -179,7 +194,7 @@ s.addEventListener("touchend",function(e){hover=false;if(x0!==null){var t=e.chan
 s.addEventListener("touchcancel",function(){hover=false;x0=null;run();},{passive:true});
 document.addEventListener("visibilitychange",run);
 if("IntersectionObserver" in window){new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run();}else{stop();}});},{threshold:.25}).observe(s);}else{run();}
-window.addEventListener("load",function(){wake(sl[1%n]);});})();</script>';
+window.addEventListener("load",function(){wake(sl[1%n]);});if(!rm)kb(sl[0]);})();</script>';
 }
 
 /* ---------------------------------------------------------------- Appearance > Hero Slides */

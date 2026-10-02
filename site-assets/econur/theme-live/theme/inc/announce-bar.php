@@ -7,7 +7,7 @@
  *
  * Rotation (1.1): each sentence of that text is one message. The messages sit on top of each other in one line box,
  * so the bar keeps its height and width; one is shown at a time and they swap with a soft fade
- * (about 3s on screen, 450ms out, then 450ms in). Without JavaScript the first message stays. Screen readers read
+ * (about 2.5s on screen, 400ms out, then 400ms in). Without JavaScript the first message stays. Screen readers read
  * every message (the hidden ones are transparent, not removed).
  * Reduced motion: the messages swap without the fade.
  */
@@ -68,8 +68,8 @@ html body .ecn.ecn-announce.ecn-announce--top:not(#ecn-ab){ display:block; box-s
   font-size:14px !important; font-weight:600; line-height:20px !important; letter-spacing:0; text-align:center; white-space:nowrap; }
 html body .ecn.ecn-announce--top .ecn-ab-track{ display:inline-grid; vertical-align:top; max-width:100%; }
 html body .ecn.ecn-announce--top .ecn-ab-msg{ grid-area:1 / 1; justify-self:center; min-width:0; max-width:100%; overflow:hidden; text-overflow:ellipsis; font-weight:600; opacity:0;
-  transition:opacity .45s ease-in-out; }
-html body .ecn.ecn-announce--top .ecn-ab-msg.is-on{ opacity:1; transition:opacity .45s ease-in-out .45s; }
+  transition:opacity .4s ease-in-out; }
+html body .ecn.ecn-announce--top .ecn-ab-msg.is-on{ opacity:1; transition:opacity .4s ease-in-out .4s; }
 /* the truck icon travels with each message, so it stays next to the text and fades with it */
 html body .ecn.ecn-announce--top:has(.ecn-ab-track)::before{ display:none; }
 html body .ecn.ecn-announce--top .ecn-ab-msg::before{ content:""; display:inline-block; width:15px; height:15px; margin:0 7px 0 0; vertical-align:-3px; background-color:currentColor;
@@ -89,7 +89,7 @@ add_action('wp_footer', function () {
     ?>
 <script id="econur-announce-js">
 (function () {
-  var HOLD = 3000, FADE = 450; // on screen ~3s, then 450ms out and 450ms in (see the CSS transitions)
+  var HOLD = 2500, FADE = 400; // on screen ~2.5s, then 400ms out and 400ms in (see the CSS transitions)
   function start() {
     var bar = document.querySelector('.ecn-announce--top');
     var msgs = bar ? bar.querySelectorAll('.ecn-ab-msg') : [];

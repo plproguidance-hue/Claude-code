@@ -24,6 +24,7 @@ require_once get_stylesheet_directory() . '/inc/announce-bar.php';
 require_once get_stylesheet_directory() . '/inc/help-cta.php';
 require_once get_stylesheet_directory() . '/inc/site-footer.php';
 require_once get_stylesheet_directory() . '/inc/header-social.php'; // Facebook / Instagram / TikTok beside the desktop header icons
+require_once get_stylesheet_directory() . '/inc/motion.php'; // motion tokens, homepage scroll reveal, hover / press feedback
 require_once get_stylesheet_directory() . '/inc/mobile-home.php';
 
 // econur-logo-painted-width: the official ECONUR logo (29 Sep 2026) keeps transparent space around the wordmark, so the header
