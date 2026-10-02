@@ -2069,3 +2069,12 @@ body.single-product .ecn-pdp .ecn-favs .ecn-rel-nav:disabled{ opacity:.4; cursor
 /* floating WhatsApp button: lifted only where the phone sticky bar exists (below 768px); from 768px up it sits where it
    does on the homepage, so it never covers the footer's own "Chat on WhatsApp" button */
 @media (min-width:768px){ body.single-product .ecn-wa-float{ bottom:24px; } }
+/* ===================== v7.17: global consistency pass — same button system as the homepage =====================
+   Primary = teal pill (48-52px), secondary = cream pill with an outline, nothing smaller than 40px to tap on phones. */
+body.single-product .ecn-pdp .ecn-lp-routine .ecn-lp-rsum .ecn-lp-btn{ border-radius:999px !important; font-size:16px !important; font-weight:600 !important; }
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra .ecn-pdp-wa{ height:48px !important; }
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-qty-btn{ width:40px; height:40px; }
+  .ecn-g-nav{ width:42px; height:42px; margin-top:-21px; }
+  body.single-product .ecn-pdp .ecn-favs .ecn-rel-size{ min-height:40px; }
+}

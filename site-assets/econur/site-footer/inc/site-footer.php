@@ -157,8 +157,15 @@ add_action('wp', function () {
 });
 
 add_action('wp_enqueue_scripts', function () {
-    $v = '1.1.1';
+    $v = '1.2.0';
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-footer', $u . 'site-footer.css', array(), $v);
     wp_register_script('econur-footer', $u . 'site-footer.js', array(), $v, array('in_footer' => true, 'strategy' => 'defer'));
+    // shared UI polish (eyebrows, button sizes, small labels); printed last in <head>, below
+    wp_register_style('econur-ui', $u . 'econur-ui.css', array(), '1.0.0');
 }, 20);
+
+// print the shared UI layer after the Customizer CSS (wp_head priority 101) so it can align earlier styles
+add_action('wp_head', function () {
+    if (!is_admin() && wp_style_is('econur-ui', 'registered')) wp_print_styles('econur-ui');
+}, 120);

@@ -71,6 +71,8 @@ HERO = ('ast-container', 'ecn-lp-hero', '.ecn-g', 'ecn-lp-badges', 'ecn-lp-card'
         'single_add_to_cart_button', 'ecn-pdp-buynow', 'ecn-pdp-wa', 'ecn-lp-service', 'ecn-pdp-coming', 'variations',
         'woocommerce-variation', 'ecn-pdp-firstrev', 'ecn-atc-price', '#primary', 'reset_variations', 'ecn-flag',
         'ecn-lp-extra', 'ecn-lp-buycol', 'ecn-lp-trust', 'ecn-pdp-newstar',
+        # the Final CTA trust line would drop below 11px if scaled
+        'ecn-lp-final-trust',
         # Complete Your Routine and Why [product] keep the approved mockup size too
         'ecn-lp-routine', 'ecn-lp-rcard', 'ecn-lp-rimg', 'ecn-lp-rstep', 'ecn-lp-plus', 'ecn-lp-rsum', 'ecn-lp-rtotal', 'ecn-lp-rprice',
         'ecn-lp-rchecks', 'ecn-lp-kicker', 'ecn-lp-why', 'ecn-lp-ing', 'ecn-lp-band',
