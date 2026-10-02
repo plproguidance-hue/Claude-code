@@ -1143,3 +1143,40 @@ body.single-product .ecn-pdp .ecn-lp-hero form.cart .single_add_to_cart_button{ 
   body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-buynow, body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa{ gap:6px; padding:0 8px !important; font-size:14.5px !important; white-space:nowrap; }
   body.single-product .ecn-pdp .ecn-lp-extra .ecn-pdp-wa svg{ width:18px; height:18px; }
 }
+
+/* ===================== v7.7.2: benefit strip as a floating overlay inside the photo (nothing else changed) ===================== */
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ justify-self:center; align-self:end; width:86%; margin:0 0 18px !important; padding:0 !important; min-height:58px;
+    border:1px solid rgba(232,222,204,.85); border-radius:15px; overflow:hidden; background:rgba(255,253,248,.94);
+    box-shadow:0 8px 24px rgba(30,24,14,.10), 0 1px 3px rgba(30,24,14,.06); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:row; justify-content:center; align-items:center; gap:8px; min-height:58px; padding:6px 12px; font-size:13.5px; font-weight:500; line-height:1.25; color:#2F3B37; text-align:left; white-space:normal; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li + li{ border-left:1px solid rgba(214,203,182,.7); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li + li::before{ content:none; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li span{ min-width:0; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ flex:none; width:28px; height:28px; padding:5px; border:1px solid #CFE0DB; border-radius:50%; background:#F3F8F6; color:var(--pd-teal); }
+}
+/* narrower two-column screens: slightly wider bar, icon above the label so text stays readable */
+@media (min-width:900px) and (max-width:1199px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ width:90%; margin-bottom:14px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:3px; min-height:62px; padding:6px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:24px; height:24px; padding:4px; }
+}
+/* phones: a compact strip directly under the photo (an overlay would cover too much of a small photo) */
+@media (max-width:899px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ border-color:#ECE4D6; border-radius:14px; background:#FFFEFB; box-shadow:0 2px 8px rgba(30,24,14,.04); }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ font-weight:500; }
+}
+@media (min-width:900px){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges{ inset:auto; left:auto; right:auto; top:auto; bottom:auto; transform:none; } }
+@media (min-width:900px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:8px; padding:6px 8px; font-size:13.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li span{ text-wrap:balance; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:26px; height:26px; padding:5px; }
+}
+@media (min-width:1200px) and (max-width:1439px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ gap:6px; padding:6px 6px; font-size:12.5px; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:24px; height:24px; padding:4px; }
+}
+@media (min-width:900px) and (max-width:1199px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges li{ flex-direction:column; gap:3px; min-height:60px; padding:6px 4px; font-size:11.5px; text-align:center; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-badges svg{ width:22px; height:22px; padding:4px; }
+}
