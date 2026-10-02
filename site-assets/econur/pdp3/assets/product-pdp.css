@@ -1591,8 +1591,8 @@ body.single-product .ecn-pdp .ecn-rv::before{ content:""; position:absolute; z-i
   background:radial-gradient(60% 70% at 8% 10%, rgba(214,231,205,.55) 0%, rgba(214,231,205,0) 70%), radial-gradient(55% 65% at 94% 12%, rgba(214,231,205,.5) 0%, rgba(214,231,205,0) 70%), radial-gradient(70% 60% at 50% 100%, rgba(226,238,220,.6) 0%, rgba(226,238,220,0) 70%), linear-gradient(180deg, #F7F7EF 0%, #FAF8F1 100%); }
 body.single-product .ecn-pdp .ecn-rv > *:not(.ecn-lp-art):not(.ecn-lp-fleaf){ position:relative; z-index:1; }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art{ position:absolute; z-index:0; opacity:.8; filter:saturate(.85) contrast(.92) brightness(1.04); -webkit-mask-image:none; mask-image:none; pointer-events:none; }
-body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tl{ top:-6px; left:calc(50% - 50vw - 30px); width:300px; transform:rotate(180deg) scaleX(-1); }
-body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tr{ top:-6px; right:calc(50% - 50vw - 30px); width:300px; transform:rotate(180deg); }
+body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tl{ top:-18px; left:calc(50% - 50vw - 40px); width:250px; transform:rotate(-4deg); }
+body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--tr{ top:-14px; right:calc(50% - 50vw - 40px); width:250px; transform:scaleX(-1) rotate(-6deg); }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--bl{ bottom:30px; left:calc(50% - 50vw - 90px); width:190px; opacity:.6; transform:rotate(-30deg); }
 body.single-product .ecn-pdp .ecn-rv .ecn-rv-art--br{ bottom:70px; right:calc(50% - 50vw - 90px); width:170px; opacity:.55; transform:scaleX(-1) rotate(-40deg); }
 body.single-product .ecn-pdp .ecn-rv .ecn-lp-fleaf.is-a{ top:110px; left:15%; transform:rotate(-30deg); }
@@ -1629,9 +1629,10 @@ body.single-product .ecn-pdp .ecn-rv-intro h3{ font-size:27px !important; font-w
 .ecn-rv-write:hover{ background:#0B3C3E !important; }
 .ecn-rv-write svg{ width:21px; height:21px; stroke-width:1.8; }
 .ecn-rv-micro{ display:flex; align-items:center; justify-content:center; gap:10px; margin:12px 0 0 !important; font-size:14.5px; color:#5E615B; }
-.ecn-rv-micro i{ position:relative; width:10px; height:16px; }
+.ecn-rv-micro i{ position:relative; width:10px; height:18px; }
 .ecn-rv-micro i::before, .ecn-rv-micro i::after{ content:""; position:absolute; left:0; width:9px; height:1.6px; border-radius:2px; background:#E3A23A; }
-.ecn-rv-micro i::before{ top:4px; transform:rotate(-24deg); } .ecn-rv-micro i::after{ top:11px; transform:rotate(24deg); }
+.ecn-rv-micro i::before{ top:3px; transform:rotate(-30deg); } .ecn-rv-micro i::after{ top:13px; transform:rotate(30deg); }
+.ecn-rv-micro i{ background:linear-gradient(#E3A23A,#E3A23A) 1px 8px / 8px 1.6px no-repeat; }
 .ecn-rv-micro i:last-child{ transform:scaleX(-1); }
 /* summary (once reviews exist) */
 .ecn-rv-score{ display:flex; align-items:center; gap:18px; padding-bottom:18px; border-bottom:1px solid #EEE8DC; }
@@ -1647,13 +1648,15 @@ body.single-product .ecn-pdp .ecn-rv-intro h3{ font-size:27px !important; font-w
 
 /* right: the review form */
 .ecn-rv-formcard{ position:relative; padding:24px 28px 26px; }
-.ecn-rv-top{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,380px); grid-template-areas:"head ctx" "rate ctx"; column-gap:24px; align-items:start; }
+.ecn-rv-top{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,344px); grid-template-areas:"head ctx" "rate ctx"; column-gap:24px; align-items:start; }
 .ecn-rv-head{ grid-area:head; }
 body.single-product .ecn-pdp .ecn-rv-head h3{ margin-top:6px !important; font-size:29px !important; font-weight:500 !important; line-height:1.15 !important; letter-spacing:-.01em; }
-.ecn-rv-note{ margin:8px 0 0 !important; font-size:13.5px; line-height:1.45; color:#5E615B; }
+.ecn-rv-note{ margin:8px 0 0 !important; font-size:13px; line-height:1.45; color:#5E615B; }
 .ecn-rv-formcard .required{ color:#C0392B; font-weight:600; }
 .ecn-rv-ctx{ grid-area:ctx; position:relative; height:164px; margin:0 !important; border-radius:14px; }
-.ecn-rv-ctx img{ display:block; width:100% !important; height:100% !important; border-radius:14px; object-fit:cover; object-position:42% 64%; }
+.ecn-rv-zoom{ position:absolute; inset:0; overflow:hidden; border-radius:14px; background:#EFE6D6; }
+/* the product's card photo, framed on its bar (same composition on every ECONUR card photo) */
+.ecn-rv-zoom img{ position:absolute; left:50%; top:50%; width:170% !important; max-width:none !important; height:auto !important; transform:translate(-31%, -61%); }
 .ecn-rv-ctx figcaption{ position:absolute; left:-58px; bottom:18px; display:flex; flex-direction:column; gap:1px; padding:12px 18px; border-radius:12px; background:#E7F0E2; box-shadow:0 6px 16px rgba(52,44,30,.08); }
 .ecn-rv-ctx figcaption span{ font-size:13.5px; color:#3E4A40; }
 .ecn-rv-ctx figcaption b{ font-size:15px; font-weight:700; color:#1E3B33; }
@@ -1679,7 +1682,7 @@ body.single-product .ecn-pdp .ecn-rv-head h3{ margin-top:6px !important; font-si
 .ecn-rv-form .logged-in-as{ font-size:13.5px; color:#5E615B; }
 .ecn-rv-ta{ position:relative; display:block; }
 .ecn-rv-form textarea, .ecn-rv-form input[type="text"], .ecn-rv-form input[type="email"]{ display:block; width:100% !important; margin:0 !important; border:1px solid #DDD6C9 !important; border-radius:12px !important; background:#fff !important; color:#24302B !important; font-size:15px !important; line-height:1.5 !important; box-shadow:none !important; transition:border-color .15s ease, box-shadow .15s ease; }
-.ecn-rv-form textarea{ min-height:104px; height:104px; padding:13px 16px 26px !important; resize:vertical; }
+.ecn-rv-form textarea{ min-height:96px; height:96px; padding:13px 16px 26px !important; resize:vertical; }
 .ecn-rv-form input[type="text"], .ecn-rv-form input[type="email"]{ height:48px; padding:0 16px !important; }
 .ecn-rv-form textarea::placeholder, .ecn-rv-form input::placeholder{ color:#8C8F88; opacity:1; }
 .ecn-rv-form textarea:focus, .ecn-rv-form input[type="text"]:focus, .ecn-rv-form input[type="email"]:focus{ outline:0 !important; border-color:#2E7A6A !important; box-shadow:0 0 0 3px rgba(46,122,106,.14) !important; }

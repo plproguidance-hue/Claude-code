@@ -751,8 +751,8 @@ function econur_lp_reviews($product) {
                 'email'  => '<p class="ecn-rv-f ecn-rv-f--email"><label for="email">Email ' . $req . '</label><input id="email" name="email" type="email" autocomplete="email" placeholder="Your email address" required maxlength="100"><span class="ecn-rv-err" data-for="email" hidden>Please enter a valid email address.</span></p>',
             ),
             'submit_button' => '<button name="%1$s" type="submit" id="%2$s" class="%3$s">' . econur_lp_icon('send') . '<span>%4$s</span></button>',
-            'submit_field' => ($photos ? '<div class="ecn-rv-photos"><span class="ecn-rv-photos-ic">' . econur_lp_icon('camera') . '</span><div class="ecn-rv-photos-tx"><b>Add photos (optional)</b><span>Show how you use the product or your results. Up to 3 photos, JPG, PNG or WebP, 5 MB each.</span><ul class="ecn-rv-thumbs" aria-live="polite"></ul><span class="ecn-rv-err" data-for="photos" hidden></span></div>'
-                . '<label class="ecn-rv-pick">' . econur_lp_icon('image') . '<span>Choose Photos</span><input type="file" name="ecn_review_photos[]" accept="image/jpeg,image/png,image/webp" multiple class="ecn-rv-file"></label></div>' : '')
+            'submit_field' => ($photos ? '<div class="ecn-rv-photos"><span class="ecn-rv-photos-ic">' . econur_lp_icon('camera') . '</span><div class="ecn-rv-photos-tx"><b>Add photos (optional)</b><span>Show how you use the product or your results.</span><span class="screen-reader-text">Up to 3 photos, JPG, PNG or WebP, 5 MB each.</span><ul class="ecn-rv-thumbs" aria-live="polite"></ul><span class="ecn-rv-err" data-for="photos" hidden></span></div>'
+                . '<label class="ecn-rv-pick" title="Up to 3 photos: JPG, PNG or WebP, 5 MB each">' . econur_lp_icon('image') . '<span>Choose Photos</span><input type="file" name="ecn_review_photos[]" accept="image/jpeg,image/png,image/webp" multiple class="ecn-rv-file"></label></div>' : '')
                 . '<p class="ecn-rv-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="ecn_rv_hp" value="" tabindex="-1" autocomplete="off"></label></p>'
                 . '<p class="form-submit">%1$s %2$s</p>',
         );
@@ -761,7 +761,7 @@ function econur_lp_reviews($product) {
         $img = econur_lp_card_img($product, 'medium_large', '(min-width: 900px) 420px, calc(100vw - 64px)', '');
         $formcard = '<div class="ecn-rv-card ecn-rv-formcard" id="ecn-rv-form">'
             . '<div class="ecn-rv-top"><div class="ecn-rv-head"><h3>' . esc_html('Review the ' . $name) . '</h3><p class="ecn-rv-note">Your email address will not be published. Required fields are marked <span class="required">*</span></p></div>'
-            . ($img ? '<figure class="ecn-rv-ctx">' . $img . '<figcaption><span>Reviewing:</span><b>' . esc_html($name) . '</b></figcaption></figure>' : '')
+            . ($img ? '<figure class="ecn-rv-ctx"><span class="ecn-rv-zoom">' . $img . '</span><figcaption><span>Reviewing:</span><b>' . esc_html($name) . '</b></figcaption></figure>' : '')
             . '<fieldset class="ecn-rv-rate"><legend>Your rating ' . $req . '</legend><div class="ecn-rv-stars">' . $stars . '</div><span class="ecn-rv-err" data-for="rating" hidden>Please choose a star rating.</span></fieldset></div>'
             . '<div class="ecn-rv-done" role="status" aria-live="polite" tabindex="-1" hidden></div>' . $form . '</div>';
     } elseif ($open) {
@@ -792,7 +792,7 @@ function econur_lp_reviews($product) {
     }
 
     echo '<section class="ecn-lp-sec ecn-lp-reviews ecn-rv" id="ecn-reviews" aria-labelledby="ecn-lp-rv-t">'
-        . econur_pdp_art('sprig', 'ecn-lp-art ecn-rv-art ecn-rv-art--tl') . econur_pdp_art('sprig', 'ecn-lp-art ecn-rv-art ecn-rv-art--tr') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--bl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--br')
+        . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--tl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--tr') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--bl') . econur_pdp_art('leaves', 'ecn-lp-art ecn-rv-art ecn-rv-art--br')
         . econur_lp_fleaf('is-a') . econur_lp_fleaf('is-b')
         . '<div class="ecn-lp-head"><span class="ecn-lp-kicker">' . econur_lp_rv_star(true) . ($rc > 0 ? 'Real stories. Real results.' : 'Your experience matters') . '</span><h2 class="ecn-lp-h2" id="ecn-lp-rv-t">Loved by Customers</h2>'
         . '<p class="ecn-lp-lead">' . esc_html('Tried the ' . $name . '? Share your experience to help other customers choose.') . '</p></div>'
