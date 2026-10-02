@@ -141,3 +141,6 @@ html body :is(.ecn-announce--top, .ecn-pc-more, .ecn-pc-badge, .ecn-sb-eyebrow, 
   .ecn-lp-pack-badge, .ecn-lp-trust li span, .ecn-lp-pill, .ecn-rel-soon, .ecn-need-go, .ecn-pick-badge, .ecn-lp-final-trust small,
   .enr-rv-trust-copy > span, .ecn-pdp-stock, .ecn-pdp-firstrev, .ecn-pdp-rating span, .ecn-lp-save):lang(bn):not(#ecn-bn){ font-size:13px !important; line-height:1.35 !important; }
 html body :is(.ecn-lp-pack-badge, .ecn-pc-badge, .ecn-rel-soon):lang(bn):not(#ecn-bn){ height:auto !important; min-height:22px; padding-top:2px !important; padding-bottom:2px !important; }
+html body :is(.ecn-need-go, .ecn-pick-badge) > span:lang(bn):not(#ecn-bn){ font-size:13px !important; }
+/* the closing call to action keeps 15px labels on wide screens (the wide stylesheet scales that block to 85%) */
+html body.single-product .ecn-lp-final-cta :is(.ecn-lp-final-add, .ecn-lp-final-wa):not(#ecn-bn){ font-size:15px !important; }
