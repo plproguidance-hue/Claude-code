@@ -66,13 +66,15 @@ add_filter('woocommerce_enable_order_notes_field', '__return_false');
 // labels the address script re-applies when it loads (same words, same order as above)
 add_filter('woocommerce_get_country_locale', function ($l) {
     $l['BD'] = array_merge(isset($l['BD']) ? $l['BD'] : array(), array(
-        'first_name' => array('label' => 'পূর্ণ নাম', 'priority' => 10),
+        'first_name' => array('label' => 'পূর্ণ নাম', 'priority' => 10, 'class' => array('form-row-first')),
         'last_name'  => array('required' => false, 'hidden' => true),
         'company'    => array('required' => false, 'hidden' => true),
-        'address_1'  => array('label' => 'সম্পূর্ণ ঠিকানা', 'placeholder' => 'বাসা / হোল্ডিং নম্বর, রোড, এলাকা', 'priority' => 30),
+        'phone'      => array('label' => 'মোবাইল নম্বর', 'placeholder' => '01XXXXXXXXX', 'required' => true, 'priority' => 20, 'class' => array('form-row-last')),
+        'address_1'  => array('label' => 'সম্পূর্ণ ঠিকানা', 'placeholder' => 'বাসা / হোল্ডিং নম্বর, রোড, এলাকা', 'priority' => 30, 'class' => array('form-row-wide', 'address-field')),
         'address_2'  => array('required' => false, 'hidden' => true),
-        'state'      => array('label' => 'জেলা', 'required' => true, 'priority' => 50),
-        'city'       => array('label' => 'থানা / এলাকা', 'placeholder' => 'যেমন: মিরপুর', 'priority' => 60),
+        'country'    => array('priority' => 35, 'class' => array('form-row-wide', 'address-field', 'update_totals_on_change', 'econur-co-hidden')),
+        'state'      => array('label' => 'জেলা', 'placeholder' => 'জেলা নির্বাচন করুন', 'required' => true, 'priority' => 50, 'class' => array('form-row-last', 'address-field')),
+        'city'       => array('label' => 'থানা / এলাকা', 'placeholder' => 'যেমন: মিরপুর', 'priority' => 60, 'class' => array('form-row-wide', 'address-field')),
         'postcode'   => array('required' => false, 'hidden' => true),
     ));
     return $l;
@@ -178,7 +180,10 @@ add_filter('gettext', function ($tr, $text, $domain) {
     static $map = array(
         'Have a coupon?' => 'কুপন কোড আছে?', 'Click here to enter your code' => 'এখানে লিখুন',
         'If you have a coupon code, please apply it below.' => 'কুপন কোড থাকলে নিচে লিখে প্রয়োগ করুন।',
-        'Coupon code' => 'কুপন কোড', 'Apply coupon' => 'প্রয়োগ করুন', 'Coupon:' => 'কুপন:', '[Remove]' => '[সরান]',
+        'Coupon code' => 'কুপন কোড', 'Apply coupon' => 'প্রয়োগ করুন', 'Coupon:' => 'কুপন:', 'Coupon: %s' => 'কুপন: %s', '[Remove]' => '[সরান]',
+        'Coupon code applied successfully.' => 'কুপন প্রয়োগ হয়েছে।', 'Coupon has been removed.' => 'কুপন সরানো হয়েছে।',
+        'Please enter a coupon code.' => 'একটি কুপন কোড লিখুন।', 'Coupon code already applied!' => 'এই কুপনটি আগেই প্রয়োগ করা হয়েছে।',
+        'Coupon "%s" does not exist!' => '"%s" কুপনটি সঠিক নয়।', 'Coupon &quot;%s&quot; cannot be applied because it does not exist.' => '"%s" কুপনটি সঠিক নয়।',
         'Select an option&hellip;' => 'জেলা নির্বাচন করুন', 'Select an option…' => 'জেলা নির্বাচন করুন',
         'Order details' => 'অর্ডারের বিস্তারিত', 'Product' => 'পণ্য', 'Total' => 'মোট', 'Subtotal:' => 'সাবটোটাল:', 'Shipping:' => 'ডেলিভারি চার্জ:',
         'Payment method:' => 'পেমেন্ট পদ্ধতি:', 'Total:' => 'মোট:', 'Billing address' => 'ডেলিভারি ঠিকানা', 'Discount:' => 'ডিসকাউন্ট:',
