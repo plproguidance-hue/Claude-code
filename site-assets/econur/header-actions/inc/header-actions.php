@@ -6,7 +6,7 @@
  *
  * WooCommerce stays the source of truth:
  *  - search is the normal WordPress / WooCommerce product search (GET /?s=TERM&post_type=product);
- *  - Login / Account goes to the WooCommerce My Account page ("Account" once signed in);
+ *  - Login goes to the ECONUR sign-in page (/login/, inc/econur-login.php); "Account" (signed in) to My Account;
  *  - the badge is the real cart quantity, kept current by WooCommerce's cart fragments (key a.econur-header-cart);
  *  - Cart opens the ECONUR side cart drawer (inc/econur-cart.php, data-ecn-cart-open); without the drawer
  *    (cart and checkout pages) it is a plain link to the cart page.
@@ -37,7 +37,15 @@ function econur_ha_search_form($id) {
         . '</form>';
 }
 
+// signed in: My Account; signed out: the ECONUR sign-in page (inc/econur-login.php), coming back to the cart or
+// checkout when the visitor was there
 function econur_ha_account_url() {
+    if (!is_user_logged_in() && function_exists('econur_login_live') && econur_login_live()) {
+        $back = '';
+        if (function_exists('is_checkout') && is_checkout() && !is_wc_endpoint_url('order-received')) $back = wc_get_checkout_url();
+        elseif (function_exists('is_cart') && is_cart()) $back = wc_get_cart_url();
+        return econur_login_url($back);
+    }
     $u = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : '';
     return $u ? $u : wp_login_url();
 }
