@@ -1,0 +1,143 @@
+/* ECONUR header 1.0
+   The Astra header builder output (logo / menu / search, account, cart, and the ECONUR social circles), refined:
+   Manrope menu with a growing underline, one icon style, a sticky header that compacts from 72px to 62px on desktop,
+   and a calmer mobile header and dropdown menu. Scoped to #masthead; printed after the Customizer and econur-ui CSS.
+   The desktop header keeps a fixed 72px box while its bar compacts, so the page below never moves. */
+
+:root{
+  --hdr-bg:#FDFCF9;
+  --hdr-ink:#183F43;
+  --hdr-active:#0D5960;
+  --hdr-hover:#4F8D79;
+  --hdr-sage:#EEF2EA;
+  --hdr-line:#E8ECE6;
+  --hdr-divider:#D9DED8;
+  --hdr-h:72px;
+  --hdr-h-stuck:62px;
+  --hdr-ease:cubic-bezier(.22, 1, .36, 1);
+  --hdr-t:.28s;
+}
+
+/* ---------- sticky shell ---------- */
+#masthead.site-header{ position:sticky; top:0; z-index:99; background:transparent !important; border-bottom:0 !important; }
+@media (min-width:783px){ .admin-bar #masthead.site-header{ top:32px; } }
+@media (min-width:601px) and (max-width:782px){ .admin-bar #masthead.site-header{ top:46px; } }
+/* in-page links (Our Story, Reviews) stop below the header */
+html{ scroll-padding-top:calc(var(--hdr-h) + 12px); }
+
+/* ---------- shared bar ---------- */
+#masthead .ast-primary-header-bar.main-header-bar{ background:var(--hdr-bg) !important; box-shadow:inset 0 -1px 0 var(--hdr-line);
+  transition:background-color var(--hdr-t) ease, box-shadow var(--hdr-t) ease; }
+.ecn-hdr-stuck #masthead .ast-primary-header-bar.main-header-bar{ background:rgba(253, 252, 249, .94) !important;
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); box-shadow:inset 0 -1px 0 var(--hdr-line), 0 4px 20px rgba(20, 55, 50, .05); }
+
+/* ---------- icons (search, account, cart): one outline style, 20px, dark teal ---------- */
+#masthead :is(.ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container){
+  width:40px; height:40px; color:var(--hdr-ink) !important; }
+#masthead :is(.ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container):hover{ color:var(--hdr-hover) !important; }
+#masthead :is(.ast-header-search .astra-search-icon .ast-icon, .ast-header-account-type-icon .ahfb-svg-iconset, .ast-site-header-cart .ast-icon.icon-bag){ width:20px; height:20px; }
+#masthead :is(.ast-header-search .astra-search-icon, .ast-header-account-wrap .ast-header-account-link, .ast-site-header-cart .cart-container):focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-2px; border-radius:999px; }
+/* cart count: small sage-green pill, hidden at 0 (as before) */
+#masthead .ast-site-header-cart i.astra-icon::after{ background:var(--hdr-hover) !important; color:#fff !important; }
+
+/* ---------- social circles (markup: inc/header-social.php) ---------- */
+.ecn-hsocial{ display:none; margin:0; padding:0; list-style:none; }
+.ecn-hsocial li{ margin:0; padding:0; list-style:none; line-height:0; }
+.ecn-hsocial a, .ecn-hsocial .ecn-hsocial-nolink{ position:relative; display:grid; place-items:center; width:38px; height:38px; border-radius:50%;
+  background:var(--hdr-sage); color:var(--hdr-active) !important; text-decoration:none; transition:background-color .2s ease, color .2s ease, transform .2s ease; }
+.ecn-hsocial a::after{ content:""; position:absolute; inset:-3px; border-radius:50%; } /* 44px tap area */
+.ecn-hsocial svg{ display:block; width:15px; height:15px; }
+/* hover: the circle fills with teal and the icon turns white (approved header hover) */
+.ecn-hsocial a:hover, .ecn-hsocial a:focus-visible, .ecn-hsocial .ecn-hsocial-nolink:hover{ background:var(--hdr-active); color:#fff !important; transform:translateY(-1px); }
+.ecn-hsocial a:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:2px; }
+
+/* =====================================================================================================
+   DESKTOP (Astra's desktop header shows from 922px)
+   ===================================================================================================== */
+@media (min-width:922px){
+  /* a fixed 72px box: only the bar inside compacts, so nothing below shifts; the strip it frees lets clicks through */
+  #masthead.site-header{ height:var(--hdr-h); pointer-events:none; }
+  #masthead #ast-desktop-header{ pointer-events:auto; }
+  #ast-desktop-header .ast-primary-header-bar .site-primary-header-wrap{ min-height:var(--hdr-h) !important; transition:min-height var(--hdr-t) var(--hdr-ease); }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item{ line-height:var(--hdr-h) !important; transition:line-height var(--hdr-t) var(--hdr-ease); }
+  .ecn-hdr-stuck #ast-desktop-header .ast-primary-header-bar .site-primary-header-wrap{ min-height:var(--hdr-h-stuck) !important; }
+  html.ecn-hdr-stuck body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item{ line-height:var(--hdr-h-stuck) !important; }
+
+  /* logo: the existing ECONUR logo at 140px, 9% smaller when the header is compact (its wrapper's padding would hold the bar open) */
+  #ast-desktop-header .site-branding{ padding-top:0 !important; padding-bottom:0 !important; }
+  #ast-desktop-header .custom-logo-link img.custom-logo{ width:140px !important; max-width:140px !important; transform-origin:0 50%; transition:scale var(--hdr-t) var(--hdr-ease); }
+  .ecn-hdr-stuck #ast-desktop-header .custom-logo-link img.custom-logo{ scale:.91; }
+
+  /* menu: Manrope 15/500, 32px between items, colour + underline that grows from the centre */
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link{ position:relative; padding:0 16px !important;
+    font-family:"Manrope", Arial, sans-serif !important; font-size:15px !important; font-weight:500 !important; letter-spacing:-.1px !important;
+    color:var(--hdr-ink) !important; text-decoration:none !important; transition:color .22s ease; }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link::after{ content:""; position:absolute; left:16px; right:16px; top:50%;
+    height:2px; margin-top:13px; border-radius:2px; background:var(--hdr-hover); transform:scaleX(0); transform-origin:50% 50%; transition:transform .24s var(--hdr-ease); }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:is(:hover, :focus-visible){ color:var(--hdr-hover) !important; }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:is(:hover, :focus-visible)::after{ transform:scaleX(.66); }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-6px; border-radius:8px; }
+  /* current page (a product page lights up its category) */
+  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link::after{ transform:scaleX(.66); }
+
+  /* right side: icons 40px apart (20px between glyphs) */
+  #ast-desktop-header .site-header-primary-section-right{ gap:0 !important; }
+}
+/* small laptops: tighter menu; the social circles join from 1200px, where there is room for them beside the icons */
+@media (min-width:922px) and (max-width:1199px){
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link{ padding:0 12px !important; }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link::after{ left:12px; right:12px; }
+}
+@media (min-width:1200px){
+  /* divider, then the circles, 10px apart */
+  #ast-desktop-header .ecn-hsocial{ position:relative; display:flex; align-items:center; gap:10px; margin-left:18px; padding-left:29px; }
+  #ast-desktop-header .ecn-hsocial::before{ content:""; position:absolute; left:0; top:50%; width:1px; height:28px; margin-top:-14px; background:var(--hdr-divider); }
+}
+
+/* the product gallery sticks below the compact header instead of under it */
+@media (min-width:922px){ body.single-product .ecn-pdp .ecn-g{ top:calc(var(--hdr-h-stuck) + 20px); } }
+
+/* =====================================================================================================
+   MOBILE / TABLET (Astra's mobile header, below 922px)
+   ===================================================================================================== */
+@media (max-width:921px){
+  #ast-mobile-header .ast-primary-header-bar{ min-height:66px !important; }
+  #ast-mobile-header .custom-logo-link img.custom-logo{ width:136px !important; max-width:136px !important; }
+  @media (max-width:544px){ #ast-mobile-header .custom-logo-link img.custom-logo{ width:130px !important; max-width:130px !important; } }
+  /* hamburger / close: 24px lines in a 44px target */
+  #ast-mobile-header .ast-mobile-menu-trigger-minimal{ width:44px !important; height:44px !important; color:var(--hdr-ink) !important; }
+  #ast-mobile-header .ast-mobile-menu-trigger-minimal .ahfb-svg-iconset svg{ width:24px !important; height:24px !important; fill:currentColor; }
+  #ast-mobile-header .ast-mobile-menu-trigger-minimal:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-2px; border-radius:10px; }
+  #ast-mobile-header .ast-mobile-menu-trigger-minimal:focus:not(:focus-visible){ outline:none !important; border:0 !important; }
+  /* search + bag: 21px icons, about 17px apart, 38x44 tap areas */
+  #ast-mobile-header .site-header-primary-section-right{ gap:0 !important; }
+  #ast-mobile-header :is(.ast-header-search .astra-search-icon, .ast-site-header-cart .cart-container){ width:38px; height:44px; }
+  #ast-mobile-header :is(.ast-header-search .astra-search-icon .ast-icon, .ast-site-header-cart .ast-icon.icon-bag){ width:21px; height:21px; }
+
+  /* dropdown menu */
+  @keyframes ecn-hdr-menu-in{ from{ opacity:0; translate:0 -6px; } to{ opacity:1; translate:0 0; } }
+  #ast-mobile-header .ast-mobile-header-content{ background:var(--hdr-bg) !important; border-top:1px solid var(--hdr-line); box-shadow:0 14px 28px rgba(20, 55, 50, .06);
+    padding:8px 0 20px; animation:ecn-hdr-menu-in var(--hdr-t) var(--hdr-ease); }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu{ background:transparent !important; border:0 !important; }
+  #ast-mobile-header .ast-mobile-header-content .menu-item{ border:0 !important; }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link{ display:flex; align-items:center; min-height:44px; padding:11px 22px !important; border:0 !important;
+    font-family:"Manrope", Arial, sans-serif !important; font-size:16px !important; font-weight:500 !important; line-height:22px !important; letter-spacing:-.1px;
+    color:var(--hdr-ink) !important; background:transparent !important; transition:color .2s ease; }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link:active{ color:var(--hdr-hover) !important; }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link::before{ content:""; width:3px; height:16px; margin:0 10px 0 -13px; border-radius:2px; background:var(--hdr-hover); }
+  #ast-mobile-header .ast-mobile-header-content .menu-link:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-4px; border-radius:8px; }
+  /* "My account" row in the same type */
+  #ast-mobile-header .ast-mobile-header-content .ast-header-account{ padding:0 22px; }
+  #ast-mobile-header .ast-mobile-header-content .ast-header-account :is(a, .ast-header-account-text){ font-family:"Manrope", Arial, sans-serif !important; font-size:16px !important; font-weight:500 !important; color:var(--hdr-ink) !important; }
+  /* social circles under a hairline */
+  #ast-mobile-header .ecn-hsocial--menu{ display:flex; align-items:center; gap:12px; margin:14px 22px 0; padding-top:18px; border-top:1px solid var(--hdr-line); }
+  #ast-mobile-header .ecn-hsocial--menu :is(a, .ecn-hsocial-nolink){ width:36px; height:36px; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  #masthead *, #masthead *::after{ transition-duration:0s !important; animation:none !important; }
+  .ecn-hsocial a:hover, .ecn-hsocial .ecn-hsocial-nolink:hover{ transform:none; }
+}
