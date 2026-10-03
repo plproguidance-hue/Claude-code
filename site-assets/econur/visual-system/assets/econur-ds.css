@@ -101,6 +101,10 @@ html body.ecn-ds .ecn-help-wa, html body.ecn-ds.single-product .ecn-pdp .single_
   border-radius:var(--ds-r-btn) !important; background:var(--ds-card) !important; border:1.5px solid var(--ds-teal) !important; color:var(--ds-teal) !important;
   font-family:var(--ds-sans) !important; font-size:var(--ds-fs-btn) !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important;
   box-shadow:none !important; transition:background-color .18s ease, box-shadow .2s ease, transform .2s var(--ds-ease) !important; }
+/* WooCommerce block buttons (cart page suggestions, product grids) */
+html body.ecn-ds .wc-block-components-product-button__button, html body.ecn-ds .wc-block-grid__product-add-to-cart .wp-block-button__link,
+html body.ecn-ds .wp-block-button__link.add_to_cart_button, html body.ecn-ds .wc-block-components-button:not(.is-link){
+  border-radius:var(--ds-r-btn) !important; font-family:var(--ds-sans) !important; font-weight:600 !important; }
 @media (hover:hover) and (pointer:fine){
   html body.ecn-ds .ecn-hx-cta:hover, html body.ecn-ds .ecn-pc-btn:not(.ecn-pc-btn-soft):hover, html body.ecn-ds .ecn-fp-add:hover, html body.ecn-ds .ecn-fy-cta:hover,
   html body.ecn-ds .ehc-btn--primary:hover, html body.ecn-ds .ecn-pdp-buynow:hover, html body.ecn-ds .ecn-lp-btn:hover, html body.ecn-ds .ecn-rel-add:hover,
@@ -170,7 +174,8 @@ html body.ecn-ds .econur-header-cart .econur-cart-count{ font-family:var(--ds-sa
 html body.ecn-ds #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link{ font-family:var(--ds-sans) !important; color:var(--ds-ink) !important; }
 /* announcement bar: the brand teal, clear semibold line */
 html body.ecn-ds .ecn.ecn-announce--top{ background:var(--ds-teal) !important; }
-html body.ecn-ds .ecn.ecn-announce--top .ecn-ab-msg{ font-family:var(--ds-sans) !important; font-weight:600 !important; letter-spacing:.01em; }
+html body.ecn-ds .ecn.ecn-announce--top .ecn-ab-msg{ font-family:var(--ds-sans) !important; font-weight:600 !important; letter-spacing:.01em; transition:opacity .3s ease-in-out !important; }
+html body.ecn-ds .ecn.ecn-announce--top .ecn-ab-msg.is-on{ transition:opacity .3s ease-in-out .3s !important; }
 
 /* =============================================================== 6. homepage hero */
 html body.ecn-ds .ecn-hx-title{ font-size:var(--ds-fs-hero) !important; line-height:1.02 !important; color:var(--ds-ink) !important; }
