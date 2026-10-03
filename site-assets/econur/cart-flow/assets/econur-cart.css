@@ -103,12 +103,13 @@ body.econur-cartpage .econur-cartpage-head{ margin:8px 0 22px; }
 body.econur-cartpage .econur-cartpage-head h1{ margin:0 !important; font-size:32px !important; font-weight:600 !important; line-height:1.2 !important; color:var(--ecart-ink) !important; }
 body.econur-cartpage .econur-cartpage-head p{ margin:6px 0 0 !important; font-size:15px; color:var(--ecart-muted); }
 body.econur-cartpage .wp-block-woocommerce-cart{ margin-bottom:56px; color:var(--ecart-ink); }
-body.econur-cartpage .wc-block-cart{ gap:28px; }
+
 /* the items: one cream card */
 body.econur-cartpage .wc-block-cart .wc-block-cart-items{ border:1px solid var(--ecart-line) !important; border-radius:16px; background:#FFFEFB; border-collapse:separate !important; border-spacing:0; overflow:hidden; }
 body.econur-cartpage .wc-block-cart .wc-block-cart-items th{ padding:14px 18px !important; border-bottom:1px solid var(--ecart-line) !important; background:var(--ecart-wash); font-size:13px !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important; color:var(--ecart-muted) !important; }
-body.econur-cartpage .wc-block-cart .wc-block-cart-items td{ padding:18px !important; border-top:0 !important; border-bottom:1px solid var(--ecart-line) !important; }
-body.econur-cartpage .wc-block-cart .wc-block-cart-items tr:last-child td{ border-bottom:0 !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items td{ padding:18px !important; border:0 !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items .wc-block-cart-items__row{ border-bottom:1px solid var(--ecart-line) !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items .wc-block-cart-items__row:last-child{ border-bottom:0 !important; }
 body.econur-cartpage .wc-block-cart-item__image img{ border:1px solid var(--ecart-line); border-radius:12px; }
 body.econur-cartpage .wc-block-components-product-name{ font-size:16px !important; font-weight:600 !important; color:var(--ecart-ink) !important; text-decoration:none !important; }
 body.econur-cartpage .wc-block-cart-item__prices, body.econur-cartpage .wc-block-cart-item__total{ color:var(--ecart-teal); font-weight:700; }
@@ -119,7 +120,9 @@ body.econur-cartpage .wc-block-cart-item__remove-link{ color:#8A8F89 !important;
 body.econur-cartpage .wc-block-cart-item__remove-link:hover{ color:#A1402F !important; }
 /* the summary: its own card */
 body.econur-cartpage .wc-block-cart__sidebar{ align-self:flex-start; }
-body.econur-cartpage .wc-block-cart__sidebar > .wp-block-woocommerce-cart-totals-block, body.econur-cartpage .wc-block-cart__sidebar .wc-block-components-sidebar{ padding:18px 20px !important; border:1px solid var(--ecart-line); border-radius:16px; background:#FFFEFB; }
+body.econur-cartpage .wc-block-cart__sidebar .wp-block-woocommerce-cart-order-summary-block{ padding:18px 20px 6px !important; border:1px solid var(--ecart-line); border-radius:16px; background:#FFFEFB; }
+body.econur-cartpage .wc-block-cart__sidebar .wc-block-cart__submit{ margin-top:14px; }
+body.econur-cartpage .wc-block-cart__submit-container--sticky{ background:rgba(255, 253, 248, .96) !important; border-top:1px solid var(--ecart-line); }
 body.econur-cartpage .wc-block-cart__totals-title{ margin:0 0 6px !important; font-size:17px !important; font-weight:700 !important; text-transform:none !important; color:var(--ecart-ink) !important; }
 body.econur-cartpage .wc-block-components-totals-item__label{ color:#4E5A55; }
 body.econur-cartpage .wc-block-components-totals-footer-item .wc-block-components-totals-item__label, body.econur-cartpage .wc-block-components-totals-footer-item .wc-block-components-totals-item__value{ font-size:18px !important; font-weight:700 !important; color:var(--ecart-ink) !important; }

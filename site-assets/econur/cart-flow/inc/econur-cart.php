@@ -87,7 +87,7 @@ add_action('wp_enqueue_scripts', function () {
     if (!function_exists('is_cart') || !is_cart()) return;
     $t = array(
         'Product' => 'পণ্য', 'Total' => 'মোট', 'Quantity' => 'পরিমাণ', 'Price' => 'দাম',
-        'Cart totals' => 'অর্ডার সারাংশ', 'Subtotal' => 'সাবটোটাল', 'Estimated total' => 'মোট (আনুমানিক)',
+        'Cart totals' => 'অর্ডার সারাংশ', 'Subtotal' => 'সাবটোটাল', 'Estimated total' => 'মোট', 'Details' => 'বিবরণ',
         'Proceed to Checkout' => 'চেকআউটে যান', 'Proceed to checkout' => 'চেকআউটে যান',
         'Add coupons' => 'কুপন কোড', 'Add a coupon' => 'কুপন কোড', 'Enter code' => 'কুপন কোড লিখুন', 'Apply' => 'প্রয়োগ করুন',
         'Coupon code' => 'কুপন কোড', 'Discount' => 'ডিসকাউন্ট',
@@ -97,6 +97,9 @@ add_action('wp_enqueue_scripts', function () {
         'Calculate shipping' => 'ডেলিভারি চার্জ দেখুন', 'Change address' => 'ঠিকানা বদলান', 'Enter address to check delivery options' => 'ডেলিভারি চার্জ চেকআউটে ঠিক হবে',
         'Your cart is currently empty!' => 'আপনার কার্ট এখন খালি।', 'Browse store' => 'কেনাকাটা শুরু করুন',
         'Your cart' => 'আপনার কার্ট', 'Size' => 'সাইজ',
+        'The quantity of "%1$s" was changed to %2$d.' => '"%1$s" এর পরিমাণ %2$d করা হয়েছে।',
+        '"%s" was removed from your cart.' => '"%s" কার্ট থেকে সরানো হয়েছে।', 'Undo' => 'ফিরিয়ে আনুন',
+        'Coupon code "%s" has been applied to your cart.' => '"%s" কুপন প্রয়োগ হয়েছে।', 'Coupon code "%s" has been removed from your cart.' => '"%s" কুপন সরানো হয়েছে।',
     );
     $locale = array('' => array('domain' => 'woocommerce', 'lang' => 'bn'));
     foreach ($t as $en => $bn) $locale[$en] = array($bn);
