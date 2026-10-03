@@ -276,7 +276,8 @@
         var f = document.getElementById('ecn-cart-form'), card = f && (f.closest('.ecn-pdp-info') || f);
         if (!card) return;
         e.preventDefault();
-        window.scrollTo({ top: card.getBoundingClientRect().top + window.pageYOffset - 16, behavior: reduce ? 'auto' : 'smooth' });
+        var head = document.getElementById('masthead'), off = head && getComputedStyle(head).position === 'sticky' ? head.offsetHeight : 0; // stop below the sticky header
+        window.scrollTo({ top: card.getBoundingClientRect().top + window.pageYOffset - 16 - off, behavior: reduce ? 'auto' : 'smooth' });
       });
     });
 
