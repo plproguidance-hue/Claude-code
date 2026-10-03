@@ -416,6 +416,7 @@ function econur_pdp_render($product) {
             . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span></a></div>';
     }
     echo '</div>';
+    if (function_exists('econur_pdp_accordion')) econur_pdp_accordion($product, $size); // inc/pdp-accordion.php
     echo '</div></section>';
 
     econur_lp_routine($product, $lp);
