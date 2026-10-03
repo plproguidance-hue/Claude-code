@@ -69,10 +69,11 @@ add_action('wp_head', function () {
   /* same soft sage circle and teal icon as the footer's social links */
   .ecn-hsocial a, .ecn-hsocial .ecn-hsocial-nolink{ display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:#E3E9DD; color:#0D585F !important; text-decoration:none;
     transition:background-color .2s ease, color .2s ease, transform .2s ease; }
-  .ecn-hsocial a:hover, .ecn-hsocial a:focus-visible{ background:#D6E0CE; color:#0A474D !important; transform:translateY(-1px); }
+  /* hover: the circle fills with ECONUR teal and the icon turns white (same as the footer's social circles) */
+  .ecn-hsocial a:hover, .ecn-hsocial a:focus-visible, .ecn-hsocial .ecn-hsocial-nolink:hover{ background:#0D585F; color:#fff !important; transform:translateY(-1px); }
   .ecn-hsocial svg{ display:block; width:18px; height:18px; }
 }
-@media (prefers-reduced-motion:reduce){ .ecn-hsocial a, .ecn-hsocial a:hover{ transform:none; } }
+@media (prefers-reduced-motion:reduce){ .ecn-hsocial a, .ecn-hsocial a:hover, .ecn-hsocial .ecn-hsocial-nolink:hover{ transform:none; } }
 </style>
     <?php
 }, 130);
