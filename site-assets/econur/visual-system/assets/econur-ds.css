@@ -20,8 +20,8 @@ body.ecn-ds{
   --ds-fs-body:clamp(.9375rem, .9rem + .15vw, 1.0625rem);
   --ds-fs-sm:.875rem; --ds-fs-micro:.75rem; --ds-fs-btn:.9375rem;
   /* space, shape, depth */
-  --ds-w:min(1320px, calc(100vw - 2 * var(--ds-gut))); --ds-gut:clamp(16px, 4vw, 48px);
-  --ds-sec:clamp(48px, 2rem + 2.8vw, 80px); --ds-sec-s:clamp(28px, 1.25rem + 1.4vw, 44px);
+  --ds-w:min(1376px, calc(100vw - 2 * var(--ds-gut))); --ds-gut:clamp(16px, 2.2vw, 32px);
+  --ds-sec:clamp(40px, 1.6rem + 1.6vw, 56px); --ds-sec-s:clamp(24px, 1rem + 1vw, 32px);
   --ds-r-sm:10px; --ds-r-btn:14px; --ds-r-card:18px; --ds-r-panel:24px;
   --ds-sh-1:0 1px 2px rgba(23, 48, 46, .04), 0 6px 18px rgba(23, 48, 46, .05);
   --ds-sh-2:0 2px 6px rgba(23, 48, 46, .05), 0 14px 32px rgba(23, 48, 46, .09);
@@ -72,8 +72,8 @@ body.ecn-ds [tabindex]:focus-visible{ outline:2px solid var(--ds-teal) !importan
 /* section titles: one strong sans heading; the brand's serif only for the hero and the editorial moments */
 html body.ecn-ds .ecn-sh-title, html body.ecn-ds .econur-category-trust__title, html body.ecn-ds .ecn-fy-title, html body.ecn-ds .ehc-title,
 html body.ecn-ds .ecn-lp-h2, html body.ecn-ds .econur-pit-title, html body.ecn-ds #ecn-lp-routine-t{
-  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-h2) !important; font-weight:700 !important; line-height:1.1 !important;
-  letter-spacing:-.025em !important; color:var(--ds-ink) !important; font-style:normal !important; }
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-h2) !important; font-weight:800 !important; line-height:1.1 !important;
+  letter-spacing:-.03em !important; color:var(--ds-ink) !important; font-style:normal !important; }
 html body.ecn-ds .ecn-hx-title, html body.ecn-ds .enr-rv-title, html body.ecn-ds .ehc-cta-title,
 html body.ecn-ds .ecn-lp-final h2, html body.ecn-ds .ecn-lp-final-title{
   font-family:var(--ds-serif) !important; font-weight:600 !important; letter-spacing:-.02em !important; font-style:normal !important; }
@@ -118,7 +118,7 @@ html body.ecn-ds .ecn-hx-cta:active, html body.ecn-ds .ecn-pc-btn:active, html b
 html body.ecn-ds .ecn-lp-btn:active, html body.ecn-ds .ecn-rel-add:active{ transform:translateY(0) scale(.99); }
 
 /* =============================================================== 4. shared section width */
-html body.ecn-ds .elementor-43 > .e-con-boxed, html body.ecn-ds .elementor-43 .e-con-boxed{ --content-width:min(100%, 1320px); }
+html body.ecn-ds .elementor-43 > .e-con-boxed, html body.ecn-ds .elementor-43 .e-con-boxed{ --content-width:min(100%, 1376px); }
 /* the hero, the offer banner, the reviews block and the footer line up with the same column (no more break-outs) */
 @media (min-width:768px){
   html body.ecn-ds .ecn-hx{ width:var(--ds-w) !important; max-width:none !important; border-radius:var(--ds-r-panel) !important; }
@@ -266,6 +266,112 @@ html body.ecn-ds.single-product .ecn-pdp .ecn-lp-hero::before{ content:""; posit
   html body.ecn-ds *, html body.ecn-ds *::before, html body.ecn-ds *::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
   html body.ecn-ds .ecn-pcard:hover, html body.ecn-ds .ecn-fp-card:hover, html body.ecn-ds .ecn-rel-card:hover, html body.ecn-ds .econur-category-trust .econur-category-card:hover{ transform:none !important; }
   html body.ecn-ds .ecn-pcard:hover img, html body.ecn-ds .ecn-fp-card:hover img, html body.ecn-ds .ecn-rel-card:hover img{ transform:none !important; }
+}
+
+/* =====================================================================================================================
+   MOCKUP PASS (approved reference, measured at 1440px): homepage
+   ===================================================================================================================== */
+/* hero: two-line serif headline, larger pill CTA, white round arrows */
+html body.ecn-ds .ecn-hx-title br:nth-of-type(2){ display:none; }
+@media (min-width:1024px){
+  html body.ecn-ds .ecn-hx-copy{ width:min(520px, 40%) !important; max-width:none !important; top:48% !important; }
+  html body.ecn-ds .ecn-hx-eyebrow{ font-size:14px !important; letter-spacing:.06em !important; margin-bottom:16px !important; }
+  html body.ecn-ds .ecn-hx-title{ font-size:clamp(46px, 2.2vw + 22px, 60px) !important; line-height:1.06 !important; }
+  html body.ecn-ds .ecn-hx-text{ font-size:18px !important; line-height:1.6 !important; max-width:360px !important; margin-top:16px !important; }
+  html body.ecn-ds .ecn-hx-cta{ min-height:56px !important; padding:0 30px !important; border-radius:999px !important; font-size:16.5px !important; margin-top:26px !important; gap:12px !important; }
+}
+html body.ecn-ds .ecn-hx-arrow{ width:40px !important; height:40px !important; margin-top:-20px !important; background:#fff !important; box-shadow:0 2px 10px rgba(23, 48, 46, .12) !important; }
+
+/* Shop by category: big sans title with the teal word, "View All Products" pill, five equal white cards */
+html body.ecn-ds .econur-category-trust__header{ display:flex !important; align-items:center !important; justify-content:space-between !important; gap:16px; margin:0 0 28px !important; }
+html body.ecn-ds .econur-category-trust__title span{ color:var(--ds-teal) !important; font-style:normal !important; }
+html body.ecn-ds .ecn-ds-viewall, html body.ecn-ds .ecn-sh-link{ display:inline-flex !important; align-items:center; gap:10px; height:52px !important; padding:0 26px !important; border-radius:999px !important;
+  border:1px solid var(--ds-line) !important; background:#fff !important; box-shadow:0 2px 8px rgba(23, 48, 46, .05) !important; color:var(--ds-ink) !important;
+  font-family:var(--ds-sans) !important; font-size:15.5px !important; font-weight:600 !important; text-decoration:none !important; white-space:nowrap; transition:border-color .2s ease, box-shadow .2s ease, transform .2s var(--ds-ease) !important; }
+html body.ecn-ds .ecn-ds-viewall svg, html body.ecn-ds .ecn-sh-link svg{ width:17px; height:17px; flex:none; }
+@media (hover:hover) and (pointer:fine){ html body.ecn-ds .ecn-ds-viewall:hover, html body.ecn-ds .ecn-sh-link:hover{ border-color:var(--ds-teal-line) !important; box-shadow:var(--ds-sh-2) !important; transform:translateY(-1px); background:#fff !important; } }
+html body.ecn-ds .econur-category-trust .econur-category-list{ gap:22px !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card{ height:92px !important; gap:16px !important; padding:8px 20px 8px 10px !important; border-radius:18px !important; background:#fff !important;
+  border:1px solid #EEE9E0 !important; box-shadow:0 1px 3px rgba(23, 48, 46, .04), 0 6px 16px rgba(23, 48, 46, .04) !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card--active{ background:#fff !important; border-color:#E2ECE8 !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card__media{ width:72px !important; height:72px !important; flex:none; border-radius:50% !important; overflow:hidden; background:#EEF4F1 !important; display:grid !important; place-items:center; }
+html body.ecn-ds .econur-category-trust .econur-category-card__img{ width:72px !important; height:72px !important; max-width:none !important; border-radius:50% !important; object-fit:cover; }
+html body.ecn-ds .econur-category-trust .econur-category-card__icon{ width:72px !important; height:72px !important; border-radius:50% !important; background:#EEF4F1 !important; color:var(--ds-teal) !important; display:grid !important; place-items:center; }
+html body.ecn-ds .econur-category-trust .econur-category-card__icon svg{ width:32px !important; height:32px !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card__label{ font-size:17.5px !important; font-weight:700 !important; letter-spacing:-.01em; }
+html body.ecn-ds .econur-category-trust .econur-category-card__arrow{ color:#A9B3AF !important; margin-left:auto; }
+html body.ecn-ds .econur-category-trust .econur-category-card__arrow svg{ width:16px; height:16px; }
+
+/* trust strip: one low pale-sage band, four columns with hairline dividers */
+html body.ecn-ds .econur-category-trust .econur-trust-strip{ margin:32px 0 0 !important; min-height:128px; padding:24px 28px !important; border-radius:22px !important; background:#F2F6F3 !important;
+  border:1px solid #E5EEE8 !important; box-shadow:none !important; display:grid !important; grid-template-columns:repeat(4, minmax(0, 1fr)) !important; align-items:center; gap:0 !important; }
+html body.ecn-ds .econur-category-trust .econur-trust-item{ display:flex !important; align-items:center; justify-content:center; gap:18px !important; padding:0 16px !important; border:0 !important; position:relative; }
+html body.ecn-ds .econur-category-trust .econur-trust-item + .econur-trust-item::before{ content:""; position:absolute; left:0; top:12%; bottom:12%; width:1px; background:#DCE6E0; }
+html body.ecn-ds .econur-category-trust .econur-trust-item__icon{ width:66px !important; height:66px !important; flex:none; border-radius:50% !important; background:#E3EEE8 !important; color:var(--ds-teal) !important; display:grid !important; place-items:center; }
+html body.ecn-ds .econur-category-trust .econur-trust-item__icon svg{ width:30px !important; height:30px !important; }
+html body.ecn-ds .econur-category-trust .econur-trust-item__label{ display:block; font-family:var(--ds-sans) !important; font-size:18px !important; font-weight:700 !important; color:var(--ds-ink) !important; letter-spacing:-.01em; }
+html body.ecn-ds .econur-category-trust .econur-trust-item__text{ font-size:15px !important; color:var(--ds-muted) !important; }
+
+/* section header row (Bestsellers, Featured): title + sub on the left, View All pill + arrows on the right */
+html body.ecn-ds .ecn-sh{ align-items:flex-end !important; margin-bottom:22px !important; }
+html body.ecn-ds .ecn-sh-sub{ margin-top:8px !important; font-size:17px !important; }
+html body.ecn-ds .ecn-sh-nav, html body.ecn-ds .ecn-fp-nav{ width:44px !important; height:44px !important; border-radius:50% !important; border:1px solid var(--ds-line) !important; background:#fff !important; color:var(--ds-ink) !important; box-shadow:none !important; }
+html body.ecn-ds .ecn-sh-nav:last-child, html body.ecn-ds .ecn-sh-nav[data-dir="1"], html body.ecn-ds .ecn-fp-nav[data-dir="1"]{ background:var(--ds-teal) !important; border-color:var(--ds-teal) !important; color:#fff !important; }
+
+/* product cards (Bestsellers, shop): photo on top edge to edge, label chip, name, price, two pill buttons */
+html body.ecn-ds .ecn-pcard{ border-radius:16px !important; overflow:hidden; border:1px solid #EEE9E0 !important; box-shadow:0 1px 3px rgba(23, 48, 46, .04), 0 8px 22px rgba(23, 48, 46, .05) !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-media img{ aspect-ratio:322 / 277 !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-body{ padding:16px 18px 18px !important; gap:0 !important; }
+html body.ecn-ds .ecn-home-grid .ecn-pc-skin, html body.ecn-ds .ecn-pcard .ecn-pc-skin{ display:block !important; min-height:0 !important; align-self:flex-start; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  padding:4px 8px !important; border-radius:6px; background:#F3F2EE; color:#727873 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
+html body.ecn-ds .ecn-home-grid .ecn-pc-body:not(:has(.ecn-pc-skin))::before{ height:22px !important; font-size:10.5px !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-title{ margin:12px 0 0 !important; font-size:21px !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-price{ display:flex; align-items:baseline; gap:10px; margin:10px 0 0 !important; min-height:0 !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-now, html body.ecn-ds .ecn-pcard .ecn-pc-now .amount{ font-size:26px !important; font-weight:700 !important; color:var(--ds-ink) !important; letter-spacing:-.02em; }
+html body.ecn-ds .ecn-pcard .ecn-pc-size{ font-size:15px !important; }
+html body.ecn-ds .ecn-pc-actions{ display:grid; gap:9px; margin-top:16px; }
+html body.ecn-ds .ecn-pcard .ecn-pc-btn{ display:flex !important; align-items:center; justify-content:center; min-height:42px !important; height:42px; padding:0 16px !important; border-radius:999px !important; margin:0 !important; font-size:15px !important; }
+html body.ecn-ds .ecn-pcard .ecn-pc-btn.added::after{ content:""; }
+html body.ecn-ds .ecn-pcard .added_to_cart{ display:none !important; }
+
+/* offer banner (neutral, preview): teal band with the botanical art on both edges */
+html body.ecn-ds .ecn-sec-sale .ecn-ds-sb{ display:grid !important; grid-template-columns:minmax(0, 1fr) auto !important; align-items:center; gap:32px; min-height:200px; padding:30px 220px 30px 270px !important;
+  border-radius:22px !important; overflow:hidden; color:#fff;
+  background:url("https://econur.shop/wp-content/uploads/2026/09/econur-sale-soap-decor-600x458.webp") right -24px bottom -34px / auto 118% no-repeat,
+    linear-gradient(90deg, rgba(14, 94, 101, 0) 0, rgba(14, 94, 101, 0) 110px, #0E5E65 280px) left top / 300px 100% no-repeat,
+    url("https://econur.shop/wp-content/uploads/2026/09/econur-sale-foliage.webp") left top / auto 100% no-repeat,
+    linear-gradient(120deg, #0E5E65 0%, #0D585F 45%, #0A474D 100%) !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-ds-sb::before, html body.ecn-ds .ecn-sec-sale .ecn-ds-sb::after{ display:none !important; }
+html body.ecn-ds .ecn-ds-sb .ecn-sb-eyebrow{ display:block; font-size:15px !important; font-weight:700 !important; letter-spacing:.06em !important; color:#fff !important; }
+html body.ecn-ds #ecn-sale.ecn-ds-sb .ecn-sb-title, html body.ecn-ds .ecn-ds-sb .ecn-sb-title{ max-width:none !important; width:auto !important; margin:8px 0 0 !important; color:#fff !important; font-size:clamp(28px, 1.6vw + 14px, 46px) !important; font-weight:800 !important; line-height:1.08 !important; }
+html body.ecn-ds .ecn-ds-sb .ecn-sb-copy{ max-width:none !important; width:auto !important; }
+html body.ecn-ds .ecn-ds-sb .ecn-sb-text{ max-width:none !important; margin:10px 0 0 !important; color:rgba(255, 255, 255, .9) !important; font-size:17px !important; }
+html body.ecn-ds .ecn-ds-sb .ecn-sb-cta{ display:inline-flex !important; align-items:center; justify-content:center; gap:10px; width:auto !important; min-width:240px; height:54px; padding:0 30px !important; border-radius:999px !important;
+  background:#fff !important; color:var(--ds-teal) !important; font-size:16px !important; font-weight:700 !important; text-decoration:none !important; box-shadow:0 8px 20px rgba(0, 0, 0, .12) !important; }
+html body.ecn-ds .ecn-ds-sb .ecn-sb-cta svg{ width:18px; height:18px; }
+
+/* Featured products: the same card as Bestsellers (photo, label chip, name, price row, pill button) */
+html body.ecn-ds .ecn-sec-sale .ecn-fp-card{ border-radius:16px !important; overflow:hidden; border:1px solid #EEE9E0 !important; box-shadow:0 1px 3px rgba(23, 48, 46, .04), 0 8px 22px rgba(23, 48, 46, .05) !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-media{ background:#F3EFE7 !important; border-radius:0 !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-img, html body.ecn-ds .ecn-sec-sale .ecn-fp-img img{ aspect-ratio:322 / 277 !important; border-radius:0 !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-body{ padding:16px 18px 18px !important; gap:0 !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-body::after{ display:none !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-proof{ display:flex; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-skin{ display:block; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; padding:4px 8px; border-radius:6px; background:#F3F2EE;
+  color:#727873 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-name{ margin:12px 0 0 !important; font-size:21px !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-foot{ gap:16px !important; padding-top:10px !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-price{ display:flex !important; align-items:baseline; gap:10px; flex-wrap:wrap; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-price b, html body.ecn-ds .ecn-sec-sale .ecn-fp-price b .amount{ font-size:26px !important; font-weight:700 !important; color:var(--ds-ink) !important; letter-spacing:-.02em; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-price s{ color:var(--ds-muted) !important; font-size:15px !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-price small{ font-size:15px !important; color:var(--ds-muted) !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-add{ min-height:42px !important; height:42px; border-radius:999px !important; font-size:15px !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-fp-heart{ background:#fff !important; box-shadow:0 2px 8px rgba(23, 48, 46, .1) !important; color:var(--ds-ink) !important; }
+
+/* header: a little taller, pill search */
+@media (min-width:922px){
+  html body.ecn-ds #ast-desktop-header .ast-primary-header-bar .site-primary-header-wrap{ min-height:78px !important; }
+  html body.ecn-ds .econur-header-search .econur-header-search-input{ border-radius:999px !important; background:#F2F1ED !important; }
 }
 
 /* =============================================================== preview marker */

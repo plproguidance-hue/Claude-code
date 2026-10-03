@@ -102,3 +102,14 @@ add_filter('do_shortcode_tag', function ($out, $tag) {
         . '<div class="ecn-sb-act"><a class="ecn-sb-cta" href="' . esc_url($shop) . '"><span lang="bn">সব পণ্য দেখুন</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>'
         . '</section>';
 }, 10, 2);
+
+// product page: a small breadcrumb above the gallery (WooCommerce's own: Home > category > product, with its BreadcrumbList data)
+add_action('woocommerce_before_single_product', function () {
+    if (!econur_ds_active() || !function_exists('woocommerce_breadcrumb')) return;
+    woocommerce_breadcrumb(array(
+        'wrap_before' => '<nav class="woocommerce-breadcrumb ecn-ds-crumbs" aria-label="Breadcrumb">',
+        'wrap_after'  => '</nav>',
+        'delimiter'   => '<span class="ecn-ds-crumb-sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>',
+        'home'        => 'Home',
+    ));
+}, 20);
