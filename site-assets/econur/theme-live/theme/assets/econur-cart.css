@@ -1,0 +1,139 @@
+/* ECONUR cart drawer, floating cart tab and cart page 1.0 (inc/econur-cart.php, assets/econur-cart.js).
+   Teal for the main action, cream surfaces, beige hairlines; everything scoped to econur- classes or the cart page. */
+:root{ --ecart-teal:#0D585F; --ecart-teal-d:#0A474D; --ecart-ink:#1F2B29; --ecart-muted:#66706B; --ecart-line:#EAE3D7; --ecart-cream:#FFFDF8; --ecart-wash:#F6F3EC; --ecart-mint:#EEF4F0;
+  --ecart-ease:cubic-bezier(.22, 1, .36, 1); }
+
+/* ---------------------------------------------------------------- overlay + drawer */
+html.econur-cart-locked{ overflow:hidden; }
+.econur-cart-overlay{ position:fixed; inset:0; z-index:99990; background:rgba(22, 32, 30, .38); opacity:0; transition:opacity .26s ease; }
+.econur-cart-overlay.is-open{ opacity:1; }
+.econur-cart-drawer{ position:fixed; top:0; right:0; bottom:0; z-index:99991; display:flex; flex-direction:column; width:min(420px, 92vw); max-width:100%;
+  background:var(--ecart-cream); box-shadow:-12px 0 40px rgba(20, 32, 28, .14); color:var(--ecart-ink); font-family:var(--ecn-font-en, "Inter", Arial, sans-serif);
+  transform:translateX(102%); transition:transform .28s var(--ecart-ease); outline:0; }
+.econur-cart-drawer.is-open{ transform:none; }
+.econur-cart-drawer *{ box-sizing:border-box; }
+.econur-cart-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px 16px; border-bottom:1px solid var(--ecart-line); }
+.econur-cart-title{ display:flex; align-items:center; gap:10px; margin:0 !important; font-size:18px !important; font-weight:700 !important; line-height:1.2 !important; color:var(--ecart-ink) !important; }
+.econur-cart-title svg{ width:24px; height:24px; color:var(--ecart-teal); }
+.econur-cart-n{ font-weight:600; color:var(--ecart-muted); }
+.econur-cart-x{ display:grid; place-items:center; width:40px; height:40px; margin:-6px -8px -6px 0; padding:0 !important; border:0 !important; border-radius:50% !important; background:transparent !important; color:var(--ecart-ink) !important; cursor:pointer; transition:background-color .18s ease; }
+.econur-cart-x:hover{ background:var(--ecart-wash) !important; }
+.econur-cart-x svg{ width:22px; height:22px; }
+.econur-cart-drawer :focus-visible{ outline:2px solid var(--ecart-teal); outline-offset:2px; }
+
+.econur-cart-body{ position:relative; flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; padding:6px 20px; }
+.econur-cart-msg{ margin:12px 0 0 !important; padding:10px 12px; border-radius:10px; background:#FBEDEA; color:#A1402F; font-size:13.5px; line-height:1.45; }
+.econur-cart-items{ margin:0 !important; padding:0 !important; list-style:none; }
+.econur-cart-item{ display:grid; grid-template-columns:72px minmax(0,1fr); gap:14px; margin:0; padding:16px 0; border-bottom:1px solid var(--ecart-line); list-style:none; transition:opacity .18s ease; }
+.econur-cart-item.is-busy{ opacity:.55; pointer-events:none; }
+.econur-cart-thumb{ display:block; width:72px; height:72px; overflow:hidden; border:1px solid var(--ecart-line); border-radius:12px; background:var(--ecart-wash); }
+.econur-cart-thumb img{ display:block; width:100% !important; height:100% !important; object-fit:cover; }
+.econur-cart-info{ display:flex; flex-direction:column; min-width:0; }
+.econur-cart-name{ font-size:15px; font-weight:600; line-height:1.3; color:var(--ecart-ink) !important; text-decoration:none !important; }
+.econur-cart-name:hover{ color:var(--ecart-teal) !important; }
+.econur-cart-meta{ margin-top:2px; font-size:13px; color:var(--ecart-muted); }
+.econur-cart-price{ margin-top:4px; font-size:15.5px; font-weight:700; color:var(--ecart-teal); }
+.econur-cart-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; }
+.econur-cart-qty{ display:inline-flex; align-items:center; height:36px; border:1px solid #DCD4C6; border-radius:999px; background:#fff; }
+.econur-cart-qty button, .econur-cart-rm, .econur-cart-x{ box-shadow:none !important; }
+.econur-cart-qty button{ display:grid; place-items:center; width:36px; height:34px; padding:0 !important; border:0 !important; border-radius:999px !important; background:transparent !important; color:var(--ecart-ink) !important; font-size:18px; line-height:1; cursor:pointer; }
+.econur-cart-qty button:hover:not(:disabled){ background:var(--ecart-wash) !important; }
+.econur-cart-qty button:disabled{ color:#C4BDB0 !important; cursor:default; }
+.econur-cart-qty span{ min-width:26px; font-size:15px; font-weight:600; text-align:center; }
+.econur-cart-rm{ display:grid; place-items:center; width:36px; height:36px; padding:0 !important; border:0 !important; border-radius:50% !important; background:transparent !important; color:#8A8F89 !important; cursor:pointer; transition:color .18s ease, background-color .18s ease; }
+.econur-cart-rm:hover{ background:#FBEDEA !important; color:#A1402F !important; }
+.econur-cart-rm svg{ width:19px; height:19px; }
+.econur-cart-empty{ padding:40px 0 20px; text-align:center; }
+.econur-cart-empty p{ margin:0 0 16px !important; font-size:15px; color:var(--ecart-muted); }
+.econur-cart-loading{ display:none; padding:18px 0; }
+.econur-cart-drawer.is-loading .econur-cart-loading{ display:block; }
+.econur-cart-drawer.is-loading .econur-cart-items:empty + .econur-cart-empty{ display:none; }
+.econur-cart-loading i{ display:block; height:72px; margin-bottom:12px; border-radius:12px; background:linear-gradient(90deg, #F2EEE6 25%, #F8F5EF 50%, #F2EEE6 75%); background-size:200% 100%; animation:ecart-shim 1.2s linear infinite; }
+@keyframes ecart-shim{ to{ background-position:-200% 0; } }
+
+.econur-cart-foot{ flex:none; padding:16px 20px 18px; border-top:1px solid var(--ecart-line); background:#FFFEFB; box-shadow:0 -8px 20px rgba(40, 36, 28, .04); }
+.econur-cart-sub{ display:flex; align-items:baseline; justify-content:space-between; font-size:15px; font-weight:600; }
+.econur-cart-sub b{ font-size:19px; color:var(--ecart-ink); }
+.econur-cart-note{ margin:2px 0 12px !important; font-size:12.5px; color:var(--ecart-muted); }
+.econur-cart-actions{ display:grid; gap:10px; }
+.econur-cart-btn{ display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 18px; border:1.5px solid var(--ecart-teal); border-radius:999px; font-size:15.5px; font-weight:600; line-height:1; text-decoration:none !important; cursor:pointer;
+  transition:background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease; }
+.econur-cart-btn svg{ width:18px; height:18px; }
+.econur-cart-btn.is-primary{ background:var(--ecart-teal); color:#fff !important; box-shadow:0 6px 16px rgba(13, 88, 95, .18); }
+.econur-cart-btn.is-ghost{ background:#FFFEFB; color:var(--ecart-teal) !important; }
+@media (hover:hover) and (pointer:fine){
+  .econur-cart-btn.is-primary:hover{ background:var(--ecart-teal-d); border-color:var(--ecart-teal-d); transform:translateY(-1px); }
+  .econur-cart-btn.is-ghost:hover{ background:var(--ecart-mint); }
+}
+.econur-cart-trust{ display:grid; gap:6px; margin:14px 0 0 !important; padding:0 !important; list-style:none; }
+.econur-cart-trust li{ display:flex; align-items:center; gap:8px; margin:0; font-size:13px; line-height:1.3; color:#4E5A55; }
+.econur-cart-trust svg{ flex:none; width:17px; height:17px; color:var(--ecart-teal); }
+
+/* ---------------------------------------------------------------- floating cart tab (right edge, middle) */
+.econur-cart-tab{ position:fixed; right:0; top:50%; z-index:9990; display:flex; flex-direction:column; align-items:center; gap:3px; width:74px; padding:10px 6px 9px !important;
+  border:1px solid var(--ecart-teal-d) !important; border-right:0 !important; border-radius:14px 0 0 14px !important; background:var(--ecart-teal) !important; color:#fff !important;
+  box-shadow:0 8px 22px rgba(13, 60, 64, .22); transform:translateY(-50%); cursor:pointer; font-family:var(--ecn-font-en, "Inter", Arial, sans-serif); transition:background-color .18s ease, padding .18s ease; }
+.econur-cart-tab[hidden]{ display:none; }
+.econur-cart-tab:hover{ background:var(--ecart-teal-d) !important; }
+.econur-cart-tab:focus-visible{ outline:2px solid var(--ecart-teal); outline-offset:3px; }
+.econur-cart-tab svg{ width:22px; height:22px; }
+.econur-cart-tab-n{ font-size:11.5px; font-weight:500; line-height:1.2; white-space:nowrap; }
+.econur-cart-tab-t{ font-size:13px; font-weight:700; line-height:1.1; }
+html.econur-cart-locked .econur-cart-tab{ visibility:hidden; }
+@media (max-width:767px){
+  .econur-cart-drawer{ width:92vw; }
+  .econur-cart-head{ padding:14px 16px 12px; }
+  .econur-cart-body{ padding:4px 16px; }
+  .econur-cart-item{ grid-template-columns:64px minmax(0,1fr); gap:12px; padding:14px 0; }
+  .econur-cart-thumb{ width:64px; height:64px; }
+  .econur-cart-foot{ padding:12px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .econur-cart-note{ margin-bottom:10px !important; }
+  .econur-cart-trust{ margin-top:10px !important; gap:4px; }
+  .econur-cart-trust li{ font-size:12.5px; }
+  /* phones: a small, quiet tab higher up (clear of the sticky Add to Cart bar and the chat button) */
+  .econur-cart-tab{ top:42%; width:56px; padding:8px 4px 7px !important; border-radius:12px 0 0 12px !important; }
+  .econur-cart-tab svg{ width:19px; height:19px; }
+  .econur-cart-tab-n{ display:none; }
+  .econur-cart-tab-t{ font-size:11.5px; }
+}
+@media (prefers-reduced-motion:reduce){ .econur-cart-drawer, .econur-cart-overlay, .econur-cart-btn{ transition:none; } .econur-cart-loading i{ animation:none; } }
+
+/* ---------------------------------------------------------------- cart page (WooCommerce Cart block) */
+body.econur-cartpage .econur-cartpage-head{ margin:8px 0 22px; }
+body.econur-cartpage .econur-cartpage-head h1{ margin:0 !important; font-size:32px !important; font-weight:600 !important; line-height:1.2 !important; color:var(--ecart-ink) !important; }
+body.econur-cartpage .econur-cartpage-head p{ margin:6px 0 0 !important; font-size:15px; color:var(--ecart-muted); }
+body.econur-cartpage .wp-block-woocommerce-cart{ margin-bottom:56px; color:var(--ecart-ink); }
+
+/* the items: one cream card */
+body.econur-cartpage .wc-block-cart .wc-block-cart-items{ border:1px solid var(--ecart-line) !important; border-radius:16px; background:#FFFEFB; border-collapse:separate !important; border-spacing:0; overflow:hidden; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items th{ padding:14px 18px !important; border-bottom:1px solid var(--ecart-line) !important; background:var(--ecart-wash); font-size:13px !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important; color:var(--ecart-muted) !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items td{ padding:18px !important; border:0 !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items .wc-block-cart-items__row{ border-bottom:1px solid var(--ecart-line) !important; }
+body.econur-cartpage .wc-block-cart .wc-block-cart-items .wc-block-cart-items__row:last-child{ border-bottom:0 !important; }
+body.econur-cartpage .wc-block-cart-item__image img{ border:1px solid var(--ecart-line); border-radius:12px; }
+body.econur-cartpage .wc-block-components-product-name{ font-size:16px !important; font-weight:600 !important; color:var(--ecart-ink) !important; text-decoration:none !important; }
+body.econur-cartpage .wc-block-cart-item__prices, body.econur-cartpage .wc-block-cart-item__total{ color:var(--ecart-teal); font-weight:700; }
+body.econur-cartpage .wc-block-components-product-metadata{ color:var(--ecart-muted); font-size:13.5px; }
+body.econur-cartpage .wc-block-components-quantity-selector{ border-radius:999px !important; border-color:#DCD4C6 !important; background:#fff; overflow:hidden; }
+body.econur-cartpage .wc-block-components-quantity-selector::after{ border-radius:999px !important; border-color:#DCD4C6 !important; }
+body.econur-cartpage .wc-block-cart-item__remove-link{ color:#8A8F89 !important; font-size:13px !important; text-decoration:none !important; }
+body.econur-cartpage .wc-block-cart-item__remove-link:hover{ color:#A1402F !important; }
+/* the summary: its own card */
+body.econur-cartpage .wc-block-cart__sidebar{ align-self:flex-start; }
+body.econur-cartpage .wc-block-cart__sidebar .wp-block-woocommerce-cart-order-summary-block{ padding:18px 20px 6px !important; border:1px solid var(--ecart-line); border-radius:16px; background:#FFFEFB; }
+body.econur-cartpage .wc-block-cart__sidebar .wc-block-cart__submit{ margin-top:14px; }
+body.econur-cartpage .wc-block-cart__submit-container--sticky{ background:rgba(255, 253, 248, .96) !important; border-top:1px solid var(--ecart-line); }
+body.econur-cartpage .wc-block-cart__totals-title{ margin:0 0 6px !important; font-size:17px !important; font-weight:700 !important; text-transform:none !important; color:var(--ecart-ink) !important; }
+body.econur-cartpage .wc-block-components-totals-item__label{ color:#4E5A55; }
+body.econur-cartpage .wc-block-components-totals-footer-item .wc-block-components-totals-item__label, body.econur-cartpage .wc-block-components-totals-footer-item .wc-block-components-totals-item__value{ font-size:18px !important; font-weight:700 !important; color:var(--ecart-ink) !important; }
+body.econur-cartpage .wc-block-cart__submit-button, body.econur-cartpage .wc-block-cart__submit-container .wc-block-components-button{ min-height:52px; border:0 !important; border-radius:999px !important; background:var(--ecart-teal) !important; color:#fff !important; font-size:16px !important; font-weight:600 !important; box-shadow:0 6px 16px rgba(13, 88, 95, .18); }
+body.econur-cartpage .wc-block-cart__submit-button:hover{ background:var(--ecart-teal-d) !important; }
+body.econur-cartpage .wc-block-components-totals-coupon__button, body.econur-cartpage .wc-block-components-totals-coupon .wc-block-components-button{ border-radius:10px !important; background:var(--ecart-teal) !important; color:#fff !important; }
+body.econur-cartpage .wc-block-components-text-input input, body.econur-cartpage .wc-block-components-text-input.is-active input{ border-radius:10px !important; border-color:#DCD4C6 !important; }
+body.econur-cartpage .wc-block-components-radio-control__option--checked-option-highlighted, body.econur-cartpage .wc-block-components-radio-control-accordion-option--checked-option-highlighted{ box-shadow:inset 0 0 0 1.5px var(--ecart-teal) !important; border-radius:12px; }
+body.econur-cartpage .wc-block-components-radio-control__input:checked{ border-color:var(--ecart-teal) !important; }
+body.econur-cartpage .wc-block-components-radio-control__input:checked::before{ background:var(--ecart-teal) !important; }
+@media (max-width:767px){
+  body.econur-cartpage .econur-cartpage-head h1{ font-size:26px !important; }
+  body.econur-cartpage .wc-block-cart .wc-block-cart-items td{ padding:14px !important; }
+}

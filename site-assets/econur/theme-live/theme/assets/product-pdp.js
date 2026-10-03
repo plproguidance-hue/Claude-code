@@ -163,6 +163,38 @@
       window.addEventListener('pageshow', bnReset); // coming back from checkout with the Back button
       if (window.jQuery) window.jQuery(form).on('found_variation', function () { bnSay(''); });
     }
+    /* ---------- out of stock: both buttons off, Buy Now says so ---------- */
+    function stockState(v) {
+      var out = !!(v && (v.is_in_stock === false || v.is_purchasable === false));
+      if (buyBtn && !bnBusy) { buyBtn.disabled = out; buyBtn.classList.toggle('is-out', out); if (bnLabel) bnLabel.textContent = out ? 'স্টক শেষ' : bnText; if (buyPrice) buyPrice.hidden = out; }
+    }
+    if (window.jQuery && form) window.jQuery(form).on('found_variation', function (e, v) { stockState(v); }).on('reset_data', function () { stockState(null); });
+
+    /* ---------- Add to Cart: WooCommerce adds it (Store API) without leaving the page, then the cart drawer opens.
+       Without the drawer script it stays WooCommerce's normal form post. ---------- */
+    if (addBtn && form) {
+      // before WooCommerce's own click check, so a missing size gets the inline note instead of a browser alert
+      addBtn.addEventListener('click', function (e) {
+        if (needsSize()) { e.preventDefault(); e.stopPropagation(); bnSay('অনুগ্রহ করে একটি সাইজ বেছে নিন।'); flagSize(); return; }
+        if (addBtn.classList.contains('wc-variation-is-unavailable')) { e.preventDefault(); e.stopPropagation(); bnSay('এই সাইজটি এখন স্টকে নেই।'); }
+      });
+      form.addEventListener('submit', function (e) {
+        var sub = e.submitter || (document.activeElement === addBtn ? addBtn : null);
+        if (sub !== addBtn || e.defaultPrevented || !window.econurCart || !window.fetch || !window.Promise) return;
+        e.preventDefault();
+        if (addBtn.classList.contains('is-busy')) return;
+        var vidIn = form.querySelector('input[name=variation_id]'), vid = vidIn ? parseInt(vidIn.value || '0', 10) : 0;
+        var pidIn = form.querySelector('[name="add-to-cart"]'), pid = vid || parseInt((pidIn && pidIn.value) || C.pid || '0', 10);
+        if (!pid) return;
+        var attrs = [].map.call(form.querySelectorAll('select[name^="attribute_"]'), function (x) { return { attribute: x.name.replace(/^attribute_/, ''), value: x.value }; }).filter(function (a) { return a.value; });
+        var n = qty();
+        bnSay(''); addBtn.classList.add('is-busy'); addBtn.setAttribute('aria-busy', 'true');
+        window.econurCart.add({ id: pid, quantity: n, variation: attrs })
+          .then(function () { meta('AddToCart', { content_ids: [String(pid)], content_type: 'product', content_name: C.name, value: lineTotal(n), quantity: n }); })
+          .catch(function (err) { var d = document.createElement('div'); d.innerHTML = (err && err.message) || ''; bnSay(d.textContent || 'দুঃখিত, কার্টে যোগ করা যায়নি। আবার চেষ্টা করুন।'); })
+          .then(function () { addBtn.classList.remove('is-busy'); addBtn.removeAttribute('aria-busy'); });
+      });
+    }
     // Meta AddToCart for the form (Add to Cart, Buy Now) is sent only after WooCommerce has added the item: see inc/meta-tracking.php
 
     /* ---------- sticky Add to Cart (phones): only once the main button has scrolled away ---------- */
