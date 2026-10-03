@@ -6,6 +6,7 @@
 defined('ABSPATH') || exit;
 
 $target  = econur_login_target();
+$mode    = econur_login_mode(); // "login" or "register" (?action=register)
 $user    = isset($_POST['username']) ? sanitize_text_field(wp_unslash($_POST['username'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 $remember = !empty($_POST['rememberme']); // phpcs:ignore WordPress.Security.NonceVerification
 // the form was sent but WooCommerce did not act on it (an expired security token): say so instead of a silent reload
@@ -16,7 +17,9 @@ if (isset($_GET['password-reset'])) { // phpcs:ignore WordPress.Security.NonceVe
     wc_add_notice('আপনার পাসওয়ার্ড পরিবর্তন হয়েছে। নতুন পাসওয়ার্ড দিয়ে সাইন ইন করুন।', 'success');
 }
 $social  = (string) apply_filters('econur_login_social_buttons', ''); // only a configured provider fills this
-$can_register = 'yes' === get_option('woocommerce_enable_myaccount_registration');
+$can_register = econur_login_can_register();
+$reg_name  = isset($_POST['econur_name']) ? sanitize_text_field(wp_unslash($_POST['econur_name'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+$reg_email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 $guest   = 'yes' === get_option('woocommerce_enable_guest_checkout');
 $shop    = wc_get_page_permalink('shop');
 ?><!doctype html>
@@ -38,11 +41,59 @@ $shop    = wc_get_page_permalink('shop');
 				<?php // the official ECONUR logo in its light version for the dark panel (same artwork: off-white lettering, lighter leaves) ?>
 				<img class="econur-login-logo" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/econur-logo-light.webp?ver=' . ECONUR_LOGIN_VER); ?>" width="840" height="212" alt="ECONUR" decoding="async" fetchpriority="high">
 			</a>
-			<h1 class="econur-login-h" id="econur-login-h" lang="bn">আবার স্বাগতম!</h1>
-			<p class="econur-login-lead" lang="bn">আপনার অ্যাকাউন্টে সাইন ইন করে, শপিং যাত্রা আরও সহজ ও উপভোগ্য করুন।</p>
+			<?php if ('register' === $mode) : ?>
+				<h1 class="econur-login-h" id="econur-login-h" lang="bn">অ্যাকাউন্ট তৈরি করুন</h1>
+				<p class="econur-login-lead" lang="bn">ECONUR-এর সাথে আপনার শপিং আরও সহজ করুন।</p>
+			<?php else : ?>
+				<h1 class="econur-login-h" id="econur-login-h" lang="bn">আবার স্বাগতম!</h1>
+				<p class="econur-login-lead" lang="bn">আপনার অ্যাকাউন্টে সাইন ইন করে, শপিং যাত্রা আরও সহজ ও উপভোগ্য করুন।</p>
+			<?php endif; ?>
 
 			<div class="econur-login-notices" lang="bn"><?php wc_print_notices(); ?></div>
 
+			<?php if ('register' === $mode) : ?>
+			<form class="econur-login-form econur-register-form woocommerce-form woocommerce-form-register register" method="post" action="<?php echo esc_url(add_query_arg(array())); ?>" novalidate lang="bn">
+				<?php do_action('woocommerce_register_form_start'); ?>
+				<div class="econur-login-field">
+					<label class="econur-login-sr" for="econur_reg_name">আপনার নাম</label>
+					<span class="econur-login-fic"><?php echo econur_login_icon('user'); // phpcs:ignore ?></span>
+					<input type="text" class="econur-login-input" name="econur_name" id="econur_reg_name" value="<?php echo esc_attr($reg_name); ?>" placeholder="আপনার নাম লিখুন" autocomplete="name" maxlength="100" required aria-describedby="econur_reg_name_err">
+					<span class="econur-login-ferr" id="econur_reg_name_err" hidden></span>
+				</div>
+				<div class="econur-login-field">
+					<label class="econur-login-sr" for="reg_email">ইমেইল</label>
+					<span class="econur-login-fic"><?php echo econur_login_icon('mail'); // phpcs:ignore ?></span>
+					<input type="email" class="econur-login-input" name="email" id="reg_email" value="<?php echo esc_attr($reg_email); ?>" placeholder="আপনার ইমেইল লিখুন" autocomplete="email" autocapitalize="off" spellcheck="false" required aria-describedby="reg_email_err">
+					<span class="econur-login-ferr" id="reg_email_err" hidden></span>
+				</div>
+				<div class="econur-login-field">
+					<label class="econur-login-sr" for="reg_password">পাসওয়ার্ড তৈরি করুন</label>
+					<span class="econur-login-fic"><?php echo econur_login_icon('lock'); // phpcs:ignore ?></span>
+					<input type="password" class="econur-login-input has-eye" name="password" id="reg_password" placeholder="পাসওয়ার্ড তৈরি করুন" autocomplete="new-password" required aria-describedby="reg_password_err">
+					<button type="button" class="econur-login-eye" data-econur-eye aria-controls="reg_password" aria-pressed="false" aria-label="পাসওয়ার্ড দেখুন">
+						<span class="econur-login-eye-show"><?php echo econur_login_icon('eye'); // phpcs:ignore ?></span><span class="econur-login-eye-hide" hidden><?php echo econur_login_icon('eyeoff'); // phpcs:ignore ?></span>
+					</button>
+					<span class="econur-login-ferr" id="reg_password_err" hidden></span>
+				</div>
+				<div class="econur-login-field">
+					<label class="econur-login-sr" for="econur_reg_password2">পাসওয়ার্ড নিশ্চিত করুন</label>
+					<span class="econur-login-fic"><?php echo econur_login_icon('lock'); // phpcs:ignore ?></span>
+					<input type="password" class="econur-login-input has-eye" name="econur_password2" id="econur_reg_password2" placeholder="পাসওয়ার্ড নিশ্চিত করুন" autocomplete="new-password" required aria-describedby="econur_reg_password2_err">
+					<button type="button" class="econur-login-eye" data-econur-eye aria-controls="econur_reg_password2" aria-pressed="false" aria-label="পাসওয়ার্ড দেখুন">
+						<span class="econur-login-eye-show"><?php echo econur_login_icon('eye'); // phpcs:ignore ?></span><span class="econur-login-eye-hide" hidden><?php echo econur_login_icon('eyeoff'); // phpcs:ignore ?></span>
+					</button>
+					<span class="econur-login-ferr" id="econur_reg_password2_err" hidden></span>
+				</div>
+				<?php do_action('woocommerce_register_form'); ?>
+				<?php wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
+				<input type="hidden" name="redirect" value="<?php echo esc_url($target); ?>">
+				<input type="hidden" name="register" value="1">
+				<input type="hidden" name="econur_login_form" value="1">
+				<input type="hidden" name="econur_reg_form" value="1">
+				<button type="submit" class="econur-login-submit" data-label="অ্যাকাউন্ট তৈরি করুন" data-busy="অ্যাকাউন্ট তৈরি হচ্ছে...">অ্যাকাউন্ট তৈরি করুন</button>
+				<?php do_action('woocommerce_register_form_end'); ?>
+			</form>
+			<?php else : ?>
 			<form class="econur-login-form woocommerce-form woocommerce-form-login login" method="post" action="<?php echo esc_url(add_query_arg(array())); ?>" novalidate lang="bn">
 				<?php do_action('woocommerce_login_form_start'); ?>
 				<div class="econur-login-field">
@@ -72,17 +123,20 @@ $shop    = wc_get_page_permalink('shop');
 				<input type="hidden" name="redirect" value="<?php echo esc_url($target); ?>">
 				<input type="hidden" name="login" value="1">
 				<input type="hidden" name="econur_login_form" value="1">
-				<button type="submit" class="econur-login-submit" data-label="সাইন ইন করুন">সাইন ইন করুন</button>
+				<button type="submit" class="econur-login-submit" data-label="সাইন ইন করুন" data-busy="সাইন ইন হচ্ছে...">সাইন ইন করুন</button>
 				<?php do_action('woocommerce_login_form_end'); ?>
 			</form>
+			<?php endif; ?>
 
-			<?php if ('' !== trim($social)) : ?>
+			<?php if ('login' === $mode && '' !== trim($social)) : ?>
 				<div class="econur-login-or" lang="bn"><span>অথবা</span></div>
 				<div class="econur-login-social"><?php echo $social; // phpcs:ignore -- markup from the configured provider ?></div>
 			<?php endif; ?>
 
-			<?php if ($can_register) : ?>
-				<p class="econur-login-alt" lang="bn">নতুন এখানে? <a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">একটি অ্যাকাউন্ট তৈরি করুন<?php echo econur_login_icon('arrow'); // phpcs:ignore ?></a></p>
+			<?php if ('register' === $mode) : ?>
+				<p class="econur-login-alt" lang="bn">ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="<?php echo esc_url(econur_login_switch_url('login')); ?>">সাইন ইন করুন<?php echo econur_login_icon('arrow'); // phpcs:ignore ?></a></p>
+			<?php elseif ($can_register) : ?>
+				<p class="econur-login-alt" lang="bn">নতুন এখানে? <a href="<?php echo esc_url(econur_login_switch_url('register')); ?>">একটি অ্যাকাউন্ট তৈরি করুন<?php echo econur_login_icon('arrow'); // phpcs:ignore ?></a></p>
 			<?php elseif ($guest && $shop) : ?>
 				<p class="econur-login-alt" lang="bn">নতুন এখানে? অ্যাকাউন্ট ছাড়াই অর্ডার করা যায়। <a href="<?php echo esc_url($shop); ?>">কেনাকাটা শুরু করুন<?php echo econur_login_icon('arrow'); // phpcs:ignore ?></a></p>
 			<?php endif; ?>
