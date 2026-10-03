@@ -79,3 +79,26 @@ add_action('wp_footer', function () {
     if (!econur_ds_preview() || isset($_GET['ds_shot'])) return; // phpcs:ignore WordPress.Security.NonceVerification
     echo '<a class="ecn-ds-badge" href="' . esc_url(add_query_arg('ds_preview', 'off')) . '" title="Leave the design preview">Design preview · exit</a>';
 });
+
+/* ---------------------------------------------------------------- preview markup (approved mockup, real store data) */
+// "Shop by category": a "View all products" button on the right (the shop page), larger round category photos
+add_filter('do_shortcode_tag', function ($out, $tag) {
+    if ('econur_category_trust' !== $tag || !econur_ds_active()) return $out;
+    $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/shop/');
+    $btn = '<a class="ecn-ds-viewall" href="' . esc_url($shop) . '">View All Products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>';
+    $out = preg_replace('#<p class="econur-category-trust__tagline">.*?</p>#s', $btn, $out, 1);
+    return str_replace('sizes="44px"', 'sizes="76px"', $out);
+}, 10, 2);
+
+// Offer banner: the saved headline ("Flat 60% OFF") and its countdown are not backed by a matching sale in WooCommerce,
+// so the preview shows a neutral banner built only from facts already on the site (no percentage, no countdown).
+add_filter('do_shortcode_tag', function ($out, $tag) {
+    if ('econur_sale_banner' !== $tag || !econur_ds_active() || '' === trim($out)) return $out;
+    $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/shop/');
+    return '<section class="ecn-sb ecn-ds-sb" id="ecn-sale" aria-labelledby="ecn-sb-title">'
+        . '<div class="ecn-sb-copy"><div class="ecn-sb-top"><span class="ecn-sb-eyebrow">Botanical skincare</span></div>'
+        . '<h2 class="ecn-sb-title" id="ecn-sb-title">Natural care for everyday life</h2>'
+        . '<p class="ecn-sb-text" lang="bn">হাতে তৈরি বোটানিক্যাল বার। সারা দেশে ক্যাশ অন ডেলিভারি।</p></div>'
+        . '<div class="ecn-sb-act"><a class="ecn-sb-cta" href="' . esc_url($shop) . '"><span lang="bn">সব পণ্য দেখুন</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>'
+        . '</section>';
+}, 10, 2);
