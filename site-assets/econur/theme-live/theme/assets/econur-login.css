@@ -24,12 +24,11 @@ body.econur-login-page :is(.ecn-wa-float, #ast-scroll-top, .ast-scroll-top-icon)
 .econur-login-deco--leaves2{ bottom:-58px; left:-66px; width:210px !important; transform:rotate(168deg); opacity:.8; }
 .econur-login-inner{ position:relative; z-index:1; width:100%; max-width:500px; }
 
-.econur-login-brand{ display:inline-flex; align-items:center; padding:11px 17px; border-radius:14px; background:var(--elg-cream); box-shadow:0 6px 18px rgba(0, 0, 0, .14); text-decoration:none !important; line-height:0; }
+.econur-login-brand{ display:inline-block; margin:0; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; line-height:0; text-decoration:none !important; }
 .econur-login-brand:focus-visible{ outline:2px solid var(--elg-focus); outline-offset:3px; }
-.econur-login-logo{ display:block; width:196px !important; height:auto !important; max-width:none; object-fit:contain; box-shadow:none !important; }
-.econur-login-logo-text{ font:600 26px/1 var(--ecn-font-en, Inter, sans-serif); color:var(--elg-ink); line-height:1.2; }
+.econur-login-logo{ display:block; width:210px !important; max-width:100%; height:auto !important; object-fit:contain; box-shadow:none !important; } /* the light version of the official logo, directly on the teal */
 
-h1.econur-login-h{ margin:30px 0 0 !important; padding:0; font-family:var(--elg-bn) !important; font-size:42px !important; font-weight:600 !important; line-height:1.2 !important; letter-spacing:0 !important; color:#fff !important; }
+h1.econur-login-h{ margin:32px 0 0 !important; padding:0; font-family:var(--elg-bn) !important; font-size:42px !important; font-weight:600 !important; line-height:1.2 !important; letter-spacing:0 !important; color:#fff !important; }
 .econur-login-lead{ max-width:440px; margin:10px 0 0 !important; font-size:16.5px; line-height:1.6; color:rgba(255, 255, 255, .74); }
 
 /* WooCommerce notices (errors, password reset) */
@@ -170,9 +169,8 @@ h2.econur-login-rh{ margin:22px 0 0 !important; font-family:var(--elg-bn) !impor
   .econur-login-right{ display:none; }
   .econur-login-deco--leaves{ top:-34px; left:auto; right:-46px; width:150px !important; transform:scaleX(-1) rotate(-6deg); opacity:.85; }
   .econur-login-deco--leaves2{ display:none; }
-  .econur-login-brand{ padding:10px 15px; border-radius:12px; }
-  .econur-login-logo{ width:160px !important; }
-  h1.econur-login-h{ margin-top:26px !important; font-size:32px !important; }
+  .econur-login-logo{ width:168px !important; }
+  h1.econur-login-h{ margin-top:28px !important; font-size:32px !important; }
   .econur-login-lead{ font-size:15.5px; }
   .econur-login-notices{ margin-top:18px; }
   .econur-login-form{ margin-top:22px !important; }
@@ -186,5 +184,5 @@ h2.econur-login-rh{ margin:22px 0 0 !important; font-family:var(--elg-bn) !impor
 @media (max-width:359px){
   .econur-login-left{ padding:34px 18px 40px; }
   h1.econur-login-h{ font-size:29px !important; }
-  .econur-login-logo{ width:150px !important; }
+  .econur-login-logo{ width:158px !important; }
 }
