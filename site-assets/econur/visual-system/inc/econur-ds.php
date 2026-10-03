@@ -24,11 +24,18 @@ function econur_ds_key() {
     return $k;
 }
 function econur_ds_live() { return 'live' === get_option('econur_ds_mode'); }
+// product pages keep the previous design for everyone unless the option econur_ds_pdp is "on"; ?ds_preview=<key> still shows the new one
+function econur_ds_pdp_held() {
+    return 'on' !== get_option('econur_ds_pdp') && function_exists('is_product') && is_product();
+}
+// true when the new design is live for this page (not only previewed)
+function econur_ds_live_here() { return econur_ds_live() && !econur_ds_pdp_held(); }
 // true when this request shows the new design
 function econur_ds_active() {
     static $on = null;
     if (null !== $on) return $on;
-    if (econur_ds_live()) return $on = true;
+    if (!did_action('wp')) return econur_ds_live(); // the page type is not known yet: answer, but do not remember
+    if (econur_ds_live_here()) return $on = true;
     $key = econur_ds_key();
     $q = isset($_GET['ds_preview']) ? (string) wp_unslash($_GET['ds_preview']) : null; // phpcs:ignore WordPress.Security.NonceVerification
     if (null !== $q) {
@@ -37,7 +44,7 @@ function econur_ds_active() {
     }
     return $on = isset($_COOKIE['econur_ds']) && hash_equals($key, (string) $_COOKIE['econur_ds']) && is_user_logged_in();
 }
-function econur_ds_preview() { return econur_ds_active() && !econur_ds_live(); }
+function econur_ds_preview() { return econur_ds_active() && !econur_ds_live_here(); }
 
 // remember / forget the preview, and never cache a preview page
 add_action('template_redirect', function () {
