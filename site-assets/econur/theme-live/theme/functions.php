@@ -29,6 +29,7 @@ require_once get_stylesheet_directory() . '/inc/header-actions.php'; // header s
 require_once get_stylesheet_directory() . '/inc/category-trust.php'; // homepage Shop by category + trust panel [econur_category_trust]
 require_once get_stylesheet_directory() . '/inc/pdp-accordion.php'; // product page details accordion under the purchase card
 require_once get_stylesheet_directory() . '/inc/pdp-love.php'; // product page Why You'll Love This section under the hero
+require_once get_stylesheet_directory() . '/inc/pdp-info.php'; // product page Description / FAQ / Reviews tabs under the hero
 require_once get_stylesheet_directory() . '/inc/econur-cart.php'; // cart drawer (all pages but cart / checkout) + floating cart (product / shop pages), cart page heading + Bengali labels
 require_once get_stylesheet_directory() . '/inc/econur-checkout.php'; // checkout fields, delivery cards, order button, order success page
 require_once get_stylesheet_directory() . '/inc/motion.php'; // motion tokens, homepage scroll reveal, hover / press feedback
