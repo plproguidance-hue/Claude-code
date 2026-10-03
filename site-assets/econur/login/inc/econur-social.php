@@ -76,6 +76,12 @@ add_action('init', function () {
 add_action('wp', function () {
     if (econur_social_ready()) NextendSocialLogin::removeFrontendAssets();
 });
+// /wp-login.php stays as WordPress draws it; only Nextend's own OAuth / settings-test requests (loginSocial=...) keep its script
+add_action('login_init', function () {
+    if (!econur_social_ready() || !empty($_REQUEST['loginSocial']) || isset($_GET['interim_login'])) return; // phpcs:ignore WordPress.Security.NonceVerification
+    NextendSocialLogin::removeLoginFormAssets();
+    remove_action('wp_print_scripts', 'NextendSocialLogin::nslDOMReady');
+}, 0);
 
 /* ---------------------------------------------------------------- who may sign up / sign in */
 $GLOBALS['econur_social_msg'] = '';
