@@ -128,7 +128,7 @@ $shop    = wc_get_page_permalink('shop');
 			</form>
 			<?php endif; ?>
 
-			<?php if ('login' === $mode && '' !== trim($social)) : ?>
+			<?php if ('' !== trim($social)) : // Google / Facebook through Nextend (inc/econur-social.php): sign in or create the account in one step ?>
 				<div class="econur-login-or" lang="bn"><span>অথবা</span></div>
 				<div class="econur-login-social"><?php echo $social; // phpcs:ignore -- markup from the configured provider ?></div>
 			<?php endif; ?>

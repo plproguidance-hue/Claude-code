@@ -88,7 +88,15 @@ body.econur-login-page .econur-login-submit:disabled{ opacity:.85; cursor:progre
 /* optional real social sign-in (only when a provider is configured) */
 .econur-login-or{ display:flex; align-items:center; gap:14px; margin:24px 0 16px; color:rgba(255, 255, 255, .62); font-size:14px; }
 .econur-login-or::before, .econur-login-or::after{ content:""; flex:1; height:1px; background:rgba(255, 255, 255, .3); }
-.econur-login-social{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; }
+.econur-login-social{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0, 1fr); gap:12px; }
+body.econur-login-page .econur-social-btn{ display:flex; align-items:center; justify-content:center; gap:10px; min-width:0; height:54px; padding:0 14px; border:1px solid rgba(24, 63, 67, .14); border-radius:12px;
+  background:#fff; box-shadow:0 1px 2px rgba(0, 20, 22, .08); color:var(--elg-ink) !important; font-family:var(--elg-bn); font-size:15px; font-weight:600; line-height:1.2; text-decoration:none !important;
+  white-space:nowrap; transition:background-color .2s ease, border-color .2s ease, transform .2s ease; }
+body.econur-login-page .econur-social-btn span{ overflow:hidden; text-overflow:ellipsis; }
+body.econur-login-page .econur-social-btn .econur-social-ic{ flex:none; width:20px; height:20px; box-shadow:none !important; }
+@media (hover:hover) and (pointer:fine){ body.econur-login-page .econur-social-btn:hover{ background:#F6F4EF; border-color:rgba(24, 63, 67, .24); transform:translateY(-1px); } }
+body.econur-login-page .econur-social-btn:focus-visible{ outline:2px solid var(--elg-focus); outline-offset:3px; }
+@media (max-width:479px){ .econur-login-social{ grid-auto-flow:row; } }
 
 /* create account / sign in switch: one quiet line, the link part bright and underlined */
 .econur-login-alt{ margin:24px 0 0 !important; font-size:15px; line-height:1.6; text-align:center; color:rgba(255, 255, 255, .7); }
