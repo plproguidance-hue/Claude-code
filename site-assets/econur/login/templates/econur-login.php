@@ -15,7 +15,6 @@ if (econur_login_posted() && !is_user_logged_in() && !wc_notice_count('error')) 
 if (isset($_GET['password-reset'])) { // phpcs:ignore WordPress.Security.NonceVerification
     wc_add_notice('আপনার পাসওয়ার্ড পরিবর্তন হয়েছে। নতুন পাসওয়ার্ড দিয়ে সাইন ইন করুন।', 'success');
 }
-$logo_id = (int) get_theme_mod('custom_logo');
 $social  = (string) apply_filters('econur_login_social_buttons', ''); // only a configured provider fills this
 $can_register = 'yes' === get_option('woocommerce_enable_myaccount_registration');
 $guest   = 'yes' === get_option('woocommerce_enable_guest_checkout');
@@ -36,13 +35,8 @@ $shop    = wc_get_page_permalink('shop');
 		<?php echo econur_login_deco(154, 'econur-login-deco--leaves2', '220px'); // phpcs:ignore ?>
 		<div class="econur-login-inner">
 			<a class="econur-login-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="ECONUR হোমপেজ">
-				<?php
-				if ($logo_id && wp_attachment_is_image($logo_id)) {
-					echo wp_get_attachment_image($logo_id, 'full', false, array('class' => 'econur-login-logo', 'alt' => 'ECONUR', 'loading' => 'eager', 'decoding' => 'async', 'fetchpriority' => 'high', 'sizes' => '210px'));
-				} else {
-					echo '<span class="econur-login-logo-text">' . esc_html(get_bloginfo('name')) . '</span>';
-				}
-				?>
+				<?php // the official ECONUR logo in its light version for the dark panel (same artwork: off-white lettering, lighter leaves) ?>
+				<img class="econur-login-logo" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/econur-logo-light.webp?ver=' . ECONUR_LOGIN_VER); ?>" width="840" height="212" alt="ECONUR" decoding="async" fetchpriority="high">
 			</a>
 			<h1 class="econur-login-h" id="econur-login-h" lang="bn">আবার স্বাগতম!</h1>
 			<p class="econur-login-lead" lang="bn">আপনার অ্যাকাউন্টে সাইন ইন করে, শপিং যাত্রা আরও সহজ ও উপভোগ্য করুন।</p>
