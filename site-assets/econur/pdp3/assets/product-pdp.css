@@ -2148,3 +2148,59 @@ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-pack:has(.ecn-lp
 
 /* ===================== v7.19.1: no subtitle under the title; the price follows the title / stock row ===================== */
 body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow + .ecn-lp-pricerow{ margin-top:8px; }
+
+/* ===================== v7.20: purchase buttons, Buy Now first =====================
+   Row 1: quantity + Buy Now (primary, filled teal, live total). Row 2: Add to Cart (secondary, outlined, full width).
+   Then the service row and WhatsApp (support, full width). Buy Now is printed inside the WooCommerce form
+   (inc/product-pdp.php), so it submits the chosen variation and quantity; product-pdp.js keeps its total current. */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .woocommerce-variation-add-to-cart,
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart:not(.variations_form){
+  display:grid !important; grid-template-columns:minmax(0,28fr) minmax(0,72fr) !important; grid-template-areas:"qty buy" "msg msg" "add add" !important;
+  column-gap:12px !important; row-gap:0 !important; align-items:stretch; margin-top:12px !important; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .quantity.ecn-qty{ grid-area:qty; width:auto !important; min-width:0; height:52px !important; min-height:0 !important; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{
+  grid-area:buy; display:inline-flex !important; align-items:center; justify-content:center; gap:8px; width:100%; min-width:0; height:52px !important; margin:0 !important; padding:0 16px !important;
+  border:1.5px solid var(--pd-teal) !important; border-radius:999px !important; background:var(--pd-teal) !important; color:#fff !important; box-shadow:0 6px 16px rgba(13, 88, 95, .18) !important;
+  font-size:16px !important; font-weight:600 !important; line-height:1 !important; white-space:nowrap; cursor:pointer;
+  transition:background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease !important; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow svg{ flex:none; width:18px; height:18px; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow .ecn-buy-price{ font-weight:600; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow:focus-visible{ outline:2px solid var(--pd-teal) !important; outline-offset:3px; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow.is-busy, body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow:disabled{ opacity:.8; cursor:progress; transform:none; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-buy-msg{ grid-area:msg; margin:8px 0 0 !important; padding:8px 12px; border-radius:10px; background:#FBEDEA; color:#A1402F; font-size:13px; line-height:1.4; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-buy-msg[hidden]{ display:none; }
+/* Add to Cart: secondary, outlined, a little lower */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button{
+  grid-area:add; width:100%; min-width:0; height:46px !important; margin:10px 0 0 !important; padding:0 16px !important;
+  border:1.5px solid var(--pd-teal) !important; background:#FFFEFB !important; color:var(--pd-teal) !important; box-shadow:none !important; font-size:15px !important; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button::before{ width:18px; height:18px; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button:hover:not(.disabled){ border-color:var(--pd-teal) !important; background:#EEF4F2 !important; color:var(--pd-teal) !important; }
+@media (hover:hover) and (pointer:fine){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow:hover:not(:disabled){ border-color:var(--pd-teal-d) !important; background:var(--pd-teal-d) !important; box-shadow:0 8px 20px rgba(13, 88, 95, .22) !important; transform:translateY(-1px); }
+}
+/* the service row 12px under Add to Cart; WhatsApp on its own, full width, as the support action */
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-trust{ margin-top:12px !important; }
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra.is-wa-only{ display:block; margin-top:12px; }
+body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra.is-wa-only .ecn-pdp-wa{ width:100%; height:46px !important; }
+
+/* phones: quantity a third, Buy Now two thirds */
+@media (max-width:767px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .woocommerce-variation-add-to-cart,
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart:not(.variations_form){ grid-template-columns:minmax(104px,32fr) minmax(0,68fr) !important; column-gap:8px !important; margin-top:10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .quantity.ecn-qty, body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{ height:50px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{ gap:6px; padding:0 10px !important; font-size:15px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button{ height:44px !important; margin-top:8px !important; font-size:14.5px !important; }
+  body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-trust{ margin-top:10px !important; }
+  body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra.is-wa-only{ margin-top:10px; }
+  body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra.is-wa-only .ecn-pdp-wa{ height:44px !important; }
+}
+/* narrow phones: quantity above Buy Now, so the Buy Now label never squeezes */
+@media (max-width:359px){
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .woocommerce-variation-add-to-cart,
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart:not(.variations_form){ grid-template-columns:minmax(0,1fr) !important; grid-template-areas:"qty" "buy" "msg" "add" !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .quantity.ecn-qty{ justify-self:start; width:132px !important; height:46px !important; }
+  body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{ margin-top:8px !important; }
+}
+/* Add to Cart now has the full width: its cart icon stays on narrow phones too */
+@media (max-width:400px){ html body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button::before{ display:block !important; } }
+@media (prefers-reduced-motion:reduce){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{ transition:none !important; transform:none !important; } }

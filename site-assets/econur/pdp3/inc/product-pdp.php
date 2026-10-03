@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.19.1';
+const ECONUR_PDP_VER = '7.20.0';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -66,6 +66,16 @@ add_filter('woocommerce_product_add_to_cart_text', function ($text) { global $pr
 add_action('woocommerce_before_add_to_cart_button', function () {
     global $product;
     if ($product && $product->is_type('simple') && econur_pdp_is_this($product)) echo '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
+});
+// The Buy Now button itself sits in the form, beside the quantity (primary action); Add to Cart follows full width below.
+// product-pdp.js keeps its price in step with the pack / size / quantity and guards against double submits.
+add_action('woocommerce_after_add_to_cart_button', function () {
+    global $product;
+    if (!$product || !econur_pdp_is_this($product) || '' === $product->get_price()) return;
+    echo '<button type="submit" name="ecn_buy_now" value="1" class="ecn-pdp-buynow">'
+        . '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13 2.5 4.6 13.4h6.3L10 21.5l8.4-10.9h-6.3Z" fill="currentColor"/></svg>'
+        . '<span lang="bn" class="econur-bn-cta" data-ecn-buy-label>এখনই কিনুন</span><span class="ecn-buy-price" data-ecn-buy-price></span></button>'
+        . '<p class="ecn-buy-msg" data-ecn-buy-msg role="alert" lang="bn" hidden></p>';
 });
 // Purchase type: shown only when a store offers more than one way to buy (filter econur_lp_purchase_types > 1).
 // ECONUR sells one-time purchases only, so the row is not shown (one fewer step before Add to Cart).
@@ -401,13 +411,13 @@ function econur_pdp_render($product) {
             . '</div></div>';
     }
 
-    // compact reassurance right under Add to Cart (the store's own terms), then Buy Now and WhatsApp
+    // compact reassurance right under Add to Cart (the store's own terms), then WhatsApp (Buy Now is in the form, beside the quantity)
     if ($buyable) {
         echo '<ul class="ecn-lp-trust" aria-label="Ordering">'
             . '<li lang="bn">' . econur_lp_icon('box') . '<span>পণ্য হাতে পেয়ে পেমেন্ট</span></li>'
             . '<li lang="bn">' . econur_pdp_icon('truck') . '<span>সারা বাংলাদেশে ডেলিভারি</span></li>'
             . '<li lang="bn">' . econur_pdp_icon('phone') . '<span>অর্ডার নিশ্চিত করতে ফোন করি</span></li></ul>';
-        echo '<div class="ecn-lp-extra"><button type="submit" form="ecn-cart-form" name="ecn_buy_now" value="1" class="ecn-pdp-buynow"><span lang="bn" class="econur-bn-cta">এখনই কিনুন</span></button>'
+        echo '<div class="ecn-lp-extra is-wa-only">'
             . '<a class="ecn-pdp-wa" data-ecn-wa data-ecn-wa-live href="' . esc_url(econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.')) . '" target="_blank" rel="noopener">' . econur_pdp_icon('whatsapp') . '<span lang="bn" class="econur-bn-cta">WhatsApp-এ কথা বলুন</span></a></div>';
     }
     echo '</div>';
