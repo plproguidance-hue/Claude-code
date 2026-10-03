@@ -1,6 +1,7 @@
 <?php
 /**
  * Review order table (ECONUR order summary: photo, name, size, quantity × price; subtotal, delivery, discount, total).
+ * The discount row is WooCommerce's own discount total; coupons are entered and removed under the total.
  * The delivery area itself is chosen in the left column (econur_checkout_shipping_cards()); here only its charge shows.
  *
  * @see https://woocommerce.com/document/template-structure/
@@ -98,19 +99,12 @@ $econur_discount = WC()->cart->get_discount_total() + ( WC()->cart->display_pric
 
 		<?php endif; ?>
 
-		<?php foreach ( WC()->cart->get_coupons() as $code => $coupon ) : ?>
-			<tr class="cart-discount coupon-<?php echo esc_attr( sanitize_title( $code ) ); ?>">
-				<th><?php wc_cart_totals_coupon_label( $coupon ); ?></th>
-				<td><?php wc_cart_totals_coupon_html( $coupon ); ?></td>
-			</tr>
-		<?php endforeach; ?>
-
-		<?php if ( ! WC()->cart->get_coupons() ) : ?>
-			<tr class="econur-sum-discount">
-				<th lang="bn">ডিসকাউন্ট</th>
-				<td><?php echo wp_kses_post( wc_price( $econur_discount ) ); ?></td>
-			</tr>
-		<?php endif; ?>
+		<?php /* one discount row: WooCommerce's discount total for all applied coupons (the codes and their "remove"
+		   action are in the coupon area under the total, econur_checkout_coupon()) */ ?>
+		<tr class="econur-sum-discount<?php echo $econur_discount > 0 ? ' has-discount' : ''; ?>">
+			<th lang="bn">ডিসকাউন্ট</th>
+			<td><?php echo $econur_discount > 0 ? '&minus;' . wp_kses_post( wc_price( $econur_discount ) ) : wp_kses_post( wc_price( 0 ) ); ?></td>
+		</tr>
 
 		<?php foreach ( WC()->cart->get_fees() as $fee ) : ?>
 			<tr class="fee">
