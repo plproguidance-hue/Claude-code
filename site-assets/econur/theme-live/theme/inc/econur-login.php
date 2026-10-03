@@ -11,7 +11,8 @@
  *   - account creation (/login/?action=register) is WooCommerce's own registration (WC_Form_Handler::process_registration:
  *     email, password, its nonce; it creates a normal WooCommerce customer, signs them in and redirects safely); this page
  *     adds the name and the password confirmation. Shown only while WooCommerce > Settings > Accounts allows it;
- *   - social sign-in buttons appear only if a real provider prints them (filter econur_login_social_buttons);
+ *   - social sign-in buttons appear only if a real provider prints them (filter econur_login_social_buttons): Google and
+ *     Facebook through the Nextend Social Login plugin, see inc/econur-social.php;
  *   - /wp-login.php and the WordPress admin sign-in are not touched.
  * The page is a WordPress page (option econur_login_page_id) shown with templates/econur-login.php instead of the theme's
  * header and footer. The header Login link and the My Account hand-over follow once econur_login_live = "yes".
@@ -19,7 +20,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_LOGIN_VER = '1.1.1';
+const ECONUR_LOGIN_VER = '1.2.1';
 
 function econur_login_page_id() {
     $id = (int) get_option('econur_login_page_id');
@@ -208,3 +209,5 @@ function econur_login_deco($id, $class, $sizes = '300px', $eager = false) {
     if (!wp_attachment_is_image($id)) return '';
     return wp_get_attachment_image($id, 'full', false, array('class' => 'econur-login-deco ' . $class, 'alt' => '', 'aria-hidden' => 'true', 'loading' => $eager ? 'eager' : 'lazy', 'decoding' => 'async', 'sizes' => $sizes));
 }
+
+require_once __DIR__ . '/econur-social.php';
