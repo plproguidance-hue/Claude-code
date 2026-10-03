@@ -99,7 +99,9 @@ function econur_pdp_info($product, $lp = array()) {
     $media = '';
     if ($d['image']) {
         $alt = $d['alt'] ?: (string) get_post_meta($d['image'], '_wp_attachment_image_alt', true) ?: $name;
-        $media = '<figure class="econur-pit-media">' . wp_get_attachment_image($d['image'], 'full', false, array(
+        $mt = wp_get_attachment_metadata($d['image']);
+        $ar = (!empty($mt['width']) && !empty($mt['height'])) ? ' style="--pit-ar:' . (int) $mt['width'] . ' / ' . (int) $mt['height'] . '"' : '';
+        $media = '<figure class="econur-pit-media"' . $ar . '>' . wp_get_attachment_image($d['image'], 'full', false, array(
             'class' => 'econur-pit-img', 'alt' => $alt, 'loading' => 'lazy', 'decoding' => 'async',
             'sizes' => '(min-width: 1100px) 640px, (min-width: 860px) 52vw, calc(100vw - 64px)',
             'style' => $d['pos'] && preg_match('/^[\d.\s%a-z-]+$/i', $d['pos']) ? 'object-position:' . $d['pos'] : '',
