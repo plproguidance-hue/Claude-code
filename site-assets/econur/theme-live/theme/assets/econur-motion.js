@@ -1,4 +1,4 @@
-/* ECONUR motion 1.0: homepage scroll reveal.
+/* ECONUR motion 1.0.1: homepage scroll reveal.
    Each group fades up once when about 15% of it enters the screen, its items one after another. Only groups that start
    below the screen are prepared (nothing above the fold is hidden, nothing is hidden without JavaScript), and the reveal
    classes are removed again afterwards, so every component keeps its own hover transitions. Skipped entirely for
@@ -10,9 +10,9 @@
   // [group, items inside the group (empty: the group itself), options]
   // k: share of the reveal distance, x: horizontal start, s: start scale, i: extra delay steps, max: highest stagger step
   var GROUPS = [
-    ['.ecn-cat-title', '', {}],
-    ['.ecn-chips', '.ecn-chip', { k: .5, step: 60 }],
-    ['.ecn-trust3', ':scope > li', { k: .6, s: .985, step: 60 }],
+    ['.econur-category-trust__header', '', { k: .5 }],
+    ['.econur-category-list', '.econur-category-card', { k: .5, step: 60 }],
+    ['.econur-trust-strip', ':scope > li', { k: .5, s: .985, step: 60 }],
     ['.ecn-sh', '', {}],
     ['.ecn-home-grid', ':scope > li', { k: .9, max: 4 }],
     ['.ecn-sb', '.ecn-sb-copy, .ecn-sb-timer, .ecn-sb-cta', { k: .6, step: 110 }],
