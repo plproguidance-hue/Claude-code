@@ -1,4 +1,4 @@
-/* ECONUR customer login page 1.0 (inc/econur-login.php, templates/econur-login.php)
+/* ECONUR customer sign-in / create-account page 1.1 (inc/econur-login.php, templates/econur-login.php)
    Left: deep ECONUR teal with the sign-in form. Right: warm cream with what an account offers.
    Colours are the site's own (checkout / header teal #0D585F, #0A474D, ink #183F43, cream), fonts the site's
    Hind Siliguri / Inter set (--ecn-font-bn, --ecn-font-body). Everything is scoped to body.econur-login-page. */
@@ -90,11 +90,26 @@ body.econur-login-page .econur-login-submit:disabled{ opacity:.85; cursor:progre
 .econur-login-or::before, .econur-login-or::after{ content:""; flex:1; height:1px; background:rgba(255, 255, 255, .3); }
 .econur-login-social{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; }
 
-.econur-login-alt{ margin:26px 0 0 !important; font-size:15px; line-height:1.6; text-align:center; color:rgba(255, 255, 255, .74); }
-.econur-login-alt a{ display:inline-flex; align-items:center; gap:6px; color:#fff !important; font-weight:600; text-decoration:underline !important; text-decoration-color:rgba(255, 255, 255, .5) !important; text-underline-offset:4px; }
-.econur-login-alt a svg{ width:17px; height:17px; transition:transform .2s ease; }
+/* create account / sign in switch: one quiet line, the link part bright and underlined */
+.econur-login-alt{ margin:24px 0 0 !important; font-size:15px; line-height:1.6; text-align:center; color:rgba(255, 255, 255, .7); }
+.econur-login-alt a{ display:inline-flex; align-items:center; gap:6px; white-space:nowrap; color:#fff !important; font-weight:600; text-decoration:underline !important; text-decoration-color:rgba(255, 255, 255, .55) !important; text-underline-offset:4px; transition:text-decoration-color .2s ease; }
+.econur-login-alt a:hover{ text-decoration-color:#fff !important; }
+.econur-login-alt a svg{ flex:none; width:16px; height:16px; transition:transform .2s ease; }
 .econur-login-alt a:hover svg{ transform:translateX(2px); }
 .econur-login-alt a:focus-visible{ outline:2px solid var(--elg-focus); outline-offset:3px; border-radius:4px; }
+
+/* create account: WooCommerce's password strength message under the password */
+.econur-register-form .woocommerce-password-strength{ margin:8px 0 0; padding:7px 12px; border-radius:8px; font-size:13.5px; font-weight:600; line-height:1.4; text-align:left;
+  background:rgba(255, 255, 255, .08); color:#fff; border:1px solid rgba(255, 255, 255, .16); }
+.econur-register-form .woocommerce-password-strength.short{ background:rgba(214, 84, 66, .2); border-color:rgba(255, 160, 145, .45); color:#FFE3DD; }
+.econur-register-form .woocommerce-password-strength.bad{ background:rgba(222, 140, 60, .2); border-color:rgba(245, 190, 130, .45); color:#FFEBD6; }
+.econur-register-form .woocommerce-password-strength.good{ background:rgba(214, 186, 80, .18); border-color:rgba(240, 220, 140, .45); color:#FFF6D6; }
+.econur-register-form .woocommerce-password-strength.strong{ background:rgba(84, 170, 136, .2); border-color:rgba(150, 215, 190, .5); color:#DDF5EA; }
+.econur-register-form .woocommerce-password-hint{ display:block; margin:6px 2px 0; font-size:13px; line-height:1.5; color:rgba(255, 255, 255, .72); }
+body.econur-login-page .econur-register-form .econur-login-submit:disabled:not([aria-busy]){ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
+.econur-register-form .woocommerce-privacy-policy-text p{ margin:4px 0 16px !important; font-size:13px; line-height:1.55; color:rgba(255, 255, 255, .66); }
+.econur-register-form .woocommerce-privacy-policy-text a{ color:#fff; }
+body.econur-login-page .econur-register-form .econur-login-submit{ margin-top:8px !important; }
 
 /* phones only: the account reasons in one short list after the form */
 .econur-login-mbenefits{ display:none; }

@@ -8,7 +8,9 @@
  * Nothing is stored here and nothing is decided in JavaScript.
  *   - logged-in visitors are sent on to My Account (or the safe redirect_to address);
  *   - "Forgot password" is WooCommerce's lost-password page; after a reset the visitor comes back here;
- *   - account registration follows WooCommerce > Settings > Accounts (off on this store, so no "create account" link);
+ *   - account creation (/login/?action=register) is WooCommerce's own registration (WC_Form_Handler::process_registration:
+ *     email, password, its nonce; it creates a normal WooCommerce customer, signs them in and redirects safely); this page
+ *     adds the name and the password confirmation. Shown only while WooCommerce > Settings > Accounts allows it;
  *   - social sign-in buttons appear only if a real provider prints them (filter econur_login_social_buttons);
  *   - /wp-login.php and the WordPress admin sign-in are not touched.
  * The page is a WordPress page (option econur_login_page_id) shown with templates/econur-login.php instead of the theme's
@@ -17,7 +19,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_LOGIN_VER = '1.0.1';
+const ECONUR_LOGIN_VER = '1.1.1';
 
 function econur_login_page_id() {
     $id = (int) get_option('econur_login_page_id');
@@ -39,6 +41,20 @@ function econur_login_url($back = '') {
     $back = $back ? wp_validate_redirect($back, '') : '';
     return $back ? add_query_arg('redirect_to', rawurlencode($back), $url) : $url;
 }
+// "login" or "register" (/login/?action=register, only while WooCommerce allows customers to create accounts)
+function econur_login_can_register() { return 'yes' === get_option('woocommerce_enable_myaccount_registration'); }
+function econur_login_mode() {
+    return (isset($_GET['action']) && 'register' === $_GET['action'] && econur_login_can_register()) ? 'register' : 'login'; // phpcs:ignore WordPress.Security.NonceVerification
+}
+// the other view of this page, keeping a safe redirect_to
+function econur_login_switch_url($mode) {
+    $url = get_permalink(econur_login_page_id());
+    if (isset($_GET['redirect_to'])) { // phpcs:ignore WordPress.Security.NonceVerification
+        $to = wp_validate_redirect(esc_url_raw(wp_unslash($_GET['redirect_to'])), ''); // phpcs:ignore WordPress.Security.NonceVerification
+        if ($to) $url = add_query_arg('redirect_to', rawurlencode($to), $url);
+    }
+    return 'register' === $mode ? add_query_arg('action', 'register', $url) : $url;
+}
 // where to go after signing in: a safe redirect_to, otherwise My Account
 function econur_login_target() {
     $acc = wc_get_page_permalink('myaccount');
@@ -58,10 +74,10 @@ add_action('template_redirect', function () {
         nocache_headers();
         return;
     }
-    // registration is off: a signed-out visitor at My Account (the WooCommerce sign-in form) sees this page instead;
+    // a signed-out visitor at My Account (WooCommerce's sign-in / register forms) sees this page instead;
     // the lost-password and other account addresses stay WooCommerce's own
     if (econur_login_live() && function_exists('is_account_page') && is_account_page() && !is_user_logged_in()
-        && !is_wc_endpoint_url() && 'GET' === ($_SERVER['REQUEST_METHOD'] ?? '') && 'yes' !== get_option('woocommerce_enable_myaccount_registration')) {
+        && !is_wc_endpoint_url() && 'GET' === ($_SERVER['REQUEST_METHOD'] ?? '')) {
         $url = get_permalink(econur_login_page_id());
         if (isset($_GET['password-reset'])) $url = add_query_arg('password-reset', 'true', $url); // phpcs:ignore WordPress.Security.NonceVerification
         wp_safe_redirect($url); exit;
@@ -75,7 +91,7 @@ add_filter('template_include', function ($tpl) {
 }, 99);
 
 add_filter('wp_robots', function ($r) { if (econur_is_login_page()) { $r['noindex'] = true; $r['follow'] = true; } return $r; });
-add_filter('pre_get_document_title', function ($t) { return econur_is_login_page() ? 'সাইন ইন – ' . get_bloginfo('name') : $t; }, 20);
+add_filter('pre_get_document_title', function ($t) { return econur_is_login_page() ? ('register' === econur_login_mode() ? 'অ্যাকাউন্ট তৈরি করুন' : 'সাইন ইন') . ' – ' . get_bloginfo('name') : $t; }, 20);
 add_filter('body_class', function ($c) { if (econur_is_login_page()) $c[] = 'econur-login-page'; return $c; });
 
 add_action('wp_enqueue_scripts', function () {
@@ -83,14 +99,34 @@ add_action('wp_enqueue_scripts', function () {
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-login', $u . 'econur-login.css', array(), ECONUR_LOGIN_VER);
     wp_enqueue_script('econur-login', $u . 'econur-login.js', array(), ECONUR_LOGIN_VER, array('in_footer' => true, 'strategy' => 'defer'));
+    if ('register' === econur_login_mode() && wp_script_is('wc-password-strength-meter', 'registered')) {
+        // WooCommerce's own password strength check (it holds the button until the password is strong enough), in Bengali
+        wp_enqueue_script('wc-password-strength-meter');
+        wp_add_inline_script('password-strength-meter', 'window.pwsL10n=' . wp_json_encode(array(
+            'unknown' => 'পাসওয়ার্ডের শক্তি বোঝা যাচ্ছে না', 'short' => 'খুব দুর্বল', 'bad' => 'দুর্বল', 'good' => 'মাঝারি', 'strong' => 'শক্তিশালী', 'mismatch' => 'মিলছে না',
+        )) . ';', 'after');
+    }
 }, 40);
+add_filter('woocommerce_get_script_data', function ($data, $handle) {
+    if ('wc-password-strength-meter' !== $handle || !is_array($data) || !econur_is_login_page()) return $data;
+    $data['i18n_password_error'] = 'আরও শক্তিশালী একটি পাসওয়ার্ড দিন।';
+    $data['i18n_password_hint'] = 'পরামর্শ: পাসওয়ার্ডটি অন্তত ১২ অক্ষরের রাখুন। আরও শক্তিশালী করতে ছোট ও বড় হাতের অক্ষর, সংখ্যা এবং ! " ? $ % ^ &amp; ) এর মতো চিহ্ন ব্যবহার করুন।';
+    return $data;
+}, 10, 2);
 
 /* ---------------------------------------------------------------- messages from WooCommerce / WordPress, in Bengali */
-// Only for this form's own requests. "Unknown user" and "wrong password" get one shared message.
+// Only for this page's own requests (sign in and create account). "Unknown user" and "wrong password" get one shared message.
 function econur_login_posted() { return isset($_POST['econur_login_form']); } // phpcs:ignore WordPress.Security.NonceVerification
+function econur_reg_posted() { return isset($_POST['econur_reg_form']); } // phpcs:ignore WordPress.Security.NonceVerification
 add_filter('woocommerce_add_error', function ($msg) {
     if (!econur_login_posted()) return $msg;
     $t = strtolower(wp_strip_all_tags((string) $msg));
+    if (econur_reg_posted()) {
+        if (false !== strpos($t, 'already registered with')) return 'এই ইমেইল দিয়ে আগেই একটি অ্যাকাউন্ট খোলা আছে। <a href="' . esc_url(econur_login_switch_url('login')) . '">সাইন ইন করুন</a>, অথবা <a href="' . esc_url(wc_lostpassword_url()) . '">পাসওয়ার্ড রিসেট করুন</a>।';
+        if (false !== strpos($t, 'valid email')) return 'সঠিক ইমেইল ঠিকানা লিখুন।';
+        if (false !== strpos($t, 'account password') || false !== strpos($t, 'create a password')) return 'একটি পাসওয়ার্ড তৈরি করুন।';
+        return preg_replace('#^<strong>[^<]*</strong>\s*#', '', (string) $msg); // our own messages (name, confirmation) without the "Error:" label
+    }
     if (false !== strpos($t, 'username is required')) return 'ইমেইল বা ইউজারনেম লিখুন।';
     if (false !== strpos($t, 'password field is empty') || false !== strpos($t, 'password is required')) return 'পাসওয়ার্ড লিখুন।';
     if (preg_match('/incorrect|not registered|unknown (email|username)|invalid (username|email)/', $t)) {
@@ -98,6 +134,45 @@ add_filter('woocommerce_add_error', function ($msg) {
     }
     return $msg;
 }, 20);
+
+add_filter('woocommerce_add_success', function ($msg) {
+    if (!econur_reg_posted()) return $msg;
+    return false !== stripos(wp_strip_all_tags((string) $msg), 'account was created') ? 'আপনার অ্যাকাউন্ট তৈরি হয়েছে। স্বাগতম!' : $msg;
+});
+
+// WooCommerce's privacy line on the create-account form, in Bengali (same meaning and privacy-policy link as at checkout)
+add_filter('woocommerce_get_privacy_policy_text', function ($text, $type) {
+    return 'registration' === $type ? 'আপনার ব্যক্তিগত তথ্য অ্যাকাউন্ট পরিচালনা করতে, এই ওয়েবসাইটে আপনার অভিজ্ঞতা সহজ রাখতে এবং আমাদের [privacy_policy]-এ বর্ণিত অন্যান্য উদ্দেশ্যে ব্যবহার করা হবে।' : $text;
+}, 20, 2);
+
+/* ---------------------------------------------------------------- create account: the page's extra fields */
+// name and password confirmation, checked on the server next to WooCommerce's own checks (email, password)
+add_filter('woocommerce_process_registration_errors', function ($errors, $username, $password, $email) {
+    if (!econur_reg_posted()) return $errors;
+    $name = isset($_POST['econur_name']) ? sanitize_text_field(wp_unslash($_POST['econur_name'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- WooCommerce checked its nonce
+    if ('' === $name) $errors->add('econur_name', 'আপনার নাম লিখুন।');
+    elseif (function_exists('mb_strlen') ? mb_strlen($name) > 100 : strlen($name) > 100) $errors->add('econur_name', 'নামটি ১০০ অক্ষরের মধ্যে লিখুন।');
+    $email = trim((string) $email);
+    if ('' === $email) $errors->add('econur_email', 'আপনার ইমেইল লিখুন।');
+    elseif (!is_email($email)) $errors->add('econur_email', 'সঠিক ইমেইল ঠিকানা লিখুন।');
+    $pw2 = isset($_POST['econur_password2']) ? (string) wp_unslash($_POST['econur_password2']) : ''; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- compared only
+    if ('' === (string) $password) $errors->add('econur_password', 'একটি পাসওয়ার্ড তৈরি করুন।');
+    elseif ($pw2 !== wp_unslash((string) $password)) $errors->add('econur_password2', 'পাসওয়ার্ড দুটি মিলছে না।');
+    return $errors;
+}, 10, 4);
+// the customer's name on the new WooCommerce account (also as the checkout's "full name")
+function econur_reg_name() {
+    return econur_reg_posted() && isset($_POST['econur_name']) ? sanitize_text_field(wp_unslash($_POST['econur_name'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+}
+add_filter('woocommerce_new_customer_data', function ($data) {
+    $name = econur_reg_name();
+    if ('' !== $name) { $data['first_name'] = $name; $data['display_name'] = $name; }
+    return $data;
+});
+add_action('woocommerce_created_customer', function ($customer_id) {
+    $name = econur_reg_name();
+    if ('' !== $name) update_user_meta($customer_id, 'billing_first_name', $name);
+});
 
 /* ---------------------------------------------------------------- content */
 function econur_login_icon($n) {
