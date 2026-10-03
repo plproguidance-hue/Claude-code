@@ -1,0 +1,268 @@
+/* ECONUR visual system 2 (inc/econur-ds.php). Loaded after every other stylesheet; every rule is scoped to body.ecn-ds.
+   One teal, one ink, warm ivory, white cards. Fraunces = editorial headlines only, Inter = shop interface,
+   Hind Siliguri = Bangla. The sections, their markup and their behaviour are unchanged. */
+
+/* =============================================================== 1. tokens */
+body.ecn-ds{
+  /* colour */
+  --ds-teal:#0D585F; --ds-teal-h:#0A474D; --ds-teal-soft:#E6EFED; --ds-teal-line:rgba(13, 88, 95, .22);
+  --ds-ink:#17302E; --ds-ink-2:#3F4C49; --ds-muted:#6A736F;
+  --ds-bg:#FBF8F2; --ds-bg-soft:#F6F1E8; --ds-sage:#F1F4EE; --ds-card:#FFFFFF; --ds-card-warm:#FFFEFB;
+  --ds-line:#E7E1D6; --ds-line-2:#DCD5C8; --ds-star:#E0A23B;
+  /* type */
+  --ds-serif:"Fraunces", "Hind Siliguri", Georgia, serif;
+  --ds-sans:"Inter", "Hind Siliguri", "Noto Sans Bengali", Arial, sans-serif;
+  --ds-fs-hero:clamp(2.25rem, 1.2rem + 2.9vw, 4rem);
+  --ds-fs-h2:clamp(1.75rem, 1.2rem + 1.75vw, 2.75rem);
+  --ds-fs-h3:clamp(1.375rem, 1.15rem + .75vw, 2rem);
+  --ds-fs-title:clamp(1.875rem, 1.3rem + 1.5vw, 2.625rem);
+  --ds-fs-card:clamp(1.0625rem, .98rem + .3vw, 1.25rem);
+  --ds-fs-body:clamp(.9375rem, .9rem + .15vw, 1.0625rem);
+  --ds-fs-sm:.875rem; --ds-fs-micro:.75rem; --ds-fs-btn:.9375rem;
+  /* space, shape, depth */
+  --ds-w:min(1320px, calc(100vw - 2 * var(--ds-gut))); --ds-gut:clamp(16px, 4vw, 48px);
+  --ds-sec:clamp(48px, 2rem + 2.8vw, 80px); --ds-sec-s:clamp(28px, 1.25rem + 1.4vw, 44px);
+  --ds-r-sm:10px; --ds-r-btn:14px; --ds-r-card:18px; --ds-r-panel:24px;
+  --ds-sh-1:0 1px 2px rgba(23, 48, 46, .04), 0 6px 18px rgba(23, 48, 46, .05);
+  --ds-sh-2:0 2px 6px rgba(23, 48, 46, .05), 0 14px 32px rgba(23, 48, 46, .09);
+  --ds-sh-3:0 18px 44px rgba(23, 48, 46, .09);
+  --ds-ease:cubic-bezier(.22, 1, .36, 1);
+
+  /* the existing components read these: point them at the one palette */
+  --ecn-teal:var(--ds-teal); --ecn-teal-dark:var(--ds-teal-h); --ecn-teal-mid:var(--ds-teal); --ecn-teal-soft:var(--ds-teal-soft);
+  --ecn-teal-wash:var(--ds-sage); --ecn-teal-line:var(--ds-teal-line);
+  --ecn-olive:var(--ds-teal); --ecn-olive-dark:var(--ds-teal); --ecn-olive-deep:var(--ds-teal); --ecn-olive-soft:var(--ds-teal-soft);
+  --ecn-btn:var(--ds-teal); --ecn-btn-hover:var(--ds-teal-h); --ecn-btn-line:var(--ds-teal);
+  --ecn-ink:var(--ds-ink); --ecn-muted:var(--ds-muted); --ecn-line:var(--ds-line); --ecn-white:var(--ds-card-warm);
+  --ecn-shadow:var(--ds-sh-2); --ecn-radius:var(--ds-r-card); --ecn-radius-sm:var(--ds-r-sm);
+  --ecn-font-head:var(--ds-sans); --ecn-font-body:var(--ds-sans); --ecn-font-display:var(--ds-serif); --ecn-font-en:var(--ds-sans);
+  --hdr-bg:#FFFEFB; --hdr-ink:var(--ds-ink); --hdr-active:var(--ds-teal); --hdr-hover:var(--ds-teal); --hdr-sage:var(--ds-sage); --hdr-line:var(--ds-line);
+  --ecart-teal:var(--ds-teal); --ecart-teal-d:var(--ds-teal-h); --ecart-ink:var(--ds-ink); --ecart-muted:var(--ds-muted); --ecart-line:var(--ds-line);
+  background:var(--ds-bg) !important; color:var(--ds-ink-2); font-family:var(--ds-sans);
+  font-size:var(--ds-fs-body); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+body.ecn-ds .econur-header-actions{ --eha-ink:var(--ds-ink); --eha-teal:var(--ds-teal); --eha-hover:var(--ds-teal-h); --eha-field:#F6F3EC; --eha-field-line:var(--ds-line); --eha-muted:var(--ds-muted); }
+body.ecn-ds .econur-category-trust{ --ect-ink:var(--ds-ink); --ect-teal:var(--ds-teal); --ect-sage:var(--ds-teal); --ect-green:var(--ds-teal); --ect-sage-light:var(--ds-teal-soft);
+  --ect-active:var(--ds-teal-soft); --ect-active-line:var(--ds-teal-line); --ect-card:var(--ds-card); --ect-card-line:var(--ds-line); --ect-panel:var(--ds-card);
+  --ect-panel-line:var(--ds-line); --ect-divider:var(--ds-line); --ect-muted:var(--ds-muted); --ect-arrow:var(--ds-teal); --ect-ui:var(--ds-sans); }
+body.ecn-ds .ecn-sec-sale .ecn-fp{ --fp-teal:var(--ds-teal); --fp-teal-dark:var(--ds-teal-h); --fp-ink:var(--ds-ink); --fp-muted:var(--ds-muted); --fp-line:var(--ds-line); }
+body.ecn-ds .ecn-fy{ --fy-teal:var(--ds-teal); --fy-teal-dark:var(--ds-teal-h); --fy-ink:var(--ds-ink); --fy-muted:var(--ds-muted); --fy-line:var(--ds-line); --fy-wash:var(--ds-teal-soft); }
+body.ecn-ds .ehc{ --ehc-teal:var(--ds-teal); --ehc-teal-dark:var(--ds-teal-h); --ehc-ink:var(--ds-ink); --ehc-muted:var(--ds-muted); --ehc-line:var(--ds-line); --ehc-sage:var(--ds-teal-soft);
+  --ehc-card:var(--ds-card); --ehc-answer:var(--ds-ink-2); --ehc-serif:var(--ds-sans); }
+body.ecn-ds .ecnf{ --ecnf-teal:var(--ds-teal); --ecnf-teal-dark:var(--ds-teal-h); --ecnf-ink:var(--ds-ink); --ecnf-text:var(--ds-ink-2); --ecnf-muted:var(--ds-muted); --ecnf-line:var(--ds-line);
+  --ecnf-sage:var(--ds-teal-soft); --ecnf-serif:var(--ds-sans); }
+body.ecn-ds .enr-rv{ --rv-teal:var(--ds-teal); --rv-green:var(--ds-teal); --rv-ink:var(--ds-ink); --rv-muted:var(--ds-muted); --rv-line:var(--ds-line); --rv-card:var(--ds-card);
+  --rv-gold:var(--ds-star); --rv-sage:var(--ds-teal-soft); }
+body.ecn-ds.single-product{ --pd-teal:var(--ds-teal); --pd-teal-d:var(--ds-teal-h); --pd-ink:var(--ds-ink); --pd-head:var(--ds-ink); --pd-muted:var(--ds-muted); --pd-sage:var(--ds-teal);
+  --pd-line:var(--ds-line); --pd-line2:var(--ds-line-2); --pd-card:var(--ds-card); --pd-cream:var(--ds-bg-soft); --pd-wash:var(--ds-bg); --pd-mint:var(--ds-teal-soft);
+  --pd-mint2:var(--ds-teal-soft); --pd-star:var(--ds-star); --pd-serif:var(--ds-sans); --pd-sans:var(--ds-sans); }
+body.ecn-ds.single-product .ecn-pdp .econur-product-info-tabs{ --pit-line:var(--ds-line); --pit-card:var(--ds-card); --pit-sage:var(--ds-teal-soft); --pit-green:var(--ds-teal);
+  --pit-title:var(--ds-ink); --pit-text:var(--ds-ink-2); --pit-teal:var(--ds-teal); --pit-bg:var(--ds-sage); }
+body.ecn-ds.single-product .ecn-pdp .ecn-love{ --love-line:var(--ds-line); --love-icon-bg:var(--ds-teal-soft); --love-green:var(--ds-teal); --love-title:var(--ds-ink); --love-text:var(--ds-ink-2); --love-bg:var(--ds-sage); }
+body.ecn-ds .ecn-acc{ --acc-bg:var(--ds-card); --acc-line:var(--ds-line); --acc-ink:var(--ds-ink); --acc-muted:var(--ds-muted); --acc-teal:var(--ds-teal); --acc-icon-bg:var(--ds-teal-soft); }
+
+/* =============================================================== 2. base type */
+body.ecn-ds h1, body.ecn-ds h2, body.ecn-ds h3, body.ecn-ds h4{ font-family:var(--ds-sans); color:var(--ds-ink); letter-spacing:-.015em; }
+body.ecn-ds p{ line-height:1.65; }
+body.ecn-ds :lang(bn), body.ecn-ds [lang="bn"]{ letter-spacing:0; }
+body.ecn-ds ::selection{ background:var(--ds-teal-soft); color:var(--ds-ink); }
+body.ecn-ds a:focus-visible, body.ecn-ds button:focus-visible, body.ecn-ds input:focus-visible, body.ecn-ds select:focus-visible, body.ecn-ds textarea:focus-visible,
+body.ecn-ds [tabindex]:focus-visible{ outline:2px solid var(--ds-teal) !important; outline-offset:3px; }
+
+/* section titles: one strong sans heading; the brand's serif only for the hero and the editorial moments */
+html body.ecn-ds .ecn-sh-title, html body.ecn-ds .econur-category-trust__title, html body.ecn-ds .ecn-fy-title, html body.ecn-ds .ehc-title,
+html body.ecn-ds .ecn-lp-h2, html body.ecn-ds .econur-pit-title, html body.ecn-ds #ecn-lp-routine-t{
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-h2) !important; font-weight:700 !important; line-height:1.1 !important;
+  letter-spacing:-.025em !important; color:var(--ds-ink) !important; font-style:normal !important; }
+html body.ecn-ds .ecn-hx-title, html body.ecn-ds .enr-rv-title, html body.ecn-ds .ehc-cta-title,
+html body.ecn-ds .ecn-lp-final h2, html body.ecn-ds .ecn-lp-final-title{
+  font-family:var(--ds-serif) !important; font-weight:600 !important; letter-spacing:-.02em !important; font-style:normal !important; }
+html body.ecn-ds .enr-rv-title, html body.ecn-ds .ehc-cta-title{ font-size:var(--ds-fs-h2) !important; line-height:1.12 !important; color:var(--ds-ink) !important; }
+/* Bangla headings: Hind Siliguri carries the weight, a little more line height */
+html body.ecn-ds .econur-bn-h2, html body.ecn-ds .ecn-lp-h2:lang(bn){ line-height:1.3 !important; letter-spacing:0 !important; }
+/* small eyebrow labels */
+html body.ecn-ds .ecn-fp-eyebrow, html body.ecn-ds .ecn-fy-eyebrow, html body.ecn-ds .ehc-eyebrow, html body.ecn-ds .enr-rv-eyebrow, html body.ecn-ds .ecn-hx-eyebrow,
+html body.ecn-ds .ecn-sb-eyebrow, html body.ecn-ds .econur-category-trust__tagline{
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-micro) !important; font-weight:700 !important; letter-spacing:.1em !important; text-transform:uppercase; color:var(--ds-teal) !important; }
+/* supporting lines under section titles */
+html body.ecn-ds .ecn-sh-sub, html body.ecn-ds .ecn-fy-sub, html body.ecn-ds .ehc-sub, html body.ecn-ds .enr-rv-sub, html body.ecn-ds .ehc-cta-sub{
+  font-size:var(--ds-fs-body) !important; line-height:1.6 !important; color:var(--ds-muted) !important; }
+
+/* =============================================================== 3. buttons (one system) */
+/* primary: teal, white text */
+html body.ecn-ds .ecn-hx-cta, html body.ecn-ds .ecn-pc-btn:not(.ecn-pc-btn-soft), html body.ecn-ds .ecn-fp-add, html body.ecn-ds .ecn-fy-cta, html body.ecn-ds .ehc-btn--primary,
+html body.ecn-ds .ecn-pdp-buynow, html body.ecn-ds .ecn-lp-btn, html body.ecn-ds .ecn-rel-add, html body.ecn-ds .ecnf-wa, html body.ecn-ds .ecn-lp-routine-add{
+  border-radius:var(--ds-r-btn) !important; background:var(--ds-teal) !important; border:1px solid var(--ds-teal) !important; color:#fff !important;
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-btn) !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important;
+  box-shadow:0 1px 2px rgba(10, 71, 77, .18) !important; transition:background-color .18s ease, box-shadow .2s ease, transform .2s var(--ds-ease) !important; }
+/* secondary: white, teal outline */
+html body.ecn-ds .ecn-pc-btn-soft, html body.ecn-ds .ecn-sh-link, html body.ecn-ds .ehc-btn--wa, html body.ecn-ds .ecn-pdp-wa, html body.ecn-ds .ecn-rel-view,
+html body.ecn-ds .ecn-help-wa, html body.ecn-ds.single-product .ecn-pdp .single_add_to_cart_button{
+  border-radius:var(--ds-r-btn) !important; background:var(--ds-card) !important; border:1.5px solid var(--ds-teal) !important; color:var(--ds-teal) !important;
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-btn) !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important;
+  box-shadow:none !important; transition:background-color .18s ease, box-shadow .2s ease, transform .2s var(--ds-ease) !important; }
+@media (hover:hover) and (pointer:fine){
+  html body.ecn-ds .ecn-hx-cta:hover, html body.ecn-ds .ecn-pc-btn:not(.ecn-pc-btn-soft):hover, html body.ecn-ds .ecn-fp-add:hover, html body.ecn-ds .ecn-fy-cta:hover,
+  html body.ecn-ds .ehc-btn--primary:hover, html body.ecn-ds .ecn-pdp-buynow:hover, html body.ecn-ds .ecn-lp-btn:hover, html body.ecn-ds .ecn-rel-add:hover,
+  html body.ecn-ds .ecnf-wa:hover, html body.ecn-ds .ecn-lp-routine-add:hover{
+    background:var(--ds-teal-h) !important; border-color:var(--ds-teal-h) !important; transform:translateY(-1px); box-shadow:0 8px 18px rgba(10, 71, 77, .2) !important; translate:none !important; }
+  html body.ecn-ds .ecn-pc-btn-soft:hover, html body.ecn-ds .ecn-sh-link:hover, html body.ecn-ds .ehc-btn--wa:hover, html body.ecn-ds .ecn-pdp-wa:hover,
+  html body.ecn-ds .ecn-rel-view:hover, html body.ecn-ds .ecn-help-wa:hover, html body.ecn-ds.single-product .ecn-pdp .single_add_to_cart_button:hover{
+    background:var(--ds-teal-soft) !important; transform:translateY(-1px); }
+}
+html body.ecn-ds .ecn-hx-cta:active, html body.ecn-ds .ecn-pc-btn:active, html body.ecn-ds .ecn-fp-add:active, html body.ecn-ds .ecn-pdp-buynow:active,
+html body.ecn-ds .ecn-lp-btn:active, html body.ecn-ds .ecn-rel-add:active{ transform:translateY(0) scale(.99); }
+
+/* =============================================================== 4. shared section width */
+html body.ecn-ds .elementor-43 > .e-con-boxed, html body.ecn-ds .elementor-43 .e-con-boxed{ --content-width:min(100%, 1320px); }
+/* the hero, the offer banner, the reviews block and the footer line up with the same column (no more break-outs) */
+@media (min-width:768px){
+  html body.ecn-ds .ecn-hx{ width:var(--ds-w) !important; max-width:none !important; border-radius:var(--ds-r-panel) !important; }
+  html body.ecn-ds .ecn-sec-sale .ecn-sb{ --sb-w:var(--ds-w); width:var(--ds-w) !important; max-width:none !important; margin-left:calc(50% - var(--ds-w) / 2) !important; border-radius:var(--ds-r-panel) !important; }
+  html body.ecn-ds .enr-rv{ --rv-w:var(--ds-w); }
+  html body.ecn-ds .ecnf{ width:var(--ds-w) !important; max-width:none !important; margin-left:auto !important; margin-right:auto !important; }
+}
+html body.ecn-ds .elementor-43 > .e-con{ background-color:transparent !important; }
+/* one vertical rhythm: the same space between every homepage section (a little less between the hero and the categories) */
+html body.ecn-ds .elementor-43 > .e-con{ --padding-top:0px; --padding-bottom:0px; padding-top:0 !important; padding-bottom:0 !important; margin-top:var(--ds-sec) !important; }
+html body.ecn-ds .elementor-43 > .e-con:first-child, html body.ecn-ds .elementor-43 > .e-con.ecn-sec-hsl{ margin-top:0 !important; }
+html body.ecn-ds .elementor-43 > .e-con.ecn-sec-chips{ margin-top:var(--ds-sec-s) !important; }
+html body.ecn-ds .elementor-43 > .e-con:last-child{ margin-bottom:var(--ds-sec) !important; }
+html body.ecn-ds .elementor-43 > .e-con > .e-con-inner{ padding-top:0 !important; padding-bottom:0 !important; }
+html body.ecn-ds .ecn-hx{ margin-bottom:0 !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-sb{ margin-bottom:var(--ds-sec) !important; }
+
+/* =============================================================== 5. cards */
+html body.ecn-ds .ecn-pcard, html body.ecn-ds .ecn-fp-card, html body.ecn-ds .ecn-lp-rcard, html body.ecn-ds .ecn-rel-card, html body.ecn-ds .enr-rv-card{
+  border-radius:var(--ds-r-card) !important; border:1px solid var(--ds-line) !important; background:var(--ds-card) !important; box-shadow:var(--ds-sh-1) !important; }
+
+/* product names, prices, small labels: the same hierarchy in every card */
+html body.ecn-ds .ecn-pc-title, html body.ecn-ds .ecn-fp-name, html body.ecn-ds .ecn-rel-name, html body.ecn-ds .ecn-lp-rcard h3, html body.ecn-ds .enr-rv-buy-name{
+  font-family:var(--ds-sans) !important; font-size:var(--ds-fs-card) !important; font-weight:700 !important; line-height:1.25 !important; letter-spacing:-.015em !important; color:var(--ds-ink) !important; }
+html body.ecn-ds .ecn-pc-price, html body.ecn-ds .ecn-fp-price, html body.ecn-ds .ecn-fy-price, html body.ecn-ds .ecn-rel-price{ color:var(--ds-ink) !important; font-weight:700 !important; letter-spacing:-.01em; }
+html body.ecn-ds .ecn-pc-price, html body.ecn-ds .ecn-fp-price{ font-size:1.25rem !important; }
+html body.ecn-ds .ecn-pc-was, html body.ecn-ds .ecn-pc-size, html body.ecn-ds .ecn-pc-sz{ color:var(--ds-muted) !important; font-weight:500 !important; }
+html body.ecn-ds .ecn-pc-skin, html body.ecn-ds .ecn-fp-skin{ font-size:11.5px !important; font-weight:700 !important; letter-spacing:.07em !important; color:var(--ds-teal) !important; opacity:.9; }
+html body.ecn-ds .ecn-pc-badge, html body.ecn-ds .ecn-fp-badge{ border-radius:999px !important; background:var(--ds-teal) !important; color:#fff !important; font-weight:700 !important; letter-spacing:.02em; }
+@media (hover:hover) and (pointer:fine){
+  html body.ecn-ds .ecn-pcard, html body.ecn-ds .ecn-fp-card, html body.ecn-ds .ecn-rel-card{ transition:box-shadow .25s ease, transform .25s var(--ds-ease), border-color .25s ease !important; }
+  html body.ecn-ds .ecn-pcard:hover, html body.ecn-ds .ecn-fp-card:hover, html body.ecn-ds .ecn-rel-card:hover{ box-shadow:var(--ds-sh-2) !important; transform:translateY(-2px); border-color:var(--ds-line-2) !important; }
+  html body.ecn-ds .ecn-pcard img, html body.ecn-ds .ecn-fp-card img, html body.ecn-ds .ecn-rel-card img{ transition:transform .5s var(--ds-ease) !important; }
+  html body.ecn-ds .ecn-pcard:hover img, html body.ecn-ds .ecn-fp-card:hover img, html body.ecn-ds .ecn-rel-card:hover img{ transform:scale(1.03); }
+}
+
+/* =============================================================== header */
+@media (min-width:922px){
+  html body.ecn-ds #ast-desktop-header .site-primary-header-wrap.ast-container{ max-width:var(--ds-w) !important; padding-left:0 !important; padding-right:0 !important; }
+  html body.ecn-ds #ast-desktop-header .custom-logo-link img.custom-logo{ width:150px !important; max-width:150px !important; }
+  html body.ecn-ds.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link{ font-family:var(--ds-sans) !important; font-size:15px !important; font-weight:500 !important; letter-spacing:-.005em !important; color:var(--ds-ink) !important; }
+  html body.ecn-ds.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:is(:hover, :focus-visible){ color:var(--ds-teal) !important; }
+  html body.ecn-ds.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link::after{ background:var(--ds-teal) !important; }
+  html body.ecn-ds.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ font-weight:600 !important; color:var(--ds-teal) !important; }
+}
+html body.ecn-ds #masthead .ast-primary-header-bar, html body.ecn-ds #masthead .main-header-bar{ background:#FFFEFB !important; border-bottom:1px solid var(--ds-line) !important; }
+html body.ecn-ds .econur-header-search .econur-header-search-input{ font-family:var(--ds-sans) !important; border-radius:12px !important; background:#F6F3EC !important; border-color:transparent !important; }
+html body.ecn-ds .econur-header-search .econur-header-search-input:hover{ border-color:var(--ds-line-2) !important; }
+html body.ecn-ds .econur-header-search .econur-header-search-input:focus{ border-color:var(--ds-teal) !important; background:#fff !important; box-shadow:0 0 0 3px rgba(13, 88, 95, .12) !important; }
+html body.ecn-ds .econur-header-actions :is(.econur-header-login, .econur-header-cart, .econur-header-search-toggle){ font-family:var(--ds-sans) !important; font-weight:600 !important; color:var(--ds-ink) !important; }
+html body.ecn-ds .econur-header-actions :is(.econur-header-login, .econur-header-cart, .econur-header-search-toggle):hover{ color:var(--ds-teal) !important; }
+html body.ecn-ds .econur-header-cart .econur-cart-count{ font-family:var(--ds-sans) !important; min-width:18px; height:18px; line-height:18px; background:var(--ds-teal) !important; }
+html body.ecn-ds #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link{ font-family:var(--ds-sans) !important; color:var(--ds-ink) !important; }
+/* announcement bar: the brand teal, clear semibold line */
+html body.ecn-ds .ecn.ecn-announce--top{ background:var(--ds-teal) !important; }
+html body.ecn-ds .ecn.ecn-announce--top .ecn-ab-msg{ font-family:var(--ds-sans) !important; font-weight:600 !important; letter-spacing:.01em; }
+
+/* =============================================================== 6. homepage hero */
+html body.ecn-ds .ecn-hx-title{ font-size:var(--ds-fs-hero) !important; line-height:1.02 !important; color:var(--ds-ink) !important; }
+html body.ecn-ds .ecn-hx-text{ font-size:clamp(1rem, .95rem + .2vw, 1.0625rem) !important; line-height:1.6 !important; color:var(--ds-ink-2) !important; max-width:min(390px, 100%) !important; }
+@media (min-width:1024px){ html body.ecn-ds .ecn-hx-copy{ max-width:470px !important; } }
+html body.ecn-ds .ecn-hx-cta{ min-height:52px !important; padding:0 24px !important; margin-top:24px !important; }
+html body.ecn-ds .ecn-hx-arrow{ width:42px !important; height:42px !important; margin-top:-21px !important; background:rgba(255, 254, 251, .92) !important; box-shadow:var(--ds-sh-1) !important; color:var(--ds-ink) !important; opacity:1 !important; }
+
+/* the offer banner keeps its light text on teal */
+html body.ecn-ds .ecn-sec-sale .ecn-sb-eyebrow{ color:rgba(255, 253, 249, .88) !important; }
+html body.ecn-ds .ecn-sec-sale .ecn-sb-title{ font-family:var(--ds-sans) !important; font-weight:800 !important; letter-spacing:-.03em !important; }
+
+/* =============================================================== 7. shop by category + trust strip */
+html body.ecn-ds .econur-category-trust .econur-category-card{ height:64px !important; border-radius:16px !important; background:var(--ds-card) !important; border:1px solid var(--ds-line) !important;
+  box-shadow:var(--ds-sh-1) !important; padding:8px 16px 8px 8px !important; transition:border-color .2s ease, box-shadow .25s ease, transform .25s var(--ds-ease) !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card--active{ background:var(--ds-teal-soft) !important; border-color:var(--ds-teal-line) !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card__img, html body.ecn-ds .econur-category-trust .econur-category-card__media{ border-radius:12px !important; }
+html body.ecn-ds .econur-category-trust .econur-category-card__label{ font-family:var(--ds-sans) !important; font-size:15.5px !important; font-weight:600 !important; color:var(--ds-ink) !important; }
+@media (max-width:767px){ html body.ecn-ds .econur-category-trust .econur-category-card{ height:54px !important; padding:6px 12px 6px 6px !important; }
+  html body.ecn-ds .econur-category-trust .econur-category-card__label{ font-size:14.5px !important; } }
+@media (hover:hover) and (pointer:fine){
+  html body.ecn-ds .econur-category-trust .econur-category-card:hover{ border-color:var(--ds-teal-line) !important; box-shadow:var(--ds-sh-2) !important; transform:translateY(-2px); }
+  html body.ecn-ds .econur-category-trust .econur-category-card:hover img{ transform:scale(1.03); }
+  html body.ecn-ds .econur-category-trust .econur-category-card img{ transition:transform .4s var(--ds-ease); }
+}
+
+/* =============================================================== 8. product page */
+/* one column for every section, the same as the homepage */
+html body.ecn-ds.single-product .site-content > .ast-container{ max-width:var(--ds-w) !important; padding-left:0 !important; padding-right:0 !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-hero, html body.ecn-ds.single-product .ecn-pdp .econur-product-info-tabs, html body.ecn-ds.single-product .ecn-pdp .ecn-love,
+html body.ecn-ds.single-product .ecn-pdp .ecn-help-faq, html body.ecn-ds.single-product .ecn-pdp .ecn-help-finder{ max-width:none !important; width:100% !important; margin-left:0 !important; margin-right:0 !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-rv--home .enr-rv, html body.ecn-ds.single-product .ecn-pdp .econur-reviews-section .enr-rv{ --rv-w:100%; max-width:none !important; width:100% !important; margin-left:0 !important; }
+html body.ecn-ds.single-product .ecn-pdp .econur-pit-box, html body.ecn-ds.single-product .ecn-pdp .ecn-love-panel, html body.ecn-ds.single-product .ecn-pdp .ecn-help-finder,
+html body.ecn-ds.single-product .ecn-pdp .enr-rv{ border-radius:var(--ds-r-panel) !important; }
+
+/* purchase panel: slightly raised, clear hierarchy (title > price > benefits > choices > Buy Now) */
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-card{ border-radius:var(--ds-r-panel) !important; border:1px solid var(--ds-line) !important; background:var(--ds-card) !important; box-shadow:var(--ds-sh-3) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-cat{ font-size:var(--ds-fs-micro) !important; font-weight:700 !important; letter-spacing:.1em !important; text-transform:uppercase; color:var(--ds-teal) !important; text-decoration:none !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-title{ font-family:var(--ds-sans) !important; font-size:var(--ds-fs-title) !important; font-weight:700 !important; line-height:1.08 !important; letter-spacing:-.03em !important; color:var(--ds-ink) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-price, html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-price .amount{ font-family:var(--ds-sans) !important; font-size:clamp(2rem, 1.6rem + 1vw, 2.5rem) !important; font-weight:700 !important; letter-spacing:-.03em !important; color:var(--ds-ink) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-size{ font-size:1rem !important; font-weight:500 !important; color:var(--ds-muted) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-checks li{ font-size:15.5px !important; color:var(--ds-ink-2) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-checks svg{ background:var(--ds-teal) !important; color:#fff !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-label{ font-size:15px !important; font-weight:700 !important; color:var(--ds-ink) !important; letter-spacing:0 !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-stock{ border-radius:999px !important; background:var(--ds-teal-soft) !important; color:var(--ds-teal) !important; border-color:transparent !important; font-weight:600 !important; }
+/* pack choice: one selected state; the "most popular" / "best value" tags are not shown (the three packs cost the same per bar) */
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack{ border-radius:14px !important; border:1px solid var(--ds-line) !important; background:var(--ds-card) !important; box-shadow:none !important; transition:border-color .2s ease, background-color .2s ease !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack.is-on{ border:1.5px solid var(--ds-teal) !important; background:#F3F8F6 !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack-badge.is-pop, html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack-badge.is-val{ display:none !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack-q{ font-weight:700 !important; color:var(--ds-ink) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-pack-p{ font-weight:700 !important; color:var(--ds-ink) !important; }
+/* size: segmented pills */
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-sz{ border-radius:999px !important; border:1px solid var(--ds-line-2) !important; background:var(--ds-card) !important; color:var(--ds-ink) !important; font-weight:600 !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-sz.is-on{ background:var(--ds-teal) !important; border-color:var(--ds-teal) !important; color:#fff !important; }
+/* quantity */
+html body.ecn-ds.single-product .ecn-pdp form.cart .quantity.ecn-qty{ height:56px !important; border-radius:var(--ds-r-btn) !important; border-color:var(--ds-line-2) !important; background:var(--ds-card) !important; }
+/* actions: Buy Now (filled) > Add to Cart (teal outline) > WhatsApp (quiet outline) */
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-buynow{ min-height:56px !important; border-radius:var(--ds-r-btn) !important; background:var(--ds-teal) !important; border-color:var(--ds-teal) !important; color:#fff !important;
+  font-size:16.5px !important; font-weight:700 !important; box-shadow:0 10px 22px rgba(10, 71, 77, .22) !important; }
+html body.ecn-ds.single-product .ecn-pdp .single_add_to_cart_button{ min-height:52px !important; border-radius:var(--ds-r-btn) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-wa{ min-height:48px !important; border-radius:var(--ds-r-btn) !important; border:1px solid var(--ds-line-2) !important; background:var(--ds-card) !important; color:var(--ds-ink) !important; }
+@media (hover:hover) and (pointer:fine){
+  html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-buynow:hover{ background:var(--ds-teal-h) !important; transform:translateY(-1px); }
+  html body.ecn-ds.single-product .ecn-pdp .ecn-pdp-wa:hover{ border-color:var(--ds-teal) !important; color:var(--ds-teal) !important; background:var(--ds-card) !important; }
+}
+/* gallery */
+html body.ecn-ds.single-product .ecn-pdp .ecn-g-main, html body.ecn-ds.single-product .ecn-pdp .ecn-g-slide, html body.ecn-ds.single-product .ecn-pdp .ecn-g-track{ border-radius:var(--ds-r-panel) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-g-thumb{ border-radius:12px !important; border:1px solid var(--ds-line) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-g-thumb[aria-current="true"], html body.ecn-ds.single-product .ecn-pdp .ecn-g-thumb.is-on, html body.ecn-ds.single-product .ecn-pdp .ecn-g-thumb[aria-selected="true"]{ border:2px solid var(--ds-teal) !important; }
+/* the details accordion under the purchase panel */
+html body.ecn-ds .ecn-acc{ border-radius:var(--ds-r-card) !important; }
+html body.ecn-ds .ecn-acc .ecn-acc-h, html body.ecn-ds .ecn-acc .ecn-acc-t{ font-family:var(--ds-sans) !important; font-weight:600 !important; color:var(--ds-ink) !important; }
+/* product page section headings and cards */
+html body.ecn-ds.single-product .ecn-pdp .ecn-love-t, html body.ecn-ds.single-product .ecn-pdp .ecn-lp-ings h3, html body.ecn-ds.single-product .ecn-pdp .ecn-lp-steps h3,
+html body.ecn-ds.single-product .ecn-pdp .econur-pit-kf{ font-family:var(--ds-sans) !important; font-weight:700 !important; color:var(--ds-ink) !important; letter-spacing:-.01em !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-final{ border-radius:var(--ds-r-panel) !important; overflow:hidden; margin-bottom:var(--ds-sec) !important; }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-final h2{ color:#fff !important; font-size:clamp(1.625rem, 1.2rem + 1.2vw, 2.25rem) !important; line-height:1.15 !important; }
+
+/* =============================================================== 9. atmosphere: a barely-there sage glow behind a few sections */
+html body.ecn-ds .elementor-43 > .e-con.ecn-sec-chips, html body.ecn-ds .ecn-fy, html body.ecn-ds.single-product .ecn-pdp .ecn-lp-hero{ position:relative; }
+html body.ecn-ds .elementor-43 > .e-con.ecn-sec-chips::before{ content:""; position:absolute; z-index:-1; inset:-40px -10% -60px; pointer-events:none;
+  background:radial-gradient(50% 60% at 50% 40%, rgba(13, 88, 95, .05), rgba(13, 88, 95, 0) 70%); }
+html body.ecn-ds.single-product .ecn-pdp .ecn-lp-hero::before{ content:""; position:absolute; z-index:-1; inset:-60px -8% -40px 30%; pointer-events:none;
+  background:radial-gradient(55% 55% at 60% 40%, rgba(13, 88, 95, .05), rgba(13, 88, 95, 0) 70%); }
+
+/* =============================================================== 10. motion: quiet hovers only; nothing moves for reduced-motion users */
+@media (prefers-reduced-motion:reduce){
+  html body.ecn-ds *, html body.ecn-ds *::before, html body.ecn-ds *::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+  html body.ecn-ds .ecn-pcard:hover, html body.ecn-ds .ecn-fp-card:hover, html body.ecn-ds .ecn-rel-card:hover, html body.ecn-ds .econur-category-trust .econur-category-card:hover{ transform:none !important; }
+  html body.ecn-ds .ecn-pcard:hover img, html body.ecn-ds .ecn-fp-card:hover img, html body.ecn-ds .ecn-rel-card:hover img{ transform:none !important; }
+}
+
+/* =============================================================== preview marker */
+body.ecn-ds .ecn-ds-badge{ position:fixed; left:12px; bottom:12px; z-index:99999; padding:6px 10px; border-radius:999px; background:rgba(23, 48, 46, .82); color:#fff !important;
+  font:600 11px/1 var(--ds-sans); letter-spacing:.04em; text-decoration:none !important; }
