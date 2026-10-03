@@ -28,8 +28,14 @@ body.econur-checkoutpage .econur-checkout-card{ padding:20px 22px 22px; border:1
 body.econur-checkoutpage .econur-co-h{ display:flex; align-items:center; gap:10px; margin:0 0 16px !important; font-size:18px !important; font-weight:700 !important; line-height:1.3 !important; color:var(--eco-ink) !important; }
 body.econur-checkoutpage .econur-co-step{ display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:50%; background:var(--eco-mint); color:var(--eco-teal); font-size:14px; font-weight:700; }
 /* Astra / WooCommerce column floats are not used here */
-body.econur-checkoutpage form.econur-checkout #customer_details, body.econur-checkoutpage form.econur-checkout #order_review, body.econur-checkoutpage form.econur-checkout #order_review_heading{ float:none !important; width:auto !important; margin:0; padding:0; border:0; }
-body.econur-checkoutpage form.econur-checkout #order_review{ padding:0 !important; }
+body.econur-checkoutpage form.econur-checkout #customer_details{ float:none !important; width:auto !important; margin:0 !important; border:1px solid var(--eco-line) !important; border-radius:16px !important; background:var(--eco-card) !important; }
+body.econur-checkoutpage form.econur-checkout #order_review, body.econur-checkoutpage form.econur-checkout #order_review_heading{ float:none !important; width:auto !important; margin:0 !important; padding:0 !important; border:0 !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important; }
+body.econur-checkoutpage form.econur-checkout #order_review_heading{ margin:0 0 14px !important; }
+body.econur-checkoutpage form.econur-checkout #order_review table.econur-summary, body.econur-checkoutpage form.econur-checkout #order_review table.econur-summary th, body.econur-checkoutpage form.econur-checkout #order_review table.econur-summary td{ color:var(--eco-ink) !important; opacity:1; }
+body.econur-checkoutpage form.econur-checkout #order_review table.econur-summary tfoot th{ color:#4E5A55 !important; }
+body.econur-checkoutpage form.econur-checkout #order_review .econur-sum-meta, body.econur-checkoutpage form.econur-checkout #order_review .econur-sum-qty{ color:var(--eco-muted) !important; }
+body.econur-checkoutpage .woocommerce-privacy-policy-text p, body.econur-checkoutpage .woocommerce-terms-and-conditions-wrapper p{ margin:14px 0 0 !important; font-size:12.5px !important; line-height:1.5; color:var(--eco-muted) !important; }
+body.econur-checkoutpage .woocommerce-privacy-policy-text a{ color:var(--eco-teal); }
 body.econur-checkoutpage .econur-co-details{ padding:20px 22px 10px; }
 body.econur-checkoutpage .woocommerce-billing-fields > h3, body.econur-checkoutpage .woocommerce-shipping-fields, body.econur-checkoutpage .woocommerce-additional-fields:empty{ display:none; }
 body.econur-checkoutpage .woocommerce-additional-fields > h3{ display:none; }
@@ -71,8 +77,11 @@ body.econur-checkoutpage #payment ul.payment_methods{ display:grid; gap:10px; ma
 body.econur-checkoutpage #payment ul.payment_methods > li.wc_payment_method{ position:relative; margin:0 !important; padding:14px 16px !important; border:1px solid var(--eco-field); border-radius:14px; background:#fff; line-height:1.35; }
 body.econur-checkoutpage #payment ul.payment_methods > li.wc_payment_method:has(input:checked){ border-color:var(--eco-teal); background:#F3F8F6; box-shadow:inset 0 0 0 .5px var(--eco-teal); }
 body.econur-checkoutpage #payment ul.payment_methods > li > input{ width:18px; height:18px; margin:0 10px 0 0 !important; vertical-align:-3px; accent-color:var(--eco-teal); }
-body.econur-checkoutpage #payment ul.payment_methods > li > label{ display:inline; margin:0 !important; font-size:15px; font-weight:600; cursor:pointer; }
-body.econur-checkoutpage #payment div.payment_box{ margin:8px 0 0 !important; padding:0 0 0 28px !important; background:transparent !important; color:var(--eco-muted); font-size:13.5px; }
+body.econur-checkoutpage #payment ul.payment_methods > li.wc_payment_method{ opacity:1 !important; color:var(--eco-ink) !important; }
+body.econur-checkoutpage #payment ul.payment_methods > li > label{ display:inline; margin:0 !important; font-size:15px; font-weight:600; color:var(--eco-ink) !important; cursor:pointer; }
+body.econur-checkoutpage #payment ul.payment_methods > li > input[type="radio"][style*="none"] + label{ padding-left:0; }
+body.econur-checkoutpage #payment div.payment_box{ margin:6px 0 0 !important; padding:0 !important; background:transparent !important; color:var(--eco-muted) !important; font-size:13.5px; }
+body.econur-checkoutpage #payment ul.payment_methods > li > input:not([style*="none"]) ~ div.payment_box{ padding-left:28px !important; }
 body.econur-checkoutpage #payment div.payment_box::before{ display:none; }
 body.econur-checkoutpage #payment div.payment_box p{ margin:0 !important; }
 

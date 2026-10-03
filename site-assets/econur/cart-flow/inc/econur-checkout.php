@@ -186,7 +186,7 @@ add_filter('gettext', function ($tr, $text, $domain) {
         'Coupon "%s" does not exist!' => '"%s" কুপনটি সঠিক নয়।', 'Coupon &quot;%s&quot; cannot be applied because it does not exist.' => '"%s" কুপনটি সঠিক নয়।',
         'Select an option&hellip;' => 'জেলা নির্বাচন করুন', 'Select an option…' => 'জেলা নির্বাচন করুন',
         'Order details' => 'অর্ডারের বিস্তারিত', 'Product' => 'পণ্য', 'Total' => 'মোট', 'Subtotal:' => 'সাবটোটাল:', 'Shipping:' => 'ডেলিভারি চার্জ:',
-        'Payment method:' => 'পেমেন্ট পদ্ধতি:', 'Total:' => 'মোট:', 'Billing address' => 'ডেলিভারি ঠিকানা', 'Discount:' => 'ডিসকাউন্ট:',
+        'Payment method:' => 'পেমেন্ট পদ্ধতি:', 'Total:' => 'মোট:', 'Billing address' => 'অর্ডারকারীর তথ্য', 'Shipping address' => 'ডেলিভারি ঠিকানা', 'Discount:' => 'ডিসকাউন্ট:',
         'Note:' => 'নোট:', 'Order again' => 'আবার অর্ডার করুন',
         'Please read and accept the terms and conditions to proceed with your order.' => 'অর্ডার করতে শর্তাবলীতে সম্মতি দিন।',
         'Invalid payment method.' => 'একটি পেমেন্ট পদ্ধতি নির্বাচন করুন।',
@@ -198,6 +198,11 @@ add_filter('gettext', function ($tr, $text, $domain) {
     if (!did_action('wp') || !function_exists('is_checkout') || !(is_checkout() || wp_doing_ajax())) return $tr;
     return $map[$text];
 }, 20, 3);
+
+// WooCommerce's privacy line under the order button, in Bengali (same meaning, same privacy policy link)
+add_filter('woocommerce_get_privacy_policy_text', function ($text, $type) {
+    return 'checkout' === $type ? 'আপনার ব্যক্তিগত তথ্য অর্ডার প্রসেস করতে, এই ওয়েবসাইটে আপনার অভিজ্ঞতা সহজ রাখতে এবং আমাদের [privacy_policy]-এ বর্ণিত অন্যান্য উদ্দেশ্যে ব্যবহার করা হবে।' : $text;
+}, 10, 2);
 
 /* ---------------------------------------------------------------- assets + page */
 add_action('wp_enqueue_scripts', function () {
