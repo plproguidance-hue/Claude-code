@@ -12,6 +12,7 @@
  *   econur_info_intro      short introduction (default: the product's WooCommerce short description)
  *   econur_info_features   one per line "Title::Text::icon" (icons: cleanse, drop, leaf, hand, fresh, skin)
  *                          (default: the product's econur_highlights "Title::Text|Title::Text")
+ *   The block is shown only on products whose introduction or features are filled in (econur_info_on()).
  *   econur_info_image      Media Library ID of an existing photo (default: the product image)
  *   econur_info_image_alt / econur_info_image_pos   alt text, crop focus
  * Printed by econur_pdp_render() in inc/product-pdp.php; look and behaviour in assets/econur-pdp-info.css / .js.
@@ -79,8 +80,8 @@ function econur_info_guess_icon($t) {
 function econur_pdp_info($product, $lp = array()) {
     if (!$product instanceof WC_Product) return;
     $id = $product->get_id(); $name = $product->get_name();
+    if (!econur_info_on($id)) return; // only products whose Description tab has been written
     $d = econur_info_data($product);
-    if ('' === $d['intro'] && !$d['features']) return; // nothing written for this product yet
 
     /* ---------- Description ---------- */
     $copy = '<div class="econur-pit-copy"><p class="econur-pit-eyebrow" lang="en">ECONUR</p>'
@@ -163,10 +164,15 @@ function econur_pdp_info($product, $lp = array()) {
         . '<div class="econur-pit-box"><div class="econur-pit-tabs" role="tablist" aria-label="Product information">' . $list . '</div>'
         . '<div class="econur-pit-body">' . $panels . '</div></div></section>';
 }
+// the block appears once a product's introduction or features are written (Products > Edit > ECONUR Description tab);
+// the subtitle, photo and alt text are optional
+function econur_info_on($id) {
+    return '' !== trim((string) get_post_meta($id, 'econur_info_intro', true)) || '' !== trim((string) get_post_meta($id, 'econur_info_features', true));
+}
 function econur_info_lang($s) { return function_exists('econur_bn_attr') ? econur_bn_attr($s) : ''; }
 
 add_action('wp_enqueue_scripts', function () {
-    if (!function_exists('is_product') || !is_product()) return;
+    if (!function_exists('is_product') || !is_product() || !econur_info_on(get_queried_object_id())) return;
     $u = get_stylesheet_directory_uri() . '/assets/';
     wp_enqueue_style('econur-pdp-info', $u . 'econur-pdp-info.css', array(), ECONUR_INFO_VER);
     wp_enqueue_script('econur-pdp-info', $u . 'econur-pdp-info.js', array(), ECONUR_INFO_VER, array('in_footer' => true, 'strategy' => 'defer'));
