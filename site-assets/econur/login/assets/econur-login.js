@@ -40,9 +40,9 @@
     [$('econur_login_pass'), function (v) { return v ? '' : 'পাসওয়ার্ড লিখুন।'; }]
   ];
   checks = checks.filter(function (c) { return c[0]; });
-  // a field's message clears as soon as it is fixed
+  // a field's message follows the typing once shown (and clears when the field is fixed)
   checks.forEach(function (c) {
-    c[0].addEventListener('input', function () { if (c[0].getAttribute('aria-invalid') === 'true' && !c[1](c[0].value)) fieldErr(c[0], ''); });
+    c[0].addEventListener('input', function () { if (c[0].getAttribute('aria-invalid') === 'true') fieldErr(c[0], c[1](c[0].value)); });
   });
 
   var btn = form.querySelector('.econur-login-submit'), busy = false;

@@ -140,6 +140,11 @@ add_filter('woocommerce_add_success', function ($msg) {
     return false !== stripos(wp_strip_all_tags((string) $msg), 'account was created') ? 'আপনার অ্যাকাউন্ট তৈরি হয়েছে। স্বাগতম!' : $msg;
 });
 
+// WooCommerce's privacy line on the create-account form, in Bengali (same meaning and privacy-policy link as at checkout)
+add_filter('woocommerce_get_privacy_policy_text', function ($text, $type) {
+    return 'registration' === $type ? 'আপনার ব্যক্তিগত তথ্য অ্যাকাউন্ট পরিচালনা করতে, এই ওয়েবসাইটে আপনার অভিজ্ঞতা সহজ রাখতে এবং আমাদের [privacy_policy]-এ বর্ণিত অন্যান্য উদ্দেশ্যে ব্যবহার করা হবে।' : $text;
+}, 20, 2);
+
 /* ---------------------------------------------------------------- create account: the page's extra fields */
 // name and password confirmation, checked on the server next to WooCommerce's own checks (email, password)
 add_filter('woocommerce_process_registration_errors', function ($errors, $username, $password, $email) {
