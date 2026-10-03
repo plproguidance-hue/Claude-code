@@ -77,9 +77,9 @@ html{ scroll-padding-top:calc(var(--hdr-h) + 12px); }
   html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:is(:hover, :focus-visible){ color:var(--hdr-hover) !important; }
   html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:is(:hover, :focus-visible)::after{ transform:scaleX(.66); }
   html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-6px; border-radius:8px; }
-  /* current page */
-  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
-  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor) > .menu-link::after{ transform:scaleX(.66); }
+  /* current page (a product page lights up its category) */
+  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
+  html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link::after{ transform:scaleX(.66); }
 
   /* right side: icons 40px apart (20px between glyphs) */
   #ast-desktop-header .site-header-primary-section-right{ gap:0 !important; }
@@ -125,8 +125,8 @@ html{ scroll-padding-top:calc(var(--hdr-h) + 12px); }
     font-family:"Manrope", Arial, sans-serif !important; font-size:16px !important; font-weight:500 !important; line-height:22px !important; letter-spacing:-.1px;
     color:var(--hdr-ink) !important; background:transparent !important; transition:color .2s ease; }
   #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link:active{ color:var(--hdr-hover) !important; }
-  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
-  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor) > .menu-link::before{ content:""; width:3px; height:16px; margin:0 10px 0 -13px; border-radius:2px; background:var(--hdr-hover); }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
+  #ast-mobile-header .ast-mobile-header-content .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link::before{ content:""; width:3px; height:16px; margin:0 10px 0 -13px; border-radius:2px; background:var(--hdr-hover); }
   #ast-mobile-header .ast-mobile-header-content .menu-link:focus-visible{ outline:2px solid var(--hdr-active); outline-offset:-4px; border-radius:8px; }
   /* "My account" row in the same type */
   #ast-mobile-header .ast-mobile-header-content .ast-header-account{ padding:0 22px; }
