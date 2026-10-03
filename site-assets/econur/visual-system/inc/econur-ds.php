@@ -65,8 +65,14 @@ add_filter('body_class', function ($c) {
 });
 
 // fonts: three families only (Fraunces for editorial headlines, Inter for the shop interface, Hind Siliguri for Bangla)
+// product pages held on the previous design still take the homepage's fonts (family and weight only)
+function econur_ds_fonts_only() { return econur_ds_live() && !econur_ds_active() && econur_ds_pdp_held(); }
+add_filter('body_class', function ($c) {
+    if (econur_ds_fonts_only()) $c[] = 'ecn-dsf';
+    return $c;
+});
 add_action('wp_enqueue_scripts', function () {
-    if (!econur_ds_active()) return;
+    if (!econur_ds_active() && !econur_ds_fonts_only()) return;
     wp_dequeue_style('econur-fonts');
     wp_deregister_style('econur-fonts');
     wp_enqueue_style('econur-fonts', 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600'
@@ -79,6 +85,29 @@ add_action('wp_head', function () {
     $f = get_stylesheet_directory() . '/assets/econur-ds.css';
     $v = ECONUR_DS_VER . (file_exists($f) ? '.' . substr(md5_file($f), 0, 8) : '');
     echo '<link rel="stylesheet" id="econur-ds-css" href="' . esc_url(get_stylesheet_directory_uri() . '/assets/econur-ds.css?ver=' . $v) . '" media="all">' . "\n";
+}, 120);
+
+add_action('wp_head', function () {
+    if (!econur_ds_fonts_only()) return;
+    $sans = '"Inter", "Hind Siliguri", "Noto Sans Bengali", Arial, sans-serif';
+    $serif = '"Fraunces", "Hind Siliguri", Georgia, serif';
+    $b = 'html body.ecn-dsf';
+    $x = ':not(#ecn-dsf-x)';
+    echo '<style id="econur-ds-fonts">'
+        . "body.ecn-dsf{--ecn-font-head:$sans;--ecn-font-body:$sans;--ecn-font-en:$sans;--pd-serif:$sans;--pd-sans:$sans;--ehc-serif:$sans;--ecnf-serif:$sans}"
+        // header: Inter like the homepage (was Manrope)
+        . "$b :is(.main-header-menu .menu-link,.econur-header-login,.econur-header-login-t,.econur-header-cart,.econur-header-cart-t,.econur-cart-count,.econur-header-search-input)$x,"
+        . "$b.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link,$b #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link,"
+        . "$b #ast-mobile-header .ast-mobile-header-content .ast-header-account :is(a, .ast-header-account-text){font-family:$sans !important}"
+        // headings: bold Inter, serif only where the homepage uses it
+        . "$b .ecn-pdp .ecn-pdp-title$x,$b :is(.ecn-lp-h2,.econur-pit-title,.econur-pit-h3,#ecn-lp-routine-t)$x{font-family:$sans !important;font-weight:800 !important;font-style:normal !important}"
+        . "$b :is(.enr-rv-title,.ecn-lp-final h2)$x{font-family:$serif !important;font-weight:600 !important;font-style:normal !important}"
+        . "$b :is(.ecn-love-t,.econur-pit-kf,.enr-rv-eyebrow,.enr-rv-buy-name,.ecn-lp-label)$x{font-weight:700 !important}"
+        . "$b .ecn-pdp :is(.ecn-pdp-price,.ecn-pdp-price .amount,.ecn-lp-pack-p)$x{font-weight:800 !important}"
+        . "$b .ecn-pdp .ecn-pdp-cat$x{font-weight:500 !important}"
+        . "$b .ecn-pdp .ecn-pdp-sz$x{font-weight:600 !important}"
+        . "$b .ecn-pdp form.cart .single_add_to_cart_button$x{font-weight:700 !important}"
+        . '</style>' . "\n";
 }, 120);
 
 // small marker so a preview is never mistaken for the live site
