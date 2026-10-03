@@ -19,7 +19,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_LOGIN_VER = '1.1.0';
+const ECONUR_LOGIN_VER = '1.1.1';
 
 function econur_login_page_id() {
     $id = (int) get_option('econur_login_page_id');
