@@ -2145,3 +2145,6 @@ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-pack:has(.ecn-lp
 /* "সাইজ বেছে নিন" follows about 12px below the cards (its own 20px top margin collapses with this) */
 @media (max-width:899px){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs:has(+ .ecn-lp-label){ margin-bottom:-8px !important; } }
 @media (prefers-reduced-motion:reduce){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-pack{ transition:none; } body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-packs .ecn-lp-pack:hover{ transform:none; } }
+
+/* ===================== v7.19.1: no subtitle under the title; the price follows the title / stock row ===================== */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-pdp-titlerow + .ecn-lp-pricerow{ margin-top:8px; }

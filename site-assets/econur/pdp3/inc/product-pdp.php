@@ -13,7 +13,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_PDP_VER = '7.19.0';
+const ECONUR_PDP_VER = '7.19.1';
 require_once __DIR__ . '/review-photos.php';
 const ECONUR_WA_NUMBER = '8801410753555';
 const ECONUR_WA_DISPLAY = '+880 1410-753555';
@@ -361,11 +361,6 @@ function econur_pdp_render($product) {
         echo '<div class="ecn-pdp-rating is-empty is-new"><span class="ecn-pdp-newstar" aria-hidden="true">&#9733;</span><span lang="bn">নতুন পণ্য</span><span class="ecn-pdp-rating-sep" aria-hidden="true">|</span><a class="ecn-pdp-firstrev" href="#ecn-reviews" data-write="1" lang="bn">প্রথম রিভিউটি দিন</a></div>';
     }
     echo '<div class="ecn-pdp-titlerow"><h1 class="ecn-pdp-title product_title">' . esc_html($name) . '</h1><span class="ecn-pdp-stock is-' . esc_attr($stock[0]) . '" data-ecn-stock' . econur_bn_attr($stock[1]) . '>' . esc_html($stock[1]) . '</span></div>';
-    // the promise: each sentence on its own line on wide screens (approved design)
-    if ($lp['subtitle']) {
-        $parts = preg_split('/(?<=[.!?])\s+(?=[A-Z])|(?<=।)\s+/u', trim($lp['subtitle']), 2);
-        echo '<p class="ecn-lp-sub"' . econur_bn_attr($lp['subtitle']) . '>' . (count($parts) > 1 ? '<span>' . esc_html($parts[0]) . '</span> <span>' . esc_html($parts[1]) . '</span>' : esc_html($lp['subtitle'])) . '</p>';
-    }
     if ('' !== $product->get_price()) {
         $save = ($unit && $unit->is_on_sale() && (float) $unit->get_regular_price() > (float) $unit->get_price()) ? (float) $unit->get_regular_price() - (float) $unit->get_price() : 0;
         echo '<div class="ecn-lp-pricerow"><div class="ecn-pdp-price">' . $product->get_price_html() . '</div>' . ($size ? '<span class="ecn-pdp-size" data-ecn-size>' . esc_html($size) . '</span>' : '') . '<span class="ecn-lp-save" data-ecn-save lang="bn"' . ($save > 0 ? '' : ' hidden') . '>' . esc_html(econur_pdp_money($save)) . ' সাশ্রয়</span></div>';
