@@ -1,0 +1,164 @@
+/* ECONUR checkout + order success 1.0 (inc/econur-checkout.php, woocommerce/checkout/*.php).
+   Cream cards, beige hairlines, teal for the selected option and the order button. Scoped to the checkout page. */
+body.econur-checkoutpage, body.econur-thankspage{ --eco-teal:#0D585F; --eco-teal-d:#0A474D; --eco-ink:#1F2B29; --eco-muted:#66706B; --eco-line:#EAE3D7; --eco-field:#DCD4C6; --eco-card:#FFFEFB; --eco-wash:#F6F3EC; --eco-mint:#EEF4F0; --eco-err:#A1402F; }
+
+/* ---------------------------------------------------------------- page head */
+body.econur-checkoutpage .econur-co-head{ margin:8px 0 20px; }
+body.econur-checkoutpage .econur-co-head h1{ margin:0 !important; font-size:32px !important; font-weight:600 !important; line-height:1.2 !important; color:var(--eco-ink) !important; }
+body.econur-checkoutpage .econur-co-head p{ margin:6px 0 0 !important; font-size:15px; color:var(--eco-muted); }
+
+/* ---------------------------------------------------------------- notices (coupon toggle, errors not tied to a field) */
+body.econur-checkoutpage .woocommerce-form-coupon-toggle .woocommerce-info, body.econur-checkoutpage .woocommerce-NoticeGroup .woocommerce-error, body.econur-checkoutpage .woocommerce-error, body.econur-checkoutpage .woocommerce-message{
+  margin:0 0 16px !important; padding:12px 16px !important; border:1px solid var(--eco-line) !important; border-radius:12px; background:var(--eco-card) !important; color:var(--eco-ink); font-size:14.5px; }
+body.econur-checkoutpage .woocommerce-form-coupon-toggle .woocommerce-info::before, body.econur-checkoutpage .woocommerce-error::before{ display:none; }
+body.econur-checkoutpage .woocommerce-form-coupon-toggle .woocommerce-info a{ color:var(--eco-teal); font-weight:600; }
+body.econur-checkoutpage .woocommerce-error{ border-color:#EBC9C1 !important; background:#FDF4F1 !important; color:var(--eco-err); }
+body.econur-checkoutpage form.checkout_coupon{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px; margin:0 0 16px !important; padding:14px 16px !important; border:1px solid var(--eco-line) !important; border-radius:12px; background:var(--eco-card); }
+body.econur-checkoutpage form.checkout_coupon > p:first-child{ flex:1 1 100%; margin:0 !important; font-size:14px; color:var(--eco-muted); }
+body.econur-checkoutpage form.checkout_coupon .form-row{ float:none !important; width:auto !important; margin:0 !important; padding:0 !important; }
+body.econur-checkoutpage form.checkout_coupon .form-row-first{ flex:1 1 200px; }
+body.econur-checkoutpage form.checkout_coupon .button{ height:48px; padding:0 20px !important; border:0 !important; border-radius:12px !important; background:var(--eco-teal) !important; color:#fff !important; font-weight:600 !important; }
+
+/* ---------------------------------------------------------------- two columns */
+body.econur-checkoutpage form.econur-checkout{ margin:0 0 56px; color:var(--eco-ink); }
+body.econur-checkoutpage .econur-co-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,400px); gap:24px; align-items:start; }
+body.econur-checkoutpage .econur-co-main{ display:grid; gap:16px; min-width:0; }
+body.econur-checkoutpage .econur-co-side{ position:sticky; top:96px; min-width:0; }
+body.econur-checkoutpage .econur-checkout-card{ padding:20px 22px 22px; border:1px solid var(--eco-line); border-radius:16px; background:var(--eco-card); }
+body.econur-checkoutpage .econur-co-h{ display:flex; align-items:center; gap:10px; margin:0 0 16px !important; font-size:18px !important; font-weight:700 !important; line-height:1.3 !important; color:var(--eco-ink) !important; }
+body.econur-checkoutpage .econur-co-step{ display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:50%; background:var(--eco-mint); color:var(--eco-teal); font-size:14px; font-weight:700; }
+/* Astra / WooCommerce column floats are not used here */
+body.econur-checkoutpage form.econur-checkout #customer_details, body.econur-checkoutpage form.econur-checkout #order_review, body.econur-checkoutpage form.econur-checkout #order_review_heading{ float:none !important; width:auto !important; margin:0; padding:0; border:0; }
+body.econur-checkoutpage form.econur-checkout #order_review{ padding:0 !important; }
+body.econur-checkoutpage .econur-co-details{ padding:20px 22px 10px; }
+body.econur-checkoutpage .woocommerce-billing-fields > h3, body.econur-checkoutpage .woocommerce-shipping-fields, body.econur-checkoutpage .woocommerce-additional-fields:empty{ display:none; }
+body.econur-checkoutpage .woocommerce-additional-fields > h3{ display:none; }
+
+/* ---------------------------------------------------------------- fields */
+body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 14px; }
+body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper > .form-row{ float:none !important; width:auto !important; margin:0 0 14px !important; padding:0 !important; }
+body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper > .form-row-wide{ grid-column:1 / -1; }
+body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper > .econur-co-hidden{ display:none !important; }
+body.econur-checkoutpage form.econur-checkout .form-row label{ display:block; margin:0 0 6px !important; font-size:14px; font-weight:600; line-height:1.3; color:var(--eco-ink); }
+body.econur-checkoutpage form.econur-checkout .form-row label .required{ color:var(--eco-err); text-decoration:none; border:0; }
+body.econur-checkoutpage form.econur-checkout .form-row label .optional{ display:none; }
+body.econur-checkoutpage form.econur-checkout .form-row .input-text, body.econur-checkoutpage form.econur-checkout .form-row select{
+  width:100% !important; height:50px; min-height:50px; margin:0; padding:0 14px !important; border:1px solid var(--eco-field) !important; border-radius:12px !important; background:#fff !important; color:var(--eco-ink); font-size:15px !important; line-height:1.3; box-shadow:none !important;
+  transition:border-color .18s ease, box-shadow .18s ease; }
+body.econur-checkoutpage form.econur-checkout .form-row select{ -webkit-appearance:none; appearance:none; padding-right:38px !important;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366706B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 12px center / 18px no-repeat !important; }
+body.econur-checkoutpage form.econur-checkout .form-row .input-text:focus, body.econur-checkoutpage form.econur-checkout .form-row select:focus{ border-color:var(--eco-teal) !important; box-shadow:0 0 0 3px rgba(13, 88, 95, .14) !important; outline:0; }
+body.econur-checkoutpage form.econur-checkout .form-row .input-text::placeholder{ color:#A39E93; }
+body.econur-checkoutpage form.econur-checkout .form-row.woocommerce-invalid .input-text, body.econur-checkoutpage form.econur-checkout .form-row.woocommerce-invalid select{ border-color:#D69888 !important; }
+body.econur-checkoutpage form.econur-checkout .econur-field-err{ display:block; margin-top:6px; font-size:13px; line-height:1.4; color:var(--eco-err); }
+
+/* ---------------------------------------------------------------- delivery area cards */
+body.econur-checkoutpage .econur-ship-cards{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+body.econur-checkoutpage .econur-ship-card{ position:relative; display:flex; align-items:center; gap:12px; min-height:64px; margin:0 !important; padding:12px 14px; border:1px solid var(--eco-field); border-radius:14px; background:#fff; cursor:pointer; transition:border-color .18s ease, background-color .18s ease, box-shadow .18s ease; }
+body.econur-checkoutpage .econur-ship-card input{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+body.econur-checkoutpage .econur-ship-dot{ flex:none; width:20px; height:20px; border:1.5px solid #B7AFA2; border-radius:50%; background:#fff; transition:border-color .18s ease, box-shadow .18s ease; }
+body.econur-checkoutpage .econur-ship-t{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+body.econur-checkoutpage .econur-ship-t b{ font-size:15px; font-weight:600; line-height:1.3; }
+body.econur-checkoutpage .econur-ship-t small{ font-size:13px; color:var(--eco-muted); }
+body.econur-checkoutpage .econur-ship-card.is-on, body.econur-checkoutpage .econur-ship-card:has(input:checked){ border-color:var(--eco-teal); background:#F3F8F6; box-shadow:inset 0 0 0 .5px var(--eco-teal); }
+body.econur-checkoutpage .econur-ship-card.is-on .econur-ship-dot, body.econur-checkoutpage .econur-ship-card:has(input:checked) .econur-ship-dot{ border-color:var(--eco-teal); box-shadow:inset 0 0 0 5px var(--eco-teal); }
+body.econur-checkoutpage .econur-ship-card:has(input:focus-visible){ outline:2px solid var(--eco-teal); outline-offset:2px; }
+body.econur-checkoutpage .econur-ship-none{ margin:0 !important; font-size:14px; color:var(--eco-muted); }
+
+/* ---------------------------------------------------------------- payment methods */
+body.econur-checkoutpage #payment{ margin:0; padding:0 !important; border:0 !important; border-radius:0; background:transparent !important; }
+body.econur-checkoutpage #payment ul.payment_methods{ display:grid; gap:10px; margin:0 !important; padding:0 !important; border:0 !important; list-style:none; }
+body.econur-checkoutpage #payment ul.payment_methods > li.wc_payment_method{ position:relative; margin:0 !important; padding:14px 16px !important; border:1px solid var(--eco-field); border-radius:14px; background:#fff; line-height:1.35; }
+body.econur-checkoutpage #payment ul.payment_methods > li.wc_payment_method:has(input:checked){ border-color:var(--eco-teal); background:#F3F8F6; box-shadow:inset 0 0 0 .5px var(--eco-teal); }
+body.econur-checkoutpage #payment ul.payment_methods > li > input{ width:18px; height:18px; margin:0 10px 0 0 !important; vertical-align:-3px; accent-color:var(--eco-teal); }
+body.econur-checkoutpage #payment ul.payment_methods > li > label{ display:inline; margin:0 !important; font-size:15px; font-weight:600; cursor:pointer; }
+body.econur-checkoutpage #payment div.payment_box{ margin:8px 0 0 !important; padding:0 0 0 28px !important; background:transparent !important; color:var(--eco-muted); font-size:13.5px; }
+body.econur-checkoutpage #payment div.payment_box::before{ display:none; }
+body.econur-checkoutpage #payment div.payment_box p{ margin:0 !important; }
+
+/* ---------------------------------------------------------------- order summary */
+body.econur-checkoutpage .econur-co-summary{ padding:20px 20px 18px; }
+body.econur-checkoutpage table.econur-summary{ width:100%; margin:0 !important; border:0 !important; border-collapse:collapse; background:transparent; }
+body.econur-checkoutpage table.econur-summary th, body.econur-checkoutpage table.econur-summary td{ padding:9px 0 !important; border:0 !important; background:transparent !important; font-size:14.5px; font-weight:500; vertical-align:middle; }
+body.econur-checkoutpage table.econur-summary tbody td{ padding:0 0 14px !important; }
+body.econur-checkoutpage table.econur-summary tbody tr:last-child td{ border-bottom:1px solid var(--eco-line) !important; }
+body.econur-checkoutpage table.econur-summary td.product-total{ text-align:right; white-space:nowrap; font-weight:700; }
+body.econur-checkoutpage table.econur-summary tfoot th{ text-align:left; color:#4E5A55; }
+body.econur-checkoutpage table.econur-summary tfoot td{ text-align:right; }
+body.econur-checkoutpage table.econur-summary tfoot tr:first-child th, body.econur-checkoutpage table.econur-summary tfoot tr:first-child td{ padding-top:14px !important; }
+body.econur-checkoutpage table.econur-summary tr.order-total th, body.econur-checkoutpage table.econur-summary tr.order-total td{ padding-top:14px !important; border-top:1px solid var(--eco-line) !important; font-size:18px; font-weight:700; color:var(--eco-ink); }
+body.econur-checkoutpage table.econur-summary tr.order-total td strong{ font-weight:700; }
+body.econur-checkoutpage .econur-sum-item{ display:flex; align-items:center; gap:12px; }
+body.econur-checkoutpage .econur-sum-img{ flex:none; width:56px; height:56px; overflow:hidden; border:1px solid var(--eco-line); border-radius:12px; background:var(--eco-wash); }
+body.econur-checkoutpage .econur-sum-img img{ display:block; width:100% !important; height:100% !important; object-fit:cover; margin:0 !important; }
+body.econur-checkoutpage .econur-sum-txt{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+body.econur-checkoutpage .econur-sum-name{ font-size:15px; font-weight:600; line-height:1.3; color:var(--eco-ink); }
+body.econur-checkoutpage .econur-sum-meta, body.econur-checkoutpage .econur-sum-qty{ font-size:13px; color:var(--eco-muted); }
+body.econur-checkoutpage .econur-place-order{ float:none !important; margin:16px 0 0 !important; padding:0 !important; }
+body.econur-checkoutpage #place_order.econur-place-btn{ display:flex !important; align-items:center; justify-content:center; gap:10px; width:100% !important; min-height:54px; margin:0 !important; padding:0 20px !important; float:none !important;
+  border:0 !important; border-radius:999px !important; background:var(--eco-teal) !important; color:#fff !important; font-size:17px !important; font-weight:700 !important; line-height:1.2 !important; box-shadow:0 8px 20px rgba(13, 88, 95, .2) !important; cursor:pointer;
+  transition:background-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+body.econur-checkoutpage #place_order.econur-place-btn::before{ content:""; flex:none; width:18px; height:18px; background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.5' y='10.5' width='15' height='10' rx='2'/%3E%3Cpath d='M8 10.5V7.8a4 4 0 0 1 8 0v2.7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.5' y='10.5' width='15' height='10' rx='2'/%3E%3Cpath d='M8 10.5V7.8a4 4 0 0 1 8 0v2.7'/%3E%3C/svg%3E") center / contain no-repeat; }
+body.econur-checkoutpage #place_order.econur-place-btn.is-busy{ opacity:.85; cursor:progress; }
+@media (hover:hover) and (pointer:fine){ body.econur-checkoutpage #place_order.econur-place-btn:hover:not(.is-busy){ background:var(--eco-teal-d) !important; transform:translateY(-1px); } }
+body.econur-checkoutpage #place_order.econur-place-btn:focus-visible{ outline:2px solid var(--eco-teal) !important; outline-offset:3px; }
+body.econur-checkoutpage .econur-co-note{ margin:10px 0 0 !important; font-size:12.5px; line-height:1.45; text-align:center; color:var(--eco-muted); }
+body.econur-checkoutpage .blockUI.blockOverlay{ border-radius:16px; background:rgba(255, 254, 251, .6) !important; }
+
+/* ---------------------------------------------------------------- tablet / phone: one column (details, area, payment, summary, button) */
+@media (max-width:921px){
+  body.econur-checkoutpage .econur-co-grid{ grid-template-columns:minmax(0,1fr); gap:16px; }
+  body.econur-checkoutpage .econur-co-side{ position:static; }
+}
+@media (max-width:600px){
+  body.econur-checkoutpage .econur-co-head h1{ font-size:26px !important; }
+  body.econur-checkoutpage .econur-co-head p{ font-size:14px; }
+  body.econur-checkoutpage .econur-checkout-card{ padding:16px 16px 18px; border-radius:14px; }
+  body.econur-checkoutpage .econur-co-details{ padding:16px 16px 6px; }
+  body.econur-checkoutpage .econur-co-h{ margin-bottom:14px !important; font-size:17px !important; }
+  body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper{ grid-template-columns:minmax(0,1fr); }
+  body.econur-checkoutpage .econur-ship-cards{ grid-template-columns:minmax(0,1fr); gap:10px; }
+  body.econur-checkoutpage form.econur-checkout .form-row .input-text, body.econur-checkoutpage form.econur-checkout .form-row select{ height:50px; font-size:16px !important; }
+}
+@media (prefers-reduced-motion:reduce){ body.econur-checkoutpage #place_order.econur-place-btn, body.econur-checkoutpage .econur-ship-card{ transition:none; } }
+
+/* ---------------------------------------------------------------- order success */
+body.econur-thankspage .entry-title, body.econur-thankspage .woocommerce-order-received .entry-title{ display:none; }
+body.econur-thankspage .econur-thanks{ max-width:760px; margin:8px auto 56px; color:var(--eco-ink); }
+body.econur-thankspage .econur-thanks-hero{ position:relative; overflow:hidden; isolation:isolate; padding:44px 28px 36px; border:1px solid var(--eco-line); border-radius:20px; background:linear-gradient(180deg, #F2F6EC 0%, #FBFAF4 70%); text-align:center; }
+body.econur-thankspage .econur-thanks-leaf{ position:absolute; z-index:-1; width:120px; height:120px; opacity:.5; pointer-events:none; background:no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'%3E%3Cpath d='M2 30C14 6 38 0 58 6 50 28 26 40 2 30Z' fill='%2389B07F'/%3E%3Cpath d='M2 30C20 22 36 14 56 7' stroke='%235E8F57' stroke-width='1.4' fill='none'/%3E%3C/svg%3E"); }
+body.econur-thankspage .econur-thanks-leaf--tl{ top:-18px; left:-26px; transform:rotate(18deg); }
+body.econur-thankspage .econur-thanks-leaf--br{ right:-26px; bottom:-30px; transform:scaleX(-1) rotate(10deg); }
+body.econur-thankspage .econur-thanks-check{ display:grid; place-items:center; width:76px; height:76px; margin:0 auto 18px; border-radius:50%; background:#2F8F5B; color:#fff; box-shadow:0 10px 26px rgba(47, 143, 91, .28); }
+body.econur-thankspage .econur-thanks-check svg{ width:38px; height:38px; }
+body.econur-thankspage .econur-thanks-h{ margin:0 !important; font-size:28px !important; font-weight:700 !important; line-height:1.3 !important; color:var(--eco-teal) !important; }
+body.econur-thankspage .econur-thanks-no{ margin:12px 0 0 !important; font-size:16px; }
+body.econur-thankspage .econur-thanks-no b{ color:var(--eco-ink); }
+body.econur-thankspage .econur-thanks-lead{ margin:6px 0 0 !important; font-size:15px; color:var(--eco-muted); }
+body.econur-thankspage .econur-thanks-facts{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin:24px 0 0 !important; padding:0 !important; text-align:left; }
+body.econur-thankspage .econur-thanks-facts > div{ margin:0; padding:12px 14px; border:1px solid var(--eco-line); border-radius:12px; background:var(--eco-card); }
+body.econur-thankspage .econur-thanks-facts > div.is-wide{ grid-column:1 / -1; }
+body.econur-thankspage .econur-thanks-facts dt{ margin:0; font-size:12.5px; font-weight:500; color:var(--eco-muted); }
+body.econur-thankspage .econur-thanks-facts dd{ margin:2px 0 0 !important; font-size:15px; font-weight:600; }
+body.econur-thankspage .econur-thanks-actions{ display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin:24px 0 0 !important; }
+body.econur-thankspage .econur-thanks-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 24px; border:1.5px solid var(--eco-teal); border-radius:999px; font-size:15.5px; font-weight:600; text-decoration:none !important; transition:background-color .18s ease, color .18s ease; }
+body.econur-thankspage .econur-thanks-btn.is-primary{ background:var(--eco-teal); color:#fff !important; }
+body.econur-thankspage .econur-thanks-btn.is-primary:hover{ background:var(--eco-teal-d); }
+body.econur-thankspage .econur-thanks-btn.is-ghost{ background:#FFFEFB; color:var(--eco-teal) !important; }
+body.econur-thankspage .econur-thanks-btn.is-ghost:hover{ background:var(--eco-mint); }
+body.econur-thankspage .econur-thanks-btn:focus-visible{ outline:2px solid var(--eco-teal); outline-offset:3px; }
+body.econur-thankspage .econur-thanks-details{ margin-top:28px; scroll-margin-top:96px; }
+body.econur-thankspage .econur-thanks-details h2{ font-size:20px !important; font-weight:700 !important; }
+body.econur-thankspage .econur-thanks-details .shop_table{ border:1px solid var(--eco-line) !important; border-radius:14px; border-collapse:separate !important; overflow:hidden; background:var(--eco-card); }
+body.econur-thankspage .econur-thanks-details .shop_table th, body.econur-thankspage .econur-thanks-details .shop_table td{ padding:12px 16px !important; border-color:var(--eco-line) !important; }
+body.econur-thankspage .econur-thanks-details address{ padding:14px 16px; border:1px solid var(--eco-line) !important; border-radius:14px; background:var(--eco-card); font-style:normal; }
+@media (max-width:600px){
+  body.econur-thankspage .econur-thanks-hero{ padding:32px 16px 26px; border-radius:16px; }
+  body.econur-thankspage .econur-thanks-check{ width:64px; height:64px; }
+  body.econur-thankspage .econur-thanks-h{ font-size:22px !important; }
+  body.econur-thankspage .econur-thanks-facts{ grid-template-columns:minmax(0,1fr); }
+  body.econur-thankspage .econur-thanks-actions{ flex-direction:column; }
+  body.econur-thankspage .econur-thanks-btn{ width:100%; }
+}

@@ -1,0 +1,88 @@
+/* ECONUR checkout 1.0 (inc/econur-checkout.php). Works with WooCommerce's own checkout script (wc-checkout):
+   division narrows the district list, mobile numbers are checked as they are typed, errors appear under their field,
+   the delivery-area card and the order button show their state. WooCommerce still validates and creates the order. */
+(function ($) {
+  'use strict';
+  if (!$) return;
+  var CO = window.ECN_CO || {}, $form = $('form.checkout.econur-checkout');
+  if (!$form.length) return;
+
+  function bnDigits(v) { return String(v || '').replace(/[০-৯]/g, function (d) { return String('০১২৩৪৫৬৭৮৯'.indexOf(d)); }); }
+  function phone(v) { v = bnDigits(v).replace(/[^\d+]/g, ''); if (v.indexOf('+880') === 0) v = '0' + v.slice(4); else if (v.indexOf('880') === 0 && v.length === 13) v = '0' + v.slice(3); return v; }
+  function phoneOk(v) { return /^01[3-9]\d{8}$/.test(v); }
+
+  /* ---------- field errors ---------- */
+  function setErr(id, msg) {
+    var $row = $('#' + id + '_field'); if (!$row.length) return false;
+    $row.find('.econur-field-err').remove();
+    if (msg) {
+      $row.addClass('woocommerce-invalid econur-has-err').removeClass('woocommerce-validated');
+      $('<span class="econur-field-err" role="alert"></span>').attr('id', id + '_err').text(msg).appendTo($row);
+      $row.find('input, select').attr({ 'aria-invalid': 'true', 'aria-describedby': id + '_err' });
+    } else {
+      $row.removeClass('econur-has-err');
+      $row.find('input, select').removeAttr('aria-invalid aria-describedby');
+    }
+    return true;
+  }
+  function clearErr(id) { setErr(id, ''); }
+
+  /* ---------- mobile numbers ---------- */
+  function checkPhone(id, optional) {
+    var $i = $('#' + id); if (!$i.length) return true;
+    var v = phone($i.val()); if (v !== $i.val() && v) $i.val(v);
+    if (!v) { if (!optional) return true; clearErr(id); return true; }
+    if (!phoneOk(v)) { setErr(id, id === 'billing_phone' ? 'সঠিক মোবাইল নম্বর দিন: ১১ সংখ্যা, 01 দিয়ে শুরু (যেমন 01712345678)।' : 'বিকল্প নম্বরটি সঠিক নয় (যেমন 01712345678), অথবা ঘরটি খালি রাখুন।'); return false; }
+    clearErr(id); return true;
+  }
+  $form.on('blur change', '#billing_phone', function () { checkPhone('billing_phone'); });
+  $form.on('blur change', '#billing_econur_alt_phone', function () { checkPhone('billing_econur_alt_phone', true); });
+  $form.on('input change', '.form-row input, .form-row select', function () { var $r = $(this).closest('.form-row'); if ($r.hasClass('econur-has-err') && $(this).val()) { var id = ($r.attr('id') || '').replace(/_field$/, ''); if (id !== 'billing_phone' && id !== 'billing_econur_alt_phone') clearErr(id); } });
+
+  /* ---------- division > district ---------- */
+  var all = null; // [[code, name], ...] as WooCommerce lists them
+  function divisionOf(code) { var d = CO.divisions || {}; for (var k in d) if (d[k].indexOf(code) > -1) return k; return ''; }
+  function filterDistricts() {
+    var $st = $('#billing_state'), div = $('#billing_econur_division').val();
+    if (!$st.is('select')) return;
+    var opts = $st.find('option').map(function () { return [[this.value, this.textContent]]; }).get();
+    if (!all || opts.length > all.length) all = opts;
+    var keep = div && CO.divisions && CO.divisions[div] ? CO.divisions[div] : null, cur = $st.val();
+    var html = all.map(function (o) { return (!o[0] || !keep || keep.indexOf(o[0]) > -1) ? '<option value="' + o[0] + '">' + $('<div>').text(o[1]).html() + '</option>' : ''; }).join('');
+    $st.html(html);
+    if (cur && (!keep || keep.indexOf(cur) > -1)) $st.val(cur); else $st.val('');
+    $st.prop('disabled', false);
+  }
+  $form.on('change', '#billing_econur_division', function () { var before = $('#billing_state').val(); filterDistricts(); if ($('#billing_state').val() !== before) $('#billing_state').trigger('change'); });
+  $form.on('change', '#billing_state', function () { var code = $(this).val(), $d = $('#billing_econur_division'); if (code && !$d.val()) { $d.val(divisionOf(code)); filterDistricts(); $(this).val(code); } });
+  $(document.body).on('country_to_state_changed', function () { all = null; filterDistricts(); });
+  $(function () { var code = $('#billing_state').val(), $d = $('#billing_econur_division'); if (code && !$d.val()) $d.val(divisionOf(code)); filterDistricts(); });
+
+  /* ---------- delivery area cards ---------- */
+  $form.on('change', '.econur-ship-card input', function () { $('.econur-ship-card').removeClass('is-on'); $(this).closest('.econur-ship-card').addClass('is-on'); });
+
+  /* ---------- placing the order ---------- */
+  var label = '';
+  $form.on('checkout_place_order', function () {
+    var ok = checkPhone('billing_phone') & checkPhone('billing_econur_alt_phone', true);
+    if (!ok) { var $f = $('.econur-has-err').first(); $('html, body').animate({ scrollTop: $f.offset().top - 110 }, 300); $f.find('input').trigger('focus'); return false; }
+    var $b = $('#place_order'); label = label || $b.data('value') || $b.text();
+    $b.addClass('is-busy').attr('aria-busy', 'true').text('অর্ডার প্রসেস হচ্ছে...');
+    return true;
+  });
+  $(document.body).on('checkout_error', function () {
+    var $b = $('#place_order'); $b.removeClass('is-busy').removeAttr('aria-busy'); if (label) $b.text(label);
+    // WooCommerce lists the errors at the top; each one with a field moves under that field
+    var $group = $('.woocommerce-NoticeGroup-checkout'), first = null, left = 0;
+    $form.find('.econur-field-err').remove(); $form.find('.econur-has-err').removeClass('econur-has-err');
+    $group.find('li').each(function () {
+      var id = $(this).attr('data-id'), txt = $.trim($(this).text());
+      if (id && setErr(id, txt)) { if (!first) first = $('#' + id + '_field'); } else left++;
+    });
+    if (first) {
+      if (!left) $group.attr('hidden', true);
+      setTimeout(function () { $('html, body').stop().animate({ scrollTop: first.offset().top - 110 }, 300); first.find('input, select').first().trigger('focus'); }, 60);
+    }
+  });
+  $(document.body).on('updated_checkout', function () { var $b = $('#place_order'); if (label && !$form.hasClass('processing')) $b.text(label); });
+})(window.jQuery);

@@ -2204,3 +2204,8 @@ body.single-product .ecn-pdp .ecn-lp-card .ecn-lp-extra.is-wa-only .ecn-pdp-wa{ 
 /* Add to Cart now has the full width: its cart icon stays on narrow phones too */
 @media (max-width:400px){ html body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button::before{ display:block !important; } }
 @media (prefers-reduced-motion:reduce){ body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow{ transition:none !important; transform:none !important; } }
+
+/* ===================== v7.21: Add to Cart opens the cart drawer; out-of-stock state ===================== */
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .single_add_to_cart_button.is-busy{ opacity:.7; pointer-events:none; cursor:progress; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow.is-out, body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow:disabled.is-out{ border-color:#C9C3B8 !important; background:#ECE8E1 !important; color:#6E6A60 !important; box-shadow:none !important; opacity:1; cursor:not-allowed; }
+body.single-product .ecn-pdp .ecn-lp-hero .ecn-lp-card form.cart .ecn-pdp-buynow.is-out svg{ display:none; }
