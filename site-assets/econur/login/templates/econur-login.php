@@ -11,7 +11,7 @@ $user    = isset($_POST['username']) ? sanitize_text_field(wp_unslash($_POST['us
 $remember = !empty($_POST['rememberme']); // phpcs:ignore WordPress.Security.NonceVerification
 // the form was sent but WooCommerce did not act on it (an expired security token): say so instead of a silent reload
 if (econur_login_posted() && !is_user_logged_in() && !wc_notice_count('error')) {
-    wc_add_notice('পেজটি অনেকক্ষণ খোলা ছিল। অনুগ্রহ করে আবার সাইন ইন করুন।', 'error');
+    wc_add_notice('পেজটি অনেকক্ষণ খোলা ছিল। অনুগ্রহ করে আবার চেষ্টা করুন।', 'error');
 }
 if (isset($_GET['password-reset'])) { // phpcs:ignore WordPress.Security.NonceVerification
     wc_add_notice('আপনার পাসওয়ার্ড পরিবর্তন হয়েছে। নতুন পাসওয়ার্ড দিয়ে সাইন ইন করুন।', 'success');
