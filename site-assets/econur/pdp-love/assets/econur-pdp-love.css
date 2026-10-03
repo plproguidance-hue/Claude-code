@@ -1,0 +1,103 @@
+/* ECONUR "Why You'll Love This" story section 1.0 (markup: inc/pdp-love.php, between the product hero and Complete Your Routine)
+   Desktop (1100px+): photo left, four benefits in a 2 x 2 grid right. 640-1099px: photo on top, 2 x 2 below.
+   Below 640px: one column (photo, then benefits as icon + number/title/text rows).
+   The label, heading and supporting line reuse the page's .ecn-lp-kicker / .ecn-lp-h2 / .ecn-lp-lead styles. Scoped to .ecn-love. */
+
+body.single-product .ecn-pdp .ecn-love{
+  --love-bg:linear-gradient(180deg, #F2F6EC 0%, #F6F7EF 60%, #F8F7F0 100%); --love-line:#E2E7DA; --love-icon-bg:#E4EEE1; --love-green:#2F7A56;
+  --love-title:var(--pd-head, #173F4A); --love-text:#5C605A; --love-ease:cubic-bezier(.22, 1, .36, 1);
+  max-width:1300px; margin:72px auto 0; /* the product hero's width, so both edges line up */
+}
+body.single-product .ecn-pdp .ecn-love-panel{ position:relative; isolation:isolate; overflow:hidden; padding:68px 56px 72px; border:1px solid #E6EADF; border-radius:22px; background:var(--love-bg); }
+
+/* botanical corners (the page's leaf image), clipped by the panel, never over text */
+body.single-product .ecn-pdp .ecn-love-leaf{ position:absolute; z-index:-1; width:210px !important; height:auto !important; max-width:none; pointer-events:none; user-select:none; opacity:.92;
+  -webkit-mask-image:radial-gradient(closest-side, #000 62%, rgba(0,0,0,0) 100%); mask-image:radial-gradient(closest-side, #000 62%, rgba(0,0,0,0) 100%); }
+body.single-product .ecn-pdp .ecn-love-leaf--tl{ top:-48px; left:-62px; transform:rotate(-8deg); }
+body.single-product .ecn-pdp .ecn-love-leaf--tr{ top:-44px; right:-62px; transform:scaleX(-1) rotate(-10deg); }
+body.single-product .ecn-pdp .ecn-love-fleaf{ position:absolute; z-index:-1; width:38px; height:auto; pointer-events:none; opacity:.7; }
+body.single-product .ecn-pdp .ecn-love-fleaf.is-a{ bottom:22px; left:51%; transform:rotate(-14deg); }
+body.single-product .ecn-pdp .ecn-love-fleaf.is-b{ bottom:26px; right:30px; transform:scaleX(-1) rotate(12deg); }
+
+body.single-product .ecn-pdp .ecn-love-head{ display:flex; flex-direction:column; align-items:center; max-width:760px; margin:0 auto 38px; }
+body.single-product .ecn-pdp .ecn-love-head .ecn-lp-kicker{ margin-bottom:14px; }
+body.single-product .ecn-pdp .ecn-love-head .ecn-lp-lead{ margin-top:10px; }
+
+body.single-product .ecn-pdp .ecn-love-grid{ display:grid; grid-template-columns:minmax(0,51fr) minmax(0,49fr); gap:48px; align-items:center; }
+body.single-product .ecn-pdp .ecn-love-grid.no-media{ grid-template-columns:minmax(0,1fr); max-width:880px; margin:0 auto; }
+body.single-product .ecn-pdp .ecn-love-media{ position:relative; margin:0; aspect-ratio:16 / 10; border-radius:18px; overflow:hidden; background:#E9E4D8; box-shadow:0 10px 28px rgba(40, 52, 38, .08); }
+body.single-product .ecn-pdp .ecn-love-media .ecn-love-img, body.single-product .ecn-pdp .ecn-love-media video{ display:block; width:100% !important; height:100% !important; max-width:none; margin:0; border-radius:0; object-fit:cover; object-position:85% 55%; }
+body.single-product .ecn-pdp .ecn-love-play{ position:absolute; left:50%; top:50%; display:grid; place-items:center; width:68px; height:68px; margin:-34px 0 0 -34px; padding:0; border:0; border-radius:50%;
+  background:rgba(255, 254, 250, .92) !important; color:var(--pd-teal, #0D585F) !important; box-shadow:0 8px 24px rgba(20, 40, 30, .2); cursor:pointer; transition:transform .2s var(--love-ease); }
+body.single-product .ecn-pdp .ecn-love-play svg{ width:26px; height:26px; margin-left:3px; }
+body.single-product .ecn-pdp .ecn-love-play:hover{ transform:scale(1.05); }
+body.single-product .ecn-pdp .ecn-love-play:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
+
+/* benefits: open and editorial, no cards; a hairline between the two rows */
+body.single-product .ecn-pdp .ecn-love-list{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 32px; margin:0 !important; padding:0; list-style:none; }
+body.single-product .ecn-pdp .ecn-love-item{ display:grid; grid-template-columns:50px minmax(0,1fr); gap:16px; align-items:start; margin:0; padding:0 0 30px; list-style:none; }
+body.single-product .ecn-pdp .ecn-love-item:nth-child(n+3){ padding:30px 0 0; border-top:1px solid var(--love-line); }
+body.single-product .ecn-pdp .ecn-love-ic{ display:grid; place-items:center; width:50px; height:50px; border-radius:50%; background:var(--love-icon-bg); color:var(--love-green); }
+body.single-product .ecn-pdp .ecn-love-ic svg{ width:25px; height:25px; }
+body.single-product .ecn-pdp .ecn-love-n{ display:block; margin:2px 0 6px; font-family:var(--pd-sans); font-size:13px; font-weight:700; line-height:1; letter-spacing:.06em; color:var(--love-green); }
+body.single-product .ecn-pdp .ecn-love-t{ margin:0 !important; font-family:var(--pd-serif) !important; font-size:19px !important; font-weight:600 !important; line-height:1.25 !important; letter-spacing:-.01em !important; color:var(--love-title) !important; text-wrap:balance; }
+body.single-product .ecn-pdp .ecn-love-p{ margin:8px 0 0 !important; font-size:15px; line-height:1.55; color:var(--love-text); }
+
+/* entrance (classes from econur-pdp-love.js; without JavaScript nothing is hidden) */
+body.single-product .ecn-pdp .ecn-love.is-wait [data-ecn-love-rv]{ opacity:0; translate:0 12px; }
+body.single-product .ecn-pdp .ecn-love.is-wait .ecn-love-media[data-ecn-love-rv]{ translate:none; }
+body.single-product .ecn-pdp .ecn-love.is-in [data-ecn-love-rv]{ transition:opacity .42s var(--love-ease), translate .42s var(--love-ease); transition-delay:calc(var(--i, 0) * 70ms); }
+
+/* small laptops: a little tighter, still two columns */
+@media (min-width:1100px) and (max-width:1279px){
+  body.single-product .ecn-pdp .ecn-love-panel{ padding:60px 40px 64px; }
+  body.single-product .ecn-pdp .ecn-love-grid{ gap:36px; }
+  body.single-product .ecn-pdp .ecn-love-list{ column-gap:24px; }
+  body.single-product .ecn-pdp .ecn-love-item{ grid-template-columns:44px minmax(0,1fr); gap:12px; }
+  body.single-product .ecn-pdp .ecn-love-ic{ width:44px; height:44px; }
+  body.single-product .ecn-pdp .ecn-love-ic svg{ width:22px; height:22px; }
+  body.single-product .ecn-pdp .ecn-love-t{ font-size:17.5px !important; }
+  body.single-product .ecn-pdp .ecn-love-p{ font-size:14px; }
+}
+/* tablets: photo on top, the 2 x 2 benefits beneath */
+@media (max-width:1099px){
+  body.single-product .ecn-pdp .ecn-love{ margin-top:60px; }
+  body.single-product .ecn-pdp .ecn-love-panel{ padding:52px 36px 56px; }
+  body.single-product .ecn-pdp .ecn-love-head{ max-width:560px; margin-bottom:30px; } /* two balanced heading lines, clear of the corner leaves */
+  body.single-product .ecn-pdp .ecn-love-grid{ grid-template-columns:minmax(0,1fr); gap:36px; }
+  body.single-product .ecn-pdp .ecn-love-media{ aspect-ratio:2 / 1; }
+  body.single-product .ecn-pdp .ecn-love-leaf{ width:150px !important; }
+  body.single-product .ecn-pdp .ecn-love-leaf--tl{ top:-44px; left:-60px; }
+  body.single-product .ecn-pdp .ecn-love-leaf--tr{ top:-40px; right:-60px; }
+  body.single-product .ecn-pdp .ecn-love-fleaf.is-a{ display:none; }
+}
+/* phones: one column */
+@media (max-width:639px){
+  body.single-product .ecn-pdp .ecn-love{ margin-top:48px; }
+  body.single-product .ecn-pdp .ecn-love-panel{ padding:40px 18px 34px; border-radius:18px; }
+  body.single-product .ecn-pdp .ecn-love-head{ margin-bottom:24px; }
+  body.single-product .ecn-pdp .ecn-love-head .ecn-lp-kicker{ height:30px; margin-bottom:12px; padding:0 14px; font-size:12px; }
+  body.single-product .ecn-pdp .ecn-love-head .ecn-lp-lead{ margin-top:8px; }
+  body.single-product .ecn-pdp .ecn-love-grid{ gap:22px; }
+  body.single-product .ecn-pdp .ecn-love-media{ aspect-ratio:4 / 3; border-radius:14px; }
+  body.single-product .ecn-pdp .ecn-love-list{ grid-template-columns:minmax(0,1fr); }
+  body.single-product .ecn-pdp .ecn-love-item, body.single-product .ecn-pdp .ecn-love-item:nth-child(n+3){ grid-template-columns:44px minmax(0,1fr); gap:14px; padding:18px 0; border-top:1px solid var(--love-line); }
+  body.single-product .ecn-pdp .ecn-love-item:first-child{ padding-top:4px; border-top:0; }
+  body.single-product .ecn-pdp .ecn-love-item:last-child{ padding-bottom:0; }
+  body.single-product .ecn-pdp .ecn-love-ic{ width:44px; height:44px; }
+  body.single-product .ecn-pdp .ecn-love-ic svg{ width:22px; height:22px; }
+  body.single-product .ecn-pdp .ecn-love-n{ margin:1px 0 5px; font-size:12px; }
+  body.single-product .ecn-pdp .ecn-love-t{ font-size:17.5px !important; }
+  body.single-product .ecn-pdp .ecn-love-p{ margin-top:6px !important; font-size:14.5px; }
+  body.single-product .ecn-pdp .ecn-love-leaf{ width:120px !important; opacity:.7; }
+  body.single-product .ecn-pdp .ecn-love-leaf--tl{ top:-40px; left:-56px; }
+  body.single-product .ecn-pdp .ecn-love-leaf--tr{ top:-36px; right:-56px; }
+  body.single-product .ecn-pdp .ecn-love-fleaf{ display:none; }
+}
+@media (max-width:420px){ body.single-product .ecn-pdp .ecn-love-leaf--tr{ display:none; } body.single-product .ecn-pdp .ecn-love-leaf--tl{ width:100px !important; top:-38px; left:-50px; } }
+@media (max-width:359px){ body.single-product .ecn-pdp .ecn-love-leaf{ display:none; } }
+
+@media (prefers-reduced-motion:reduce){
+  body.single-product .ecn-pdp .ecn-love.is-wait [data-ecn-love-rv]{ opacity:1; translate:none; }
+  body.single-product .ecn-pdp .ecn-love.is-in [data-ecn-love-rv], body.single-product .ecn-pdp .ecn-love-play{ transition:none; }
+}
