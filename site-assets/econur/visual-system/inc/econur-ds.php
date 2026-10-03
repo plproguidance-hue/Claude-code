@@ -149,3 +149,50 @@ add_action('woocommerce_before_single_product', function () {
         'home'        => 'Home',
     ));
 }, 20);
+
+/* ---------------------------------------------------------------- mobile refinement (preview) */
+// Phone-only typography, sizing and spacing (assets/econur-mr.css) on top of whatever is live. Preview only until approved:
+// ?mr_preview=<preview key> turns it on (remembered by cookie for a signed-in visitor), ?mr_preview=off turns it off.
+// Going live later = option econur_mr_mode = "live".
+function econur_mr_live() { return 'live' === get_option('econur_mr_mode'); }
+function econur_mr_active() {
+    static $on = null;
+    if (null !== $on) return $on;
+    if (econur_mr_live()) return $on = true;
+    $key = econur_ds_key();
+    $q = isset($_GET['mr_preview']) ? (string) wp_unslash($_GET['mr_preview']) : null; // phpcs:ignore WordPress.Security.NonceVerification
+    if (null !== $q) {
+        if ('off' === $q) return $on = false;
+        if (hash_equals($key, $q)) return $on = true;
+    }
+    return $on = isset($_COOKIE['econur_mr']) && hash_equals($key, (string) $_COOKIE['econur_mr']) && is_user_logged_in();
+}
+function econur_mr_preview() { return econur_mr_active() && !econur_mr_live(); }
+add_action('template_redirect', function () {
+    if (isset($_GET['mr_preview']) && !headers_sent()) { // phpcs:ignore WordPress.Security.NonceVerification
+        $q = (string) wp_unslash($_GET['mr_preview']); // phpcs:ignore WordPress.Security.NonceVerification
+        if ('off' === $q) setcookie('econur_mr', '', time() - HOUR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+        elseif (hash_equals(econur_ds_key(), $q)) setcookie('econur_mr', $q, time() + 7 * DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+    }
+    if (!econur_mr_preview()) return;
+    if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
+    do_action('litespeed_control_set_nocache', 'econur mobile preview');
+    nocache_headers();
+}, 1);
+add_filter('body_class', function ($c) {
+    if (econur_mr_active()) $c[] = 'ecn-mr';
+    return $c;
+});
+add_action('wp_head', function () {
+    if (!econur_mr_active()) return;
+    $f = get_stylesheet_directory() . '/assets/econur-mr.css';
+    if (!file_exists($f)) return;
+    echo '<link rel="stylesheet" id="econur-mr-css" href="' . esc_url(get_stylesheet_directory_uri() . '/assets/econur-mr.css?ver=' . substr(md5_file($f), 0, 8)) . '" media="(max-width: 767px)">' . "\n";
+}, 130);
+// while previewing, keep the preview on when moving between pages of the site (links only; forms and cart requests are untouched)
+add_action('wp_footer', function () {
+    if (!econur_mr_preview() || !isset($_GET['mr_preview'])) return; // phpcs:ignore WordPress.Security.NonceVerification
+    $key = econur_ds_key();
+    echo '<script>(function(){var k=' . wp_json_encode($key) . ';document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a||a.target==="_blank")return;var u;try{u=new URL(a.href,location.href)}catch(x){return}if(u.origin!==location.origin||u.searchParams.has("add-to-cart")||u.searchParams.has("wc-ajax")||u.searchParams.has("mr_preview"))return;u.searchParams.set("mr_preview",k);a.href=u.toString();},true);})();</script>';
+    if (!isset($_GET['ds_shot'])) echo '<a class="ecn-mr-badge" href="' . esc_url(add_query_arg('mr_preview', 'off')) . '" style="position:fixed;left:10px;bottom:10px;z-index:99999;padding:6px 10px;border-radius:999px;background:#17302E;color:#fff;font:600 11px/1 Inter,Arial,sans-serif;text-decoration:none">Mobile preview · exit</a>'; // phpcs:ignore WordPress.Security.NonceVerification
+});

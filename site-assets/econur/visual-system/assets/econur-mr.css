@@ -1,0 +1,218 @@
+/* ECONUR mobile refinement (inc/econur-ds.php, body.ecn-mr, phones only: the <link> carries media="(max-width: 767px)").
+   Typography, sizes, proportions and spacing only. No markup, order, colour, image, icon or behaviour changes.
+   One side gutter for every section (14 / 16 / 18 px), one vertical rhythm (48 between sections, 32 for close ones),
+   one heading scale. Selectors start with html body.ecn-mr.ecn-mr (and :not(#ecn-mr-x) where a theme rule is ID-weighted). */
+
+/* =============================================================== scale */
+html body.ecn-mr.ecn-mr{
+  --mr-g:16px;                                   /* page side gutter */
+  --mr-sec:48px; --mr-sec-s:32px;                /* between sections / between close sections */
+  --mr-h2:clamp(28px, 7.6vw, 32px);              /* major section headings */
+  --mr-h2-lh:1.1;
+  --mr-body:15px; --mr-body-lh:1.55;
+  --mr-sub:14.5px;
+  /* the homepage layer (econur-ds.css) reads these */
+  --ds-gut:var(--mr-g); --ds-sec:var(--mr-sec); --ds-sec-s:var(--mr-sec-s);
+}
+@media (max-width:374px){ html body.ecn-mr.ecn-mr{ --mr-g:14px; } }
+@media (min-width:412px){ html body.ecn-mr.ecn-mr{ --mr-g:18px; } }
+
+/* =============================================================== header */
+html body.ecn-mr.ecn-mr .ecn.ecn-announce--top .ecn-ab-msg:not(#ecn-mr-x){ font-size:12.5px !important; font-weight:600 !important; letter-spacing:.005em !important; }
+html body.ecn-mr.ecn-mr .econur-header-cart .econur-cart-count:not(#ecn-mr-x){ font-size:10.5px !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr #ast-mobile-header .ast-mobile-header-content .main-header-menu > .menu-item > .menu-link:not(#ecn-mr-x){ font-size:15px !important; font-weight:500 !important; }
+html body.ecn-mr.ecn-mr #ast-mobile-header .ast-builder-grid-row{ padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; }
+
+/* =============================================================== page gutter: every section on the same left/right line */
+/* homepage: the Elementor sections that hold content edge-to-edge get the gutter; the hero, offer banner and reviews read --ds-gut */
+html body.ecn-mr.ecn-mr.home .elementor-43 .elementor-element-833f8ca:not(#ecn-mr-x), html body.ecn-mr.ecn-mr.home .elementor-43 .elementor-element-e5a1f07:not(#ecn-mr-x),
+html body.ecn-mr.ecn-mr.home .elementor-43 .elementor-element-d4c3b5f:not(#ecn-mr-x), html body.ecn-mr.ecn-mr.home .elementor-43 .elementor-element-a7f7fda:not(#ecn-mr-x),
+html body.ecn-mr.ecn-mr.home .elementor-43 .elementor-element-2625fd5:not(#ecn-mr-x){ padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; }
+html body.ecn-mr.ecn-mr .ecn-hx:not(#ecn-mr-x){ width:calc(100% - 2 * var(--mr-g)) !important; margin-left:auto !important; margin-right:auto !important; margin-top:12px !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust:not(#ecn-mr-x){ --ect-gutter:var(--mr-g); padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; }
+html body.ecn-mr.ecn-mr.home .enr-rv:not(#ecn-mr-x){ margin-left:var(--mr-g) !important; margin-right:var(--mr-g) !important; width:auto !important; }
+/* product pages and every other WooCommerce page */
+html body.ecn-mr.ecn-mr:not(.home) .site-content > .ast-container:not(#ecn-mr-x){ padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; }
+/* footer */
+html body.ecn-mr.ecn-mr .ecnf:not(#ecn-mr-x){ margin-left:var(--mr-g) !important; margin-right:var(--mr-g) !important; width:auto !important; }
+
+/* =============================================================== shared type */
+/* major section headings: Bestsellers, Shop by category, Featured products, Find your bar, Good to know, product page sections */
+html body.ecn-mr.ecn-mr :is(.econur-category-trust__title, .ecn-sh-title, .ecn-fy-title, .ehc-title, .ecn-lp-h2, .econur-pit-title, #ecn-lp-routine-t):not(#ecn-mr-x){
+  font-size:var(--mr-h2) !important; line-height:var(--mr-h2-lh) !important; font-weight:800 !important; letter-spacing:-.03em !important; }
+html body.ecn-mr.ecn-mr :is(.enr-rv-title, .ehc-cta-title):not(#ecn-mr-x){ font-size:var(--mr-h2) !important; line-height:1.12 !important; }
+html body.ecn-mr.ecn-mr :is(.econur-category-trust__title, .ecn-sh-title, .ecn-fy-title, .ehc-title, .ecn-lp-h2, .econur-pit-title, .enr-rv-title, .ehc-cta-title):lang(bn):not(#ecn-mr-x){ line-height:1.25 !important; letter-spacing:0 !important; }
+/* section subtext */
+html body.ecn-mr.ecn-mr :is(.ecn-sh-sub, .ecn-fy-sub, .ehc-sub, .enr-rv-sub, .ehc-cta-sub, .ecn-lp-lead, .ecn-help-lead):not(#ecn-mr-x){
+  font-size:var(--mr-sub) !important; line-height:1.5 !important; max-width:34em; }
+/* eyebrows / kickers */
+html body.ecn-mr.ecn-mr :is(.ecn-fp-eyebrow, .ecn-fy-eyebrow, .ehc-eyebrow, .enr-rv-eyebrow, .ecn-lp-kicker):not(#ecn-mr-x){ font-size:11.5px !important; font-weight:700 !important; letter-spacing:.08em !important; }
+/* "View all" pills next to section headings */
+html body.ecn-mr.ecn-mr :is(.ecn-ds-viewall, .ecn-sh-link):not(#ecn-mr-x){ min-height:42px !important; height:42px !important; padding:0 16px !important; font-size:14px !important; font-weight:600 !important; gap:6px !important; flex:none; }
+html body.ecn-mr.ecn-mr :is(.ecn-ds-viewall, .ecn-sh-link) svg{ width:16px !important; height:16px !important; }
+html body.ecn-mr.ecn-mr .ecn-sh-link:not(#ecn-mr-x){ --ecn-bn-cta:14px; }
+
+/* =============================================================== homepage: hero (same layout, type only) */
+html body.ecn-mr.ecn-mr .ecn-hx-copy:not(#ecn-mr-x){ padding-left:20px !important; padding-right:20px !important; }
+html body.ecn-mr.ecn-mr .ecn-hx-eyebrow:not(#ecn-mr-x){ font-size:12px !important; font-weight:700 !important; letter-spacing:.08em !important; margin-bottom:10px !important; }
+html body.ecn-mr.ecn-mr .ecn-hx-title:not(#ecn-mr-x){ font-size:clamp(34px, 9.4vw, 40px) !important; line-height:1.04 !important; letter-spacing:-.025em !important; }
+html body.ecn-mr.ecn-mr .ecn-hx-text:not(#ecn-mr-x){ font-size:15.5px !important; line-height:1.5 !important; margin-top:12px !important; max-width:30em !important; }
+html body.ecn-mr.ecn-mr .ecn-hx-cta:not(#ecn-mr-x){ min-height:50px !important; padding:0 24px !important; margin-top:20px !important; font-size:15px !important; font-weight:600 !important; --ecn-bn-cta:15px; }
+
+/* =============================================================== homepage: shop by category */
+html body.ecn-mr.ecn-mr .econur-category-trust__header:not(#ecn-mr-x){ gap:12px !important; margin-bottom:16px !important; align-items:center !important; }
+html body.ecn-mr.ecn-mr .econur-category-list:not(#ecn-mr-x){ gap:12px !important; }
+html body.ecn-mr.ecn-mr .econur-category-card:not(#ecn-mr-x){ min-height:76px !important; padding:10px 16px 10px 10px !important; gap:12px !important; }
+html body.ecn-mr.ecn-mr .econur-category-card :is(.econur-category-card__media, .econur-category-card__icon, img):not(#ecn-mr-x){ width:54px !important; height:54px !important; flex:none; }
+html body.ecn-mr.ecn-mr .econur-category-card__label:not(#ecn-mr-x){ font-size:15px !important; font-weight:700 !important; line-height:1.25 !important; }
+
+/* =============================================================== homepage: trust strip (same four items, compact) */
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-strip:not(#ecn-mr-x){ grid-template-columns:repeat(4, minmax(0, 1fr)) !important; row-gap:0 !important; margin-top:16px !important; padding:16px 4px !important; min-height:0 !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item:not(#ecn-mr-x){ flex-direction:column !important; justify-content:flex-start !important; gap:8px !important; padding:0 4px !important; text-align:center; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item + .econur-trust-item::before{ display:block !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item__icon:not(#ecn-mr-x){ width:40px !important; height:40px !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item__icon svg:not(#ecn-mr-x){ width:22px !important; height:22px !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item__label:not(#ecn-mr-x){ font-size:12.5px !important; line-height:1.25 !important; font-weight:700 !important; letter-spacing:0 !important; }
+html body.ecn-mr.ecn-mr .econur-category-trust .econur-trust-item__text:not(#ecn-mr-x){ font-size:10.5px !important; line-height:1.35 !important; margin-top:2px; }
+
+/* =============================================================== homepage: section heads (Bestsellers, Featured) */
+html body.ecn-mr.ecn-mr .ecn-sh:not(#ecn-mr-x){ gap:12px !important; margin-bottom:16px !important; align-items:flex-end !important; }
+html body.ecn-mr.ecn-mr .ecn-sh-sub:not(#ecn-mr-x){ margin-top:6px !important; }
+
+/* =============================================================== product cards: two across the content width, image first */
+html body.ecn-mr.ecn-mr.home #bestsellers ul.ecn-home-grid:not(#ecn-mr-x){ gap:10px !important; }
+html body.ecn-mr.ecn-mr.home #bestsellers ul.ecn-home-grid > li.ecn-pcard:not(#ecn-mr-x){ flex:0 0 calc((100% - 10px) / 2) !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard:not(#ecn-mr-x){ border-radius:14px !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-media img:not(#ecn-mr-x){ aspect-ratio:1 / 1 !important; height:auto !important; object-fit:cover !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-body:not(#ecn-mr-x){ padding:10px 10px 12px !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-skin:not(#ecn-mr-x){ font-size:10px !important; font-weight:600 !important; letter-spacing:.05em !important; padding:3px 6px !important; }
+html body.ecn-mr.ecn-mr .ecn-home-grid .ecn-pc-body:not(:has(.ecn-pc-skin))::before{ height:18px !important; font-size:10px !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-title:not(#ecn-mr-x){ margin:8px 0 0 !important; font-size:15.5px !important; line-height:1.25 !important; font-weight:700 !important; letter-spacing:-.01em !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-price:not(#ecn-mr-x){ margin:6px 0 0 !important; gap:6px !important; flex-wrap:wrap; }
+html body.ecn-mr.ecn-mr .ecn-pcard :is(.ecn-pc-now, .ecn-pc-now .amount):not(#ecn-mr-x){ font-size:19px !important; font-weight:800 !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-size:not(#ecn-mr-x){ font-size:12.5px !important; }
+html body.ecn-mr.ecn-mr .ecn-pc-actions:not(#ecn-mr-x){ gap:8px !important; margin-top:10px !important; }
+html body.ecn-mr.ecn-mr .ecn-pcard .ecn-pc-btn:not(#ecn-mr-x){ min-height:38px !important; height:38px !important; padding:0 8px !important; font-size:13.5px !important; font-weight:600 !important; --ecn-bn-cta:13.5px; }
+
+/* featured products: same card proportions */
+html body.ecn-mr.ecn-mr.home .ecn-fp-track:not(#ecn-mr-x){ gap:10px !important; }
+html body.ecn-mr.ecn-mr.home .ecn-fp-card:not(#ecn-mr-x){ flex:0 0 calc((100% - 10px) / 2) !important; border-radius:14px !important; }
+html body.ecn-mr.ecn-mr .ecn-fp-body:not(#ecn-mr-x){ padding:10px 10px 12px !important; }
+html body.ecn-mr.ecn-mr .ecn-fp-skin:not(#ecn-mr-x){ font-size:10px !important; letter-spacing:.05em !important; }
+html body.ecn-mr.ecn-mr .ecn-fp-name:not(#ecn-mr-x){ margin-top:8px !important; font-size:15.5px !important; line-height:1.25 !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr :is(.ecn-fp-price, .ecn-fp-price .amount):not(#ecn-mr-x){ font-size:19px !important; font-weight:800 !important; }
+html body.ecn-mr.ecn-mr .ecn-fp-price del :is(.amount, bdi):not(#ecn-mr-x){ font-size:12.5px !important; font-weight:500 !important; }
+html body.ecn-mr.ecn-mr .ecn-fp-add:not(#ecn-mr-x){ min-height:38px !important; height:38px !important; padding:0 8px !important; font-size:13.5px !important; --ecn-bn-cta:13.5px; }
+html body.ecn-mr.ecn-mr .ecn-fp-heart:not(#ecn-mr-x){ width:34px !important; height:34px !important; }
+
+/* =============================================================== homepage: lower sections */
+html body.ecn-mr.ecn-mr #packaging .ecn-usp:not(#ecn-mr-x){ gap:12px !important; }
+html body.ecn-mr.ecn-mr .ecn-usp-tile :is(h3, .ecn-usp-title):not(#ecn-mr-x){ font-size:20px !important; line-height:1.2 !important; }
+html body.ecn-mr.ecn-mr .ecn-usp-tile p:not(#ecn-mr-x){ font-size:14px !important; line-height:1.5 !important; }
+/* reviews */
+html body.ecn-mr.ecn-mr :is(.enr-rv-score, .enr-rv-avg):not(#ecn-mr-x){ font-size:32px !important; }
+html body.ecn-mr.ecn-mr .enr-rv-text p:not(#ecn-mr-x){ font-size:15px !important; line-height:1.55 !important; }
+html body.ecn-mr.ecn-mr .enr-rv-name:not(#ecn-mr-x){ font-size:14px !important; font-weight:700 !important; }
+/* FAQ */
+html body.ecn-mr.ecn-mr :is(.ehc-q, .ecn-faq-q):not(#ecn-mr-x){ font-size:15px !important; font-weight:600 !important; line-height:1.4 !important; }
+html body.ecn-mr.ecn-mr .ehc-q:not(#ecn-mr-x){ min-height:54px !important; padding-top:14px !important; padding-bottom:14px !important; }
+html body.ecn-mr.ecn-mr :is(.ehc-a-in, .ehc-a-in p, .ecn-faq-a p):not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.6 !important; }
+
+/* =============================================================== footer */
+html body.ecn-mr.ecn-mr .ecnf-brand p:not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.6 !important; }
+html body.ecn-mr.ecn-mr .ecnf :is(.ecnf-col h2, .ecnf-col h3, .ecnf-col-h, .ecnf-col > button, .ecnf-h):not(#ecn-mr-x){ font-size:15.5px !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr .ecnf .ecnf-col a:not(#ecn-mr-x){ font-size:14px !important; line-height:1.8 !important; }
+html body.ecn-mr.ecn-mr .ecnf-card:not(#ecn-mr-x){ padding-top:32px !important; }
+
+/* =============================================================== product page (same structure, type and proportion) */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-g-thumbs:not(#ecn-mr-x){ gap:8px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-g-thumb:not(#ecn-mr-x){ width:62px !important; height:62px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-badges:not(#ecn-mr-x){ margin-top:12px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-card:not(#ecn-mr-x){ padding:20px 16px 22px !important; margin-top:16px; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-cat:not(#ecn-mr-x){ font-size:13px !important; font-weight:500 !important; margin:0 0 4px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-rating:not(#ecn-mr-x){ font-size:13.5px !important; gap:7px !important; margin-top:2px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-titlerow:not(#ecn-mr-x){ margin-top:8px !important; margin-bottom:8px !important; gap:8px 10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-title:not(#ecn-mr-x){ font-size:clamp(30px, 8.4vw, 34px) !important; line-height:1.1 !important; font-weight:800 !important; letter-spacing:-.03em !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-pricerow:not(#ecn-mr-x){ gap:10px !important; align-items:baseline !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-pdp-price, .ecn-pdp-price .amount):not(#ecn-mr-x){ font-size:clamp(30px, 8.4vw, 34px) !important; font-weight:800 !important; line-height:1.05 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-size:not(#ecn-mr-x){ font-size:14px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-checks:not(#ecn-mr-x){ gap:8px !important; margin-top:16px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-checks li:not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.5 !important; gap:10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-checks svg:not(#ecn-mr-x){ width:20px !important; height:20px !important; flex:none; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-packs:not(#ecn-mr-x){ margin-top:20px !important; padding-top:20px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-label:not(#ecn-mr-x){ font-size:15.5px !important; font-weight:700 !important; margin:20px 0 10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-lp-packs, .ecn-lp-ptype) .ecn-lp-label:not(#ecn-mr-x){ margin-top:0 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-packs-row:not(#ecn-mr-x){ gap:8px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-pack:not(#ecn-mr-x){ min-height:88px !important; padding:18px 6px 10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-pack-q:not(#ecn-mr-x){ font-size:13.5px !important; font-weight:600 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-pack-p:not(#ecn-mr-x){ font-size:17px !important; font-weight:700 !important; line-height:1.2 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-lp-pack-n, .ecn-lp-pack-n b):not(#ecn-mr-x){ font-size:10.5px !important; line-height:1.3 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-sizes:not(#ecn-mr-x){ gap:10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-sz:not(#ecn-mr-x){ height:44px !important; min-height:44px !important; padding:0 22px !important; font-size:15px !important; font-weight:600 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp form.cart .quantity:not(#ecn-mr-x){ height:50px !important; min-height:50px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp form.cart .quantity input.qty:not(#ecn-mr-x){ font-size:16px !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp form.cart .quantity :is(button, .ecn-qty-btn) svg:not(#ecn-mr-x){ width:18px !important; height:18px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-buynow:not(#ecn-mr-x){ min-height:54px !important; height:54px !important; font-size:16px !important; font-weight:700 !important; --ecn-bn-cta:16px; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-buynow svg:not(#ecn-mr-x){ width:17px !important; height:17px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp form.cart .single_add_to_cart_button:not(#ecn-mr-x){ min-height:50px !important; height:50px !important; margin-top:10px !important; font-size:16px !important; font-weight:700 !important; --ecn-bn-cta:16px; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-trust:not(#ecn-mr-x){ margin-top:16px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-trust li:not(#ecn-mr-x){ font-size:11.5px !important; font-weight:600 !important; line-height:1.35 !important; gap:6px !important; padding:0 6px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-trust svg:not(#ecn-mr-x){ width:22px !important; height:22px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-pdp-wa:not(#ecn-mr-x){ min-height:48px !important; height:48px !important; font-size:15px !important; --ecn-bn-cta:15px; }
+/* details accordion under the purchase box */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-acc:not(#ecn-mr-x){ margin-top:16px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-acc-btn:not(#ecn-mr-x){ min-height:54px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-acc-t:not(#ecn-mr-x){ font-size:15px !important; font-weight:600 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-acc-body, .ecn-acc-body p, .ecn-acc-list li):not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.6 !important; }
+/* information tabs */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-product-info-tabs:not(#ecn-mr-x){ margin-top:var(--mr-sec-s) !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-tab:not(#ecn-mr-x){ height:46px !important; padding:0 12px !important; font-size:13.5px !important; font-weight:500 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-tab[aria-selected="true"]:not(#ecn-mr-x){ font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-sub:not(#ecn-mr-x){ font-size:15.5px !important; line-height:1.45 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.econur-pit-intro, .econur-pit-text p, .econur-pit-text li):not(#ecn-mr-x){ font-size:15px !important; line-height:1.65 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-kf:not(#ecn-mr-x){ font-size:17px !important; margin-top:20px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-ftx b:not(#ecn-mr-x){ font-size:15px !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .econur-pit-ftx span:not(#ecn-mr-x){ font-size:13.5px !important; line-height:1.5 !important; }
+/* lower sections: one rhythm */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-love, .ecn-lp-routine, .ecn-lp-why, .ecn-lp-how, .ecn-lp-reviews, .ecn-help, .ecn-favs, .ecn-lp-final):not(#ecn-mr-x){ margin-top:var(--mr-sec) !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-lp-why, .ecn-lp-how):not(#ecn-mr-x){ padding-top:0 !important; padding-bottom:0 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-routine:not(#ecn-mr-x){ padding-top:32px !important; padding-bottom:32px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs:not(#ecn-mr-x){ padding-bottom:0 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecnf:not(#ecn-mr-x){ margin-top:var(--mr-sec-s) !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-head:not(#ecn-mr-x){ margin-bottom:24px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-love-t:not(#ecn-mr-x){ font-size:16.5px !important; line-height:1.3 !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-love-p:not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.55 !important; }
+/* complete your routine */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rcard:not(#ecn-mr-x){ padding:12px 12px 16px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rimg:not(#ecn-mr-x){ aspect-ratio:16 / 10 !important; height:auto !important; overflow:hidden; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rimg img:not(#ecn-mr-x){ width:100% !important; height:100% !important; object-fit:cover !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rcard > b:not(#ecn-mr-x){ font-size:15px !important; font-weight:700 !important; margin-top:10px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rcard > small:not(#ecn-mr-x){ font-size:13px !important; line-height:1.45 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rprice:not(#ecn-mr-x){ font-size:17px !important; font-weight:700 !important; padding-top:6px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-rprice em:not(#ecn-mr-x){ font-size:13px !important; }
+/* ingredients */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-ings:not(#ecn-mr-x){ gap:12px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-ing:not(#ecn-mr-x){ padding:14px !important; gap:12px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-ing-img:not(#ecn-mr-x){ width:90px !important; height:90px !important; flex:none; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-ing h3:not(#ecn-mr-x){ font-size:16px !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-ing p:not(#ecn-mr-x){ font-size:13px !important; line-height:1.45 !important; }
+/* how to use */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-steps:not(#ecn-mr-x){ gap:12px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-step h3:not(#ecn-mr-x){ font-size:16.5px !important; font-weight:700 !important; line-height:1.3 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-step p:not(#ecn-mr-x){ font-size:14px !important; line-height:1.5 !important; }
+/* FAQ */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-faq-q:not(#ecn-mr-x){ min-height:54px !important; }
+/* more favorites: same card proportions as the homepage */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-track:not(#ecn-mr-x){ gap:10px !important; margin-left:calc(-1 * var(--mr-g)) !important; margin-right:calc(-1 * var(--mr-g)) !important;
+  padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; scroll-padding-inline:var(--mr-g) !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-card:not(#ecn-mr-x){ flex-basis:calc((100vw - 2 * var(--mr-g) - 10px) / 2) !important; border-radius:14px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-media:not(#ecn-mr-x){ aspect-ratio:1 / 1 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-body:not(#ecn-mr-x){ padding:10px 10px 12px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-name:not(#ecn-mr-x){ font-size:15.5px !important; line-height:1.25 !important; font-weight:700 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-line:not(#ecn-mr-x){ font-size:12.5px !important; line-height:1.45 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs :is(.ecn-rel-price, .ecn-rel-price .amount):not(#ecn-mr-x){ font-size:19px !important; font-weight:800 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs .ecn-rel-size:not(#ecn-mr-x){ height:32px !important; padding:0 10px !important; font-size:12.5px !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs :is(.ecn-rel-add, .ecn-rel-view):not(#ecn-mr-x){ min-height:38px !important; height:38px !important; padding:0 8px !important; font-size:13.5px !important; --ecn-bn-cta:13.5px; }
+/* closing banner */
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-final h2:not(#ecn-mr-x){ font-size:28px !important; line-height:1.15 !important; }
+html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-final-copy p:not(#ecn-mr-x){ font-size:15px !important; line-height:1.55 !important; }
