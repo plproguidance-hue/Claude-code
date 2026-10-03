@@ -19,7 +19,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_INFO_VER = '1.0.0';
+const ECONUR_INFO_VER = '1.0.1';
 
 function econur_info_icon($n) {
     $p = array(
