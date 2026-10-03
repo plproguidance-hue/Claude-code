@@ -3,7 +3,7 @@
  * Econur header social links: Facebook, Instagram, TikTok after the desktop header's Search / Account / Cart icons,
  * printed through Astra's desktop header column hook so they appear on every page with the main header
  * (econur_header_social_markup() also feeds the mobile dropdown menu, see inc/header-nav.php).
- * Placement and look (divider, 38px sage circles, shown from 1200px, also in the mobile menu) live in
+ * Placement and look (38px sage circles centred in the free strip right of the Cart icon, also in the mobile menu) live in
  * assets/econur-header.css and inc/header-nav.php.
  *
  * URLs: Facebook and Instagram are the ones the footer already uses (econur_footer_config()).

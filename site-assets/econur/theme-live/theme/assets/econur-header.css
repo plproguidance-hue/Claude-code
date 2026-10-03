@@ -1,6 +1,7 @@
 /* ECONUR header 1.0
    The Astra header builder output (logo / menu / search, account, cart, and the ECONUR social circles), refined:
-   Manrope menu with a growing underline, one icon style, a sticky header that compacts from 72px to 62px on desktop,
+   Manrope menu with a growing underline, one icon style, social circles in the free strip right of the Cart icon,
+   a sticky header that compacts from 72px to 62px on desktop,
    and a calmer mobile header and dropdown menu. Scoped to #masthead; printed after the Customizer and econur-ui CSS.
    The desktop header keeps a fixed 72px box while its bar compacts, so the page below never moves. */
 
@@ -11,7 +12,6 @@
   --hdr-hover:#4F8D79;
   --hdr-sage:#EEF2EA;
   --hdr-line:#E8ECE6;
-  --hdr-divider:#D9DED8;
   --hdr-h:72px;
   --hdr-h-stuck:62px;
   --hdr-ease:cubic-bezier(.22, 1, .36, 1);
@@ -81,18 +81,17 @@ html{ scroll-padding-top:calc(var(--hdr-h) + 12px); }
   html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link{ color:var(--hdr-active) !important; font-weight:600 !important; }
   html body.ast-desktop #ast-desktop-header .main-header-menu > :is(.current-menu-item, .current-menu-ancestor, .current-menu-parent) > .menu-link::after{ transform:scaleX(.66); }
 
-  /* right side: icons 40px apart (20px between glyphs) */
-  #ast-desktop-header .site-header-primary-section-right{ gap:0 !important; }
 }
-/* small laptops: tighter menu; the social circles join from 1200px, where there is room for them beside the icons */
+/* small laptops: tighter menu */
 @media (min-width:922px) and (max-width:1199px){
   html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link{ padding:0 12px !important; }
   html body.ast-desktop #ast-desktop-header .main-header-menu > .menu-item > .menu-link::after{ left:12px; right:12px; }
 }
-@media (min-width:1200px){
-  /* divider, then the circles, 10px apart */
-  #ast-desktop-header .ecn-hsocial{ position:relative; display:flex; align-items:center; gap:10px; margin-left:18px; padding-left:29px; }
-  #ast-desktop-header .ecn-hsocial::before{ content:""; position:absolute; left:0; top:50%; width:1px; height:28px; margin-top:-14px; background:var(--hdr-divider); }
+/* Search / Account / Cart stay at the end of the header row as before; the social circles sit centred in the free strip
+   between the Cart icon and the screen edge (econur-header.js sets the strip width and shows them only when they fit) */
+@media (min-width:922px){
+  #ast-desktop-header .site-header-primary-section-right{ position:relative; }
+  #ast-desktop-header .ecn-hsocial.is-fit{ position:absolute; left:100%; top:0; bottom:0; display:flex; align-items:center; justify-content:center; gap:10px; }
 }
 
 /* the product gallery sticks below the compact header instead of under it */
