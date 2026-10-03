@@ -1,4 +1,4 @@
-/* ECONUR checkout + order success 1.0 (inc/econur-checkout.php, woocommerce/checkout/*.php).
+/* ECONUR checkout + order success 1.1 (inc/econur-checkout.php, woocommerce/checkout/*.php).
    Cream cards, beige hairlines, teal for the selected option and the order button. Scoped to the checkout page. */
 body.econur-checkoutpage, body.econur-thankspage{ --eco-teal:#0D585F; --eco-teal-d:#0A474D; --eco-ink:#1F2B29; --eco-muted:#66706B; --eco-line:#EAE3D7; --eco-field:#DCD4C6; --eco-card:#FFFEFB; --eco-wash:#F6F3EC; --eco-mint:#EEF4F0; --eco-err:#A1402F; }
 
@@ -116,6 +116,43 @@ body.econur-checkoutpage #place_order.econur-place-btn:focus-visible{ outline:2p
 body.econur-checkoutpage .econur-co-note{ margin:10px 0 0 !important; font-size:12.5px; line-height:1.45; text-align:center; color:var(--eco-muted); }
 body.econur-checkoutpage .blockUI.blockOverlay{ border-radius:16px; background:rgba(255, 254, 251, .6) !important; }
 
+/* ---------------------------------------------------------------- coupon code (under the total, before the order button) */
+body.econur-checkoutpage .econur-coupon{ margin:16px 0 0; }
+body.econur-checkoutpage .econur-coupon-label{ display:block; margin:0 0 8px; padding:0; font-size:15px; font-weight:600; line-height:1.35; color:var(--eco-ink); }
+body.econur-checkoutpage .econur-coupon-row{ display:flex; align-items:stretch; gap:8px; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-input{ box-sizing:border-box; flex:1 1 auto; min-width:0; width:auto; height:48px; margin:0; padding:0 14px !important;
+  border:1px solid var(--eco-field) !important; border-radius:12px !important; background:#fff !important; box-shadow:none !important; outline:0;
+  font-size:14px !important; font-weight:500; line-height:46px; color:var(--eco-ink) !important; transition:border-color .18s ease, box-shadow .18s ease; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-input::placeholder{ color:#8A918D; opacity:1; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-input:focus{ border-color:var(--eco-teal) !important; box-shadow:0 0 0 3px rgba(13, 88, 95, .14) !important; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-input[aria-invalid="true"]{ border-color:var(--eco-err) !important; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-btn{ flex:0 0 auto; min-width:114px; height:48px; margin:0; padding:0 18px !important; border:0 !important; border-radius:12px !important;
+  background:var(--eco-teal) !important; color:#fff !important; font-size:15px !important; font-weight:600 !important; line-height:1 !important; white-space:nowrap; box-shadow:none !important; cursor:pointer;
+  transition:background-color .18s ease, opacity .18s ease; }
+@media (hover:hover) and (pointer:fine){ body.econur-checkoutpage .econur-coupon .econur-coupon-btn:hover:not(:disabled){ background:var(--eco-teal-d) !important; } }
+body.econur-checkoutpage .econur-coupon .econur-coupon-btn:focus-visible{ outline:2px solid var(--eco-teal) !important; outline-offset:2px; }
+body.econur-checkoutpage .econur-coupon .econur-coupon-btn:disabled{ opacity:.75; cursor:progress; }
+body.econur-checkoutpage .econur-coupon-msg{ margin:7px 0 0 !important; font-size:12.5px; line-height:1.45; }
+body.econur-checkoutpage .econur-coupon-msg[hidden]{ display:none !important; }
+body.econur-checkoutpage .econur-coupon-msg.is-ok{ color:#2E7650; }
+body.econur-checkoutpage .econur-coupon-msg.is-ok::before{ content:"\2713\00a0"; font-weight:700; }
+body.econur-checkoutpage .econur-coupon-msg.is-err{ color:var(--eco-err); }
+body.econur-checkoutpage .econur-coupon-msg a{ color:inherit; text-decoration:underline; }
+/* applied codes: code, "applied", remove */
+body.econur-checkoutpage .econur-coupon-applied:empty{ display:none; }
+body.econur-checkoutpage .econur-coupon-chip{ display:flex; align-items:center; gap:8px; margin:8px 0 0; padding:6px 6px 6px 12px; border:1px solid #D5E3DA; border-radius:10px; background:var(--eco-mint); font-size:13px; line-height:1.3; }
+body.econur-checkoutpage .econur-coupon-code{ font-weight:700; letter-spacing:.3px; color:var(--eco-ink); overflow-wrap:anywhere; }
+body.econur-checkoutpage .econur-coupon-ok{ color:#2E7650; white-space:nowrap; }
+body.econur-checkoutpage .econur-coupon-ok::before{ content:"\2713\00a0"; font-weight:700; }
+body.econur-checkoutpage .econur-coupon-chip .econur-coupon-rm{ flex:none; min-height:32px; margin:0 0 0 auto; padding:0 8px !important; border:0 !important; border-radius:8px !important; background:transparent !important; box-shadow:none !important;
+  color:var(--eco-teal) !important; font-size:13px !important; font-weight:600 !important; text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
+body.econur-checkoutpage .econur-coupon-chip .econur-coupon-rm:hover{ color:var(--eco-teal-d) !important; background:rgba(13, 88, 95, .07) !important; }
+body.econur-checkoutpage .econur-coupon-chip .econur-coupon-rm:focus-visible{ outline:2px solid var(--eco-teal); outline-offset:1px; }
+body.econur-checkoutpage .econur-coupon-chip .econur-coupon-rm:disabled{ opacity:.6; cursor:progress; }
+/* the privacy text follows the coupon area 18px below */
+body.econur-checkoutpage .econur-coupon ~ .econur-place-order{ margin-top:18px !important; }
+body.econur-checkoutpage .econur-coupon ~ .econur-place-order .woocommerce-terms-and-conditions-wrapper > .woocommerce-privacy-policy-text:first-child p{ margin-top:0 !important; }
+
 /* ---------------------------------------------------------------- tablet / phone: one column (details, area, payment, summary, button) */
 @media (max-width:921px){
   body.econur-checkoutpage .econur-co-grid{ grid-template-columns:minmax(0,1fr); gap:16px; }
@@ -130,6 +167,11 @@ body.econur-checkoutpage .blockUI.blockOverlay{ border-radius:16px; background:r
   body.econur-checkoutpage .woocommerce-billing-fields__field-wrapper{ grid-template-columns:minmax(0,1fr); }
   body.econur-checkoutpage .econur-ship-cards{ grid-template-columns:minmax(0,1fr); gap:10px; }
   body.econur-checkoutpage form.econur-checkout .form-row .input-text, body.econur-checkoutpage form.econur-checkout .form-row select{ height:50px; font-size:16px !important; }
+  body.econur-checkoutpage .econur-coupon .econur-coupon-input{ font-size:16px !important; } /* 16px: no zoom on iPhone */
+}
+@media (max-width:359px){
+  body.econur-checkoutpage .econur-coupon-row{ flex-direction:column; }
+  body.econur-checkoutpage .econur-coupon .econur-coupon-input, body.econur-checkoutpage .econur-coupon .econur-coupon-btn{ width:100%; }
 }
 @media (prefers-reduced-motion:reduce){ body.econur-checkoutpage #place_order.econur-place-btn, body.econur-checkoutpage .econur-ship-card{ transition:none; } }
 

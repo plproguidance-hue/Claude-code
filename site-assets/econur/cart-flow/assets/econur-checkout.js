@@ -1,6 +1,8 @@
-/* ECONUR checkout 1.0 (inc/econur-checkout.php). Works with WooCommerce's own checkout script (wc-checkout):
+/* ECONUR checkout 1.1 (inc/econur-checkout.php). Works with WooCommerce's own checkout script (wc-checkout):
    division narrows the district list, mobile numbers are checked as they are typed, errors appear under their field,
-   the delivery-area card and the order button show their state. WooCommerce still validates and creates the order. */
+   the delivery-area card and the order button show their state. WooCommerce still validates and creates the order.
+   The coupon field in the order summary sends WooCommerce's own coupon requests (apply_coupon / remove_coupon, with
+   the nonces WooCommerce hands to its checkout script) and then lets WooCommerce refresh the totals. */
 (function ($) {
   'use strict';
   if (!$) return;
@@ -85,4 +87,60 @@
     }
   });
   $(document.body).on('updated_checkout', function () { var $b = $('#place_order'); if (label && !$form.hasClass('processing')) $b.text(label); });
+
+  /* ---------- coupon code (order summary) ---------- */
+  var P = window.wc_checkout_params || {}, cBusy = false;
+  function wcAjax(ep) { return String(P.wc_ajax_url || '').replace('%%endpoint%%', ep); }
+  function cMsg(text, kind) {
+    var $m = $('#econur_coupon_msg');
+    $m.removeClass('is-ok is-err').text(text || '').prop('hidden', !text);
+    if (text) $m.addClass(kind === 'ok' ? 'is-ok' : 'is-err').attr('role', kind === 'ok' ? 'status' : 'alert');
+    $('#econur_coupon_code').attr('aria-invalid', text && kind !== 'ok' ? 'true' : null);
+  }
+  // WooCommerce answers with its notice markup; the first message is shown under the field
+  function notice(html) {
+    var $h = $('<div>').html(html || ''), $e = $h.find('.woocommerce-error li, .woocommerce-error').first(), $ok = $h.find('.woocommerce-message, .woocommerce-info').first();
+    if ($e.length) return { kind: 'err', text: $.trim($e.text()) };
+    if ($ok.length) return { kind: 'ok', text: $.trim($ok.text()) };
+    return { kind: 'err', text: '' };
+  }
+  function busy(on, $btn, text) {
+    cBusy = on; $btn.prop('disabled', on).toggleClass('is-busy', on).attr('aria-busy', on ? 'true' : null);
+    if (text) $btn.text(text);
+  }
+  function applyCoupon() {
+    var $in = $('#econur_coupon_code'), $btn = $('.econur-coupon-btn'), code = $.trim($in.val() || '');
+    if (cBusy) return;
+    if (!code) { cMsg('কুপন কোড লিখুন', 'err'); $in.trigger('focus'); return; }
+    if (!P.apply_coupon_nonce) { cMsg('দুঃখিত, এখন কুপন প্রয়োগ করা যাচ্ছে না। পাতাটি আবার লোড করুন।', 'err'); return; }
+    busy(true, $btn, 'প্রয়োগ হচ্ছে...'); cMsg('');
+    $.ajax({ type: 'POST', url: wcAjax('apply_coupon'), dataType: 'html',
+      data: { security: P.apply_coupon_nonce, coupon_code: code } })
+      .done(function (html) {
+        var n = notice(html);
+        if (n.kind === 'ok') { cMsg(n.text || 'কুপন সফলভাবে প্রয়োগ হয়েছে', 'ok'); $in.val(''); $(document.body).trigger('applied_coupon_in_checkout', [code]); }
+        else cMsg(n.text || 'কুপন কোডটি সঠিক নয়।', 'err');
+        $(document.body).trigger('update_checkout', { update_shipping_method: false });
+      })
+      .fail(function () { cMsg('দুঃখিত, এখন কুপন প্রয়োগ করা যায়নি। আবার চেষ্টা করুন।', 'err'); })
+      .always(function () { busy(false, $btn, $btn.data('label')); });
+  }
+  $form.on('click', '.econur-coupon-btn', function (e) { e.preventDefault(); applyCoupon(); });
+  // Enter in the coupon field applies the code; it never sends the order
+  $form.on('keydown', '#econur_coupon_code', function (e) { if (e.key === 'Enter' || e.keyCode === 13) { e.preventDefault(); applyCoupon(); } });
+  $form.on('input', '#econur_coupon_code', function () { if ($('#econur_coupon_msg').hasClass('is-err')) cMsg(''); });
+  $form.on('click', '.econur-coupon-rm', function (e) {
+    e.preventDefault();
+    var $b = $(this), code = $b.data('coupon');
+    if (cBusy || !code) return;
+    busy(true, $b); cMsg('');
+    $.ajax({ type: 'POST', url: wcAjax('remove_coupon'), dataType: 'html', data: { security: P.remove_coupon_nonce, coupon: code } })
+      .done(function (html) {
+        var n = notice(html);
+        cMsg(n.text || 'কুপন সরানো হয়েছে।', n.kind);
+        $(document.body).trigger('removed_coupon_in_checkout', [code]).trigger('update_checkout', { update_shipping_method: false });
+      })
+      .fail(function () { cMsg('দুঃখিত, কুপনটি সরানো যায়নি। আবার চেষ্টা করুন।', 'err'); })
+      .always(function () { busy(false, $b); setTimeout(function () { $('#econur_coupon_code').trigger('focus'); }, 0); });
+  });
 })(window.jQuery);

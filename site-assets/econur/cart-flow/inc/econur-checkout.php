@@ -12,7 +12,7 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_CHECKOUT_VER = '1.0.0';
+const ECONUR_CHECKOUT_VER = '1.1.0';
 
 /* ---------------------------------------------------------------- Bangladesh: divisions and their districts (WooCommerce codes) */
 function econur_bd_divisions() {
@@ -118,6 +118,10 @@ add_action('woocommerce_admin_order_data_after_billing_address', function ($orde
 add_action('wp', function () {
     remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20);
     add_action('woocommerce_checkout_order_review', 'econur_checkout_place_order', 20);
+    // the coupon field lives in the order summary (econur_checkout_coupon() below); WooCommerce's own
+    // "Have a coupon?" toggle and form above the checkout are taken out, coupons themselves stay on
+    remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10);
+    add_action('woocommerce_checkout_order_review', 'econur_checkout_coupon', 15);
 });
 add_filter('woocommerce_order_button_text', function () { return 'অর্ডার সম্পন্ন করুন'; });
 
@@ -165,10 +169,38 @@ function econur_checkout_place_order() {
     wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce');
     echo '<p class="econur-co-note" lang="bn">পণ্য হাতে পেয়ে পেমেন্ট। অর্ডার নিশ্চিত করতে আমরা ফোন করি।</p></div>';
 }
-// keep both in step when WooCommerce refreshes the totals
+// coupon code in the order summary, between the total and the order button. It uses WooCommerce's own coupon
+// requests (wc-ajax apply_coupon / remove_coupon with WooCommerce's nonces, see econur-checkout.js); WooCommerce
+// checks the code and calculates the discount and the total. The field is not part of the order form's data.
+function econur_checkout_coupon() {
+    if (!function_exists('wc_coupons_enabled') || !wc_coupons_enabled()) return;
+    echo '<div class="econur-coupon" lang="bn">'
+        . '<label class="econur-coupon-label" for="econur_coupon_code">কুপন কোড</label>'
+        . '<div class="econur-coupon-row">'
+        . '<input type="text" class="econur-coupon-input" id="econur_coupon_code" placeholder="কুপন কোড লিখুন" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" aria-describedby="econur_coupon_msg">'
+        . '<button type="button" class="econur-coupon-btn" data-label="প্রয়োগ করুন">প্রয়োগ করুন</button>'
+        . '</div>'
+        . '<p class="econur-coupon-msg" id="econur_coupon_msg" aria-live="polite" hidden></p>';
+    econur_checkout_coupon_applied();
+    echo '</div>';
+}
+// the applied coupons with a "remove" action (refreshed with the totals)
+function econur_checkout_coupon_applied() {
+    echo '<div class="econur-coupon-applied">';
+    if (WC()->cart) {
+        foreach (WC()->cart->get_coupons() as $code => $coupon) {
+            echo '<div class="econur-coupon-chip"><span class="econur-coupon-code" lang="en">' . esc_html(wc_strtoupper($code)) . '</span>'
+                . '<span class="econur-coupon-ok">প্রয়োগ হয়েছে</span>'
+                . '<button type="button" class="econur-coupon-rm" data-coupon="' . esc_attr($code) . '" aria-label="' . esc_attr(wc_strtoupper($code)) . ' কুপনটি সরান">সরান</button></div>';
+        }
+    }
+    echo '</div>';
+}
+// keep them in step when WooCommerce refreshes the totals
 add_filter('woocommerce_update_order_review_fragments', function ($fr) {
     ob_start(); econur_checkout_shipping_cards(); $fr['.econur-ship-options'] = ob_get_clean();
     ob_start(); econur_checkout_place_order(); $fr['.econur-place-order'] = ob_get_clean();
+    ob_start(); econur_checkout_coupon_applied(); $fr['.econur-coupon-applied'] = ob_get_clean();
     return $fr;
 });
 add_action('woocommerce_before_checkout_form', function () {
@@ -181,9 +213,29 @@ add_filter('gettext', function ($tr, $text, $domain) {
         'Have a coupon?' => 'কুপন কোড আছে?', 'Click here to enter your code' => 'এখানে লিখুন',
         'If you have a coupon code, please apply it below.' => 'কুপন কোড থাকলে নিচে লিখে প্রয়োগ করুন।',
         'Coupon code' => 'কুপন কোড', 'Apply coupon' => 'প্রয়োগ করুন', 'Coupon:' => 'কুপন:', 'Coupon: %s' => 'কুপন: %s', '[Remove]' => '[সরান]',
-        'Coupon code applied successfully.' => 'কুপন প্রয়োগ হয়েছে।', 'Coupon has been removed.' => 'কুপন সরানো হয়েছে।',
-        'Please enter a coupon code.' => 'একটি কুপন কোড লিখুন।', 'Coupon code already applied!' => 'এই কুপনটি আগেই প্রয়োগ করা হয়েছে।',
-        'Coupon "%s" does not exist!' => '"%s" কুপনটি সঠিক নয়।', 'Coupon &quot;%s&quot; cannot be applied because it does not exist.' => '"%s" কুপনটি সঠিক নয়।',
+        'Coupon code applied successfully.' => 'কুপন সফলভাবে প্রয়োগ হয়েছে', 'Coupon has been removed.' => 'কুপন সরানো হয়েছে।',
+        'Coupon code removed successfully.' => 'কুপন সরানো হয়েছে।', 'Sorry there was a problem removing this coupon.' => 'দুঃখিত, কুপনটি সরানো যায়নি। আবার চেষ্টা করুন।',
+        'Please enter a coupon code.' => 'কুপন কোড লিখুন', 'Coupon code already applied!' => 'এই কুপনটি আগেই প্রয়োগ করা হয়েছে।',
+        'Coupon "%s" does not exist!' => '"%s" কুপন কোডটি সঠিক নয়।', 'Coupon &quot;%s&quot; cannot be applied because it does not exist.' => '"%s" কুপন কোডটি সঠিক নয়।',
+        'Coupon "%s" cannot be applied because it does not exist.' => '"%s" কুপন কোডটি সঠিক নয়।',
+        'Coupon "%s" cannot be applied because it is not valid.' => '"%s" কুপনটি এখন ব্যবহার করা যাবে না।',
+        'Coupon does not exist.' => 'কুপন কোডটি সঠিক নয়।', 'Coupon is not valid.' => 'কুপনটি এখন ব্যবহার করা যাবে না।', 'Invalid coupon' => 'কুপনটি সঠিক নয়',
+        'Coupon code "%s" already applied!' => '"%s" কুপনটি আগেই প্রয়োগ করা হয়েছে।',
+        'Sorry, coupon "%s" has already been applied and cannot be used in conjunction with other coupons.' => 'দুঃখিত, "%s" কুপনটির সাথে অন্য কোনো কুপন একসাথে ব্যবহার করা যায় না।',
+        'Usage limit for coupon "%s" has been reached.' => '"%s" কুপনটির ব্যবহারের সীমা শেষ হয়ে গেছে।',
+        'Usage limit for coupon "%s" has been reached. Please try again after some time, or contact us for help.' => '"%s" কুপনটির ব্যবহারের সীমা এই মুহূর্তে শেষ। কিছুক্ষণ পরে আবার চেষ্টা করুন, অথবা আমাদের সাথে যোগাযোগ করুন।',
+        'Usage limit for coupon "%1$s" has been reached. If you were using this coupon just now but your order was not complete, you can retry or cancel the order by going to the <a href="%2$s">my account page</a>.' => '"%1$s" কুপনটির ব্যবহারের সীমা শেষ হয়ে গেছে। একটু আগে এই কুপন দিয়ে অর্ডার শুরু করে শেষ না করে থাকলে <a href="%2$s">আমার অ্যাকাউন্ট</a> পাতা থেকে আবার চেষ্টা বা অর্ডারটি বাতিল করতে পারেন।',
+        'Coupon "%s" has expired.' => '"%s" কুপনটির মেয়াদ শেষ হয়ে গেছে।',
+        'The minimum spend for coupon "%1$s" is %2$s.' => '"%1$s" কুপনটি ব্যবহার করতে কমপক্ষে %2$s-এর পণ্য কিনতে হবে।',
+        'The maximum spend for coupon "%1$s" is %2$s.' => '"%1$s" কুপনটি সর্বোচ্চ %2$s-এর অর্ডারে ব্যবহার করা যায়।',
+        'Sorry, coupon "%s" is not applicable to your cart contents.' => 'দুঃখিত, "%s" কুপনটি আপনার কার্টের পণ্যে প্রযোজ্য নয়।',
+        'Sorry, coupon "%1$s" is not applicable to the products: %2$s.' => 'দুঃখিত, "%1$s" কুপনটি এই পণ্যগুলোতে প্রযোজ্য নয়: %2$s।',
+        'Sorry, coupon "%1$s" is not applicable to the categories: %2$s.' => 'দুঃখিত, "%1$s" কুপনটি এই ক্যাটাগরির পণ্যে প্রযোজ্য নয়: %2$s।',
+        'Sorry, coupon "%s" is not valid for sale items.' => 'দুঃখিত, "%s" কুপনটি ছাড়ে থাকা পণ্যে প্রযোজ্য নয়।',
+        'Sorry, coupon "%s" is not applicable to selected products.' => 'দুঃখিত, "%s" কুপনটি নির্বাচিত পণ্যে প্রযোজ্য নয়।',
+        'Please enter a valid email to use coupon code "%s".' => '"%s" কুপনটি শুধু নির্দিষ্ট গ্রাহকদের জন্য।',
+        'Please enter a valid email at checkout to use coupon code "%s".' => '"%s" কুপনটি শুধু নির্দিষ্ট গ্রাহকদের জন্য।',
+        'Sorry, it seems the coupon "%s" is invalid - it has now been removed from your order.' => 'দুঃখিত, "%s" কুপনটি এই অর্ডারে আর প্রযোজ্য নয়, তাই সরিয়ে দেওয়া হয়েছে।',
         'Select an option&hellip;' => 'জেলা নির্বাচন করুন', 'Select an option…' => 'জেলা নির্বাচন করুন',
         'Order details' => 'অর্ডারের বিস্তারিত', 'Product' => 'পণ্য', 'Total' => 'মোট', 'Subtotal:' => 'সাবটোটাল:', 'Shipping:' => 'ডেলিভারি চার্জ:',
         'Payment method:' => 'পেমেন্ট পদ্ধতি:', 'Total:' => 'মোট:', 'Billing address' => 'অর্ডারকারীর তথ্য', 'Shipping address' => 'ডেলিভারি ঠিকানা', 'Discount:' => 'ডিসকাউন্ট:',
