@@ -25,6 +25,7 @@ require_once get_stylesheet_directory() . '/inc/help-cta.php';
 require_once get_stylesheet_directory() . '/inc/site-footer.php';
 require_once get_stylesheet_directory() . '/inc/header-social.php'; // Facebook / Instagram / TikTok beside the desktop header icons
 require_once get_stylesheet_directory() . '/inc/header-nav.php'; // header styles, sticky header, mobile menu social circles
+require_once get_stylesheet_directory() . '/inc/econur-login.php'; // customer sign-in page /login/ (WooCommerce login, split-screen design)
 require_once get_stylesheet_directory() . '/inc/header-actions.php'; // header search field, Login / Account, Cart + live count (opens the cart drawer)
 require_once get_stylesheet_directory() . '/inc/category-trust.php'; // homepage Shop by category + trust panel [econur_category_trust]
 require_once get_stylesheet_directory() . '/inc/pdp-accordion.php'; // product page details accordion under the purchase card

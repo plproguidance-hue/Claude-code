@@ -16,6 +16,7 @@ const ECONUR_CART_VER = '1.1.0';
 // the drawer: everywhere the header Cart button can open it (the cart and checkout pages show the cart themselves)
 function econur_cart_drawer_here() {
     if (is_admin() || !function_exists('is_product')) return false;
+    if (function_exists('econur_is_login_page') && econur_is_login_page()) return false; // the focused sign-in page
     return !(is_cart() || is_checkout());
 }
 
