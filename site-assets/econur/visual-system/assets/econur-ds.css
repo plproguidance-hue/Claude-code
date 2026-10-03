@@ -119,9 +119,8 @@ html body.ecn-ds .ecn-lp-btn:active, html body.ecn-ds .ecn-rel-add:active{ trans
 
 /* =============================================================== 4. shared section width */
 html body.ecn-ds .elementor-43 > .e-con-boxed, html body.ecn-ds .elementor-43 .e-con-boxed{ --content-width:min(100%, 1376px); }
-/* the hero, the offer banner, the reviews block and the footer line up with the same column (no more break-outs) */
+/* the offer banner, the reviews block and the footer line up with the same column; the hero keeps its live width and place */
 @media (min-width:768px){
-  html body.ecn-ds .ecn-hx{ width:var(--ds-w) !important; max-width:none !important; border-radius:var(--ds-r-panel) !important; }
   html body.ecn-ds .ecn-sec-sale .ecn-sb{ --sb-w:var(--ds-w); width:var(--ds-w) !important; max-width:none !important; margin-left:calc(50% - var(--ds-w) / 2) !important; border-radius:var(--ds-r-panel) !important; }
   html body.ecn-ds .enr-rv{ --rv-w:var(--ds-w); }
   html body.ecn-ds .ecnf{ width:var(--ds-w) !important; max-width:none !important; margin-left:auto !important; margin-right:auto !important; }
@@ -133,7 +132,6 @@ html body.ecn-ds .elementor-43 > .e-con:first-child, html body.ecn-ds .elementor
 html body.ecn-ds .elementor-43 > .e-con.ecn-sec-chips{ margin-top:var(--ds-sec-s) !important; }
 html body.ecn-ds .elementor-43 > .e-con:last-child{ margin-bottom:var(--ds-sec) !important; }
 html body.ecn-ds .elementor-43 > .e-con > .e-con-inner{ padding-top:0 !important; padding-bottom:0 !important; }
-html body.ecn-ds .ecn-hx{ margin-bottom:0 !important; }
 html body.ecn-ds .ecn-sec-sale .ecn-sb{ margin-bottom:var(--ds-sec) !important; }
 
 /* =============================================================== 5. cards */
