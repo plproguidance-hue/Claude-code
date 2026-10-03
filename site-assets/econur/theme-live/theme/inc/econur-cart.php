@@ -1,6 +1,7 @@
 <?php
 /**
- * ECONUR cart drawer + floating cart tab (product pages and shop / category pages; not the homepage, cart or checkout),
+ * ECONUR cart drawer (every page except the cart and checkout, opened by the header Cart button and, on product / shop /
+ * category pages, by Add to Cart and the floating cart tab, which is printed only there),
  * and the ECONUR heading, Bengali labels and styling for the WooCommerce Cart block on the cart page.
  *
  * WooCommerce stays the source of truth: the drawer reads and changes the real cart through the WooCommerce Store API
@@ -10,11 +11,18 @@
  */
 defined('ABSPATH') || exit;
 
-const ECONUR_CART_VER = '1.0.0';
+const ECONUR_CART_VER = '1.1.0';
 
+// the drawer: everywhere the header Cart button can open it (the cart and checkout pages show the cart themselves)
 function econur_cart_drawer_here() {
     if (is_admin() || !function_exists('is_product')) return false;
-    if (is_cart() || is_checkout() || is_front_page()) return false; // the homepage keeps its own add-to-cart toast
+    return !(is_cart() || is_checkout());
+}
+
+// the floating cart tab and the drawer opening by itself after Add to Cart: product, shop and category pages only
+// (the homepage keeps its own add-to-cart toast)
+function econur_cart_tab_here() {
+    if (!econur_cart_drawer_here() || is_front_page()) return false;
     return is_product() || is_shop() || is_product_taxonomy();
 }
 
@@ -40,6 +48,7 @@ add_action('wp_enqueue_scripts', function () {
             'cart' => wc_get_cart_url(),
             'checkout' => wc_get_checkout_url(),
             'unit' => array('bar', 'bars'),
+            'auto' => econur_cart_tab_here(),
         )) . ';', 'before');
     }
     if (function_exists('is_cart') && is_cart()) {
@@ -65,8 +74,9 @@ add_action('wp_footer', function () {
         . '<div class="econur-cart-actions"><a class="econur-cart-btn is-ghost" href="' . esc_url(wc_get_cart_url()) . '">কার্ট দেখুন</a>'
         . '<a class="econur-cart-btn is-primary" href="' . esc_url(wc_get_checkout_url()) . '">চেকআউট করুন' . econur_cart_icon('arrow') . '</a></div>'
         . '<ul class="econur-cart-trust"><li>' . econur_cart_icon('box') . 'পণ্য হাতে পেয়ে পেমেন্ট</li><li>' . econur_cart_icon('truck') . 'সারা বাংলাদেশে ডেলিভারি</li><li>' . econur_cart_icon('phone') . 'অর্ডার নিশ্চিত করতে ফোন করি</li></ul>'
-        . '</footer></aside>'
-        . '<button type="button" class="econur-cart-tab" data-ecn-cart-open aria-controls="econur-cart-drawer" aria-expanded="false" lang="bn" hidden>'
+        . '</footer></aside>';
+    if (!econur_cart_tab_here()) return;
+    echo '<button type="button" class="econur-cart-tab" data-ecn-cart-open aria-controls="econur-cart-drawer" aria-expanded="false" lang="bn" hidden>'
         . econur_cart_icon('cart') . '<span class="econur-cart-tab-n" data-ecn-tab-count></span><b class="econur-cart-tab-t" data-ecn-tab-total></b></button>';
 }, 40);
 

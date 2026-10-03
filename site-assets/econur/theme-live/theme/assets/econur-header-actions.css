@@ -1,0 +1,136 @@
+/* ECONUR header actions 1.0 (markup: inc/header-actions.php, behaviour: assets/econur-header-actions.js)
+   Desktop: a pill product search, Login / Account and Cart with the live count badge, in one row after the menu.
+   Mobile: search, account and cart icons; the search icon opens a full-width search panel under the header.
+   Colours, font and hover colour are the header's own (econur-header.css: --hdr-*); Astra's own search / account /
+   cart icons are only hidden here, so they return untouched if this module is switched off. */
+
+.econur-header-actions{
+  --eha-ink:var(--hdr-ink, #183F43); --eha-teal:var(--hdr-active, #0D5960); --eha-hover:var(--hdr-hover, #4F8D79);
+  --eha-field:#F6F4EE; --eha-field-line:#E2E0D7; --eha-muted:#6E7874; --eha-t:.18s ease;
+  display:flex; align-items:center; flex:1 1 auto; justify-content:flex-end; min-width:0; }
+.site-header-section > .econur-header-actions{ padding:0; } /* Astra pads every header item by 10px */
+.econur-sr{ position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+.econur-header-actions svg, .econur-mobile-search-panel svg{ display:block; width:20px; height:20px; flex:none; }
+
+/* ---------------------------------------------------------------- search field (desktop + panel) */
+.econur-header-search{ position:relative; display:flex; align-items:center; margin:0; padding:0; }
+.econur-header-actions .econur-header-search{ flex:0 1 auto; width:320px; min-width:220px; }
+.econur-header-search .econur-header-search-input{ box-sizing:border-box; width:100%; height:44px; margin:0; padding:0 46px 0 19px !important;
+  border:1px solid var(--eha-field-line, #E2E0D7) !important; border-radius:999px !important; background:var(--eha-field, #F6F4EE) !important; box-shadow:none !important;
+  font-family:"Manrope", Arial, sans-serif !important; font-size:14px !important; font-weight:500; line-height:42px; letter-spacing:0; color:var(--eha-ink, #183F43) !important;
+  outline:0; -webkit-appearance:none; appearance:none; transition:border-color var(--eha-t, .18s ease), box-shadow var(--eha-t, .18s ease), background-color var(--eha-t, .18s ease); }
+.econur-header-search .econur-header-search-input::placeholder{ color:var(--eha-muted, #6E7874); opacity:1; }
+.econur-header-search .econur-header-search-input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; display:none; }
+.econur-header-search .econur-header-search-input:hover{ border-color:#B4CAC3 !important; }
+.econur-header-search .econur-header-search-input:focus{ border-color:var(--eha-teal, #0D5960) !important; background:#fff !important; box-shadow:0 0 0 3px rgba(13, 89, 96, .12) !important; }
+.econur-header-search .econur-header-search-btn{ position:absolute; top:50%; right:4px; display:grid; place-items:center; width:36px; height:36px; margin:-18px 0 0; padding:0;
+  border:0 !important; border-radius:50% !important; background:transparent !important; box-shadow:none !important; color:var(--eha-ink, #183F43) !important; cursor:pointer;
+  transition:color var(--eha-t, .18s ease), background-color var(--eha-t, .18s ease); }
+.econur-header-search .econur-header-search-btn svg{ width:19px; height:19px; }
+.econur-header-search .econur-header-search-btn:hover{ color:var(--eha-teal, #0D5960) !important; background:rgba(13, 89, 96, .07) !important; }
+.econur-header-search .econur-header-search-btn:focus-visible{ outline:2px solid var(--eha-teal, #0D5960); outline-offset:0; }
+
+/* ---------------------------------------------------------------- Login / Account, Cart */
+.econur-header-actions :is(.econur-header-login, .econur-header-cart, .econur-header-search-toggle){ position:relative; display:inline-flex; align-items:center; gap:7px; flex:none;
+  min-height:44px; margin:0; padding:0; border:0 !important; background:transparent !important; box-shadow:none !important;
+  font-family:"Manrope", Arial, sans-serif; font-size:14.5px; font-weight:600; line-height:1; letter-spacing:-.1px; white-space:nowrap;
+  color:var(--eha-ink) !important; text-decoration:none !important; cursor:pointer; transition:color var(--eha-t); }
+.econur-header-actions :is(.econur-header-login, .econur-header-cart, .econur-header-search-toggle):hover{ color:var(--eha-hover) !important; }
+.econur-header-actions :is(.econur-header-login, .econur-header-cart, .econur-header-search-toggle):focus-visible{ outline:2px solid var(--eha-teal); outline-offset:2px; border-radius:10px; }
+.econur-header-actions .econur-header-login{ margin-left:26px; }
+.econur-header-actions .econur-header-cart{ margin-left:22px; }
+.econur-header-cart-ic{ position:relative; display:block; line-height:0; }
+/* the count: a small teal circle, above and to the right of the cart icon; 0 is shown too */
+.econur-header-cart .econur-cart-count{ position:absolute; top:-8px; right:-9px; box-sizing:border-box; min-width:17px; height:17px; padding:0 4px; border-radius:999px;
+  background:var(--eha-teal); box-shadow:0 0 0 2px var(--hdr-bg, #FDFCF9); color:#fff; font-family:"Manrope", Arial, sans-serif; font-size:10.5px; font-weight:700;
+  line-height:17px; text-align:center; letter-spacing:0; font-variant-numeric:tabular-nums; pointer-events:none; }
+.econur-header-cart .econur-header-cart-t{ padding-left:6px; } /* clear of the badge */
+/* the search icon button is for the compact header and the mobile header only */
+.econur-header-actions .econur-header-search-toggle{ display:none; justify-content:center; width:40px; }
+.econur-header-search-toggle[aria-expanded="true"]{ color:var(--eha-teal) !important; }
+
+/* ---------------------------------------------------------------- desktop (Astra's desktop header) */
+/* the menu sits midway between the logo and the actions instead of in the exact centre, so the actions get the room
+   they need; the menu never shrinks (max-content), the search field gives way first (320px down to 220px) */
+#ast-desktop-header .ast-builder-grid-row.ast-grid-center-col-layout{ grid-template-columns:auto max-content auto; justify-content:space-between; container:ecnhdr / inline-size; }
+#ast-desktop-header .site-header-primary-section-right > :is(.ast-header-search, .ast-header-account, .ast-header-woo-cart){ display:none !important; }
+#ast-desktop-header .site-header-primary-section-right{ min-width:0; }
+/* Astra's empty spacer columns beside the logo and before the actions (10px each, nothing in them) */
+#ast-desktop-header :is(.site-header-primary-section-left-center, .site-header-primary-section-right-center):not(:has(*)){ display:none; }
+/* Narrower windows, in steps (measured on the header row itself, so a scrollbar never tips the menu into the actions):
+   1. small laptops: the field narrows (down to 220px), slightly tighter gaps;
+   2. no room for the words: the field stays, Login and Cart become icons (their labels stay for screen readers);
+   3. no room for the field: search, account and cart icons, as on the mobile header; the search icon opens the panel.
+   The script applies the same steps (.is-tight, .is-compact) if the actions would still run into the menu. */
+@container ecnhdr (max-width:1099.98px){
+  .econur-header-actions .econur-header-login{ margin-left:24px; }
+  .econur-header-actions .econur-header-cart{ margin-left:20px; }
+}
+@container ecnhdr (max-width:1001.98px){
+  .econur-header-actions:not(.is-mobile) :is(.econur-header-login, .econur-header-cart){ justify-content:center; width:40px; gap:0; }
+  .econur-header-actions:not(.is-mobile) .econur-header-login{ margin-left:16px; }
+  .econur-header-actions:not(.is-mobile) .econur-header-cart{ margin-left:6px; }
+  .econur-header-actions:not(.is-mobile) :is(.econur-header-login-t, .econur-header-cart-t){ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+}
+@container ecnhdr (max-width:945.98px){
+  .econur-header-actions:not(.is-mobile) > .econur-header-search{ display:none; }
+  .econur-header-actions:not(.is-mobile) > .econur-header-search-toggle{ display:inline-flex; }
+  .econur-header-actions:not(.is-mobile) .econur-header-login{ margin-left:6px; }
+}
+.econur-header-actions:is(.is-tight, .is-compact) :is(.econur-header-login, .econur-header-cart){ justify-content:center; width:40px; gap:0; }
+.econur-header-actions:is(.is-tight, .is-compact) .econur-header-login{ margin-left:16px; }
+.econur-header-actions:is(.is-tight, .is-compact) .econur-header-cart{ margin-left:6px; }
+.econur-header-actions:is(.is-tight, .is-compact) :is(.econur-header-login-t, .econur-header-cart-t){ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.econur-header-actions.is-compact > .econur-header-search{ display:none; }
+.econur-header-actions.is-compact > .econur-header-search-toggle{ display:inline-flex; }
+.econur-header-actions.is-compact .econur-header-login{ margin-left:6px; }
+
+/* ---------------------------------------------------------------- mobile / tablet header
+   (Astra's mobile header, below 922px; scoped to #ast-mobile-header rather than a width, because Astra decides itself
+   which of its two headers to show) */
+/* the logo stays centred while there is room; on the narrowest phones the left side gives way so the three icons fit */
+#ast-mobile-header .ast-builder-grid-row.ast-grid-center-col-layout{ grid-template-columns:minmax(max-content, 1fr) auto minmax(max-content, 1fr); }
+@media (max-width:544px){ #ast-mobile-header .ast-builder-grid-row.ast-grid-center-col-layout{ column-gap:4px; } }
+#ast-mobile-header .site-header-primary-section-right > :is(.ast-header-search, .ast-header-account, .ast-header-woo-cart){ display:none !important; }
+#ast-mobile-header .site-header-primary-section-right{ justify-content:flex-end; }
+#ast-mobile-header .econur-header-actions.is-mobile{ flex:none; }
+#ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-search-toggle, .econur-header-login, .econur-header-cart){ display:inline-flex; justify-content:center; width:36px; height:44px; margin:0; gap:0; }
+#ast-mobile-header .econur-header-actions.is-mobile svg{ width:21px; height:21px; }
+#ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-login-t, .econur-header-cart-t){ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+#ast-mobile-header .econur-header-actions.is-mobile .econur-cart-count{ top:-7px; right:-8px; }
+#ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-search-toggle, .econur-header-login, .econur-header-cart):focus-visible{ outline-offset:-2px; }
+@media (min-width:545px){
+  #ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-search-toggle, .econur-header-login, .econur-header-cart){ width:40px; }
+}
+@media (max-width:399px){
+  #ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-search-toggle, .econur-header-login, .econur-header-cart){ width:34px; }
+}
+@media (max-width:374px){
+  #ast-mobile-header .econur-header-actions.is-mobile :is(.econur-header-search-toggle, .econur-header-login, .econur-header-cart){ width:32px; }
+}
+
+/* ---------------------------------------------------------------- search panel under the header */
+.econur-mobile-search-panel{ position:absolute; top:100%; left:0; right:0; z-index:5; pointer-events:auto;
+  background:var(--hdr-bg, #FDFCF9); border-top:1px solid var(--hdr-line, #E8ECE6); border-bottom:1px solid var(--hdr-line, #E8ECE6); box-shadow:0 12px 26px rgba(20, 55, 50, .07); }
+.econur-mobile-search-panel[hidden]{ display:none !important; }
+.econur-mobile-search-in{ display:flex; align-items:center; gap:8px; box-sizing:border-box; max-width:1180px; margin:0 auto; padding:12px 20px; }
+.econur-mobile-search-panel .econur-header-search{ flex:1 1 auto; min-width:0; }
+.econur-mobile-search-panel .econur-header-search .econur-header-search-input{ height:46px; font-size:16px !important; border-color:#BCD0CA !important; background:#fff !important; } /* 16px: no zoom on iOS */
+.econur-mobile-search-panel .econur-header-search .econur-header-search-input:focus{ border-color:var(--hdr-active, #0D5960) !important; }
+.econur-mobile-search-panel .econur-header-search .econur-header-search-btn{ color:var(--hdr-ink, #183F43) !important; }
+.econur-mobile-search-x{ display:grid; place-items:center; flex:none; width:44px; height:44px; margin:0 -6px 0 0; padding:0; border:0 !important; border-radius:50% !important;
+  background:transparent !important; box-shadow:none !important; color:var(--hdr-ink, #183F43) !important; cursor:pointer; transition:color .18s ease, background-color .18s ease; }
+.econur-mobile-search-x svg{ width:21px; height:21px; }
+.econur-mobile-search-x:hover{ color:var(--hdr-active, #0D5960) !important; background:rgba(13, 89, 96, .07) !important; }
+.econur-mobile-search-x:focus-visible{ outline:2px solid var(--hdr-active, #0D5960); outline-offset:-2px; }
+@keyframes ecn-hsearch-in{ from{ opacity:0; translate:0 -6px; } to{ opacity:1; translate:0 0; } }
+.econur-mobile-search-panel.is-open{ animation:ecn-hsearch-in .2s cubic-bezier(.22, 1, .36, 1); }
+/* opened from the compact desktop header: the field lines up under the icons */
+body:not(.ast-header-break-point) .econur-mobile-search-in{ justify-content:flex-end; }
+body:not(.ast-header-break-point) .econur-mobile-search-panel .econur-header-search{ flex:0 1 560px; }
+@media (max-width:359px){ .econur-mobile-search-in{ padding:10px 14px; } }
+
+@media (prefers-reduced-motion:reduce){
+  .econur-mobile-search-panel.is-open{ animation:none; }
+  .econur-header-actions *, .econur-mobile-search-panel *{ transition-duration:0s !important; }
+}
