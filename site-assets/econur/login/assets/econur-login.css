@@ -96,6 +96,9 @@ body.econur-login-page .econur-social-btn span{ overflow:hidden; text-overflow:e
 body.econur-login-page .econur-social-btn .econur-social-ic{ flex:none; width:20px; height:20px; box-shadow:none !important; }
 @media (hover:hover) and (pointer:fine){ body.econur-login-page .econur-social-btn:hover{ background:#F6F4EF; border-color:rgba(24, 63, 67, .24); transform:translateY(-1px); } }
 body.econur-login-page .econur-social-btn:focus-visible{ outline:2px solid var(--elg-focus); outline-offset:3px; }
+/* side by side only while each button has room for its full label (form column 440px+); otherwise one under the other */
+.econur-login-inner{ container-type:inline-size; }
+@container (max-width:439px){ .econur-login-social{ grid-auto-flow:row; } }
 @media (max-width:479px){ .econur-login-social{ grid-auto-flow:row; } }
 
 /* create account / sign in switch: one quiet line, the link part bright and underlined */
