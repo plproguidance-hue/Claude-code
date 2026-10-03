@@ -85,7 +85,11 @@
     /* ---------- price on the buttons, pack cards and sticky bar ---------- */
     var unit = parseFloat(C.price) || 0, unitReg = parseFloat(C.reg) || 0, origReg = unitReg, size = '', vidNow = C.vid || C.pid;
     var addBtn = form ? form.querySelector('.single_add_to_cart_button') : null, atcPrice = null;
-    if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); if (/[\u0980-\u09FF]/.test(addBtn.textContent)) addBtn.setAttribute('lang', 'bn'); }
+    var buyBtn = form ? form.querySelector('.ecn-pdp-buynow') : null, buyPrice = buyBtn ? buyBtn.querySelector('[data-ecn-buy-price]') : null;
+    if (addBtn && /[\u0980-\u09FF]/.test(addBtn.textContent)) addBtn.setAttribute('lang', 'bn');
+    // the running total sits on Buy Now (the primary button); without it, on Add to Cart as before
+    if (buyPrice) atcPrice = buyPrice;
+    else if (addBtn) { atcPrice = document.createElement('span'); atcPrice.className = 'ecn-atc-price'; addBtn.appendChild(atcPrice); }
     var packs = [].slice.call(page.querySelectorAll('.ecn-lp-pack')), sbP = document.getElementById('ecnSbarPrice'), sbS = document.getElementById('ecnSbarSize'), finalP = page.querySelector('[data-ecn-final-price]');
     var sizeEl = page.querySelector('[data-ecn-size]'); size = sizeEl ? sizeEl.textContent : '';
     function lineTotal(n) { return unit * n * (1 - pct(n) / 100); }
@@ -138,8 +142,27 @@
     /* ---------- a size must be chosen before Add to Cart / Buy Now ---------- */
     function needsSize() { if (!isVar) return false; var vid = form.querySelector('input[name=variation_id]'); return !(vid && parseInt(vid.value || '0', 10) > 0); }
     function flagSize() { var sz = form.querySelector('.ecn-pdp-sizes') || form; sz.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); sz.classList.add('ecn-flag'); var f = sz.querySelector('.ecn-pdp-sz'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 350); setTimeout(function () { sz.classList.remove('ecn-flag'); }, 1600); }
-    var bn = page.querySelector('.ecn-pdp-buynow');
-    if (bn) bn.addEventListener('click', function (e) { if (needsSize()) { e.preventDefault(); flagSize(); return; } if (addBtn && addBtn.classList.contains('wc-variation-is-unavailable')) e.preventDefault(); });
+    /* ---------- Buy Now: the same form with ecn_buy_now=1, so WooCommerce adds the chosen variation and quantity and goes to checkout ---------- */
+    var bnMsg = form ? form.querySelector('[data-ecn-buy-msg]') : null, bnLabel = buyBtn ? buyBtn.querySelector('[data-ecn-buy-label]') : null, bnText = bnLabel ? bnLabel.textContent : '', bnBusy = false;
+    function bnSay(t) { if (!bnMsg) return; bnMsg.textContent = t || ''; bnMsg.hidden = !t; }
+    function bnReset() { bnBusy = false; if (!buyBtn) return; buyBtn.disabled = false; buyBtn.classList.remove('is-busy'); buyBtn.removeAttribute('aria-busy'); if (bnLabel) bnLabel.textContent = bnText; }
+    if (buyBtn) {
+      buyBtn.addEventListener('click', function (e) {
+        if (bnBusy) { e.preventDefault(); return; }
+        if (needsSize()) { e.preventDefault(); bnSay('অনুগ্রহ করে একটি সাইজ বেছে নিন।'); flagSize(); return; }
+        if (addBtn && addBtn.classList.contains('wc-variation-is-unavailable')) { e.preventDefault(); bnSay('এই সাইজটি এখন পাওয়া যাচ্ছে না। অন্য সাইজ বেছে নিন।'); return; }
+        bnSay('');
+      });
+      form.addEventListener('submit', function (e) {
+        if (e.defaultPrevented || (e.submitter && e.submitter !== buyBtn) || (!e.submitter && document.activeElement !== buyBtn)) return;
+        if (bnBusy) { e.preventDefault(); return; }
+        bnBusy = true; buyBtn.classList.add('is-busy'); buyBtn.setAttribute('aria-busy', 'true'); if (bnLabel) bnLabel.textContent = 'প্রসেস হচ্ছে...';
+        setTimeout(function () { buyBtn.disabled = true; }, 0); // after the form data (with ecn_buy_now) has been taken
+        setTimeout(bnReset, 8000); // a stalled request never leaves the button locked
+      });
+      window.addEventListener('pageshow', bnReset); // coming back from checkout with the Back button
+      if (window.jQuery) window.jQuery(form).on('found_variation', function () { bnSay(''); });
+    }
     // Meta AddToCart for the form (Add to Cart, Buy Now) is sent only after WooCommerce has added the item: see inc/meta-tracking.php
 
     /* ---------- sticky Add to Cart (phones): only once the main button has scrolled away ---------- */
