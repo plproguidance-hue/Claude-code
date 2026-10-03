@@ -12,7 +12,7 @@ body.single-product .ecn-pdp .econur-product-info-tabs{
 body.single-product .ecn-pdp .econur-pit-box{ position:relative; padding:12px; border:1px solid var(--pit-line); border-radius:22px; background:var(--pit-bg); }
 
 /* botanical corners: the page's own leaf image, small, behind the panel edge */
-body.single-product .ecn-pdp .econur-pit-leaf{ position:absolute; z-index:-1; top:-26px; width:118px !important; height:auto !important; max-width:none; pointer-events:none; user-select:none; opacity:.9; }
+body.single-product .ecn-pdp .econur-pit-leaf{ position:absolute; z-index:-1; top:-26px; width:118px !important; height:auto !important; max-width:none; margin:0; border-radius:0; box-shadow:none !important; pointer-events:none; user-select:none; opacity:.9; } /* no theme image shadow on the transparent leaves */
 body.single-product .ecn-pdp .econur-pit-leaf--tl{ left:-34px; transform:rotate(-12deg); }
 body.single-product .ecn-pdp .econur-pit-leaf--tr{ right:-34px; transform:scaleX(-1) rotate(-12deg); }
 
