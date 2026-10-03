@@ -419,6 +419,7 @@ function econur_pdp_render($product) {
     if (function_exists('econur_pdp_accordion')) econur_pdp_accordion($product, $size); // inc/pdp-accordion.php
     echo '</div></section>';
 
+    if (function_exists('econur_pdp_love')) econur_pdp_love($product); // inc/pdp-love.php: Why You'll Love This
     econur_lp_routine($product, $lp);
     econur_lp_why($product, $lp);
     econur_lp_howto($product);
