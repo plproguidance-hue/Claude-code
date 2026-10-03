@@ -1,0 +1,155 @@
+/* ECONUR product Description / FAQ / Reviews block 1.0 (markup: inc/pdp-info.php, directly under the product hero)
+   A sage panel with a three-tab bar; the selected tab's content sits on a cream card.
+   Description: text + Key Features left, product photo right (stacked below 860px). Fonts and colours are the product
+   page's own (--pd-serif, --pd-sans, --pd-ink, --pd-teal) and the "Why You'll Love This" section's sage tones.
+   Everything is scoped to .econur-product-info-tabs. */
+
+body.single-product .ecn-pdp .econur-product-info-tabs{
+  --pit-bg:linear-gradient(180deg, #F1F5EB 0%, #F5F7EF 100%); --pit-line:#E1E7D9; --pit-card:#FFFEFA; --pit-sage:#E7EEE1; --pit-green:#2F7A56;
+  --pit-title:var(--pd-head, #173F4A); --pit-text:#5C605A; --pit-teal:var(--pd-teal, #0D585F); --pit-ease:cubic-bezier(.22, 1, .36, 1);
+  position:relative; isolation:isolate; max-width:1300px; margin:40px auto 0; /* the product hero's width, like the section below */
+}
+body.single-product .ecn-pdp .econur-pit-box{ position:relative; padding:12px; border:1px solid var(--pit-line); border-radius:22px; background:var(--pit-bg); }
+
+/* botanical corners: the page's own leaf image, small, behind the panel edge */
+body.single-product .ecn-pdp .econur-pit-leaf{ position:absolute; z-index:-1; top:-26px; width:118px !important; height:auto !important; max-width:none; pointer-events:none; user-select:none; opacity:.9; }
+body.single-product .ecn-pdp .econur-pit-leaf--tl{ left:-34px; transform:rotate(-12deg); }
+body.single-product .ecn-pdp .econur-pit-leaf--tr{ right:-34px; transform:scaleX(-1) rotate(-12deg); }
+
+/* ---------------------------------------------------------------- tabs */
+body.single-product .ecn-pdp .econur-pit-tabs{ display:grid; grid-auto-columns:minmax(0,1fr); grid-auto-flow:column; gap:4px; padding:4px; border:1px solid #DCE4D3; border-radius:15px; background:rgba(231, 238, 225, .75); }
+body.single-product .ecn-pdp .econur-pit-tab{ display:flex; align-items:center; justify-content:center; gap:8px; min-width:0; height:48px; margin:0; padding:0 12px !important;
+  border:1px solid transparent !important; border-radius:11px !important; background:transparent !important; box-shadow:none !important; color:#5D6A62 !important;
+  font-family:var(--pd-sans) !important; font-size:15px !important; font-weight:500 !important; line-height:1 !important; white-space:nowrap; cursor:pointer;
+  transition:background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+body.single-product .ecn-pdp .econur-pit-tab-ic{ display:grid; place-items:center; flex:none; width:18px; height:18px; }
+body.single-product .ecn-pdp .econur-pit-tab-ic svg{ width:18px; height:18px; }
+body.single-product .ecn-pdp .econur-pit-tab:hover{ background:rgba(255, 254, 250, .55) !important; color:var(--pit-title) !important; }
+body.single-product .ecn-pdp .econur-pit-tab[aria-selected="true"]{ border-color:#DAE3D2 !important; background:var(--pit-card) !important; color:var(--pit-teal) !important; font-weight:600 !important;
+  box-shadow:0 2px 8px rgba(36, 66, 48, .07) !important; }
+body.single-product .ecn-pdp .econur-pit-tab[aria-selected="true"] .econur-pit-tab-ic{ color:var(--pit-green); }
+body.single-product .ecn-pdp .econur-pit-tab:focus-visible{ outline:2px solid var(--pit-teal) !important; outline-offset:2px; }
+
+/* ---------------------------------------------------------------- panel card */
+body.single-product .ecn-pdp .econur-pit-body{ margin-top:12px; }
+body.single-product .ecn-pdp .econur-pit-panel{ padding:34px 34px 36px; border:1px solid #E7EBE1; border-radius:16px; background:var(--pit-card); }
+body.single-product .ecn-pdp .econur-pit-panel[hidden]{ display:none !important; }
+body.single-product .ecn-pdp .econur-pit-panel:focus{ outline:0; }
+body.single-product .ecn-pdp .econur-pit-panel:focus-visible{ outline:2px solid var(--pit-teal); outline-offset:2px; }
+body.single-product .ecn-pdp .econur-pit-panel.is-in{ animation:econur-pit-in .22s var(--pit-ease); }
+@keyframes econur-pit-in{ from{ opacity:0; translate:0 4px; } to{ opacity:1; translate:0 0; } }
+
+/* ---------------------------------------------------------------- Description */
+body.single-product .ecn-pdp .econur-pit-desc{ display:grid; grid-template-columns:minmax(0,46fr) minmax(0,54fr); gap:34px; align-items:stretch; }
+body.single-product .ecn-pdp .econur-pit-desc.no-media{ grid-template-columns:minmax(0,1fr); max-width:760px; }
+body.single-product .ecn-pdp .econur-pit-eyebrow{ margin:0 0 10px !important; font-family:var(--pd-sans); font-size:12px; font-weight:600; line-height:1; letter-spacing:.2em; text-transform:uppercase; color:#4F8D79; }
+body.single-product .ecn-pdp h2.econur-pit-title{ margin:0 !important; font-family:var(--pd-serif) !important; font-size:34px !important; font-weight:500 !important; line-height:1.14 !important; letter-spacing:-.015em !important; color:var(--pit-title) !important; }
+body.single-product .ecn-pdp .econur-pit-sub{ margin:6px 0 0 !important; font-family:var(--pd-serif); font-size:19px; font-weight:400; line-height:1.35; color:#35584F; }
+body.single-product .ecn-pdp .econur-pit-intro{ margin:16px 0 0 !important; font-size:15px; line-height:1.65; color:var(--pit-text); }
+body.single-product .ecn-pdp h3.econur-pit-kf{ display:flex; align-items:center; gap:10px; margin:26px 0 14px !important; font-family:var(--pd-serif) !important; font-size:20px !important; font-weight:500 !important; line-height:1.2 !important; color:var(--pit-title) !important; }
+body.single-product .ecn-pdp .econur-pit-kf-ic{ display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--pit-sage); color:var(--pit-green); }
+body.single-product .ecn-pdp .econur-pit-kf-ic svg{ width:16px; height:16px; }
+body.single-product .ecn-pdp .econur-pit-feats{ display:grid; gap:13px; margin:0 !important; padding:0 !important; list-style:none; }
+body.single-product .ecn-pdp .econur-pit-feats li{ display:grid; grid-template-columns:38px minmax(0,1fr); gap:14px; align-items:center; margin:0 !important; padding:0; list-style:none; }
+body.single-product .ecn-pdp .econur-pit-fic{ display:grid; place-items:center; width:38px; height:38px; border:1px solid #CADBC8; border-radius:50%; background:#EEF4EA; color:var(--pit-green); }
+body.single-product .ecn-pdp .econur-pit-fic svg{ width:19px; height:19px; }
+body.single-product .ecn-pdp .econur-pit-ftx{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+body.single-product .ecn-pdp .econur-pit-ftx b{ font-family:var(--pd-sans); font-size:15.5px; font-weight:600; line-height:1.3; color:var(--pit-title); }
+body.single-product .ecn-pdp .econur-pit-ftx span{ font-size:13.5px; line-height:1.5; color:#6A6F69; }
+/* photo: fills the right column, as tall as the text */
+body.single-product .ecn-pdp .econur-pit-media{ position:relative; margin:0; min-height:100%; overflow:hidden; border-radius:16px; background:#EDE7DA; }
+body.single-product .ecn-pdp .econur-pit-media .econur-pit-img{ position:absolute; inset:0; display:block; width:100% !important; height:100% !important; max-width:none; margin:0; border-radius:0; object-fit:cover; object-position:50% 58%; }
+
+/* ---------------------------------------------------------------- FAQ */
+body.single-product .ecn-pdp h3.econur-pit-h3{ margin:0 !important; font-family:var(--pd-serif) !important; font-size:24px !important; font-weight:500 !important; line-height:1.2 !important; color:var(--pit-title) !important; }
+body.single-product .ecn-pdp .econur-pit-faq{ display:grid; gap:10px; max-width:900px; margin-top:18px; }
+body.single-product .ecn-pdp .econur-pit-faq-i{ border:1px solid #E1E8DA; border-radius:13px; background:#FFFEFB; transition:border-color .2s ease, background-color .2s ease; }
+body.single-product .ecn-pdp .econur-pit-faq-i.is-open{ border-color:#CFDDCB; background:#FBFCF8; }
+body.single-product .ecn-pdp .econur-pit-faq-q{ margin:0 !important; padding:0; font-size:inherit; line-height:inherit; }
+body.single-product .ecn-pdp .econur-pit-faq-q button{ display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; min-height:56px; margin:0; padding:12px 16px 12px 18px !important;
+  border:0 !important; border-radius:13px !important; background:transparent !important; box-shadow:none !important; color:var(--pit-title) !important; text-align:left;
+  font-family:var(--pd-sans) !important; font-size:15.5px !important; font-weight:600 !important; line-height:1.45 !important; cursor:pointer; }
+body.single-product .ecn-pdp .econur-pit-faq-q button:focus-visible{ outline:2px solid var(--pit-teal) !important; outline-offset:-2px; }
+body.single-product .ecn-pdp .econur-pit-faq-ic{ display:grid; place-items:center; flex:none; width:30px; height:30px; border:1px solid #CADBC8; border-radius:50%; background:#EEF4EA; color:var(--pit-green); transition:transform .22s var(--pit-ease), background-color .2s ease; }
+body.single-product .ecn-pdp .econur-pit-faq-ic svg{ width:15px; height:15px; }
+body.single-product .ecn-pdp .econur-pit-faq-i.is-open .econur-pit-faq-ic{ transform:rotate(45deg); }
+body.single-product .ecn-pdp .econur-pit-faq-a{ display:grid; grid-template-rows:0fr; visibility:hidden; transition:grid-template-rows .22s var(--pit-ease), visibility 0s linear .22s; }
+body.single-product .ecn-pdp .econur-pit-faq-i.is-open .econur-pit-faq-a{ grid-template-rows:1fr; visibility:visible; transition:grid-template-rows .22s var(--pit-ease), visibility 0s; }
+body.single-product .ecn-pdp .econur-pit-faq-a > div{ overflow:hidden; }
+body.single-product .ecn-pdp .econur-pit-faq-a p{ margin:0 !important; padding:0 60px 16px 18px; font-size:14.5px; line-height:1.65; color:var(--pit-text); }
+
+/* ---------------------------------------------------------------- Reviews */
+body.single-product .ecn-pdp .econur-pit-rev-head{ display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; }
+body.single-product .ecn-pdp .econur-pit-rev-head p{ margin:6px 0 0 !important; font-size:14.5px; color:var(--pit-text); }
+body.single-product .ecn-pdp .econur-pit-write{ display:inline-flex; align-items:center; gap:9px; height:46px; margin:0; padding:0 22px !important; border:0 !important; border-radius:999px !important;
+  background:var(--pit-teal) !important; color:#fff !important; font-family:var(--pd-sans) !important; font-size:15px !important; font-weight:600 !important; line-height:1 !important; cursor:pointer; transition:background-color .2s ease; }
+body.single-product .ecn-pdp .econur-pit-write svg{ width:17px; height:17px; }
+body.single-product .ecn-pdp .econur-pit-write:hover{ background:#0A474D !important; }
+body.single-product .ecn-pdp .econur-pit-write:focus-visible{ outline:2px solid var(--pit-teal) !important; outline-offset:3px; }
+body.single-product .ecn-pdp .econur-pit-rev-empty{ display:flex; align-items:center; gap:14px; margin-top:22px; padding:22px 20px; border:1px dashed #CFDCCB; border-radius:14px; background:#FAFBF6; }
+body.single-product .ecn-pdp .econur-pit-rev-empty p{ margin:0 !important; font-size:15px; line-height:1.5; color:#4E5A54; }
+body.single-product .ecn-pdp .econur-pit-rev-empty-ic{ display:grid; place-items:center; flex:none; width:40px; height:40px; border-radius:50%; background:var(--pit-sage); color:var(--pit-green); }
+body.single-product .ecn-pdp .econur-pit-rev-empty-ic svg{ width:19px; height:19px; }
+body.single-product .ecn-pdp .econur-pit-rev-sum{ display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin-top:20px; font-size:14px; color:var(--pit-text); }
+body.single-product .ecn-pdp .econur-pit-rev-sum > b{ font-family:var(--pd-serif); font-size:30px; font-weight:500; line-height:1; color:var(--pit-title); }
+body.single-product .ecn-pdp .econur-pit-stars{ display:inline-flex; gap:2px; color:#C9A54B; }
+body.single-product .ecn-pdp .econur-pit-stars i{ display:block; width:16px; height:16px; }
+body.single-product .ecn-pdp .econur-pit-stars svg{ width:16px; height:16px; }
+body.single-product .ecn-pdp .econur-pit-stars i.is-on svg{ fill:currentColor; }
+body.single-product .ecn-pdp .econur-pit-rev-list{ display:grid; gap:12px; margin:16px 0 0 !important; padding:0 !important; list-style:none; }
+body.single-product .ecn-pdp .econur-pit-rev-list li{ margin:0; padding:16px 18px; border:1px solid #E7EBE1; border-radius:13px; background:#FFFEFB; list-style:none; }
+body.single-product .ecn-pdp .econur-pit-rev-top{ display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin-bottom:6px; font-size:14px; }
+body.single-product .ecn-pdp .econur-pit-rev-top b{ color:var(--pit-title); }
+body.single-product .ecn-pdp .econur-pit-rev-top time{ margin-left:auto; font-size:12.5px; color:#7A807A; }
+body.single-product .ecn-pdp .econur-pit-ver{ font-size:12px; font-weight:600; color:var(--pit-green); }
+body.single-product .ecn-pdp .econur-pit-rev-list p{ margin:8px 0 0 !important; font-size:14.5px; line-height:1.6; color:var(--pit-text); }
+body.single-product .ecn-pdp .econur-pit-allrev{ display:inline-flex; align-items:center; gap:8px; margin-top:16px; color:var(--pit-teal) !important; font-weight:600; text-decoration:none !important; }
+body.single-product .ecn-pdp .econur-pit-allrev svg{ width:17px; height:17px; }
+body.single-product .ecn-pdp .econur-pit-note{ margin:14px 0 0 !important; font-size:13.5px; color:#6A6F69; }
+
+/* ---------------------------------------------------------------- tablet */
+@media (max-width:1099px){
+  body.single-product .ecn-pdp .econur-pit-panel{ padding:28px 26px 30px; }
+  body.single-product .ecn-pdp .econur-pit-desc{ grid-template-columns:minmax(0,47fr) minmax(0,53fr); gap:26px; }
+  body.single-product .ecn-pdp h2.econur-pit-title{ font-size:31px !important; }
+}
+/* not enough room for two columns: text, then the photo */
+@media (max-width:859px){
+  body.single-product .ecn-pdp .econur-pit-desc{ grid-template-columns:minmax(0,1fr); gap:24px; }
+  body.single-product .ecn-pdp .econur-pit-media{ min-height:0; aspect-ratio:auto; border-radius:14px; }
+  body.single-product .ecn-pdp .econur-pit-media .econur-pit-img{ position:static; height:auto !important; aspect-ratio:auto; }
+  body.single-product .ecn-pdp .econur-pit-leaf{ width:96px !important; top:-20px; }
+}
+
+/* ---------------------------------------------------------------- phones */
+@media (max-width:767px){
+  body.single-product .ecn-pdp .econur-product-info-tabs{ margin-top:32px; }
+  body.single-product .ecn-pdp .econur-pit-box{ padding:8px; border-radius:18px; }
+  body.single-product .ecn-pdp .econur-pit-tabs{ gap:2px; padding:3px; border-radius:13px; }
+  body.single-product .ecn-pdp .econur-pit-tab{ gap:6px; height:44px; padding:0 6px !important; border-radius:10px !important; font-size:13px !important; }
+  body.single-product .ecn-pdp .econur-pit-tab-ic, body.single-product .ecn-pdp .econur-pit-tab-ic svg{ width:15px; height:15px; }
+  body.single-product .ecn-pdp .econur-pit-body{ margin-top:8px; }
+  body.single-product .ecn-pdp .econur-pit-panel{ padding:22px 16px 20px; border-radius:14px; }
+  body.single-product .ecn-pdp h2.econur-pit-title{ font-size:27px !important; }
+  body.single-product .ecn-pdp .econur-pit-sub{ font-size:17px; }
+  body.single-product .ecn-pdp .econur-pit-intro{ margin-top:12px !important; font-size:14.5px; }
+  body.single-product .ecn-pdp h3.econur-pit-kf{ margin-top:22px !important; font-size:19px !important; }
+  body.single-product .ecn-pdp .econur-pit-feats{ gap:12px; }
+  body.single-product .ecn-pdp .econur-pit-feats li{ grid-template-columns:36px minmax(0,1fr); gap:12px; }
+  body.single-product .ecn-pdp .econur-pit-fic{ width:36px; height:36px; }
+  body.single-product .ecn-pdp .econur-pit-ftx b{ font-size:15px; }
+  body.single-product .ecn-pdp .econur-pit-ftx span{ font-size:13px; }
+  body.single-product .ecn-pdp h3.econur-pit-h3{ font-size:21px !important; }
+  body.single-product .ecn-pdp .econur-pit-faq-q button{ min-height:52px; padding:10px 12px 10px 14px !important; font-size:15px !important; }
+  body.single-product .ecn-pdp .econur-pit-faq-a p{ padding:0 14px 14px; }
+  body.single-product .ecn-pdp .econur-pit-write{ width:100%; justify-content:center; }
+  body.single-product .ecn-pdp .econur-pit-leaf{ display:none; }
+}
+@media (max-width:359px){
+  body.single-product .ecn-pdp .econur-pit-tab-ic{ display:none; }
+  body.single-product .ecn-pdp .econur-pit-tab{ font-size:12.5px !important; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.single-product .ecn-pdp .econur-product-info-tabs *{ transition-duration:0s !important; animation:none !important; }
+}

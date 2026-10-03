@@ -424,6 +424,7 @@ function econur_pdp_render($product) {
     if (function_exists('econur_pdp_accordion')) econur_pdp_accordion($product, $size); // inc/pdp-accordion.php
     echo '</div></section>';
 
+    if (function_exists('econur_pdp_info')) econur_pdp_info($product, $lp); // inc/pdp-info.php: Description / FAQ / Reviews tabs
     if (function_exists('econur_pdp_love')) econur_pdp_love($product); // inc/pdp-love.php: Why You'll Love This
     econur_lp_routine($product, $lp);
     econur_lp_why($product, $lp);
@@ -887,8 +888,10 @@ function econur_lp_reviews($product) {
 
 /* ===== FAQ + find your bar: one help area (questions answered, then guidance to the right bar) ===== */
 // FAQ answers come from the product's own data and the store's real terms; nothing is made up.
-function econur_lp_faq($product, $lp) {
-    $id = $product->get_id(); $name = $product->get_name(); $q = $lp['faq_extra'];
+// the questions and answers, shared with the FAQ tab of the Description / FAQ / Reviews block (inc/pdp-info.php);
+// the last one points to the guide under this FAQ section, so the tab leaves it out ($guide_q false)
+function econur_lp_faq_items($product, $lp, $guide_q = true) {
+    $id = $product->get_id(); $name = $product->get_name(); $q = isset($lp['faq_extra']) ? (array) $lp['faq_extra'] : array();
     $skin = econur_meta_list($id, 'econur_skin_type');
     // Bangla questions; answers translate the product's own data and the store's terms (skin types: econur_bn_skin)
     if ($skin) $q[] = array($name . ' কি আমার ত্বকের জন্য উপযোগী?', 'এটি ' . econur_bn_skin_list($skin) . ' জন্য তৈরি। নিশ্চিত না হলে WhatsApp-এ মেসেজ দিন, সঠিক বারটি বেছে নিতে আমরা সাহায্য করব।');
@@ -898,8 +901,13 @@ function econur_lp_faq($product, $lp) {
     if ($full) $q[] = array('এতে কী কী উপাদান আছে?', $full);
     $q[] = array('ক্যাশ অন ডেলিভারি সুবিধা আছে কি?', 'হ্যাঁ। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি আছে: পণ্য হাতে পেয়ে টাকা দেবেন।');
     $q[] = array('অর্ডার পৌঁছাতে কত সময় লাগবে?', 'ঢাকার ভেতরে 1–2 দিন, ঢাকার বাইরে 2–4 দিন। প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে আমরা ফোন করে নিশ্চিত করি।');
-    $guide = econur_lp_finder_items($product);
+    $guide = $guide_q ? econur_lp_finder_items($product) : array();
     if ($guide) $q[] = array('আমার ত্বকের জন্য সঠিক বার কীভাবে বেছে নেব?', 'নিচের গাইডে আপনার ত্বকের সবচেয়ে বড় প্রয়োজনটি বেছে নিন, মানানসই ECONUR বারটি দেখতে পাবেন। চাইলে WhatsApp-এও আমাদের সাথে কথা বলতে পারেন।');
+    return $q;
+}
+function econur_lp_faq($product, $lp) {
+    $name = $product->get_name(); $q = econur_lp_faq_items($product, $lp);
+    $guide = econur_lp_finder_items($product);
     $wa = econur_pdp_wa_link('Hi Econur, I have a question about ' . $name . '.');
 
     $items = '';
