@@ -33,7 +33,7 @@ $shop    = wc_get_page_permalink('shop');
 
 	<section class="econur-login-left" aria-labelledby="econur-login-h">
 		<?php echo econur_login_deco(154, 'econur-login-deco--leaves', '260px', true); // phpcs:ignore ?>
-		<?php echo econur_login_deco(155, 'econur-login-deco--soap', '240px'); // phpcs:ignore ?>
+		<?php echo econur_login_deco(154, 'econur-login-deco--leaves2', '220px'); // phpcs:ignore ?>
 		<div class="econur-login-inner">
 			<a class="econur-login-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="ECONUR হোমপেজ">
 				<?php
@@ -109,8 +109,8 @@ $shop    = wc_get_page_permalink('shop');
 		<?php echo econur_login_deco(129, 'econur-login-deco--decor', '340px'); // phpcs:ignore ?>
 		<div class="econur-login-right-inner">
 			<span class="econur-login-avatar"><?php echo econur_login_icon('user'); // phpcs:ignore ?></span>
-			<h2 class="econur-login-rh" id="econur-login-rh">প্রিয় পণ্যগুলো এখন<br>আরও সহজে আপনার সাথে</h2>
-			<p class="econur-login-rlead">আপনার অ্যাকাউন্টে লগইন করে উপভোগ করুন<br>একটি ব্যক্তিগত ও নিরাপদ শপিং অভিজ্ঞতা।</p>
+			<h2 class="econur-login-rh" id="econur-login-rh">প্রিয় পণ্যগুলো এখন <br>আরও সহজে আপনার সাথে</h2>
+			<p class="econur-login-rlead">আপনার অ্যাকাউন্টে লগইন করে উপভোগ করুন <br>একটি ব্যক্তিগত ও নিরাপদ শপিং অভিজ্ঞতা।</p>
 			<ul class="econur-login-benefits">
 				<?php foreach (econur_login_benefits() as $i => $b) : ?>
 					<li class="econur-login-benefit" style="--i:<?php echo (int) $i; ?>"><span class="econur-login-bic"><?php echo econur_login_icon($b[0]); // phpcs:ignore ?></span><span><b><?php echo esc_html($b[1]); ?></b><small><?php echo esc_html($b[2]); ?></small></span></li>

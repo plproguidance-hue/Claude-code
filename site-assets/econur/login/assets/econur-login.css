@@ -14,18 +14,19 @@ body.econur-login-page .econur-login-sr{ position:absolute !important; width:1px
 body.econur-login-page :is(.ecn-wa-float, #ast-scroll-top, .ast-scroll-top-icon){ display:none !important; }
 
 .econur-login-layout{ display:grid; grid-template-columns:minmax(0,51fr) minmax(0,49fr); min-height:100vh; min-height:100dvh; }
-.econur-login-deco{ position:absolute; z-index:0; height:auto !important; max-width:none; margin:0; border-radius:0; box-shadow:none !important; pointer-events:none; user-select:none; }
+.econur-login-deco{ position:absolute; z-index:0; height:auto !important; max-width:none; margin:0; border-radius:0; box-shadow:none !important; pointer-events:none; user-select:none;
+  -webkit-mask-image:radial-gradient(closest-side, #000 64%, rgba(0, 0, 0, 0) 100%); mask-image:radial-gradient(closest-side, #000 64%, rgba(0, 0, 0, 0) 100%); } /* soft edges, never a hard rectangle */
 
 /* ---------------------------------------------------------------- left: sign in */
 .econur-login-left{ position:relative; isolation:isolate; overflow:hidden; display:flex; align-items:center; justify-content:center; padding:64px clamp(36px, 6vw, 96px);
   background:radial-gradient(120% 85% at 28% 18%, #10606A 0%, var(--elg-deep) 52%, #083E44 100%); color:#fff; }
 .econur-login-deco--leaves{ top:-46px; left:-58px; width:250px !important; transform:rotate(-6deg); opacity:.95; }
-.econur-login-deco--soap{ bottom:-26px; left:-54px; width:230px !important; opacity:.96; }
+.econur-login-deco--leaves2{ bottom:-58px; left:-66px; width:210px !important; transform:rotate(168deg); opacity:.8; }
 .econur-login-inner{ position:relative; z-index:1; width:100%; max-width:500px; }
 
-.econur-login-brand{ display:inline-flex; align-items:center; padding:12px 18px; border-radius:14px; background:var(--elg-cream); box-shadow:0 6px 18px rgba(0, 0, 0, .14); text-decoration:none !important; line-height:0; }
+.econur-login-brand{ display:inline-flex; align-items:center; padding:11px 17px; border-radius:14px; background:var(--elg-cream); box-shadow:0 6px 18px rgba(0, 0, 0, .14); text-decoration:none !important; line-height:0; }
 .econur-login-brand:focus-visible{ outline:2px solid var(--elg-focus); outline-offset:3px; }
-.econur-login-logo{ display:block; width:200px !important; height:auto !important; max-width:none; object-fit:contain; box-shadow:none !important; }
+.econur-login-logo{ display:block; width:196px !important; height:auto !important; max-width:none; object-fit:contain; box-shadow:none !important; }
 .econur-login-logo-text{ font:600 26px/1 var(--ecn-font-en, Inter, sans-serif); color:var(--elg-ink); line-height:1.2; }
 
 h1.econur-login-h{ margin:30px 0 0 !important; padding:0; font-family:var(--elg-bn) !important; font-size:42px !important; font-weight:600 !important; line-height:1.2 !important; letter-spacing:0 !important; color:#fff !important; }
@@ -144,6 +145,8 @@ h2.econur-login-rh{ margin:22px 0 0 !important; font-family:var(--elg-bn) !impor
   .econur-login-benefit small{ font-size:13px; }
   h2.econur-login-rh{ font-size:32px !important; }
   .econur-login-trust li{ padding:0 18px; }
+  .econur-login-deco--decor{ bottom:-46px; right:-84px; width:250px !important; }
+  .econur-login-deco--sprig{ width:250px !important; }
 }
 @media (max-width:1023px){
   .econur-login-layout{ grid-template-columns:minmax(0,56fr) minmax(0,44fr); }
@@ -155,9 +158,9 @@ h2.econur-login-rh{ margin:22px 0 0 !important; font-family:var(--elg-bn) !impor
   .econur-login-trust{ flex-direction:column; align-items:flex-start; gap:16px; max-width:300px; margin-left:auto !important; margin-right:auto !important; }
   .econur-login-trust li{ padding:0; }
   .econur-login-trust li + li{ border-left:0; }
-  .econur-login-deco--sprig{ width:220px !important; }
-  .econur-login-deco--decor{ width:230px !important; }
-  .econur-login-deco--soap{ width:180px !important; }
+  .econur-login-deco--sprig{ top:-40px; right:-60px; width:190px !important; }
+  .econur-login-deco--decor{ display:none; }
+  .econur-login-deco--leaves2{ width:170px !important; }
 }
 
 /* ---------------------------------------------------------------- phones: one column, the form first */
@@ -166,7 +169,7 @@ h2.econur-login-rh{ margin:22px 0 0 !important; font-family:var(--elg-bn) !impor
   .econur-login-left{ display:block; min-height:100vh; min-height:100dvh; padding:40px 22px 44px; }
   .econur-login-right{ display:none; }
   .econur-login-deco--leaves{ top:-34px; left:auto; right:-46px; width:150px !important; transform:scaleX(-1) rotate(-6deg); opacity:.85; }
-  .econur-login-deco--soap{ display:none; }
+  .econur-login-deco--leaves2{ display:none; }
   .econur-login-brand{ padding:10px 15px; border-radius:12px; }
   .econur-login-logo{ width:160px !important; }
   h1.econur-login-h{ margin-top:26px !important; font-size:32px !important; }
