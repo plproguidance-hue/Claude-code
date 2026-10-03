@@ -1,6 +1,8 @@
-/* ECONUR cart drawer + floating cart tab 1.0 (markup: inc/econur-cart.php).
+/* ECONUR cart drawer + floating cart tab 1.1 (markup: inc/econur-cart.php).
    Reads and changes the real WooCommerce cart through the Store API; after a change WooCommerce's cart fragments
-   refresh the header count. window.econurCart = { open, close, load, add } is used by the product page script. */
+   refresh the header count. window.econurCart = { open, close, load, add } is used by the product page script.
+   Any [data-ecn-cart-open] opens the drawer (the floating tab and the header Cart button, inc/header-actions.php).
+   Where there is no floating tab (homepage, content pages) the cart is read only when the drawer is opened. */
 (function () {
   'use strict';
   var C = window.ECN_CART || {}, $ = window.jQuery;
@@ -119,9 +121,9 @@
 
   // WooCommerce's own ajax add-to-cart buttons on shop / category pages
   if ($) {
-    $(document.body).on('added_to_cart', function () { load().then(open); });
+    $(document.body).on('added_to_cart', function () { if (C.auto) load().then(open); else if (cart) load(); });
     $(document.body).on('wc_fragments_refreshed', function () { if (selfRefresh) { selfRefresh = false; return; } if (cart || tab) load(); });
   }
   // a cart from an earlier visit: show the tab (WooCommerce sets this cookie while the cart has items)
-  if (/(?:^|; )woocommerce_items_in_cart=1/.test(document.cookie)) load();
+  if (tab && /(?:^|; )woocommerce_items_in_cart=1/.test(document.cookie)) load();
 })();
