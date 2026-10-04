@@ -91,7 +91,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <tr><td class="area">Cart &amp; checkout</td><td><span class="st good">Good</span></td><td>Add to Cart, Buy Now, cart drawer, BD phone check, delivery charges and order confirmation all tested</td></tr>
       <tr><td class="area">Software &amp; hosting</td><td><span class="st good">Good</span></td><td>Latest WordPress, WooCommerce and PHP 8.3; HTTPS; caching on; unused plugins and themes removed; 3 plugin updates waiting</td></tr>
       <tr><td class="area">Speed</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: pages 40–60% lighter, fonts served from the store, cache kept warm, hero slides load one at a time</td></tr>
-      <tr><td class="area">Security</td><td><span class="st fair">Fair</span></td><td>HTTPS and one admin, but XML-RPC open, admin username visible, file editor on</td></tr>
+      <tr><td class="area">Security</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: XML-RPC blocked, account name hidden, file editor off, security headers on; plugin updates and handover access still to do</td></tr>
       <tr><td class="area">SEO &amp; sharing</td><td><span class="st weak">Weak</span></td><td>No SEO plugin, no meta descriptions, no share previews for Facebook / WhatsApp</td></tr>
       <tr><td class="area">Order emails</td><td><span class="st weak">Weak</span></td><td>Sent with no sender name, from a Gmail address through the web host: spam risk</td></tr>
       <tr><td class="area">Content &amp; claims</td><td><span class="st weak">Weak</span></td><td>Offer not matched by prices; some medical / safety-style claims; testimonials shown as product reviews</td></tr>
@@ -152,12 +152,18 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <dt>Why it matters</dt><dd>Links shared on Facebook, WhatsApp and Messenger show no image or description. Google writes its own snippets.</dd>
       <dt>Fix</dt><dd>Install Rank Math or Yoast, write a title and description for the homepage, categories and each product, set a share image, add Organization schema.</dd></dl></article>
 
-    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Security hardening and handover access</h3><span class="who">Owner: developer + store owner</span></div>
-      <dl><dt>Found</dt><dd>
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Handover access and updates (hardening done 4 October)</h3><span class="who">Owner: developer + store owner</span></div>
+      <dl><dt>Done</dt><dd>
         <ul>
-          <li>XML-RPC is open.</li>
-          <li>The admin username can be read from the public REST API.</li>
-          <li>The theme/plugin file editor is on, and plugin auto-updates are off.</li>
+          <li>XML-RPC is blocked at the server (403); the public user list, author pages, user sitemap and link previews no longer show the account name, and the admin display name is now "Econur".</li>
+          <li>Wrong username and wrong password now show the same message, so nobody can test which accounts exist.</li>
+          <li>The theme/plugin file editor is off; WordPress, WooCommerce and Elementor version tags are gone; readme.html and license.txt are blocked.</li>
+          <li>Security headers on every page: HSTS, nosniff, SAMEORIGIN framing, referrer policy, permissions policy; the PHP version header is removed.</li>
+          <li>Checked: shop, product, cart, checkout, add to cart and the store login all work; kill switch <code>econur_security_mode</code> = <code>off</code>.</li>
+        </ul></dd>
+      <dt>Still open</dt><dd>
+        <ul>
+          <li>Plugin auto-updates are off.</li>
           <li>3 plugin updates are pending: Elementor, Hostinger AI and Novamira.</li>
           <li>The only admin account is the developer's.</li>
           <li>The Novamira plugin lets an AI assistant run code on the site; it was used to build this store.</li>
@@ -166,7 +172,6 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
         <ul>
           <li>Create the client's own admin account, and remove or downgrade the developer account after handover.</li>
           <li>Deactivate Novamira unless ongoing remote maintenance is agreed.</li>
-          <li>Disable XML-RPC, hide user listing and turn off the file editor.</li>
           <li>Apply the pending updates and enable auto-updates for minor versions.</li>
         </ul></dd></dl></article>
 
@@ -228,7 +233,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
     <div class="step"><span class="when">This week · before ads</span>
       <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Send emails from an @econur.shop address</li><li>Client admin account; apply plugin updates; decide on Novamira</li><li>Complete the 3 open orders</li></ol></div>
     <div class="step"><span class="when">This month</span>
-      <ol><li>SEO plugin, descriptions and share image</li><li>Security hardening (XML-RPC, user listing, file editor)</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
+      <ol><li>SEO plugin, descriptions and share image</li><li>Turn on minor plugin auto-updates after the first manual update round</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
     <div class="step"><span class="when">Next 3 months</span>
       <ol><li>New photos per bar with its own colour accent</li><li>Launch Shampoo and Toothpaste with full details</li><li>Welcome and abandoned-cart emails</li><li>Bangla blog / guides for search (skin type, how to use)</li><li>Review sales and ad data monthly; test one change at a time</li></ol></div>
   </div>
