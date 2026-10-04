@@ -184,6 +184,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
           <li>Fonts are served from the store itself (same fonts, same look); the emoji script is gone.</li>
           <li>Hero slides 2–5 load one at a time just before they appear; phones get the 1,536 px hero photo instead of the 1,942 px one.</li>
           <li>The page cache is refilled every hour and after every full purge, so shoppers get the fast copy (about 0.25–0.35 s).</li>
+          <li>Background tasks (WordPress cron) now start after the shopper's page is delivered, removing a 0.2–0.4 s wait on the visits that used to trigger them.</li>
           <li>Phone homepage, first screen: about 2.8 MB → 2.0 MB downloaded. Product photos were already the right size for their boxes.</li>
           <li>Checked: identical look at phone and desktop sizes; Add to Cart, Buy Now, cart and checkout work. Kill switch: option <code>econur_speed_mode</code> = <code>off</code>.</li>
         </ul></dd></dl></article>
@@ -217,7 +218,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
           <li>Hostinger Reach (email marketing) is installed but not set up.</li>
           <li>Google / Facebook login is installed but switched off until the privacy policy is published.</li>
         </ul></dd>
-      <dt>Fix</dt><dd>Add alt text to product images, and set up a welcome / abandoned-cart email once tracking is live. Optional: a Hostinger cron job for <code>wp-cron.php</code> every 5 minutes, so background tasks never run during a shopper's visit.</dd></dl></article>
+      <dt>Fix</dt><dd>Add alt text to product images, and set up a welcome / abandoned-cart email once tracking is live.</dd></dl></article>
   </div>
 </section>
 
