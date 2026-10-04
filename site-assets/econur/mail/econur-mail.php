@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ECONUR Mail
- * Description: Every email from the store goes out as "Econur <orders@econur.shop>" (WordPress's own emails too, which otherwise say "WordPress <wordpress@…>"). When the mailbox login is set in wp-config.php (ECONUR_SMTP_USER / ECONUR_SMTP_PASS), mail is sent through Hostinger Email (smtp.hostinger.com) so it is DKIM-signed for econur.shop and passes DMARC; if that login ever fails, the email is resent the old way so no order email is lost. Kill switch: option econur_mail_mode = "off".
+ * Description: Every email from the store goes out as "Econur <support@econur.shop>" (WordPress's own emails too, which otherwise say "WordPress <wordpress@…>"). When the mailbox login is set in wp-config.php (ECONUR_SMTP_USER / ECONUR_SMTP_PASS), mail is sent through Hostinger Email (smtp.hostinger.com) so it is DKIM-signed for econur.shop and passes DMARC; if that login ever fails, the email is resent the old way so no order email is lost. Kill switch: option econur_mail_mode = "off".
  * Version: 1.1.0
  *
  * WooCommerce's own sender, Reply-To and colours are set in WooCommerce > Settings > Emails.
@@ -19,7 +19,7 @@ function ecn_mail_smtp() {
 function ecn_mail_from() {
     if (ecn_mail_smtp()) return ECONUR_SMTP_USER; // Hostinger only sends as the signed-in mailbox
     $from = get_option('woocommerce_email_from_address');
-    return ($from && is_email($from) && '@econur.shop' === substr($from, -12)) ? $from : 'orders@econur.shop';
+    return ($from && is_email($from) && '@econur.shop' === substr($from, -12)) ? $from : 'support@econur.shop';
 }
 
 // WordPress core emails (password resets, account notices): replace the default wordpress@ sender and "WordPress" name.
