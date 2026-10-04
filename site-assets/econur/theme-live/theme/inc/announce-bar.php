@@ -111,7 +111,7 @@ html body .ecn.ecn-announce--top .ecn-ab-wa{ position:absolute; top:50%; left:ma
 /* support e-mail beside the number (desktop), an envelope instead of the WhatsApp mark */
 html body .ecn.ecn-announce--top{ --ecn-i-mail:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2.5'/%3E%3Cpath d='m4 7 8 6 8-6'/%3E%3C/svg%3E"); }
 html body .ecn.ecn-announce--top :is(.ecn-ab-mail, .ecn-ab-msg--mail) a::before{ -webkit-mask-image:var(--ecn-i-mail) !important; mask-image:var(--ecn-i-mail) !important; }
-@media (max-width:1023px){ html body .ecn.ecn-announce--top .ecn-ab-mail{ display:none; } }
+@media (max-width:1279px){ html body .ecn.ecn-announce--top .ecn-ab-mail{ display:none; } }
 html body .ecn.ecn-announce--top .ecn-ab-wa a, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a{ display:inline-flex; align-items:center; gap:7px; color:inherit !important; font-weight:600; text-decoration:none !important; font-variant-numeric:tabular-nums; letter-spacing:.01em; }
 html body .ecn.ecn-announce--top .ecn-ab-wa a::before, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a::before{ content:""; flex:none; width:16px; height:16px; background-color:currentColor;
   -webkit-mask:var(--ecn-i-wa) center/contain no-repeat; mask:var(--ecn-i-wa) center/contain no-repeat; }
