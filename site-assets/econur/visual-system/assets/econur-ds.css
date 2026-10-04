@@ -123,7 +123,6 @@ html body.ecn-ds .elementor-43 > .e-con-boxed, html body.ecn-ds .elementor-43 .e
 @media (min-width:768px){
   html body.ecn-ds .ecn-sec-sale .ecn-sb{ --sb-w:var(--ds-w); width:var(--ds-w) !important; max-width:none !important; margin-left:calc(50% - var(--ds-w) / 2) !important; border-radius:var(--ds-r-panel) !important; }
   html body.ecn-ds .enr-rv{ --rv-w:var(--ds-w); }
-  html body.ecn-ds .ecnf{ width:var(--ds-w) !important; max-width:none !important; margin-left:auto !important; margin-right:auto !important; }
 }
 html body.ecn-ds .elementor-43 > .e-con{ background-color:transparent !important; }
 /* one vertical rhythm: the same space between every homepage section (a little less between the hero and the categories) */

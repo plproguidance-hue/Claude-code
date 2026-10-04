@@ -33,8 +33,6 @@ html body.ecn-mr.ecn-mr .econur-category-trust:not(#ecn-mr-x){ --ect-gutter:var(
 html body.ecn-mr.ecn-mr.home .enr-rv:not(#ecn-mr-x){ margin-left:var(--mr-g) !important; margin-right:var(--mr-g) !important; width:auto !important; }
 /* product pages and every other WooCommerce page */
 html body.ecn-mr.ecn-mr:not(.home) .site-content > .ast-container:not(#ecn-mr-x){ padding-left:var(--mr-g) !important; padding-right:var(--mr-g) !important; }
-/* footer */
-html body.ecn-mr.ecn-mr .ecnf:not(#ecn-mr-x){ margin-left:var(--mr-g) !important; margin-right:var(--mr-g) !important; width:auto !important; }
 
 /* =============================================================== shared type */
 /* major section headings: Bestsellers, Shop by category, Featured products, Find your bar, Good to know, product page sections */
@@ -178,7 +176,6 @@ html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-love, .ecn-lp-routine, 
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp :is(.ecn-lp-why, .ecn-lp-how):not(#ecn-mr-x){ padding-top:0 !important; padding-bottom:0 !important; }
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-routine:not(#ecn-mr-x){ padding-top:32px !important; padding-bottom:32px !important; }
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-favs:not(#ecn-mr-x){ padding-bottom:0 !important; }
-html body.ecn-mr.ecn-mr.single-product .ecnf:not(#ecn-mr-x){ margin-top:var(--mr-sec-s) !important; }
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-lp-head:not(#ecn-mr-x){ margin-bottom:24px !important; }
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-love-t:not(#ecn-mr-x){ font-size:16.5px !important; line-height:1.3 !important; font-weight:700 !important; }
 html body.ecn-mr.ecn-mr.single-product .ecn-pdp .ecn-love-p:not(#ecn-mr-x){ font-size:14.5px !important; line-height:1.55 !important; }
