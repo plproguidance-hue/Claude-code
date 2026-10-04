@@ -129,7 +129,7 @@ add_filter('do_shortcode_tag', function ($out, $tag) {
 // Offer banner: the saved headline ("Flat 60% OFF") and its countdown are not backed by a matching sale in WooCommerce,
 // so the preview shows a neutral banner built only from facts already on the site (no percentage, no countdown).
 add_filter('do_shortcode_tag', function ($out, $tag) {
-    if ('econur_sale_banner' !== $tag || !econur_ds_active() || '' === trim($out)) return $out;
+    if ('econur_sale_banner' !== $tag || !econur_ds_active() || '' === trim($out) || 'on' !== get_option('econur_ds_neutral_banner')) return $out; // the saved offer banner shows unless econur_ds_neutral_banner = on
     $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/shop/');
     return '<section class="ecn-sb ecn-ds-sb" id="ecn-sale" aria-labelledby="ecn-sb-title">'
         . '<div class="ecn-sb-copy"><div class="ecn-sb-top"><span class="ecn-sb-eyebrow">Botanical skincare</span></div>'
