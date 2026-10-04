@@ -1,0 +1,50 @@
+/* ECONUR v3 (inc/econur-ds.php, live when option econur_v3_mode = "live"; loaded after every other stylesheet).
+   1 one background, more white  2 no leaf cut-outs  3 bold sans titles (serif only in the hero)
+   4 products sooner on phones (category grid, 2-column bestsellers)  5 price in brand teal  6 always-visible buy bar (product page, phones) */
+
+/* 1. one background: white cards on ivory, no tinted section panels (trust strip and offer banner stay as the two highlights) */
+html body :is(.ecn-fp, .ecn-fy, .enr-rv, .ehc, .ecnf-card):not(#v3){ background:#FFFFFF !important; background-image:none !important; border:1px solid #ECE7DD !important; box-shadow:none !important; }
+html body :is(.ecn-fp, .ecn-fy, .enr-rv, .ehc, .ecnf-card)::before, html body :is(.ecn-fp, .ecn-fy, .enr-rv, .ehc, .ecnf-card)::after{ display:none !important; }
+html body :is(.ecn-trustx-list, .enr-rv-trust, .ehc-trust, .ecn-fy-trust):not(#v3){ background:#FFFFFF !important; border:1px solid #ECE7DD !important; }
+html body .elementor-element-9dd311c::before{ display:none !important; }
+html body :is(.ehc-faq, .ehc-cta, .ehc-intro, .enr-rv-head, .ecn-fp-head, .ecn-fy-head):not(#v3){ background:transparent !important; background-image:none !important; }
+html body.single-product .ecn-pdp :is(.ecn-love-panel, .ecn-lp-routine, .ecn-lp-why, .ecn-lp-how, .ecn-help-finder, .ecn-help, .ecn-favs, .econur-pit-box, .econur-pit-panel, .ecn-acc):not(#v3){ background:#FFFFFF !important; background-image:none !important; }
+html body.single-product .ecn-pdp :is(.ecn-lp-routine, .ecn-lp-why, .ecn-lp-how, .ecn-favs, .ecn-help, .ecn-lp-band)::before,
+html body.single-product .ecn-pdp :is(.ecn-lp-routine, .ecn-lp-why, .ecn-lp-how, .ecn-favs, .ecn-help, .ecn-lp-band)::after{ display:none !important; }
+
+/* 2. no decorative leaf cut-outs; the product photos carry the botanical feel */
+html body :is(.enr-rv-deco, .ehc-art, .ecnf-art, .ecn-fp-art, .ecn-fy-art, .ecn-sh-art, .ecn-lp-art, .ecn-love-leaf, .econur-pit-leaf, .ecn-acc-leaf, .ecn-help-art, .ecn-favs-art, .ecn-lp-fleaf, .ecn-lp-wave, .ecn-lp-rsum-deco):not(#v3){ display:none !important; }
+
+/* 3. one confident title style: heavy Inter everywhere, Fraunces only in the hero */
+html body :is(.enr-rv-title, .ehc-cta-title, .ecn-lp-final h2, #ecn-lp-routine-t, .ecn-usp-title, .ecn-usp-tile h3):not(#v3){ font-family:"Inter", "Hind Siliguri", Arial, sans-serif !important; font-weight:800 !important; letter-spacing:-.03em !important; font-style:normal !important; }
+html body .enr-rv-text p:not(#v3){ font-family:"Inter", "Hind Siliguri", Arial, sans-serif !important; font-size:15px !important; line-height:1.6 !important; }
+
+/* 5. price stands out in brand teal */
+html body :is(.ecn-pc-now, .ecn-pc-now .amount, .ecn-fp-price ins .amount, .ecn-fp-price > .amount, .ecn-rel-pr .amount):not(#v3){ color:#0D585F !important; font-weight:800 !important; }
+html body.single-product .ecn-pdp :is(.ecn-pdp-price, .ecn-pdp-price .amount):not(#v3){ color:#0D585F !important; font-weight:800 !important; }
+
+@media (max-width:767px){
+  /* 4a. categories: every category visible at once (3 across), photo above the name */
+  html body .econur-category-list:not(#v3){ display:grid !important; grid-template-columns:repeat(3, minmax(0, 1fr)) !important; gap:10px !important; overflow:visible !important; margin:0 !important; padding:0 !important; }
+  html body .econur-category-card:not(#v3){ min-width:0 !important; max-width:none !important; flex:none !important; flex-direction:column !important; justify-content:center !important; align-items:center !important; gap:8px !important; min-height:0 !important; height:auto !important; width:100% !important; padding:14px 6px 12px !important; text-align:center; border-radius:16px !important; }
+  html body .econur-category-card :is(.econur-category-card__media, .econur-category-card__icon, img):not(#v3){ width:56px !important; height:56px !important; }
+  html body .econur-category-card__label:not(#v3){ font-size:13.5px !important; line-height:1.2 !important; font-weight:700 !important; }
+  html body .econur-category-card__arrow:not(#v3){ display:none !important; }
+  /* 4b. bestsellers: a 2-column grid right under the categories instead of a sideways row */
+  html body.home #bestsellers ul.ecn-home-grid:not(#v3){ display:grid !important; grid-template-columns:repeat(2, minmax(0, 1fr)) !important; gap:10px !important; overflow:visible !important; }
+  html body.home #bestsellers ul.ecn-home-grid > li.ecn-pcard:not(#v3){ flex:none !important; width:auto !important; }
+  html body.home #bestsellers ul.ecn-home-grid > li.ecn-pcard:nth-child(n+5){ display:none !important; }
+
+  /* 6. product page: the buy bar is always there (photo, price, Add to Cart, Buy Now) */
+  html body .ecn-sbar:not(#v3){ display:flex !important; transform:none !important; gap:10px !important; padding:10px 12px calc(10px + env(safe-area-inset-bottom)) !important; background:#FFFFFF !important; border-top:1px solid #ECE7DD; box-shadow:0 -6px 20px rgba(23, 48, 46, .08) !important; }
+  html body .ecn-sbar .ecn-sbar-thumb{ flex:none; width:46px; height:46px; border-radius:10px; object-fit:cover; }
+  html body .ecn-sbar .ecn-sbar-p:not(#v3){ flex:1 1 auto; min-width:0; }
+  html body .ecn-sbar .ecn-sbar-p b:not(#v3){ font-size:17px !important; color:#0D585F !important; font-weight:800 !important; }
+  html body .ecn-sbar :is(.ecn-sbar-btn, .ecn-sbar-buy):not(#v3){ height:44px !important; padding:0 14px !important; border-radius:999px !important; font-size:13.5px !important; font-weight:700 !important; white-space:nowrap; }
+  html body .ecn-sbar .ecn-sbar-btn:not(#v3){ background:#FFFFFF !important; color:#0D585F !important; border:1.5px solid #0D585F !important; }
+  html body .ecn-sbar .ecn-sbar-btn svg{ display:none; }
+  html body .ecn-sbar .ecn-sbar-buy{ display:inline-flex; align-items:center; background:#0D585F; color:#fff; border:0; }
+  html body.single-product:not(#v3){ padding-bottom:76px !important; }
+  html body.single-product .ecn-wa-float:not(#v3){ bottom:88px !important; }
+  html body .ecn-sbar .ecn-sbar-buy[disabled]{ opacity:.6; }
+}

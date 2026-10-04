@@ -208,3 +208,45 @@ add_action('wp_head', function () {
         . 'html body .ecn-sec-sale .ecn-sb-u small:not(#ecn-cf-x){color:rgba(255,253,249,.94) !important}'
         . '</style>' . "\n";
 }, 125);
+
+/* ---------------------------------------------------------------- v3: cleaner panels, products sooner, always-visible buy bar */
+// assets/econur-v3.css: white section panels, no leaf cut-outs, one bold title font, teal prices; on phones a category grid,
+// 2-column bestsellers and a buy bar that is always on screen (photo, price, Add to Cart, Buy Now).
+// Live when option econur_v3_mode = "live"; ?v3_preview=<preview key> shows it on one request for checks.
+function econur_v3_active() {
+    static $on = null;
+    if (null !== $on) return $on;
+    if ('live' === get_option('econur_v3_mode')) return $on = true;
+    $q = isset($_GET['v3_preview']) ? (string) wp_unslash($_GET['v3_preview']) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+    return $on = ('' !== $q && hash_equals(econur_ds_key(), $q));
+}
+add_action('template_redirect', function () {
+    if (!econur_v3_active() || 'live' === get_option('econur_v3_mode')) return;
+    if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE', true);
+    do_action('litespeed_control_set_nocache', 'econur v3 preview');
+    nocache_headers();
+}, 1);
+add_filter('body_class', function ($c) {
+    if (econur_v3_active()) $c[] = 'ecn-v3';
+    return $c;
+});
+add_action('wp_head', function () {
+    if (!econur_v3_active()) return;
+    $f = get_stylesheet_directory() . '/assets/econur-v3.css';
+    if (!file_exists($f)) return;
+    echo '<link rel="stylesheet" id="econur-v3-css" href="' . esc_url(get_stylesheet_directory_uri() . '/assets/econur-v3.css?ver=' . substr(md5_file($f), 0, 8)) . '" media="all">' . "\n";
+}, 140);
+// product page buy bar: add the product photo and a Buy Now button that presses the page's own Buy Now
+// (same size check, same quantity, same checkout); keep the bar reachable by keyboard and screen readers on phones
+add_action('wp_footer', function () {
+    if (!econur_v3_active() || !function_exists('is_product') || !is_product()) return;
+    ?>
+<script>(function(){var bar=document.getElementById('ecnSbar');if(!bar)return;var mq=window.matchMedia('(max-width: 767px)');
+var img=document.querySelector('.ecn-g-main img, .ecn-g-slide img, .woocommerce-product-gallery img');
+if(img&&!bar.querySelector('.ecn-sbar-thumb')){var t=document.createElement('img');t.className='ecn-sbar-thumb';t.alt='';t.setAttribute('aria-hidden','true');t.decoding='async';t.src=img.currentSrc||img.src;bar.insertBefore(t,bar.firstChild);}
+var main=document.querySelector('form.cart .ecn-pdp-buynow');
+if(main&&!bar.querySelector('.ecn-sbar-buy')){var b=document.createElement('button');b.type='button';b.className='ecn-sbar-buy';b.setAttribute('lang','bn');b.textContent='এখনই কিনুন';b.addEventListener('click',function(){if(main.disabled)return;main.click();});bar.appendChild(b);}
+function sync(){if(!mq.matches)return;if(bar.getAttribute('aria-hidden')!=='false')bar.setAttribute('aria-hidden','false');bar.querySelectorAll('a,button').forEach(function(x){if(x.tabIndex!==0)x.tabIndex=0;});}
+sync();window.addEventListener('load',function(){setTimeout(sync,50);});setTimeout(sync,1200);new MutationObserver(function(){setTimeout(sync,0);}).observe(bar,{attributes:true,attributeFilter:['class']});if(mq.addEventListener)mq.addEventListener('change',sync);})();</script>
+    <?php
+}, 60);
