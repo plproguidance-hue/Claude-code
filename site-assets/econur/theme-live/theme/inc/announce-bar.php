@@ -37,7 +37,7 @@ function econur_top_announce_html() {
 function econur_top_announce_messages($html) {
     $text = trim(preg_replace('/\s+/u', ' ', wp_strip_all_tags($html)));
     $msgs = array_values(array_filter(array_map('trim', preg_split('/(?<=[।.!?])\s+/u', $text))));
-    if (count($msgs) < 2) return econur_top_announce_wa() . $html . econur_top_announce_social();
+    if (count($msgs) < 2) return econur_top_announce_wa() . $html;
     $out = '';
     foreach ($msgs as $i => $msg) {
         $msg  = rtrim($msg, '।.');
@@ -45,7 +45,7 @@ function econur_top_announce_messages($html) {
         $out .= '<span class="ecn-ab-msg' . (0 === $i ? ' is-on' : '') . '"' . $lang . '>' . esc_html($msg) . '</span>';
     }
     $out .= '<span class="ecn-ab-msg ecn-ab-msg--wa">' . econur_top_announce_wa_link('WhatsApp ' . ECONUR_TOP_WA_DISPLAY) . '</span>';
-    return econur_top_announce_wa() . '<span class="ecn-ab-track">' . $out . '</span>' . econur_top_announce_social();
+    return econur_top_announce_wa() . '<span class="ecn-ab-track">' . $out . '</span>';
 }
 
 /* WhatsApp number in the bar (Oct 2026): at the left edge of the bar on tablets and desktop, lined up with the logo;
@@ -58,21 +58,6 @@ function econur_top_announce_wa_link($label) {
 }
 function econur_top_announce_wa() {
     return '<span class="ecn-ab-wa">' . econur_top_announce_wa_link(ECONUR_TOP_WA_DISPLAY) . '</span>';
-}
-
-/* Facebook / Instagram / TikTok at the right edge of the bar (tablet and desktop). They moved here from the desktop header
-   (inc/header-social.php skips the header copy on pages that show this bar); phones keep them in the menu.
-   Icons are CSS masks and the names are visually hidden text, so the markup survives wp_kses on product pages. */
-function econur_top_announce_social() {
-    if (!function_exists('econur_header_social_links')) return '';
-    $names = array('facebook' => 'Facebook', 'instagram' => 'Instagram', 'tiktok' => 'TikTok');
-    $o = '';
-    foreach (econur_header_social_links() as $l) {
-        $o .= '<span class="ecn-ab-so-i ecn-ab-so--' . esc_attr($l[0]) . '">'
-            . ('' === $l[2] ? '' : '<a href="' . esc_url($l[2]) . '"><span class="ecn-ab-sr">Econur on ' . esc_html($names[$l[0]] ?? $l[0]) . '</span></a>')
-            . '</span>';
-    }
-    return $o ? '<span class="ecn-ab-so">' . $o . '</span>' : '';
 }
 
 function econur_top_announce_shown() {
@@ -111,24 +96,12 @@ html body .ecn.ecn-announce--top .ecn-ab-wa a::before, html body .ecn.ecn-announ
 html body .ecn.ecn-announce--top .ecn-ab-msg--wa::before{ display:none !important; }
 html body .ecn.ecn-announce--top .ecn-ab-wa a:hover, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a:hover{ text-decoration:underline !important; text-underline-offset:3px; }
 html body .ecn.ecn-announce--top .ecn-ab-wa a:focus-visible, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a:focus-visible{ outline:2px solid currentColor; outline-offset:2px; border-radius:2px; }
-/* social icons: right edge, lined up with the header's right edge */
-html body .ecn.ecn-announce--top .ecn-ab-so{ position:absolute; top:50%; right:max(var(--ecn-ab-gap), calc((100% - 1376px) / 2)); transform:translateY(-50%); display:flex; align-items:center; gap:6px; line-height:0; }
-html body .ecn.ecn-announce--top .ecn-ab-so-i{ position:relative; display:block; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.12); transition:background-color .2s ease; }
-html body .ecn.ecn-announce--top .ecn-ab-so-i::before{ content:""; position:absolute; inset:0; margin:auto; width:14px; height:14px; background-color:currentColor; pointer-events:none;
-  -webkit-mask:var(--ecn-so) center/contain no-repeat; mask:var(--ecn-so) center/contain no-repeat; }
-html body .ecn.ecn-announce--top .ecn-ab-so-i a{ position:absolute; inset:-5px; border-radius:50%; color:inherit !important; }
-html body .ecn.ecn-announce--top .ecn-ab-so-i:has(a:hover), html body .ecn.ecn-announce--top .ecn-ab-so-i:has(a:focus-visible){ background:rgba(255,255,255,.26); }
-html body .ecn.ecn-announce--top .ecn-ab-so-i a:focus-visible{ outline:2px solid currentColor; outline-offset:-3px; }
-html body .ecn.ecn-announce--top .ecn-ab-sr{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-html body .ecn.ecn-announce--top .ecn-ab-so--facebook{ --ecn-so:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13.6 21v-7.7h2.6l.4-3h-3V8.4c0-.9.3-1.5 1.5-1.5h1.6V4.2c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.9v3h2.6V21h3.1Z'/%3E%3C/svg%3E"); }
-html body .ecn.ecn-announce--top .ecn-ab-so--instagram{ --ecn-so:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='3.5' width='17' height='17' rx='5'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/g%3E%3Ccircle cx='17.2' cy='6.8' r='1.1'/%3E%3C/svg%3E"); }
-html body .ecn.ecn-announce--top .ecn-ab-so--tiktok{ --ecn-so:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16.6 3c.3 2.2 1.6 3.6 3.9 3.8v2.6c-1.3.1-2.6-.3-3.9-1.1v5.1c0 3.3-2.3 5.6-5.4 5.6S5.8 16.8 5.8 14c0-3.1 2.6-5.4 5.9-5v2.7c-1.5-.4-3.1.5-3.1 2.2 0 1.3 1 2.3 2.4 2.3 1.6 0 2.6-1 2.6-2.9V3h3Z'/%3E%3C/svg%3E"); }
 @media (min-width:768px){ html body .ecn.ecn-announce--top .ecn-ab-msg--wa{ display:none; } }
 @media (min-width:1024px){ html body .ecn.ecn-announce--top{ --ecn-ab-gap:24px; } }
 @media (min-width:1280px){ html body .ecn.ecn-announce--top{ --ecn-ab-gap:32px; } }
 @media (max-width:767px){
   html body .ecn.ecn-announce.ecn-announce--top:not(#ecn-ab){ min-height:38px; padding:9px 12px !important; font-size:13px !important; }
-  html body .ecn.ecn-announce--top :is(.ecn-ab-wa, .ecn-ab-so){ display:none; }
+  html body .ecn.ecn-announce--top .ecn-ab-wa{ display:none; }
 }
 @media (prefers-reduced-motion:reduce){
   html body .ecn.ecn-announce--top .ecn-ab-msg, html body .ecn.ecn-announce--top .ecn-ab-msg.is-on{ transition:none; }
@@ -148,7 +121,6 @@ add_action('wp_footer', function () {
     var bar = document.querySelector('.ecn-announce--top');
     if (!bar) return;
     [].forEach.call(bar.querySelectorAll('a[href^="https://wa.me/"]'), function (a) { a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('aria-label', 'WhatsApp ' + a.textContent.replace(/^WhatsApp\s*/, '')); });
-    [].forEach.call(bar.querySelectorAll('.ecn-ab-so a'), function (a) { a.target = '_blank'; a.rel = 'noopener noreferrer'; });
     var all = bar.querySelectorAll('.ecn-ab-msg');
     if (all.length < 2) return;
     // the WhatsApp message only rotates on phones (on wider screens the number sits at the left instead)
