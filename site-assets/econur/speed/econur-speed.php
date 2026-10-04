@@ -37,7 +37,7 @@ function ecn_speed_file($name, $css) {
 
 /** Inline CSS with page-relative url()s would break once moved to a file, so leave it inline. */
 function ecn_speed_movable($css) {
-    return strlen($css) >= 2048 && !preg_match('#url\(\s*[\'"]?(?!data:|https?:|//|/|\#)#i', $css);
+    return strlen($css) >= 2048 && !preg_match('#url\(\s*+[\'"]?+(?!data:|https?:|//|/|\#)#i', $css);
 }
 
 /* 1. Theme/WooCommerce inline styles -> cached files, printed right where the inline block was. */
@@ -147,8 +147,8 @@ add_filter('wp_resource_hints', function ($urls, $type) {
 }, 20, 2);
 
 /* 4. Emoji detection script/styles (every current phone and browser shows emoji natively). */
-add_action('init', function () {
-    if ('off' === get_option('econur_speed_mode')) return;
+add_action('template_redirect', function () {
+    if (!ecn_speed_on()) return;
     remove_action('wp_head', 'print_emoji_detection_script', 7);
     remove_action('wp_print_styles', 'print_emoji_styles');
     remove_action('wp_enqueue_scripts', 'wp_enqueue_emoji_styles');
