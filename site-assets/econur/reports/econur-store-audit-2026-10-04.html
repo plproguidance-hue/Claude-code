@@ -1,0 +1,276 @@
+<title>ECONUR Store Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column (~860px) with a scorecard table, severity-striped finding rows and a three-step plan; the store's own teal / ivory brand */
+:root{
+  --bg:#FBF8F2; --surface:#FFFFFF; --ink:#17302E; --muted:#56605C; --line:#E7E1D6; --teal:#0D585F; --teal-soft:#E6EFED;
+  --crit:#B42318; --crit-soft:#FDECEA; --high:#B54708; --high-soft:#FEF3E2; --med:#8A6A12; --med-soft:#FBF5DD; --low:#3B6E57; --low-soft:#E7F2EC; --ok:#1F7A4D;
+  --display:"Fraunces", Georgia, "Times New Roman", serif; --body:"Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101917; --surface:#16211F; --ink:#E8EFEC; --muted:#A3B0AB; --line:#2A3835; --teal:#5FB7B0; --teal-soft:#183331;
+  --crit:#F97066; --crit-soft:#3A1A17; --high:#F7A04B; --high-soft:#36260F; --med:#E4C65C; --med-soft:#302A12; --low:#7CCBA4; --low-soft:#16302A; --ok:#6FD3A0; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101917; --surface:#16211F; --ink:#E8EFEC; --muted:#A3B0AB; --line:#2A3835; --teal:#5FB7B0; --teal-soft:#183331;
+  --crit:#F97066; --crit-soft:#3A1A17; --high:#F7A04B; --high-soft:#36260F; --med:#E4C65C; --med-soft:#302A12; --low:#7CCBA4; --low-soft:#16302A; --ok:#6FD3A0; color-scheme:dark }
+*{ box-sizing:border-box }
+body{ background:var(--bg); color:var(--ink); font:400 15.5px/1.6 var(--body); }
+.wrap{ max-width:880px; margin:0 auto; padding-inline:20px; padding-block:40px 72px; display:grid; gap:44px; }
+h1,h2,h3{ text-wrap:balance; margin:0; color:var(--ink) }
+h1{ font:600 clamp(30px,5vw,44px)/1.1 var(--display); letter-spacing:-.01em }
+h2{ font:700 22px/1.25 var(--body); letter-spacing:-.01em }
+h3{ font:600 16.5px/1.35 var(--body) }
+p{ margin:0 } a{ color:var(--teal) }
+.eyebrow{ font:600 12px/1 var(--body); letter-spacing:.12em; text-transform:uppercase; color:var(--teal) }
+.lead{ color:var(--muted); max-width:65ch }
+header.top{ display:grid; gap:14px; border-bottom:1px solid var(--line); padding-bottom:28px }
+.meta{ display:flex; flex-wrap:wrap; gap:8px 22px; color:var(--muted); font-size:13.5px }
+.meta b{ color:var(--ink); font-weight:600 }
+section{ display:grid; gap:16px }
+.verdict{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px 24px; display:grid; gap:10px }
+.verdict p{ max-width:68ch }
+.tablewrap{ overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface) }
+table{ width:100%; border-collapse:collapse; font-size:14px; min-width:560px }
+th,td{ text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top }
+th{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600 }
+tr:last-child td{ border-bottom:0 }
+td.area{ font-weight:600; white-space:nowrap }
+.st{ display:inline-flex; align-items:center; gap:6px; font-weight:600; font-size:13px; white-space:nowrap; padding:3px 10px; border-radius:999px }
+.st::before{ content:""; width:7px; height:7px; border-radius:50% ; background:currentColor }
+.st.good{ color:var(--ok); background:var(--low-soft) } .st.fair{ color:var(--med); background:var(--med-soft) } .st.weak{ color:var(--high); background:var(--high-soft) } .st.miss{ color:var(--crit); background:var(--crit-soft) }
+.legend{ display:flex; flex-wrap:wrap; gap:10px 18px; font-size:13px; color:var(--muted) }
+.findings{ display:grid; gap:12px }
+.f{ background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--sev); border-radius:12px; padding:16px 18px; display:grid; gap:8px; min-width:0 }
+.f.c{ --sev:var(--crit); --sevbg:var(--crit-soft) } .f.h{ --sev:var(--high); --sevbg:var(--high-soft) } .f.m{ --sev:var(--med); --sevbg:var(--med-soft) } .f.l{ --sev:var(--low); --sevbg:var(--low-soft) }
+.fh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px }
+.sev{ font:700 11.5px/1 var(--body); letter-spacing:.06em; text-transform:uppercase; color:var(--sev); background:var(--sevbg); padding:5px 8px; border-radius:6px }
+.who{ margin-left:auto; font-size:12.5px; color:var(--muted) }
+.f dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:14.5px }
+.f dt{ color:var(--muted); font-weight:600 } .f dd{ margin:0; min-width:0 }
+.plan{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px }
+.step{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px; display:grid; gap:10px; align-content:start }
+.step .when{ font:600 12px/1 var(--body); letter-spacing:.1em; text-transform:uppercase; color:var(--teal) }
+ul,ol{ margin:0; padding-left:20px; display:grid; gap:6px } li{ max-width:68ch }
+.done{ columns:2 260px; column-gap:28px; padding-left:20px; display:block } .done li{ margin-bottom:6px; break-inside:avoid }
+.note{ font-size:13.5px; color:var(--muted) }
+code{ font:500 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:var(--teal-soft); color:var(--ink); padding:1px 5px; border-radius:4px; word-break:break-word }
+.num{ font-variant-numeric:tabular-nums }
+footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); font-size:13px }
+@media (max-width:560px){ .f dl{ grid-template-columns:1fr } .who{ margin-left:0; width:100% } }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">Store audit · handover report</span>
+  <h1>ECONUR Store Audit</h1>
+  <p class="lead">A full review of econur.shop before handover: what is working, what needs fixing, and what to do next. Every finding below was measured on the live store, not estimated.</p>
+  <div class="meta">
+    <span><b>Website</b> econur.shop</span>
+    <span><b>Audit date</b> 4 October 2026</span>
+    <span><b>Platform</b> WordPress 7.1.2 · WooCommerce 11.1.2 · Astra + ECONUR child theme</span>
+    <span><b>Checked</b> desktop and phone (360–1920 px)</span>
+  </div>
+</header>
+
+<section>
+  <h2>Summary</h2>
+  <div class="verdict">
+    <p><b>The shop itself is in good shape.</b> Design, mobile layout, product pages, cart, Buy Now and Cash on Delivery checkout all work and were tested end to end. The software is up to date and runs on HTTPS.</p>
+    <p><b>Four things must be fixed before spending money on ads:</b> the legal pages are not published, there is no sales tracking (Google Analytics / Meta Pixel), the "Flat 60% OFF" banner is not backed by real sale prices, and some product claims are stronger than the products can support. Order emails are also at risk of landing in spam.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Scorecard</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Area</th><th>Status</th><th>Main reason</th></tr></thead>
+    <tbody>
+      <tr><td class="area">Design &amp; brand</td><td><span class="st good">Good</span></td><td>Consistent teal / ivory design, clean product pages, readable text (meets WCAG AA contrast)</td></tr>
+      <tr><td class="area">Mobile experience</td><td><span class="st good">Good</span></td><td>No sideways scrolling at any phone size; category grid, 2-column products, always-visible buy bar</td></tr>
+      <tr><td class="area">Cart &amp; checkout</td><td><span class="st good">Good</span></td><td>Add to Cart, Buy Now, cart drawer, BD phone check, delivery charges and order confirmation all tested</td></tr>
+      <tr><td class="area">Software &amp; hosting</td><td><span class="st good">Good</span></td><td>Latest WordPress, WooCommerce and PHP 8.3; HTTPS; caching on; 5 plugin updates waiting</td></tr>
+      <tr><td class="area">Speed</td><td><span class="st fair">Fair</span></td><td>0.65–0.9 s server response; heavy style and font files; large photos on desktop</td></tr>
+      <tr><td class="area">Security</td><td><span class="st fair">Fair</span></td><td>HTTPS and one admin, but XML-RPC open, admin username visible, file editor on</td></tr>
+      <tr><td class="area">SEO &amp; sharing</td><td><span class="st weak">Weak</span></td><td>No SEO plugin, no meta descriptions, no share previews for Facebook / WhatsApp</td></tr>
+      <tr><td class="area">Order emails</td><td><span class="st weak">Weak</span></td><td>Sent with no sender name, from a Gmail address through the web host: spam risk</td></tr>
+      <tr><td class="area">Content &amp; claims</td><td><span class="st weak">Weak</span></td><td>Offer not matched by prices; some medical / safety-style claims; testimonials shown as product reviews</td></tr>
+      <tr><td class="area">Legal pages</td><td><span class="st miss">Missing</span></td><td>Privacy Policy and Refund Policy are drafts; no Terms &amp; Conditions page</td></tr>
+      <tr><td class="area">Tracking &amp; analytics</td><td><span class="st miss">Missing</span></td><td>No Google Analytics, no Meta Pixel or Conversions API on any page</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Findings</h2>
+  <div class="legend">
+    <span><span class="sev" style="--sev:var(--crit);--sevbg:var(--crit-soft)">Critical</span> fix before running ads</span>
+    <span><span class="sev" style="--sev:var(--high);--sevbg:var(--high-soft)">High</span> fix this month</span>
+    <span><span class="sev" style="--sev:var(--med);--sevbg:var(--med-soft)">Medium</span> plan it</span>
+    <span><span class="sev" style="--sev:var(--low);--sevbg:var(--low-soft)">Low</span> nice to have</span>
+  </div>
+  <div class="findings">
+
+    <article class="f c"><div class="fh"><span class="sev">Critical</span><h3>Legal pages are not published</h3><span class="who">Owner: store owner (content) + developer (links)</span></div>
+      <dl><dt>Found</dt><dd>Privacy Policy and Refund &amp; Returns Policy exist only as drafts. No Terms &amp; Conditions page is set in WooCommerce.</dd>
+      <dt>Why it matters</dt><dd>Customers cannot see return or privacy terms before paying. Meta and Google ad accounts, and Google / Facebook login, require a published privacy policy.</dd>
+      <dt>Fix</dt><dd>Review the two drafts against how the business really works (return window, who pays delivery, COD rules), publish them, create a Terms page, link all three in the footer and at checkout.</dd></dl></article>
+
+    <article class="f c"><div class="fh"><span class="sev">Critical</span><h3>No sales tracking</h3><span class="who">Owner: developer</span></div>
+      <dl><dt>Found</dt><dd>No Google Analytics 4, Meta Pixel or Meta Conversions API on any page checked (homepage, shop, product, cart, checkout).</dd>
+      <dt>Why it matters</dt><dd>There is no way to know where visitors come from, which products sell, or whether an ad paid for itself. Facebook / Instagram ads cannot optimise for purchases.</dd>
+      <dt>Fix</dt><dd>Install GA4 and Meta Pixel with server-side Conversions API (official WooCommerce integrations), with view, add-to-cart, checkout and purchase events. Test with a real order.</dd></dl></article>
+
+    <article class="f c"><div class="fh"><span class="sev">Critical</span><h3>"Flat 60% OFF" is not backed by real prices</h3><span class="who">Owner: store owner (decision) + developer</span></div>
+      <dl><dt>Found</dt><dd>The homepage banner says "Flat 60% OFF" with a countdown to 8 October, 14:16. Products still sell at full price (for example ৳280). The only sale prices are Herbifresh 100 gm (৳1,000 → ৳99) and one Olivelle option (৳540 → ৳200).</dd>
+      <dt>Why it matters</dt><dd>Customers who click the offer and see full prices feel misled. Ad platforms reject ads that promise a discount the landing page does not show.</dd>
+      <dt>Fix</dt><dd>Either set real 60% sale prices on the chosen products until the countdown ends, or switch to the neutral banner (one setting, already built).</dd></dl></article>
+
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Product claims are stronger than they can support</h3><span class="who">Owner: store owner</span></div>
+      <dl><dt>Found</dt><dd>
+        <ul>
+          <li>Licorice: "Fades sunburn and tan spots", "Clears acne marks".</li>
+          <li>Olivelle: "Safe for babies and young children".</li>
+          <li>Site title and footer: "100% natural, chemical-free", although the bars are made with lye (saponified).</li>
+          <li>Herbifresh is described as "fragrance-free" but contains tea tree and lavender essential oils.</li>
+          <li>Product pages show "5.0 · Based on 3 customer reviews" next to "Reviews (0)": those 3 are store testimonials, not reviews of that product.</li>
+        </ul></dd>
+      <dt>Why it matters</dt><dd>Cosmetic claims that sound medical or absolute can break consumer-protection rules and get ads rejected. Contradictions lower trust.</dd>
+      <dt>Fix</dt><dd>Use the gentler wording already on Active Defense ("helps", "feels"). Correct the fragrance wording. Label testimonials as store reviews, or show them only once the product has its own reviews.</dd></dl></article>
+
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Order emails may land in spam</h3><span class="who">Owner: developer</span></div>
+      <dl><dt>Found</dt><dd>Store emails go out with an empty sender name, from <code>pl.proguidance@gmail.com</code>, sent through the web host. The domain has SPF and a DMARC record set to "none".</dd>
+      <dt>Why it matters</dt><dd>Gmail and Yahoo treat mail that claims to come from a Gmail address but is sent by another server as suspicious. Customers may miss order confirmations.</dd>
+      <dt>Fix</dt><dd>Send as "ECONUR" from an <code>@econur.shop</code> mailbox (the domain already has Hostinger mail), with authenticated SMTP and DKIM. Raise DMARC to "quarantine" once mail passes.</dd></dl></article>
+
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Price and option errors</h3><span class="who">Owner: store owner</span></div>
+      <dl><dt>Found</dt><dd>Olivelle has two options both called "100 gm" (৳300 and ৳540 → ৳200), so the shop shows "৳300 – ৳540". Herbifresh 100 gm shows "Save 90%" (৳1,000 → ৳99).</dd>
+      <dt>Fix</dt><dd>Delete the duplicate Olivelle option and confirm the Herbifresh price. These look like data-entry mistakes.</dd></dl></article>
+
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>SEO and share previews are missing</h3><span class="who">Owner: developer + store owner (text)</span></div>
+      <dl><dt>Found</dt><dd>No SEO plugin. None of the 7 pages checked has a meta description or Open Graph tags. Product schema exists on product pages; the homepage has none. The page language is set to English although most text is Bangla.</dd>
+      <dt>Why it matters</dt><dd>Links shared on Facebook, WhatsApp and Messenger show no image or description. Google writes its own snippets.</dd>
+      <dt>Fix</dt><dd>Install Rank Math or Yoast, write a title and description for the homepage, categories and each product, set a share image, add Organization schema.</dd></dl></article>
+
+    <article class="f h"><div class="fh"><span class="sev">High</span><h3>Security hardening and handover access</h3><span class="who">Owner: developer + store owner</span></div>
+      <dl><dt>Found</dt><dd>
+        <ul>
+          <li>XML-RPC is open.</li>
+          <li>The admin username can be read from the public REST API.</li>
+          <li>The theme/plugin file editor is on, and plugin auto-updates are off.</li>
+          <li>5 plugin updates are pending: Elementor, Hostinger AI, Hostinger Easy Onboarding, Hostinger Reach and Novamira.</li>
+          <li>The only admin account is the developer's.</li>
+          <li>The Novamira plugin lets an AI assistant run code on the site; it was used to build this store.</li>
+        </ul></dd>
+      <dt>Fix</dt><dd>
+        <ul>
+          <li>Create the client's own admin account, and remove or downgrade the developer account after handover.</li>
+          <li>Deactivate Novamira unless ongoing remote maintenance is agreed.</li>
+          <li>Disable XML-RPC, hide user listing and turn off the file editor.</li>
+          <li>Apply the pending updates and enable auto-updates for minor versions.</li>
+        </ul></dd></dl></article>
+
+    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Page speed</h3><span class="who">Owner: developer</span></div>
+      <dl><dt>Found</dt><dd>
+        <ul>
+          <li>The server takes 0.65–0.9 s to start sending an uncached page (cached visits are faster).</li>
+          <li>The homepage makes about 79 requests on a phone, including 26 style and 24 script files.</li>
+          <li>Style files total about 630–910 KB before compression, and fonts about 350–400 KB.</li>
+          <li>On desktop the homepage loads about 2.3 MB of photos, because product cards use 1024 px images.</li>
+          <li>LiteSpeed CSS/JS minify, WebP conversion and lazy-load are switched off.</li>
+        </ul></dd>
+      <dt>Fix</dt><dd>
+        <ul>
+          <li>Merge the four design style layers into one file.</li>
+          <li>Trim unused font weights.</li>
+          <li>Serve 600 px card images.</li>
+          <li>Turn on LiteSpeed minify and WebP one at a time, testing checkout after each.</li>
+        </ul></dd></dl></article>
+
+    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Trust content</h3><span class="who">Owner: store owner</span></div>
+      <dl><dt>Found</dt><dd>0 product reviews. No About page. "Contact" in the menu opens WhatsApp only, and the store address in WooCommerce is empty. Facebook, Instagram and WhatsApp links are present.</dd>
+      <dt>Fix</dt><dd>Ask every delivered customer for a review (WhatsApp message with the product link; the review form is ready). Add a short About page (who makes the bars, where) and a Contact page with phone, WhatsApp and business address.</dd></dl></article>
+
+    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Product data gaps</h3><span class="who">Owner: store owner</span></div>
+      <dl><dt>Found</dt><dd>
+        <ul>
+          <li>No SKUs or weights on any product.</li>
+          <li>Natural Scalp Shampoo and Natural Toothpaste are "coming soon", with no price, ingredients or usage.</li>
+          <li>Olivelle has only one photo.</li>
+          <li>Every bar is shown in the same beige pouch on the same background, so the product cards look alike.</li>
+          <li>Only Active Defense has recorded sales (4 units).</li>
+        </ul></dd>
+      <dt>Fix</dt><dd>Add SKUs and weights (needed for courier and stock control). Complete the two coming-soon products before launch. Shoot extra photos per bar, ideally with a different colour accent for each (charcoal, turmeric, coffee, green tea, olive).</dd></dl></article>
+
+    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Open orders</h3><span class="who">Owner: store owner</span></div>
+      <dl><dt>Found</dt><dd>3 orders (৳1,300 total, placed 23 September – 3 October) are still in "Processing".</dd>
+      <dt>Fix</dt><dd>Mark delivered orders as "Completed" so customers get the completion email and sales reports are correct.</dd></dl></article>
+
+    <article class="f l"><div class="fh"><span class="sev">Low</span><h3>Housekeeping</h3><span class="who">Owner: developer</span></div>
+      <dl><dt>Found</dt><dd>
+        <ul>
+          <li>Unused plugins: Jetpack (inactive), WPForms Lite (no forms), WPCode (draft snippets only).</li>
+          <li>WordPress memory limit is 40 MB; WooCommerce recommends 256 MB.</li>
+          <li>Images missing alt text: 9 on the homepage and 16 on a product page (mostly decorative).</li>
+          <li>Coupons are switched on but none exist.</li>
+          <li>Hostinger Reach (email marketing) is installed but not set up.</li>
+          <li>Google / Facebook login is installed but switched off until the privacy policy is published.</li>
+        </ul></dd>
+      <dt>Fix</dt><dd>Remove the unused plugins, raise the memory limit, add alt text to product images, and set up a welcome / abandoned-cart email once tracking is live.</dd></dl></article>
+  </div>
+</section>
+
+<section>
+  <h2>What to do next</h2>
+  <div class="plan">
+    <div class="step"><span class="when">This week · before ads</span>
+      <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Send emails from an @econur.shop address</li><li>Client admin account; apply plugin updates; decide on Novamira</li><li>Complete the 3 open orders</li></ol></div>
+    <div class="step"><span class="when">This month</span>
+      <ol><li>SEO plugin, descriptions and share image</li><li>Security hardening (XML-RPC, user listing, file editor)</li><li>Speed work: one style file, fewer fonts, smaller images, LiteSpeed settings</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
+    <div class="step"><span class="when">Next 3 months</span>
+      <ol><li>New photos per bar with its own colour accent</li><li>Launch Shampoo and Toothpaste with full details</li><li>Welcome and abandoned-cart emails</li><li>Bangla blog / guides for search (skin type, how to use)</li><li>Review sales and ad data monthly; test one change at a time</li></ol></div>
+  </div>
+</section>
+
+<section>
+  <h2>Already completed</h2>
+  <ul class="done">
+    <li>New design for homepage, shop, cart, checkout and login</li>
+    <li>Mobile layout refined: text sizes, spacing, side margins</li>
+    <li>Phone category grid and 2-column bestsellers</li>
+    <li>Always-visible buy bar on product pages (photo, price, Add to Cart, Buy Now)</li>
+    <li>Full product sections for Active Defense, Licorice, Caffiend, Herbifresh and Olivelle</li>
+    <li>Cart drawer, Buy Now, Bangla checkout with BD phone validation, thank-you page</li>
+    <li>Colour readability fixes (all text meets WCAG AA)</li>
+    <li>Offer banner with countdown; neutral banner ready as backup</li>
+    <li>Google / Facebook login prepared (off until the privacy policy is live)</li>
+    <li>No broken internal links (24 checked); sitemap and robots.txt in place</li>
+    <li>Backup taken before the last design change</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Technical reference for handover</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td class="area">Versions</td><td>WordPress 7.1.2 · WooCommerce 11.1.2 · PHP 8.3 · MariaDB 11.8 · Astra 4.14 + Econur child theme 5.2.0</td></tr>
+      <tr><td class="area">Payments &amp; delivery</td><td>Cash on Delivery only · Inside Dhaka ৳60 (1–2 days) · Outside Dhaka ৳120 (2–4 days) · Bangladesh only</td></tr>
+      <tr><td class="area">Design switches</td><td>Each change can be turned off instantly with one setting:
+        <ul>
+          <li><code>econur_ds_mode</code>: new design</li>
+          <li><code>econur_mr_mode</code>: mobile refinement</li>
+          <li><code>econur_v3_mode</code>: white panels, category grid and buy bar</li>
+          <li><code>econur_ds_neutral_banner</code>: neutral offer banner</li>
+          <li><code>econur_pdp_routine</code>: bring back "Complete Your Routine"</li>
+        </ul></td></tr>
+      <tr><td class="area">Backups</td><td>Theme, settings, homepage layout and product content saved in <code>wp-content/econur-backups/pre-v3-20261004-072620/</code>, blocked from public access. Keep using Hostinger's daily backups as well.</td></tr>
+      <tr><td class="area">Source code</td><td>All theme changes are versioned in the project repository, folder <code>site-assets/econur/</code>.</td></tr>
+      <tr><td class="area">Contact points</td><td>WhatsApp +880 1410-753555 · facebook.com/econurskincare · instagram.com/econur.skincare</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Passwords and access keys are not included in this report. Hand them over separately and change them after handover.</p>
+</section>
+
+<footer>Measured on the live store on 4 October 2026 (homepage, shop, a category, two product pages, cart, checkout and login, at phone and desktop widths). Speed figures come from server timing and a page-weight capture and are indicative, not a Google PageSpeed score.</footer>
+</div>
