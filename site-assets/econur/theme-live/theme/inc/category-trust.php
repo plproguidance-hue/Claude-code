@@ -16,7 +16,7 @@ function econur_cattrust_config() {
         'cats'  => array(array('face-care', 109), array('baby-care', 111), array('hair-care', 114), array('daily-care', 115)),
         // [label, supporting text, short text for small phones, icon]
         'trust' => array(
-            array('100% Natural', 'Pure ingredients, real care', 'Pure ingredients', 'leaf'),
+            array('Botanical', 'Simple, listed ingredients', 'Listed ingredients', 'leaf'), // Oct 2026: was "100% Natural" (the bars also contain tallow and lye)
             array('Eco Friendly', 'Better for you & Earth', 'Better for Earth', 'sprout'),
             array('Handmade', 'Crafted with love', 'Crafted with love', 'hand'),
             array('Cash on Delivery', 'Shop with confidence', 'Shop confidently', 'truck'),

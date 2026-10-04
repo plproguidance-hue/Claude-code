@@ -1062,7 +1062,7 @@ function econur_lp_final($product, $lp, $unit, $size) {
     $soon = '' === $product->get_price() || !$product->is_purchasable();
     $line = $buy ? 'আজই অর্ডার করুন, পণ্য হাতে পেয়ে টাকা দিন।' : ($soon ? 'শীঘ্রই আসছে। যেদিন পাওয়া যাবে, জানতে WhatsApp-এ মেসেজ দিন।' : 'কখন পাওয়া যাবে জানতে WhatsApp-এ মেসেজ দিন।');
     echo '<section class="ecn-lp-final" aria-labelledby="ecn-lp-final-t"><div class="ecn-lp-final-img">' . econur_lp_card_img($product, 'large', '(min-width: 1000px) 32vw, 100vw', '') . '</div>'
-        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p class="econur-bn-body" lang="bn">প্রাকৃতিক বোটানিক্যাল উপাদানে বাংলাদেশে হাতে তৈরি। ' . esc_html($line) . '</p>'
+        . '<div class="ecn-lp-final-copy"><h2 id="ecn-lp-final-t">' . esc_html($title) . '</h2><p class="econur-bn-body" lang="bn">বোটানিক্যাল উপাদান দিয়ে বাংলাদেশে হাতে তৈরি। ' . esc_html($line) . '</p>'
         . '<ul class="ecn-lp-final-trust" lang="bn"><li>' . econur_pdp_icon('cash') . '<span><b>ক্যাশ অন ডেলিভারি</b><small>সারা বাংলাদেশে</small></span></li><li>' . econur_pdp_icon('truck') . '<span><b>দ্রুত ডেলিভারি</b><small>ঢাকার ভেতরে 1–2 দিন<br>ঢাকার বাইরে 2–4 দিন</small></span></li><li>' . econur_pdp_icon('phone') . '<span><b>ফোনে অর্ডার নিশ্চিত</b><small>প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে</small></span></li></ul></div>'
         . '<div class="ecn-lp-final-cta">'
         . ($buy ? '<button type="button" class="ecn-lp-final-add" data-ecn-final-add>' . econur_pdp_icon('cart') . '<span lang="bn">কার্টে যোগ করুন</span><span class="ecn-atc-price" data-ecn-final-price> — ' . esc_html(econur_pdp_money($unit->get_price())) . '</span></button>' : '')

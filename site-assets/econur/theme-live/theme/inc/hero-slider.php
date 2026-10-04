@@ -14,8 +14,8 @@ function econur_hero_default_slides() {
     return array(
         array('on' => 1, 'desktop' => 103, 'mobile' => 0, 'width' => 16, 'eyebrow' => 'Botanical skincare', 'title' => "Made For\nEvery Skin\nRitual", 'text' => 'Deep-cleansing, brightening, and exfoliating bars crafted for everyday face care.', 'cta' => 'ফেস কেয়ার দেখুন', 'url' => '/product-category/face-care/'),
         array('on' => 1, 'desktop' => 104, 'mobile' => 0, 'width' => 30, 'eyebrow' => 'For dull & uneven-looking skin', 'title' => "Licorice\nBrightening Bar", 'text' => 'A botanical cleansing bar crafted with licorice and turmeric for a fresh, radiant-looking complexion.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/licorice-brightening-bar/'),
-        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/active-defense-bar/'),
-        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/herbifresh-bar/'),
+        array('on' => 1, 'desktop' => 105, 'mobile' => 0, 'width' => 29, 'eyebrow' => 'For oily & acne-prone skin', 'title' => "Active\nDefense Bar", 'text' => 'A deep-cleansing bar made with activated charcoal, neem and tulsi for everyday cleansing.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/active-defense-bar/'),
+        array('on' => 1, 'desktop' => 106, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Fresh daily cleansing', 'title' => "Herbfresh\nBar", 'text' => 'A refreshing herbal cleansing bar with neem, moringa and green tea for everyday skin care.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/herbifresh-bar/'),
         array('on' => 1, 'desktop' => 107, 'mobile' => 0, 'width' => 28, 'eyebrow' => 'Gentle exfoliating care', 'title' => "Caffeind\nBar", 'text' => 'A coffee-inspired cleansing bar designed to gently exfoliate and refresh dull-looking skin.', 'cta' => 'পণ্যটি দেখুন', 'url' => '/product/caffiend-bar/'),
     );
 }
@@ -50,7 +50,7 @@ add_shortcode('econur_hero', function () {
 
     $o  = econur_hero_css();
     $o .= '<section class="ecn-hsl ecn-hx' . ($m_ratio ? ' has-mobile' : '') . '" aria-roledescription="carousel" aria-label="Econur featured products"' . $m_ratio . '>';
-    $o .= '<h1 class="ecn-visually-hidden">Econur: 100% natural, handmade skincare in zero-plastic packaging</h1>';
+    $o .= '<h1 class="ecn-visually-hidden">Econur: handmade botanical skincare in zero-plastic packaging</h1>';
     $o .= '<div class="ecn-hx-track">';
     foreach ($slides as $i => $s) {
         $first = 0 === $i;

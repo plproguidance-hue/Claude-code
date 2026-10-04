@@ -53,7 +53,7 @@ function econur_archive_header() {
     foreach ($chips as $c) echo '<a class="ecn-arch-chip' . ($c['slug'] === $cur ? ' is-on' : '') . '" href="' . esc_url($c['url']) . '"' . ($c['slug'] === $cur ? ' aria-current="page"' : '') . '>' . esc_html($c['name']) . '</a>';
     echo '</div>';
 
-    echo '<ul class="ecn-arch-trust"><li>Cash on delivery</li><li>100% natural</li><li>Zero plastic</li><li>Handmade in BD</li></ul>';
+    echo '<ul class="ecn-arch-trust"><li>Cash on delivery</li><li>Botanical ingredients</li><li>Zero plastic</li><li>Handmade in BD</li></ul>';
 
     echo '<div class="ecn-arch-bar"><span class="ecn-arch-count">' . esc_html($total) . ' ' . ($total === 1 ? 'product' : 'products') . '</span>';
     echo '<form class="ecn-arch-sort" method="get"><label for="ecn-orderby">Sort</label><select id="ecn-orderby" name="orderby">';

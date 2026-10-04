@@ -12,7 +12,7 @@ function econur_footer_config() {
     $wa = 'https://wa.me/8801410753555';
     return array(
         'logo'  => 98, // econur-logo-official.webp (the official wordmark, also used in the header)
-        'about' => 'Handcrafted, 100% natural, chemical-free skincare, made in Bangladesh from cold-pressed oils and plant botanicals, in packaging that returns to the soil.',
+        'about' => 'Handcrafted skincare made in Bangladesh with cold-pressed oils and botanicals, every ingredient listed, in packaging that returns to the soil.',
         'social' => array(
             array('facebook',  'Econur on Facebook',  'https://facebook.com/econurskincare'),
             array('instagram', 'Econur on Instagram', 'https://instagram.com/econur.skincare'),
