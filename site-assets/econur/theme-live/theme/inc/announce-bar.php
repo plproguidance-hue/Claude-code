@@ -89,7 +89,8 @@ add_action('wp_footer', function () {
     ?>
 <script id="econur-announce-js">
 (function () {
-  var HOLD = 2500, FADE = 400; // on screen ~2.5s, then 400ms out and 400ms in (see the CSS transitions)
+  var DS = document.body && document.body.classList.contains('ecn-ds'); // visual system 2 (inc/econur-ds.php): a calmer ~4s line, 300ms crossfade
+  var HOLD = DS ? 3800 : 2500, FADE = DS ? 300 : 400; // on screen ~2.5s, then 400ms out and 400ms in (see the CSS transitions)
   function start() {
     var bar = document.querySelector('.ecn-announce--top');
     var msgs = bar ? bar.querySelectorAll('.ecn-ab-msg') : [];
