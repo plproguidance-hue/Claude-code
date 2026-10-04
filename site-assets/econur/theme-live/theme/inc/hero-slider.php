@@ -33,7 +33,7 @@ function econur_hero_slides() {
 }
 
 /* painted width of the banner per breakpoint (full banner from 768px up; phones show a 16:10 frame cut from the right) */
-define('ECONUR_HERO_SIZES', '(min-width: 1824px) 1760px, (min-width: 1280px) calc(100vw - 64px), (min-width: 1024px) calc(100vw - 48px), (min-width: 768px) calc(100vw - 32px), calc(150vw - 36px)');
+define('ECONUR_HERO_SIZES', '(min-width: 1824px) 1760px, (min-width: 1280px) calc(100vw - 64px), (min-width: 1024px) calc(100vw - 48px), (min-width: 768px) calc(100vw - 32px), calc(130vw - 36px)');
 // WordPress re-adds "auto, " to lazy images when it filters content; remove it again for the hero banners only.
 add_filter('wp_content_img_tag', function ($img) {
     return str_replace('sizes="auto, ' . ECONUR_HERO_SIZES . '"', 'sizes="' . ECONUR_HERO_SIZES . '"', $img);
@@ -66,6 +66,14 @@ add_shortcode('econur_hero', function () {
         if ($m && wp_attachment_is_image($m)) {
             $set = wp_get_attachment_image_srcset($m, 'full');
             $src = '<source media="(max-width: 767px)" srcset="' . esc_attr($set ? $set : wp_get_attachment_image_url($m, 'full')) . '" sizes="100vw">';
+        }
+        // Speed (Oct 2026): slides 2+ sit stacked under slide 1, so the browser counts them as on screen and
+        // "lazy" does not hold them back. Their photo addresses wait in data-hx-* until the slider wakes them
+        // (after the page has loaded, one slide ahead of the one showing).
+        if (!$first) {
+            $img = preg_replace('/\s(srcset|src)="/', ' data-hx-$1="', $img);
+            $img = str_replace('<img ', '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" ', $img);
+            $src = str_replace(' srcset="', ' data-hx-srcset="', $src);
         }
         $url = $s['url'] ? (0 === strpos($s['url'], '/') ? home_url($s['url']) : $s['url']) : '';
         $wd = max(12, min(45, (int) $s['width']));
@@ -178,7 +186,7 @@ function econur_hero_js() {
     return '<script>(function(){var s=document.currentScript&&document.currentScript.previousElementSibling;if(!s||!s.classList.contains("ecn-hx"))return;
 var sl=[].slice.call(s.querySelectorAll(".ecn-hx-slide")),d=[].slice.call(s.querySelectorAll(".ecn-hx-dots button")),pb=s.querySelector(".ecn-hx-pause"),n=sl.length,cur=0,timer=null,hover=false,paused=false,DELAY=4000,
 rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(rm){paused=true;s.classList.add("is-paused");pb.setAttribute("aria-pressed","true");pb.setAttribute("aria-label","Play slideshow");}
-function wake(el){[].forEach.call(el.querySelectorAll("img[loading=lazy]"),function(i){i.loading="eager";});}
+function wake(el){[].forEach.call(el.querySelectorAll("[data-hx-srcset],[data-hx-src]"),function(i){var a=i.getAttribute("data-hx-srcset"),b=i.getAttribute("data-hx-src");if(a){i.setAttribute("srcset",a);i.removeAttribute("data-hx-srcset");}if(b){i.setAttribute("src",b);i.removeAttribute("data-hx-src");}});[].forEach.call(el.querySelectorAll("img[loading=lazy]"),function(i){i.loading="eager";});}
 function kb(el){requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("is-kb");});});}
 function go(i){i=(i+n)%n;if(i===cur)return;var a=sl[cur],b=sl[i];wake(b);s.classList.add("is-moved");setTimeout(function(){if(!a.classList.contains("is-on"))a.classList.remove("is-kb");},700);kb(b);a.classList.remove("is-on");a.setAttribute("aria-hidden","true");a.inert=true;b.classList.add("is-on");b.removeAttribute("aria-hidden");b.inert=false;
 d.forEach(function(x,k){x.classList.toggle("is-on",k===i);if(k===i){x.setAttribute("aria-current","true");}else{x.removeAttribute("aria-current");}});cur=i;wake(sl[(i+1)%n]);}
