@@ -12,7 +12,7 @@
   --hdr-hover:#4F8D79;
   --hdr-sage:#EEF2EA;
   --hdr-line:#E8ECE6;
-  --hdr-h:72px;
+  --hdr-h:68px; /* Oct 2026: 72 -> 68, a little slimmer under the taller top bar */
   --hdr-h-stuck:62px;
   --hdr-ease:cubic-bezier(.22, 1, .36, 1);
   --hdr-t:.28s;
