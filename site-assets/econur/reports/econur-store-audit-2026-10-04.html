@@ -42,7 +42,7 @@ td.area{ font-weight:600; white-space:nowrap }
 .legend{ display:flex; flex-wrap:wrap; gap:10px 18px; font-size:13px; color:var(--muted) }
 .findings{ display:grid; gap:12px }
 .f{ background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--sev); border-radius:12px; padding:16px 18px; display:grid; gap:8px; min-width:0 }
-.f.c{ --sev:var(--crit); --sevbg:var(--crit-soft) } .f.h{ --sev:var(--high); --sevbg:var(--high-soft) } .f.m{ --sev:var(--med); --sevbg:var(--med-soft) } .f.l{ --sev:var(--low); --sevbg:var(--low-soft) }
+.f.c{ --sev:var(--crit); --sevbg:var(--crit-soft) } .f.h{ --sev:var(--high); --sevbg:var(--high-soft) } .f.m{ --sev:var(--med); --sevbg:var(--med-soft) } .f.l{ --sev:var(--low); --sevbg:var(--low-soft) } .f.d{ --sev:var(--ok); --sevbg:var(--low-soft) }
 .fh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px }
 .sev{ font:700 11.5px/1 var(--body); letter-spacing:.06em; text-transform:uppercase; color:var(--sev); background:var(--sevbg); padding:5px 8px; border-radius:6px }
 .who{ margin-left:auto; font-size:12.5px; color:var(--muted) }
@@ -89,8 +89,8 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <tr><td class="area">Design &amp; brand</td><td><span class="st good">Good</span></td><td>Consistent teal / ivory design, clean product pages, readable text (meets WCAG AA contrast)</td></tr>
       <tr><td class="area">Mobile experience</td><td><span class="st good">Good</span></td><td>No sideways scrolling at any phone size; category grid, 2-column products, always-visible buy bar</td></tr>
       <tr><td class="area">Cart &amp; checkout</td><td><span class="st good">Good</span></td><td>Add to Cart, Buy Now, cart drawer, BD phone check, delivery charges and order confirmation all tested</td></tr>
-      <tr><td class="area">Software &amp; hosting</td><td><span class="st good">Good</span></td><td>Latest WordPress, WooCommerce and PHP 8.3; HTTPS; caching on; 5 plugin updates waiting</td></tr>
-      <tr><td class="area">Speed</td><td><span class="st fair">Fair</span></td><td>0.65–0.9 s server response; heavy style and font files; large photos on desktop</td></tr>
+      <tr><td class="area">Software &amp; hosting</td><td><span class="st good">Good</span></td><td>Latest WordPress, WooCommerce and PHP 8.3; HTTPS; caching on; unused plugins and themes removed; 3 plugin updates waiting</td></tr>
+      <tr><td class="area">Speed</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: pages 40–60% lighter, fonts served from the store, cache kept warm, hero slides load one at a time</td></tr>
       <tr><td class="area">Security</td><td><span class="st fair">Fair</span></td><td>HTTPS and one admin, but XML-RPC open, admin username visible, file editor on</td></tr>
       <tr><td class="area">SEO &amp; sharing</td><td><span class="st weak">Weak</span></td><td>No SEO plugin, no meta descriptions, no share previews for Facebook / WhatsApp</td></tr>
       <tr><td class="area">Order emails</td><td><span class="st weak">Weak</span></td><td>Sent with no sender name, from a Gmail address through the web host: spam risk</td></tr>
@@ -158,7 +158,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
           <li>XML-RPC is open.</li>
           <li>The admin username can be read from the public REST API.</li>
           <li>The theme/plugin file editor is on, and plugin auto-updates are off.</li>
-          <li>5 plugin updates are pending: Elementor, Hostinger AI, Hostinger Easy Onboarding, Hostinger Reach and Novamira.</li>
+          <li>3 plugin updates are pending: Elementor, Hostinger AI and Novamira.</li>
           <li>The only admin account is the developer's.</li>
           <li>The Novamira plugin lets an AI assistant run code on the site; it was used to build this store.</li>
         </ul></dd>
@@ -170,21 +170,22 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
           <li>Apply the pending updates and enable auto-updates for minor versions.</li>
         </ul></dd></dl></article>
 
-    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Page speed</h3><span class="who">Owner: developer</span></div>
+    <article class="f d"><div class="fh"><span class="sev">Done</span><h3>Page speed (fixed 4 October)</h3><span class="who">Owner: developer</span></div>
       <dl><dt>Found</dt><dd>
         <ul>
-          <li>The server takes 0.65–0.9 s to start sending an uncached page (cached visits are faster).</li>
-          <li>The homepage makes about 79 requests on a phone, including 26 style and 24 script files.</li>
-          <li>Style files total about 630–910 KB before compression, and fonts about 350–400 KB.</li>
-          <li>On desktop the homepage loads about 2.3 MB of photos, because product cards use 1024 px images.</li>
-          <li>LiteSpeed CSS/JS minify, WebP conversion and lazy-load are switched off.</li>
+          <li>Uncached pages took 0.85–1.3 s to start (now 0.6–0.85 s); every page carried about 175 KB of style code inside the page itself.</li>
+          <li>Fonts came from Google's servers (two extra connections before text could settle).</li>
+          <li>All 5 hero slides downloaded with the page (about 850 KB extra on a phone).</li>
+          <li>Five plugins and three themes were installed but unused; one plugin cost 13 ms on every page.</li>
         </ul></dd>
-      <dt>Fix</dt><dd>
+      <dt>Done</dt><dd>
         <ul>
-          <li>Merge the four design style layers into one file.</li>
-          <li>Trim unused font weights.</li>
-          <li>Serve 600 px card images.</li>
-          <li>Turn on LiteSpeed minify and WebP one at a time, testing checkout after each.</li>
+          <li>Page code is now 40–60% smaller (homepage 377 → 215 KB, shop 259 → 98 KB); the styles became files the browser keeps between pages.</li>
+          <li>Fonts are served from the store itself (same fonts, same look); the emoji script is gone.</li>
+          <li>Hero slides 2–5 load one at a time just before they appear; phones get the 1,536 px hero photo instead of the 1,942 px one.</li>
+          <li>The page cache is refilled every hour and after every full purge, so shoppers get the fast copy (about 0.25–0.35 s).</li>
+          <li>Phone homepage, first screen: about 2.8 MB → 2.0 MB downloaded. Product photos were already the right size for their boxes.</li>
+          <li>Checked: identical look at phone and desktop sizes; Add to Cart, Buy Now, cart and checkout work. Kill switch: option <code>econur_speed_mode</code> = <code>off</code>.</li>
         </ul></dd></dl></article>
 
     <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Trust content</h3><span class="who">Owner: store owner</span></div>
@@ -206,17 +207,17 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <dl><dt>Found</dt><dd>3 orders (৳1,300 total, placed 23 September – 3 October) are still in "Processing".</dd>
       <dt>Fix</dt><dd>Mark delivered orders as "Completed" so customers get the completion email and sales reports are correct.</dd></dl></article>
 
-    <article class="f l"><div class="fh"><span class="sev">Low</span><h3>Housekeeping</h3><span class="who">Owner: developer</span></div>
+    <article class="f l"><div class="fh"><span class="sev">Low</span><h3>Housekeeping (partly done 4 October)</h3><span class="who">Owner: developer</span></div>
       <dl><dt>Found</dt><dd>
         <ul>
-          <li>Unused plugins: Jetpack (inactive), WPForms Lite (no forms), WPCode (draft snippets only).</li>
-          <li>WordPress memory limit is 40 MB; WooCommerce recommends 256 MB.</li>
+          <li>Done 4 Oct: removed Jetpack, WPForms Lite, WPCode, Hostinger Reach and Easy Onboarding, three unused themes, 43 old revisions and leftover data; moved 388 old backup files (12.6 MB) out of the public theme folder, where their code could be read by anyone.</li>
+          <li>Memory is fine: PHP allows 2 GB, and pages peak at about 31 MB.</li>
           <li>Images missing alt text: 9 on the homepage and 16 on a product page (mostly decorative).</li>
           <li>Coupons are switched on but none exist.</li>
           <li>Hostinger Reach (email marketing) is installed but not set up.</li>
           <li>Google / Facebook login is installed but switched off until the privacy policy is published.</li>
         </ul></dd>
-      <dt>Fix</dt><dd>Remove the unused plugins, raise the memory limit, add alt text to product images, and set up a welcome / abandoned-cart email once tracking is live.</dd></dl></article>
+      <dt>Fix</dt><dd>Add alt text to product images, and set up a welcome / abandoned-cart email once tracking is live. Optional: a Hostinger cron job for <code>wp-cron.php</code> every 5 minutes, so background tasks never run during a shopper's visit.</dd></dl></article>
   </div>
 </section>
 
@@ -226,7 +227,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
     <div class="step"><span class="when">This week · before ads</span>
       <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Send emails from an @econur.shop address</li><li>Client admin account; apply plugin updates; decide on Novamira</li><li>Complete the 3 open orders</li></ol></div>
     <div class="step"><span class="when">This month</span>
-      <ol><li>SEO plugin, descriptions and share image</li><li>Security hardening (XML-RPC, user listing, file editor)</li><li>Speed work: one style file, fewer fonts, smaller images, LiteSpeed settings</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
+      <ol><li>SEO plugin, descriptions and share image</li><li>Security hardening (XML-RPC, user listing, file editor)</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
     <div class="step"><span class="when">Next 3 months</span>
       <ol><li>New photos per bar with its own colour accent</li><li>Launch Shampoo and Toothpaste with full details</li><li>Welcome and abandoned-cart emails</li><li>Bangla blog / guides for search (skin type, how to use)</li><li>Review sales and ad data monthly; test one change at a time</li></ol></div>
   </div>
