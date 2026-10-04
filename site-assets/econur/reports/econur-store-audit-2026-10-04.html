@@ -77,7 +77,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
   <h2>Summary</h2>
   <div class="verdict">
     <p><b>The shop itself is in good shape.</b> Design, mobile layout, product pages, cart, Buy Now and Cash on Delivery checkout all work and were tested end to end. The software is up to date and runs on HTTPS.</p>
-    <p><b>Four things must be fixed before spending money on ads:</b> the legal pages are not published, there is no sales tracking (Google Analytics / Meta Pixel), the "Flat 60% OFF" banner is not backed by real sale prices, and some product claims are stronger than the products can support. Order emails now come from Econur&rsquo;s own address; one mailbox step remains for full email authentication.</p>
+    <p><b>Four things must be fixed before spending money on ads:</b> the legal pages are not published, there is no sales tracking (Google Analytics / Meta Pixel), the "Flat 60% OFF" banner is not backed by real sale prices, and some product claims are stronger than the products can support. Order emails now come from Econur&rsquo;s own signed address.</p>
   </div>
 </section>
 
@@ -93,7 +93,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <tr><td class="area">Speed</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: pages 40–60% lighter, fonts served from the store, cache kept warm, hero slides load one at a time</td></tr>
       <tr><td class="area">Security</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: XML-RPC blocked, account name hidden, file editor off, security headers on, all plugins up to date with safe auto-updates</td></tr>
       <tr><td class="area">SEO &amp; sharing</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: descriptions on every page, Facebook / WhatsApp previews, business details for Google, clean sitemap</td></tr>
-      <tr><td class="area">Order emails</td><td><span class="st fair">Fair</span></td><td>Fixed 4 Oct: "Econur &lt;support@econur.shop&gt;", replies to support@econur.shop, brand colours, test landed in Inbox. Last step: a mailbox password so emails are signed (DKIM)</td></tr>
+      <tr><td class="area">Order emails</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: sent through the support@econur.shop mailbox; Gmail shows DKIM, SPF and DMARC all "pass"; brand colours; lands in Inbox</td></tr>
       <tr><td class="area">Content &amp; claims</td><td><span class="st weak">Weak</span></td><td>Offer not matched by prices; some medical / safety-style claims; testimonials shown as product reviews</td></tr>
       <tr><td class="area">Legal pages</td><td><span class="st miss">Missing</span></td><td>Privacy Policy and Refund Policy are drafts; no Terms &amp; Conditions page</td></tr>
       <tr><td class="area">Tracking &amp; analytics</td><td><span class="st miss">Missing</span></td><td>No Google Analytics, no Meta Pixel or Conversions API on any page</td></tr>
@@ -138,16 +138,17 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <dt>Why it matters</dt><dd>Cosmetic claims that sound medical or absolute can break consumer-protection rules and get ads rejected. Contradictions lower trust.</dd>
       <dt>Fix</dt><dd>Use the gentler wording already on Active Defense ("helps", "feels"). Correct the fragrance wording. Label testimonials as store reviews, or show them only once the product has its own reviews.</dd></dl></article>
 
-    <article class="f m"><div class="fh"><span class="sev">Medium</span><h3>Order emails (mostly fixed 4 October)</h3><span class="who">Owner: store owner (one step) + developer</span></div>
+    <article class="f d"><div class="fh"><span class="sev">Done</span><h3>Order emails (fixed 4 October)</h3><span class="who">Owner: developer</span></div>
       <dl><dt>Found</dt><dd>Store emails went out with an empty sender name, from <code>pl.proguidance@gmail.com</code>, in WooCommerce's default purple. The domain already has Hostinger mail, SPF, a DKIM key and DMARC ("none").</dd>
       <dt>Done</dt><dd>
         <ul>
           <li>Every store email (orders, password resets, account emails) now comes from <strong>Econur &lt;support@econur.shop&gt;</strong>; customer replies go to <code>support@econur.shop</code>; new-order alerts still go to <code>pl.proguidance@gmail.com</code>.</li>
           <li>Emails use the brand teal and ivory, with a footer: "Econur · Handmade in Bangladesh · WhatsApp +880 1410-753555 · econur.shop".</li>
           <li>Test email delivered to the Gmail Inbox (not spam), marked Important.</li>
-          <li>Sending through the econur.shop mailbox is built in and switches on as soon as the mailbox login is added; if that login ever fails, the email is resent the old way so no order email is lost.</li>
+          <li>Every email is now sent through the <code>support@econur.shop</code> mailbox (Hostinger SMTP; the login is in <code>wp-config.php</code>, not in the database). Gmail&rsquo;s check of the test email: <strong>DKIM pass</strong> (signed by econur.shop), <strong>SPF pass</strong>, <strong>DMARC pass</strong>.</li>
+          <li>If the mailbox login ever fails (for example after a password change), the email is resent the old way so no order email is lost. If you change the mailbox password, update <code>ECONUR_SMTP_PASS</code> in <code>wp-config.php</code>.</li>
         </ul></dd>
-      <dt>Still open</dt><dd>The test showed SPF passes for Hostinger's shared sender but there is no DKIM signature for econur.shop, so DMARC does not pass yet (it is only delivered because the policy is "none"). Add the password of the official mailbox <code>support@econur.shop</code> to <code>wp-config.php</code> (or send it securely); the next test should show DKIM and DMARC "pass". Then raise DMARC to <code>p=quarantine</code>.</dd></dl></article>
+      <dt>Optional next</dt><dd>Make DMARC stricter in hPanel → DNS: change the <code>_dmarc</code> TXT record from <code>v=DMARC1; p=none</code> to <code>v=DMARC1; p=quarantine; adkim=r; aspf=r</code>, so mail that pretends to be from econur.shop goes to spam.</dd></dl></article>
 
     <article class="f h"><div class="fh"><span class="sev">High</span><h3>Price and option errors</h3><span class="who">Owner: store owner</span></div>
       <dl><dt>Found</dt><dd>Olivelle has two options both called "100 gm" (৳300 and ৳540 → ৳200), so the shop shows "৳300 – ৳540". Herbifresh 100 gm shows "Save 90%" (৳1,000 → ৳99).</dd>
@@ -237,7 +238,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
   <h2>What to do next</h2>
   <div class="plan">
     <div class="step"><span class="when">This week · before ads</span>
-      <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Add the support@econur.shop mailbox password so emails are DKIM-signed</li><li>Update WooCommerce and Elementor by hand each month (backup first)</li><li>Complete the 3 open orders</li></ol></div>
+      <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Optional: DMARC to &ldquo;quarantine&rdquo; in hPanel DNS</li><li>Update WooCommerce and Elementor by hand each month (backup first)</li><li>Complete the 3 open orders</li></ol></div>
     <div class="step"><span class="when">This month</span>
       <ol><li>Google Search Console: verify the site and submit the sitemap</li><li>Turn on minor plugin auto-updates after the first manual update round</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
     <div class="step"><span class="when">Next 3 months</span>
