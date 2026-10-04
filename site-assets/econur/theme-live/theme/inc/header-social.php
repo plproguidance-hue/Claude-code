@@ -54,5 +54,7 @@ function econur_header_social_markup($extra = '') {
 
 add_action('astra_render_header_column', function ($row, $column) {
     if ('primary' !== $row || 'right' !== $column) return;
+    // pages with the top announcement bar show these icons in the bar instead (inc/announce-bar.php)
+    if (function_exists('econur_top_announce_shown') && econur_top_announce_shown()) return;
     echo econur_header_social_markup();
 }, 20, 2);
