@@ -1,0 +1,191 @@
+[
+ {
+  "type": "post",
+  "id": 14,
+  "field": "excerpt",
+  "old_sha": "a73b96b22e135e0cc2a9f23aa8148d1ae553a0185da405730253431f80ef218b",
+  "old": "Deep-cleansing charcoal and neem bar for oily, acne-prone skin, controls oil and breakouts without stripping.",
+  "new": "Deep-cleansing charcoal and neem bar for oily and blemish-prone skin; helps lift excess oil and leaves skin feeling clean, not stripped."
+ },
+ {
+  "type": "post",
+  "id": 14,
+  "field": "content",
+  "old_sha": "4e1fdba0239bb3bc7eb5df1bb39165a26958df59a23fb8e0db3f13da1eeecb4c",
+  "old": "<p>A deep-cleansing bar made for oily and acne-prone skin. Activated charcoal draws excess oil and impurities out of pores, while neem and tulsi calm acne-causing bacteria and inflammation. Balanced cold-pressed oils keep your skin barrier intact, so it feels clean, never tight.</p>",
+  "new": "<p>A deep-cleansing bar made for oily and blemish-prone skin. Activated charcoal helps lift excess oil and everyday impurities from the skin's surface, while neem and tulsi are part of a botanical blend in balanced cold-pressed oils. It leaves skin feeling clean and fresh, never tight.</p>"
+ },
+ {
+  "type": "post",
+  "id": 14,
+  "field": "econur_benefits",
+  "old_sha": "d57622b3104b9ee0f867bf13f9399c3bfd6c11962749aebe99a1d3f50e675bbc",
+  "old": "Absorbs excess oil from pores|Reduces acne-causing bacteria|Calms fungal acne and inflammation|Supports sebum control|Eliminates body odour from sweat|Controls general itching",
+  "new": "Helps lift excess surface oil|Cleanses away everyday dirt and sweat|Leaves skin feeling fresh and clean|Made for oily and blemish-prone skin routines|Gentle enough for morning and night"
+ },
+ {
+  "type": "post",
+  "id": 14,
+  "field": "econur_highlights",
+  "old_sha": "aca0ff03a7199bd87b2fd3d5d707d7acb4d2236e2a84513aec997e0b7485c6a7",
+  "old": "Deep Cleansing::Activated charcoal draws excess oil and impurities out of pores.|Made for Oily Skin::Made for oily and acne-prone skin, it leaves skin feeling clean, never tight.|Botanical Formula::Neem and tulsi in balanced cold-pressed oils that keep your skin barrier intact.|Thoughtful Packaging::Zero plastic, wrapped in a compostable wrap that returns to the soil.",
+  "new": "Deep Cleansing::Activated charcoal helps lift excess oil and impurities from the skin's surface.|Made for Oily Skin::Made for oily and acne-prone skin, it leaves skin feeling clean, never tight.|Botanical Formula::Neem and tulsi in balanced cold-pressed oils for a clean, comfortable feel.|Thoughtful Packaging::Zero plastic, wrapped in a compostable wrap that returns to the soil."
+ },
+ {
+  "type": "post",
+  "id": 18,
+  "field": "excerpt",
+  "old_sha": "0f9675fb42f291faf4d8e83c10323f8f3a8638b77f4ff14ffebbe621caa245da",
+  "old": "Licorice, wild turmeric and honey bar that fades tanning, dark spots and pigmentation on normal to combination skin.",
+  "new": "Licorice, wild turmeric and honey bar for a more even-looking tone on normal to combination skin; results build with daily use."
+ },
+ {
+  "type": "post",
+  "id": 18,
+  "field": "content",
+  "old_sha": "bcc26be8d2569cee102db10874fea1f07cc1f40e7457de819c3c554ad2bbaa89",
+  "old": "<p>A gentle brightening bar for uneven tone. Licorice and wild turmeric work on tanning, dark spots and pigmentation over time, while honey and aloe vera keep skin hydrated and calm. Results build with consistent daily use, pair it with sun protection.</p>",
+  "new": "<p>A gentle brightening bar for an uneven-looking tone. Licorice and wild turmeric are paired for a more even-looking complexion over time, while honey and aloe vera keep skin feeling hydrated and calm. Results build with consistent daily use; pair it with sun protection.</p>"
+ },
+ {
+  "type": "post",
+  "id": 18,
+  "field": "econur_benefits",
+  "old_sha": "f320eec9b4a5a3bf29c065cd00c967af6fd0ecde44bd33590f8860017992d848",
+  "old": "Fades sunburn and tan spots|Clears acne marks|Evens pigmentation and melasma|Reduces redness and soothes inflammation|Leaves skin glowing and hydrated",
+  "new": "Helps skin look more even over time|A fresher, brighter-looking complexion|Keeps skin feeling hydrated and calm|Gentle enough for daily use|Best with daily sun protection"
+ },
+ {
+  "type": "post",
+  "id": 18,
+  "field": "econur_ingredient_notes",
+  "old_sha": "664be417e1bd723204861a6906e8c85e00f12da17bbbc738c481a1ee533dc62b",
+  "old": "Licorice::Works with wild turmeric on tanning and dark spots over time.|Wild Turmeric::Paired with licorice for a more even-looking tone.|Honey::Keeps skin hydrated, alongside aloe vera.",
+  "new": "Licorice::Paired with wild turmeric for a more even-looking tone over time.|Wild Turmeric::Paired with licorice for a more even-looking tone.|Honey::Keeps skin feeling hydrated, alongside aloe vera."
+ },
+ {
+  "type": "post",
+  "id": 22,
+  "field": "content",
+  "old_sha": "e0e01e086b17cfb75b1862a63f939e55c55e6490003197d8b86268e49d8bb267",
+  "old": "<p>A coffee scrub bar that exfoliates two ways: coffee compounds draw out oil and dirt, while the grounds gently buff away dead skin. Caffeine boosts circulation for smoother-looking texture, and almond oil with milk keeps the skin soft. Ideal for dull, congested skin and post-workout cleansing.</p>",
+  "new": "<p>A coffee scrub bar that exfoliates two ways: coffee helps lift oil and dirt, while the grounds gently buff away dead skin for a smoother-looking texture. Almond oil and milk keep the skin feeling soft. Ideal for dull-looking skin and post-workout cleansing.</p>"
+ },
+ {
+  "type": "post",
+  "id": 22,
+  "field": "econur_benefits",
+  "old_sha": "f63d02b7f908899d9f469892a35fea068c2e21c670d6fc2593f7857336672d1f",
+  "old": "Draws out excess oil and dirt|Buffs away dead skin cells|Calms redness and inflammation|Targets acne-causing bacteria|Boosts circulation with caffeine",
+  "new": "Helps lift excess oil and dirt|Gently buffs away dead skin|Smoother-looking texture|Leaves skin feeling soft|Great after workouts"
+ },
+ {
+  "type": "post",
+  "id": 26,
+  "field": "excerpt",
+  "old_sha": "3514a545341657c325df8fc010ff76bb006db8a3aa8fb44d0499ab8c370b6d97",
+  "old": "Herbal antibacterial bar with moringa, neem and green tea, deep cleansing with gentle oat exfoliation for normal to combination skin.",
+  "new": "Herbal deep-cleansing bar with moringa, neem and green tea and gentle oat exfoliation, for normal to combination skin."
+ },
+ {
+  "type": "post",
+  "id": 26,
+  "field": "content",
+  "old_sha": "5421f07373dc348029b0eeda0fc107c5978ac4c88aef00b6d1c5e8626531dfad",
+  "old": "<p>A herbal antibacterial bar with fourteen active botanicals. Neem, moringa, green tea and blackseed cleanse deeply and act as a natural disinfectant, while oats add gentle daily exfoliation. Nourishes instead of stripping, a fragrance-free routine for normal to combination skin.</p>",
+  "new": "<p>A herbal bar with fourteen botanicals. Neem, moringa, green tea and blackseed cleanse deeply, while oats add gentle daily exfoliation. It nourishes rather than strips, for normal to combination skin, and is lightly scented with tea tree and lavender essential oils.</p>"
+ },
+ {
+  "type": "post",
+  "id": 26,
+  "field": "econur_benefits",
+  "old_sha": "6fb4ad9a112539f4cdf892d2be9718e9e48a115e0ef138d94505a7920b84fea0",
+  "old": "Natural disinfectant and acne-fighting cleanser|Relieves mild allergies and itching|Gentle daily exfoliation with oats|Brightens dull, congested skin|Fragrance-free herbal routine",
+  "new": "Deep, fresh herbal cleanse|Gentle daily exfoliation with oats|Leaves skin feeling fresh, not stripped|A brighter-looking, refreshed complexion|Scented only with tea tree and lavender essential oils"
+ },
+ {
+  "type": "post",
+  "id": 30,
+  "field": "content",
+  "old_sha": "ae534ee00c94df9c444469a215da16ebd804d562068ecdc0be87910bbbb204d4",
+  "old": "<p>An ultra-mild, fragrance-free bar made with over 80% olive oil. Deeply moisturising without drying, with kaolin clay and oat milk to calm reactive skin. Gentle enough for babies and young children, and soothing for prickly heat, very dry or sensitive skin, keeps skin soft, never tight.</p>",
+  "new": "<p>An ultra-mild, fragrance-free bar made with over 80% olive oil. Moisturising without drying, with kaolin clay and oat milk for a calm, comfortable feel. Mild enough for babies and young children, and for very dry or sensitive skin; keeps skin soft, never tight.</p>"
+ },
+ {
+  "type": "post",
+  "id": 30,
+  "field": "econur_benefits",
+  "old_sha": "983b8c9fc37e5e5beb8ff970c05b24d47d989314a85a650c9124d1c493288a94",
+  "old": "Safe for babies and young children|Soothes very dry and sensitive skin|Relieves prickly heat and mild itching|Fragrance-free daily cleansing|Keeps skin soft, never tight",
+  "new": "Mild enough for babies and young children|Comfortable for very dry and sensitive skin|Fragrance-free daily cleansing|Keeps skin soft, never tight|Patch test first on very sensitive skin"
+ },
+ {
+  "type": "post",
+  "id": 34,
+  "field": "excerpt",
+  "old_sha": "1613592a0da1588e8ae4f385204e726c0cbba39c3b442ab5f8a8600bc269a4e7",
+  "old": "Nourishing formula to effectively combat dandruff and hairfall. Coming soon.",
+  "new": "A gentle botanical shampoo for everyday scalp and hair care. Coming soon."
+ },
+ {
+  "type": "post",
+  "id": 34,
+  "field": "content",
+  "old_sha": "d65d040e0cf3d78d207c4fe93518904ff1c218d419ea382dc2eac95ece77ec67",
+  "old": "<p>Our natural scalp shampoo is on its way, a nourishing, chemical-free formula to combat dandruff and hairfall. Follow us on Facebook or Instagram to be the first to know when it launches.</p>",
+  "new": "<p>Our natural scalp shampoo is on its way: a nourishing botanical formula for everyday scalp and hair care. Follow us on Facebook or Instagram to be the first to know when it launches.</p>"
+ },
+ {
+  "type": "post",
+  "id": 36,
+  "field": "excerpt",
+  "old_sha": "e2cfb92f9191105ca3eb2b0447b2f199f4dad36be981c9337c649bd6521398c1",
+  "old": "100% free of fluoride and micro-plastics. Coming soon.",
+  "new": "Made without fluoride or micro-plastics. Coming soon."
+ },
+ {
+  "type": "post",
+  "id": 36,
+  "field": "content",
+  "old_sha": "352b5076cba14878781683b035444a3b37a67afb18414c3885596bb039687a32",
+  "old": "<p>A natural toothpaste that is 100% free of fluoride and micro-plastics, coming soon. Follow us on Facebook or Instagram to be the first to know when it launches.</p>",
+  "new": "<p>A natural toothpaste made without fluoride or micro-plastics, coming soon. Follow us on Facebook or Instagram to be the first to know when it launches.</p>"
+ },
+ {
+  "type": "term",
+  "slug": "daily-care",
+  "field": "description",
+  "old": "Everyday essentials, fluoride-free and micro-plastic-free. Launching soon.",
+  "new": "Everyday essentials, made without fluoride or micro-plastics. Launching soon."
+ },
+ {
+  "type": "option",
+  "name": "blogdescription",
+  "old": "100% natural skincare in zero-plastic packaging, handmade in Bangladesh",
+  "new": "Handmade botanical skincare in zero-plastic packaging, from Bangladesh"
+ },
+ {
+  "type": "hero_text",
+  "old": "A deep-cleansing botanical bar made with activated charcoal and plant-based ingredients for everyday cleansing.",
+  "new": "A deep-cleansing bar made with activated charcoal, neem and tulsi for everyday cleansing."
+ },
+ {
+  "type": "hero_text",
+  "old": "A refreshing botanical cleansing bar featuring herbs and plant-based ingredients for everyday skin care.",
+  "new": "A refreshing herbal cleansing bar with neem, moringa and green tea for everyday skin care."
+ },
+ {
+  "type": "post",
+  "id": 43,
+  "field": "content",
+  "old": "Econur makes 100% natural, handmade soap bars in zero-plastic, compostable packaging. Cash on delivery across Bangladesh.",
+  "new": "Econur makes handmade botanical soap bars in zero-plastic, compostable packaging. Cash on delivery across Bangladesh.",
+  "match": "contains"
+ },
+ {
+  "type": "elementor",
+  "id": 43,
+  "old": "Nothing synthetic",
+  "new": "Simple, honest ingredients"
+ }
+]
