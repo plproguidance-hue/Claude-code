@@ -37,6 +37,7 @@ function econur_footer_config() {
             array('truck',    'সারা দেশে ক্যাশ অন ডেলিভারি', ''),
             array('phone',    'প্রতিটি অর্ডার 12 ঘণ্টার মধ্যে ফোনে নিশ্চিত করা হয়।', ''),
             array('whatsapp', 'WhatsApp: +880 1410-753555', $wa),
+            array('mail',     'Email: support@econur.shop', 'mailto:support@econur.shop'),
         ),
         'whatsapp_url' => $wa,
         // media IDs: leaf spray, soap bars on stone with flowers, soap on a wood slice with linen, leaf sprig
@@ -50,6 +51,7 @@ function econur_footer_icon($n) {
         'phone' => '<path d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.8 17.8 0 0 1-7.8-2.8 17.5 17.5 0 0 1-5.4-5.4A17.8 17.8 0 0 1 3 5.2 1.8 1.8 0 0 1 4.8 3.2h2.6a1.8 1.8 0 0 1 1.8 1.6c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8.3 10.3a14.4 14.4 0 0 0 5.4 5.4l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.6 1.8Z"/>',
         'arrow' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
         'leaf'  => '<path d="M5 19c0-8 5-13.5 15-14-.4 9.6-5.8 15-13.4 15"/><path d="M5 19c2.6-4.3 5.6-7.2 9.5-9.4"/>',
+        'mail'  => '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
         'heart' => '<path d="M12 20s-7.5-4.6-7.5-10.3A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"/>',
         'instagram' => '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor" stroke="none"/>',
     );
@@ -106,7 +108,7 @@ function econur_footer_markup() {
     $support = '<ul class="ecnf-support">';
     foreach ($c['support'] as $s) {
         $text = esc_html($s[1]);
-        if ($s[2]) $text = '<a href="' . esc_url($s[2]) . '" target="_blank" rel="noopener">' . $text . '</a>';
+        if ($s[2]) $text = '<a href="' . esc_url($s[2]) . '"' . (0 === strpos($s[2], 'http') ? ' target="_blank" rel="noopener"' : '') . '>' . $text . '</a>';
         $support .= '<li' . (function_exists('econur_bn_attr') ? econur_bn_attr($s[1]) : '') . '><span class="ecnf-ico">' . econur_footer_icon($s[0]) . '</span><span class="ecnf-support-t">' . $text . '</span></li>';
     }
     $support .= '</ul>';
