@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ECONUR Speed
- * Description: Front-end speed: self-hosted Google fonts, page styles served as cached files instead of inline blocks, no emoji script, cache warm-up. Kill switch: option econur_speed_mode = "off" (or delete this file).
- * Version: 1.0.0
+ * Description: Front-end speed: self-hosted Google fonts, page styles served as cached files instead of inline blocks, no emoji script, cache warm-up, background tasks start after the shopper's page is delivered. Kill switch: option econur_speed_mode = "off" (or delete this file).
+ * Version: 1.1.0
  *
  * Lives in wp-content/mu-plugins. Nothing here changes how the site looks: fonts are the
  * same files with the same @font-face rules, and every inline style block is replaced by a
@@ -182,3 +182,18 @@ add_action('init', function () {
 add_action('litespeed_purged_all', function () {
     if (!wp_next_scheduled('ecn_speed_warm_once')) wp_schedule_single_event(time() + 90, 'ecn_speed_warm_once');
 });
+
+/* 6. Background tasks (WP-Cron) never hold up a shopper's page.
+ * WordPress starts due background tasks at the end of a page request (shutdown), and on this host the
+ * shopper's browser waited ~0.2-0.4 s for that hand-off. When a task is due, close the response to the
+ * shopper first (the page is already flushed at shutdown priority 1), then let WordPress start the tasks
+ * at priority 10 as usual. Same tasks, same schedule; only the shopper stops waiting. */
+add_action('shutdown', function () {
+    if ('off' === get_option('econur_speed_mode') || !function_exists('litespeed_finish_request')) return;
+    if (wp_doing_cron() || (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) || defined('WP_CLI')) return;
+    $jobs = wp_get_ready_cron_jobs();
+    if (empty($jobs)) return;
+    $lock = (float) get_transient('doing_cron');
+    if ($lock && $lock + WP_CRON_LOCK_TIMEOUT > microtime(true) && $lock <= microtime(true) + 10 * MINUTE_IN_SECONDS) return; // no spawn would happen
+    litespeed_finish_request();
+}, 5);
