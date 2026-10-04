@@ -92,7 +92,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <tr><td class="area">Software &amp; hosting</td><td><span class="st good">Good</span></td><td>Latest WordPress, WooCommerce and PHP 8.3; HTTPS; caching on; unused plugins and themes removed; 3 plugin updates waiting</td></tr>
       <tr><td class="area">Speed</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: pages 40–60% lighter, fonts served from the store, cache kept warm, hero slides load one at a time</td></tr>
       <tr><td class="area">Security</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: XML-RPC blocked, account name hidden, file editor off, security headers on, all plugins up to date with safe auto-updates</td></tr>
-      <tr><td class="area">SEO &amp; sharing</td><td><span class="st weak">Weak</span></td><td>No SEO plugin, no meta descriptions, no share previews for Facebook / WhatsApp</td></tr>
+      <tr><td class="area">SEO &amp; sharing</td><td><span class="st good">Good</span></td><td>Fixed 4 Oct: descriptions on every page, Facebook / WhatsApp previews, business details for Google, clean sitemap</td></tr>
       <tr><td class="area">Order emails</td><td><span class="st weak">Weak</span></td><td>Sent with no sender name, from a Gmail address through the web host: spam risk</td></tr>
       <tr><td class="area">Content &amp; claims</td><td><span class="st weak">Weak</span></td><td>Offer not matched by prices; some medical / safety-style claims; testimonials shown as product reviews</td></tr>
       <tr><td class="area">Legal pages</td><td><span class="st miss">Missing</span></td><td>Privacy Policy and Refund Policy are drafts; no Terms &amp; Conditions page</td></tr>
@@ -147,10 +147,17 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
       <dl><dt>Found</dt><dd>Olivelle has two options both called "100 gm" (৳300 and ৳540 → ৳200), so the shop shows "৳300 – ৳540". Herbifresh 100 gm shows "Save 90%" (৳1,000 → ৳99).</dd>
       <dt>Fix</dt><dd>Delete the duplicate Olivelle option and confirm the Herbifresh price. These look like data-entry mistakes.</dd></dl></article>
 
-    <article class="f h"><div class="fh"><span class="sev">High</span><h3>SEO and share previews are missing</h3><span class="who">Owner: developer + store owner (text)</span></div>
-      <dl><dt>Found</dt><dd>No SEO plugin. None of the 7 pages checked has a meta description or Open Graph tags. Product schema exists on product pages; the homepage has none. The page language is set to English although most text is Bangla.</dd>
-      <dt>Why it matters</dt><dd>Links shared on Facebook, WhatsApp and Messenger show no image or description. Google writes its own snippets.</dd>
-      <dt>Fix</dt><dd>Install Rank Math or Yoast, write a title and description for the homepage, categories and each product, set a share image, add Organization schema.</dd></dl></article>
+    <article class="f d"><div class="fh"><span class="sev">Done</span><h3>SEO and share previews (fixed 4 October)</h3><span class="who">Owner: developer</span></div>
+      <dl><dt>Found</dt><dd>No page had a meta description or share tags; shop and category pages had no canonical link; the homepage had no business details for Google; the sitemap listed cart, checkout, account and login pages.</dd>
+      <dt>Done</dt><dd>
+        <ul>
+          <li>A light built-in SEO module (no heavy plugin): every page now has a description, taken from the product's short description or the category description, so no new claims were added.</li>
+          <li>Facebook, WhatsApp, Messenger and X previews: title, description, photo (product photo on products, hero banner elsewhere), price and stock on products.</li>
+          <li>Homepage tells Google the business name, logo, Facebook and Instagram pages and the product search.</li>
+          <li>Canonical links on shop and category pages; the sitemap now lists only the homepage, shop, 7 products and 4 categories.</li>
+          <li>Every description can be changed in the product/page editor ("Search &amp; sharing" box) or on the category edit screen. Kill switch: <code>econur_seo_mode</code> = <code>off</code>. If an SEO plugin is ever installed, this module steps aside automatically.</li>
+        </ul></dd>
+      <dt>Your part</dt><dd>Add the store to Google Search Console and submit <code>https://econur.shop/wp-sitemap.xml</code> (Search Console gives a verification code: send it and it is added in a minute). The homepage title still says "100% natural", which is part of the claims review.</dd></dl></article>
 
     <article class="f d"><div class="fh"><span class="sev">Done</span><h3>Security hardening and updates (done 4 October)</h3><span class="who">Owner: developer</span></div>
       <dl><dt>Done</dt><dd>
@@ -226,7 +233,7 @@ footer{ border-top:1px solid var(--line); padding-top:18px; color:var(--muted); 
     <div class="step"><span class="when">This week · before ads</span>
       <ol><li>Publish Privacy, Refund and Terms pages</li><li>Real 60% prices or the neutral banner</li><li>Soften product claims; fix fragrance wording and the review label</li><li>Fix the Olivelle and Herbifresh prices</li><li>Install GA4 + Meta Pixel + Conversions API</li><li>Send emails from an @econur.shop address</li><li>Update WooCommerce and Elementor by hand each month (backup first)</li><li>Complete the 3 open orders</li></ol></div>
     <div class="step"><span class="when">This month</span>
-      <ol><li>SEO plugin, descriptions and share image</li><li>Turn on minor plugin auto-updates after the first manual update round</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
+      <ol><li>Google Search Console: verify the site and submit the sitemap</li><li>Turn on minor plugin auto-updates after the first manual update round</li><li>Run Google PageSpeed (pagespeed.web.dev) monthly; investigate if mobile drops below 70</li><li>About and Contact pages, store address</li><li>Start collecting product reviews after each delivery</li><li>SKUs and weights on all products</li></ol></div>
     <div class="step"><span class="when">Next 3 months</span>
       <ol><li>New photos per bar with its own colour accent</li><li>Launch Shampoo and Toothpaste with full details</li><li>Welcome and abandoned-cart emails</li><li>Bangla blog / guides for search (skin type, how to use)</li><li>Review sales and ad data monthly; test one change at a time</li></ol></div>
   </div>
