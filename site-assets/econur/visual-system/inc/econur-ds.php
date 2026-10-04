@@ -196,3 +196,15 @@ add_action('wp_footer', function () {
     echo '<script>(function(){var k=' . wp_json_encode($key) . ';document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a||a.target==="_blank")return;var u;try{u=new URL(a.href,location.href)}catch(x){return}if(u.origin!==location.origin||u.searchParams.has("add-to-cart")||u.searchParams.has("wc-ajax")||u.searchParams.has("mr_preview"))return;u.searchParams.set("mr_preview",k);a.href=u.toString();},true);})();</script>';
     if (!isset($_GET['ds_shot'])) echo '<a class="ecn-mr-badge" href="' . esc_url(add_query_arg('mr_preview', 'off')) . '" style="position:fixed;left:10px;bottom:10px;z-index:99999;padding:6px 10px;border-radius:999px;background:#17302E;color:#fff;font:600 11px/1 Inter,Arial,sans-serif;text-decoration:none">Mobile preview · exit</a>'; // phpcs:ignore WordPress.Security.NonceVerification
 });
+
+/* ---------------------------------------------------------------- readable small text (all pages, live) */
+// colour audit: a few small labels were below the 4.5:1 readability minimum; same layout, slightly darker colours
+add_action('wp_head', function () {
+    if (is_admin()) return;
+    echo '<style id="econur-colour-fix">'
+        . 'html body .ecnf .ecnf-slogan:not(#ecn-cf-x){color:#5C5A53 !important}'
+        . 'html body.single-product .ecn-pdp .econur-pit-eyebrow:not(#ecn-cf-x){color:#2F6B58 !important}'
+        . 'html body.single-product .ecn-pdp .ecn-lp-pack-badge:is(.is-pop,.is-val):not(#ecn-cf-x){background:#E6EFED !important;color:#0D585F !important}'
+        . 'html body .ecn-sec-sale .ecn-sb-u small:not(#ecn-cf-x){color:rgba(255,253,249,.94) !important}'
+        . '</style>' . "\n";
+}, 125);

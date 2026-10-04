@@ -6,7 +6,7 @@
 body.ecn-ds{
   /* colour */
   --ds-teal:#0D585F; --ds-teal-h:#0A474D; --ds-teal-soft:#E6EFED; --ds-teal-line:rgba(13, 88, 95, .22);
-  --ds-ink:#17302E; --ds-ink-2:#3F4C49; --ds-muted:#6A736F;
+  --ds-ink:#17302E; --ds-ink-2:#3F4C49; --ds-muted:#59625E;
   --ds-bg:#FBF8F2; --ds-bg-soft:#F6F1E8; --ds-sage:#F1F4EE; --ds-card:#FFFFFF; --ds-card-warm:#FFFEFB;
   --ds-line:#E7E1D6; --ds-line-2:#DCD5C8; --ds-star:#E0A23B;
   /* type */
@@ -321,7 +321,7 @@ html body.ecn-ds .ecn-pcard{ border-radius:16px !important; overflow:hidden; bor
 html body.ecn-ds .ecn-pcard .ecn-pc-media img{ aspect-ratio:322 / 277 !important; }
 html body.ecn-ds .ecn-pcard .ecn-pc-body{ padding:16px 18px 18px !important; gap:0 !important; }
 html body.ecn-ds .ecn-home-grid .ecn-pc-skin, html body.ecn-ds .ecn-pcard .ecn-pc-skin{ display:block !important; min-height:0 !important; align-self:flex-start; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
-  padding:4px 8px !important; border-radius:6px; background:#F3F2EE; color:#727873 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
+  padding:4px 8px !important; border-radius:6px; background:#F3F2EE; color:#555D59 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
 html body.ecn-ds .ecn-home-grid .ecn-pc-body:not(:has(.ecn-pc-skin))::before{ height:22px !important; font-size:10.5px !important; }
 html body.ecn-ds .ecn-pcard .ecn-pc-title{ margin:12px 0 0 !important; font-size:21px !important; }
 html body.ecn-ds .ecn-pcard .ecn-pc-price{ display:flex; align-items:baseline; gap:10px; margin:10px 0 0 !important; min-height:0 !important; }
@@ -356,7 +356,7 @@ html body.ecn-ds .ecn-sec-sale .ecn-fp-body{ padding:16px 18px 18px !important; 
 html body.ecn-ds .ecn-sec-sale .ecn-fp-body::after{ display:none !important; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-proof{ display:flex; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-skin{ display:block; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; padding:4px 8px; border-radius:6px; background:#F3F2EE;
-  color:#727873 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
+  color:#555D59 !important; font-size:10.5px !important; font-weight:600 !important; letter-spacing:.07em !important; text-transform:uppercase; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-name{ margin:12px 0 0 !important; font-size:21px !important; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-foot{ gap:16px !important; padding-top:10px !important; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-price{ display:flex !important; align-items:baseline; gap:10px; flex-wrap:wrap; }
