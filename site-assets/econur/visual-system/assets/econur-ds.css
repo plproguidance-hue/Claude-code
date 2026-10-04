@@ -365,9 +365,10 @@ html body.ecn-ds .ecn-sec-sale .ecn-fp-price small{ font-size:15px !important; c
 html body.ecn-ds .ecn-sec-sale .ecn-fp-add{ min-height:42px !important; height:42px; border-radius:999px !important; font-size:15px !important; }
 html body.ecn-ds .ecn-sec-sale .ecn-fp-heart{ background:#fff !important; box-shadow:0 2px 8px rgba(23, 48, 46, .1) !important; color:var(--ds-ink) !important; }
 
-/* header: a little taller, pill search */
+/* header: pill search; 68px tall (Oct 2026: a little slimmer, the top bar above got a little taller) */
 @media (min-width:922px){
-  html body.ecn-ds #ast-desktop-header .ast-primary-header-bar .site-primary-header-wrap{ min-height:78px !important; }
+  html body.ecn-ds{ --hdr-h:68px; }
+  html body.ecn-ds #ast-desktop-header .ast-primary-header-bar .site-primary-header-wrap{ min-height:68px !important; }
   html body.ecn-ds .econur-header-search .econur-header-search-input{ border-radius:999px !important; background:#F2F1ED !important; }
 }
 

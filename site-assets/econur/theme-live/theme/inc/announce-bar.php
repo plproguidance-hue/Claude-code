@@ -92,7 +92,7 @@ add_action('wp_head', function () {
     if (!econur_top_announce_shown()) return;
     ?>
 <style id="econur-announce-css">
-html body .ecn.ecn-announce.ecn-announce--top:not(#ecn-ab){ display:block; box-sizing:border-box; min-height:36px; padding:8px 16px !important; overflow:hidden;
+html body .ecn.ecn-announce.ecn-announce--top:not(#ecn-ab){ display:block; box-sizing:border-box; min-height:42px; padding:11px 16px !important; overflow:hidden;
   font-size:14px !important; font-weight:600; line-height:20px !important; letter-spacing:0; text-align:center; white-space:nowrap; }
 html body .ecn.ecn-announce--top .ecn-ab-track{ display:inline-grid; vertical-align:top; max-width:100%; }
 html body .ecn.ecn-announce--top .ecn-ab-msg{ grid-area:1 / 1; justify-self:center; min-width:0; max-width:100%; overflow:hidden; text-overflow:ellipsis; font-weight:600; opacity:0;
