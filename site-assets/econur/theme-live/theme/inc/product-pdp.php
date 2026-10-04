@@ -426,7 +426,7 @@ function econur_pdp_render($product) {
 
     if (function_exists('econur_pdp_info')) econur_pdp_info($product, $lp); // inc/pdp-info.php: Description / FAQ / Reviews tabs
     if (function_exists('econur_pdp_love')) econur_pdp_love($product); // inc/pdp-love.php: Why You'll Love This
-    econur_lp_routine($product, $lp);
+    if ('on' === get_option('econur_pdp_routine')) econur_lp_routine($product, $lp); // "Complete Your Routine": removed from the page (option econur_pdp_routine = on brings it back)
     econur_lp_why($product, $lp);
     econur_lp_howto($product);
     econur_lp_reviews($product);
