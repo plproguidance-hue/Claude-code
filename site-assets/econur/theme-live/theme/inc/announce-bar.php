@@ -37,14 +37,27 @@ function econur_top_announce_html() {
 function econur_top_announce_messages($html) {
     $text = trim(preg_replace('/\s+/u', ' ', wp_strip_all_tags($html)));
     $msgs = array_values(array_filter(array_map('trim', preg_split('/(?<=[।.!?])\s+/u', $text))));
-    if (count($msgs) < 2) return $html;
+    if (count($msgs) < 2) return econur_top_announce_wa() . $html;
     $out = '';
     foreach ($msgs as $i => $msg) {
         $msg  = rtrim($msg, '।.');
         $lang = function_exists('econur_bn_attr') ? econur_bn_attr($msg) : '';
         $out .= '<span class="ecn-ab-msg' . (0 === $i ? ' is-on' : '') . '"' . $lang . '>' . esc_html($msg) . '</span>';
     }
-    return '<span class="ecn-ab-track">' . $out . '</span>';
+    $out .= '<span class="ecn-ab-msg ecn-ab-msg--wa">' . econur_top_announce_wa_link('WhatsApp ' . ECONUR_TOP_WA_DISPLAY) . '</span>';
+    return econur_top_announce_wa() . '<span class="ecn-ab-track">' . $out . '</span>';
+}
+
+/* WhatsApp number in the bar (Oct 2026): at the left edge of the bar on tablets and desktop, lined up with the logo;
+   on phones it joins the rotating messages instead, so the bar stays one short line. Only <span class> and <a href>
+   are used because product pages print the bar through wp_kses (inc/product-pdp.php). */
+const ECONUR_TOP_WA_NUMBER  = '8801410753555';
+const ECONUR_TOP_WA_DISPLAY = '+880 1410-753555';
+function econur_top_announce_wa_link($label) {
+    return '<a href="' . esc_url('https://wa.me/' . ECONUR_TOP_WA_NUMBER) . '">' . esc_html($label) . '</a>';
+}
+function econur_top_announce_wa() {
+    return '<span class="ecn-ab-wa">' . econur_top_announce_wa_link(ECONUR_TOP_WA_DISPLAY) . '</span>';
 }
 
 function econur_top_announce_shown() {
@@ -74,8 +87,21 @@ html body .ecn.ecn-announce--top .ecn-ab-msg.is-on{ opacity:1; transition:opacit
 html body .ecn.ecn-announce--top:has(.ecn-ab-track)::before{ display:none; }
 html body .ecn.ecn-announce--top .ecn-ab-msg::before{ content:""; display:inline-block; width:15px; height:15px; margin:0 7px 0 0; vertical-align:-3px; background-color:currentColor;
   -webkit-mask:var(--ecn-i-truck) center/contain no-repeat; mask:var(--ecn-i-truck) center/contain no-repeat; }
+/* WhatsApp number: left edge, lined up with the header logo (header content is 1376px wide at most, 16/24/32px side gaps) */
+html body .ecn.ecn-announce--top{ position:relative; --ecn-i-wa:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.99-1.23-.73-.66-1.23-1.47-1.37-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.08.14-1.18-.06-.1-.22-.16-.47-.28Z'/%3E%3C/svg%3E"); --ecn-ab-gap:16px; }
+html body .ecn.ecn-announce--top .ecn-ab-wa{ position:absolute; top:50%; left:max(var(--ecn-ab-gap), calc((100% - 1376px) / 2)); transform:translateY(-50%); line-height:20px; }
+html body .ecn.ecn-announce--top .ecn-ab-wa a, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a{ display:inline-flex; align-items:center; gap:7px; color:inherit !important; font-weight:600; text-decoration:none !important; font-variant-numeric:tabular-nums; letter-spacing:.01em; }
+html body .ecn.ecn-announce--top .ecn-ab-wa a::before, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a::before{ content:""; flex:none; width:16px; height:16px; background-color:currentColor;
+  -webkit-mask:var(--ecn-i-wa) center/contain no-repeat; mask:var(--ecn-i-wa) center/contain no-repeat; }
+html body .ecn.ecn-announce--top .ecn-ab-msg--wa::before{ display:none !important; }
+html body .ecn.ecn-announce--top .ecn-ab-wa a:hover, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a:hover{ text-decoration:underline !important; text-underline-offset:3px; }
+html body .ecn.ecn-announce--top .ecn-ab-wa a:focus-visible, html body .ecn.ecn-announce--top .ecn-ab-msg--wa a:focus-visible{ outline:2px solid currentColor; outline-offset:2px; border-radius:2px; }
+@media (min-width:768px){ html body .ecn.ecn-announce--top .ecn-ab-msg--wa{ display:none; } }
+@media (min-width:1024px){ html body .ecn.ecn-announce--top{ --ecn-ab-gap:24px; } }
+@media (min-width:1280px){ html body .ecn.ecn-announce--top{ --ecn-ab-gap:32px; } }
 @media (max-width:767px){
   html body .ecn.ecn-announce.ecn-announce--top:not(#ecn-ab){ min-height:38px; padding:9px 12px !important; font-size:13px !important; }
+  html body .ecn.ecn-announce--top .ecn-ab-wa{ display:none; }
 }
 @media (prefers-reduced-motion:reduce){
   html body .ecn.ecn-announce--top .ecn-ab-msg, html body .ecn.ecn-announce--top .ecn-ab-msg.is-on{ transition:none; }
@@ -93,14 +119,20 @@ add_action('wp_footer', function () {
   var HOLD = DS ? 3800 : 2500, FADE = DS ? 300 : 400; // on screen ~2.5s, then 400ms out and 400ms in (see the CSS transitions)
   function start() {
     var bar = document.querySelector('.ecn-announce--top');
-    var msgs = bar ? bar.querySelectorAll('.ecn-ab-msg') : [];
-    if (msgs.length < 2) return;
-    var i = 0, timer = null, paused = false;
+    if (!bar) return;
+    [].forEach.call(bar.querySelectorAll('a[href^="https://wa.me/"]'), function (a) { a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('aria-label', 'WhatsApp ' + a.textContent.replace(/^WhatsApp\s*/, '')); });
+    var all = bar.querySelectorAll('.ecn-ab-msg');
+    if (all.length < 2) return;
+    // the WhatsApp message only rotates on phones (on wider screens the number sits at the left instead)
+    function shown() { return [].filter.call(all, function (m) { return getComputedStyle(m).display !== 'none'; }); }
+    var timer = null, paused = false;
     function next() {
       if (paused || document.hidden) return;
-      msgs[i].classList.remove('is-on');
-      i = (i + 1) % msgs.length;
-      msgs[i].classList.add('is-on');
+      var msgs = shown();
+      if (msgs.length < 2) return;
+      var cur = bar.querySelector('.ecn-ab-msg.is-on'), i = msgs.indexOf(cur);
+      if (cur) cur.classList.remove('is-on');
+      msgs[(i + 1) % msgs.length].classList.add('is-on');
     }
     function run() { clearInterval(timer); timer = setInterval(next, HOLD + 2 * FADE); }
     // pointing at (mouse) or tabbing into the bar holds the current message
