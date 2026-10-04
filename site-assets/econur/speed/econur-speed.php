@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ECONUR Speed
  * Description: Front-end speed: self-hosted Google fonts, page styles served as cached files instead of inline blocks, no emoji script, cache warm-up, background tasks start after the shopper's page is delivered. Kill switch: option econur_speed_mode = "off" (or delete this file).
- * Version: 1.1.0
+ * Version: 1.2.0
  *
  * Lives in wp-content/mu-plugins. Nothing here changes how the site looks: fonts are the
  * same files with the same @font-face rules, and every inline style block is replaced by a
@@ -197,3 +197,17 @@ add_action('shutdown', function () {
     if ($lock && $lock + WP_CRON_LOCK_TIMEOUT > microtime(true) && $lock <= microtime(true) + 10 * MINUTE_IN_SECONDS) return; // no spawn would happen
     litespeed_finish_request();
 }, 5);
+
+/* 7. Theme files carry their own change time in the address (?ver=1.0.2.1791129000), so an edited CSS/JS file
+ * reaches visitors at once instead of after the browser/CDN cache (7 days) runs out. */
+function ecn_speed_bust($src) {
+    if (!is_string($src) || false === strpos($src, '/themes/econur/') || 'off' === get_option('econur_speed_mode')) return $src;
+    $path = wp_parse_url($src, PHP_URL_PATH);
+    $file = $path ? untrailingslashit(ABSPATH) . $path : '';
+    if (!$file || !is_file($file)) return $src;
+    $ver = preg_match('/[?&]ver=([^&]+)/', $src, $m) ? $m[1] : '';
+    if (preg_match('/\.\d{9,}$/', $ver)) return $src; // already stamped
+    return add_query_arg('ver', ($ver ? $ver . '.' : '') . filemtime($file), $src);
+}
+add_filter('style_loader_src', 'ecn_speed_bust', 20);
+add_filter('script_loader_src', 'ecn_speed_bust', 20);
